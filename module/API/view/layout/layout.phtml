@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Web Application | todo</title>
+  <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="css/bootstrap.css" type="text/css" />
+  <link rel="stylesheet" href="css/animate.css" type="text/css" />
+  <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+  <link rel="stylesheet" href="css/font.css" type="text/css" cache="false" />
+  <link rel="stylesheet" href="css/plugin.css" type="text/css" />
+  <link rel="stylesheet" href="css/app.css" type="text/css" />
+  <link rel="stylesheet" href="css/landing.css" type="text/css" cache="false" />
+  <!--[if lt IE 9]>
+    <script src="js/ie/respond.min.js" cache="false"></script>
+    <script src="js/ie/html5.js" cache="false"></script>
+    <script src="js/ie/fix.js" cache="false"></script>
+  <![endif]-->
+</head>
+<body data-spy="scroll" data-target="#header" class="landing" id="home">
+  <!-- header -->
+  <header id="header" class="navbar navbar-fixed-top bg-white"  data-spy="affix" data-offset-top="1">
+    <div class="container">
+      <a class="navbar-brand" href="#">BuyBuy</a>
+      <p class="navbar-text pull-left text-muted hidden-xs hidden-sm"><small class="text-muted text-sm"><em>RESTService</em></small></p>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav">
+        <i class="fa fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="hide">
+            <a href="#home" data-ride="scroll">Home</a>
+          </li>     
+          <li>
+            <a href="#about" data-ride="scroll">About</a>
+          </li>
+          <li>
+            <a href="#features" data-ride="scroll">Features</a>
+          </li>
+          <li>
+            <a href="#price" data-ride="scroll">Price</a>
+          </li>
+          <li>
+            <a href="#contact" data-ride="scroll">Contact us</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  <!-- / header -->
+  <section id="content">
+  	<?php echo $this->content; ?>
+  </section>
+  <footer id="footer">
+    <div class="bg-black dk clearfix">
+      <div class="container text-center wrapper">
+        <a href="#home" data-ride="scroll"><i class="fa fa-angle-up fa fa-2x"></i></a>
+      </div>
+    </div>
+    <div class="bg-black dker wrapper">
+      <div class="container">
+        <div class="row m-xl">
+          <div class="col-sm-3">
+            <h5 class="text-uc m-b">Find Us</h5>
+            <p class="text-sm">23 soe Midlokls <br>
+              120002 Loki — UNITED KINGDOM <br>
+              +333 432 321 322
+             </p>
+          </div>
+          <div class="col-sm-3">
+            <h5 class="text-uc m-b">Mail Us</h5>
+            <p class="text-sm"><a href="mailto:hey@example.com">info@example.com</a></p>
+          </div>
+          <div class="col-sm-3">
+            <h5 class="text-uc m-b">Join Us</h5>
+            <p class="text-sm">Send your resume to <br><a href="mailto:hey@example.com">recruit@example.com</a></p>
+          </div>
+          <div class="col-sm-3">
+            <h5 class="text-uc m-b">Follow Us</h5>
+            <a href="#" class="btn btn-icon btn-rounded btn-facebook"><i class="fa fa-facebook"></i></a>
+            <a href="#" class="btn btn-icon btn-rounded btn-twitter"><i class="fa fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="js/bootstrap.js"></script>
+  <!-- app -->
+  <script src="js/app.js"></script>
+
+  <script src="js/appear/jquery.appear.js" cache="false"></script>
+  <script src="js/scroll/smoothscroll.js" cache="false"></script>
+  <script src="js/landing.js" cache="false"></script>
+</body>
+</html>
