@@ -1,5 +1,5 @@
 <?php
-namespace Company\ACL\User;
+namespace Company\ACL\User\Form;
 
 use Zend\Form\Form;
 

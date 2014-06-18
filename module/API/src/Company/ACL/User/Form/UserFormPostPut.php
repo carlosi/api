@@ -1,9 +1,9 @@
 <?php
-namespace Company\ACL\User;
+namespace Company\ACL\User\Form;
 
-use Company\ACL\User\UserForm;
+use Company\ACL\User\Form\UserForm;
 
-class UserFormPOST{
+class UserFormPostPut{
 
     public static function init($userLevel){
 
@@ -27,7 +27,7 @@ class UserFormPOST{
 
                 $userForm->remove('user_status');
                 
-                $this->add(array(
+                $userForm->add(array(
                     'type' => 'Select',
                     'name' => 'user_status',
                     'options' => array(

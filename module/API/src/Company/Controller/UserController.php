@@ -6,24 +6,32 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use BasePeer;
-use Company\ACL\User\UserFormGET;
-use Company\ACL\User\UserFormPOST;
+//==============FORMS================
+use Company\ACL\User\UserForm;
+use Company\ACL\User\Form\UserFormGET;
+use Company\ACL\User\Form\UserFormPostPut;
+//==============FILTERS==============
+use Company\ACL\User\Filter\UserFilter;
+use Company\ACL\User\Filter\UserFilterGET;
+use Company\ACL\User\Filter\UserFilterPostPut;
+
+
 use User;
 use Shared\Functions\ArrayManage;
 use Shared\Functions\SessionManager;
 use TokenQuery;
 use UserQuery;
-use Company\ACL\User\UserForm;
+
 use UseraclQuery;
 use Useracl;
-use Company\Filter\Table\User as UserFilter;
+
 
 class UserController extends AbstractRestfulController
 {
     protected $table = 'user';
     protected $collectionOptions = array('GET','POST');
     protected $entityOptions = array('GET', 'POST', 'PUT', 'DELETE');
-    protected $getFilters = array('neq','in','nin');
+    protected $getFilters = array('neq','in','nin','gt','lt','from','to','like');
     
     public function _getOptions()
     {
@@ -87,12 +95,13 @@ class UserController extends AbstractRestfulController
             $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : 'active';
             
             //Le ponemos los datos a nuestro formulario
-            $userForm = new UserFormPOST();
+            $userForm = UserFormPostPut::init($userLevel);
             $userForm->setData($userArray);
             
             //Le ponemos el filtro a nuestro formulario
-            $userFilter = new UserFilter() ;
-            $userForm->setInputFilter($userFilter->getInputFilter());
+            $userFilter = new UserFilterPostPut();
+            
+            $userForm->setInputFilter($userFilter->getInputFilter($userLevel));
             //Si los valores son validos
             if($userForm->isValid()){
                 //Verificamos que user_nickname no exista ya en nuestra base de datos.
@@ -373,12 +382,12 @@ class UserController extends AbstractRestfulController
                 }
                 
                 //Le ponemos los datos a nuestro formulario
-                $userForm = new UserForm();
+                $userForm = UserFormPostPut::init($userLevel);
                 $userForm->setData($user->toArray(BasePeer::TYPE_FIELDNAME));
                 
                 //Le ponemos el filtro a nuestro formulario
-                $userFilter = new UserFilter() ;
-                $userForm->setInputFilter($userFilter->getInputFilter());
+                $userFilter = new UserFilterPostPut();
+                $userForm->setInputFilter($userFilter->getInputFilter($userLevel));
                 //Si los valores son validos
                 if($userForm->isValid()){
                     //Si hay valores por modificar
