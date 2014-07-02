@@ -2,34 +2,36 @@
 
 namespace Company\Controller;
 
-use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
-use BasePeer;
+
 //==============FORMS================
 use Company\ACL\User\UserForm;
 use Company\ACL\User\Form\UserFormGET;
 use Company\ACL\User\Form\UserFormPostPut;
+use Company\ACL\Company\CompanyForm;
+use Company\ACL\Company\CompanyFormGET;
 //==============FILTERS==============
 use Company\ACL\User\Filter\UserFilter;
 use Company\ACL\User\Filter\UserFilterGET;
 use Company\ACL\User\Filter\UserFilterPostPut;
-
-
+//=============PROPEL===============
 use User;
-use Shared\Functions\ArrayManage;
-use Shared\Functions\SessionManager;
+use Useracl;
 use TokenQuery;
 use UserQuery;
-
 use UseraclQuery;
-use Useracl;
+use BasePeer;
+//=============SHARED===============
+use Zend\Http\Request;
+use Shared\Functions\ArrayManage;
+use Shared\Functions\SessionManager;
 
 
 class UserController extends AbstractRestfulController
 {
     protected $table = 'user';
-    protected $collectionOptions = array('GET','POST');
+    protected $collectionOptions = array('GET');
     protected $entityOptions = array('GET', 'POST', 'PUT', 'DELETE');
     protected $getFilters = array('neq','in','nin','gt','lt','from','to','like');
     
@@ -66,10 +68,11 @@ class UserController extends AbstractRestfulController
                 'More Info' => 'http://buybuy.com/api/docs/user'
             ),
         );
-        return new JsonModel(array('test'));     
+        return new JsonModel($body);     
     }
     
     public function create($data) {
+
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
         
@@ -85,14 +88,52 @@ class UserController extends AbstractRestfulController
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
             
-            $request = $this->getRequest();
+            $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
             
-            //Cachamos los datos a insertar en un arreglo
-            $userArray = array();
-            $userArray['user_nickname'] = $this->getRequest()->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
-            $userArray['user_password'] = $this->getRequest()->getPost()->user_password ? $this->getRequest()->getPost()->user_password : null;
-            $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : null;
-            $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : 'active';
+             switch($requestContentType){
+                case 'application/x-www-form-urlencoded':{
+
+                    $request = $this->getRequest();
+
+                    //Cachamos los datos a insertar en un arreglo
+                    $userArray = array();
+                    $userArray['user_nickname'] = $this->getRequest()->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
+                    $password = $this->getRequest()->getPost()->user_password;
+                    $userArray['user_password'] = isset($password) ? hash('sha256', $password) : null;
+                    $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : null;
+                    $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : 'pending';
+
+                    break;
+                }
+                case 'application/json':{
+
+                    $requestContent = $this->getRequest()->getContent();
+                    $requestArray = json_decode($requestContent, true);
+
+                    //Cachamos los datos a insertar en un arreglo
+                    $userArray = array();
+                    $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
+                    $password = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
+                    $userArray['user_password'] = isset($password) ? hash('sha256',$password) : null;
+                    $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : null;
+                    $userArray['user_status'] = isset($requestArray['user_status']) ? $requestArray['user_status'] : 'pending';
+
+                    break;
+                }
+                default :{
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
+                    $body = array(
+                        'HTTP Status' => '400' ,
+                        'Title' => 'Bad Request' ,
+                        'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
+                        'More Info' => "http://buybuy.com/api/docs"
+                    );
+
+                    return new JsonModel($body);
+                    break;
+                }
+            }
             
             //Le ponemos los datos a nuestro formulario
             $userForm = UserFormPostPut::init($userLevel);
@@ -106,7 +147,7 @@ class UserController extends AbstractRestfulController
             if($userForm->isValid()){
                 //Verificamos que user_nickname no exista ya en nuestra base de datos.
                 if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByUserNickname($userArray['user_nickname'])->find()->count()==0){
-                     //Insertamos en nuestra base de datos
+                    //Insertamos en nuestra base de datos
                     $user = new \User();
                     $user->setIdCompany($idCompany)
                          ->setUserNickname($userArray['user_nickname'])
@@ -114,12 +155,27 @@ class UserController extends AbstractRestfulController
                          ->setUserType($userArray['user_type'])
                          ->setUserStatus($userArray['user_status'])
                          ->save();
-
-
+                    
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
+                    $response->getHeaders()
+                    ->addHeaderLine('Location', 'http://dev.api.buybuy.com.mx/user/'.$user->getIdUser().'/'.$this->getToken());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
-                    return new JsonModel($userArray);
+                    
+                    //Le damos formato a nuestra respuesta
+                    $bodyResponse = array(
+                        "_links" => array(
+                             'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$user->getIdUser(),
+                         ),
+                    );
+                    $companyArray = array();
+                    
+                    
+                    
+                    $bodyRespone = $user->toArray(BasePeer::TYPE_FIELDNAME);
+                    $bodyRespone['user_password'] = $password;
+                    return new JsonModel($bodyRespone);
+                    
                 }else{
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
@@ -128,7 +184,7 @@ class UserController extends AbstractRestfulController
                         'Error' => array(
                             'HTTP Status' => 400 . ' Bad Request',
                             'Title' => 'Resource data pre-validation error',
-                            'Details' => 'user_nickname already exists',
+                            'Details' => "user_nickname ". "'".$userArray['user_nickname']."'". " already exists",
                         ),
                     );
                     return new JsonModel($bodyResponse);
@@ -170,7 +226,7 @@ class UserController extends AbstractRestfulController
             return new JsonModel($bodyResponse);       
         } 
     }
-
+    
     public function delete($id) {
         
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
@@ -249,13 +305,45 @@ class UserController extends AbstractRestfulController
             
             //Si si existe el id solicitado y pertenece a la compañia
             if($result!=null){
-                $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
-                
-                $user = array();
+                $user = UserQuery::create()->filterByIdUser($id)->findOne();
+                $result = $result->toArray(BasePeer::TYPE_FIELDNAME);           
+                $userArray = array(
+                    "_links" => array(
+                         'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$id,
+                     ),
+                );
                 foreach ($userForm->getElements() as $key=>$value){
-                    $user[$key] = $result[$key];
+                    $userArray[$key] = $result[$key];
                 }
-                return new JsonModel($user);
+                
+                //Eliminamos los campos que hacen referencia a otras tablas
+                unset($userArray['idcompany']);
+                
+                //Agregamos el campo embedded a nuestro arreglo
+                $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+                
+                //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                $companyForm = CompanyFormGET::init($userLevel);
+                
+                $companyArray = array();
+                foreach ($companyForm->getElements() as $key=>$value){
+                    $companyArray[$key] = $company[$key];
+                }                 
+                $userArray ['_embedded'] = array(
+                     'company' => array(
+                         '_links' => array(
+                             'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                         ),
+                     ),
+                );
+                
+                //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+               foreach ($companyArray as $key=>$value){
+                     $userArray ['_embedded']['company'][$key] = $value;
+               }
+                        
+                return new JsonModel($userArray);
+                
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
@@ -320,23 +408,51 @@ class UserController extends AbstractRestfulController
             if($filters!=null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
             
             $result = ArrayManage::executeQuery($this->getQuery(), $this->table, $idCompany,$page,$limit,$filters,$order,$dir);
-
+            
             $userArray = array();
 
-            foreach ($result['data'] as $user){
-                 $row = array();
+            foreach ($result['data'] as $item){
+                 $user = UserQuery::create()->filterByIdUser($item['iduser'])->findOne();
+                 $row = array(
+                     "_links" => array(
+                         'self' => array('href' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$item['iduser']),
+                     ),
+                 );
                  foreach ($userForm->getElements() as $key=>$value){
-                    $row[$key] = $user[$key];
+                    $row[$key] = $item[$key];
+                 }
+                 //Eliminamos los campos que hacen referencia a otras tablas
+                 unset($row['idcompany']);
+                 //Agregamos el campo embedded a nuestro arreglo
+                 $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+                 //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                 $companyForm = CompanyFormGET::init($userLevel);
+                 
+                 $companyArray = array();
+                 foreach ($companyForm->getElements() as $key=>$value){
+                    $companyArray[$key] = $company[$key];
+                 }                 
+                 $row['_embedded'] = array(
+                     'company' => array(
+                         '_links' => array(
+                             'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                         ),
+                     ),
+                 );
+                 //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                 foreach ($companyArray as $key=>$value){
+                     $row['_embedded']['company'][$key] = $value;
                  }
                  array_push($userArray, $row);
             }
-            
+           
             $response = array(
+                '_links' => $result['links'],
                 'resume' => $result['resume'],
-                'data' => $userArray,
+                'users' => $userArray,
             );
-            
-            return new JsonModel($response);
+
+             return new JsonModel($response);
   
         }else{
             //Modifiamos el Header de nuestra respuesta
@@ -354,7 +470,6 @@ class UserController extends AbstractRestfulController
     }
 
     public function update($id,$data) {
-        
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
         
@@ -369,10 +484,10 @@ class UserController extends AbstractRestfulController
         
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
-            
+                
             //Verificamos que el Id del usuario que se quiere modificar exista y que pretenece a la compañia
             if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByIdUser($id)->exists()){
-                
+                    
                 //Instanciamos nuestro user
                 $user = UserQuery::create()->findPk($id);
                 
@@ -453,10 +568,18 @@ class UserController extends AbstractRestfulController
                 );
                 return new JsonModel($bodyResponse);
             }
+        }else{
+            //Modifiamos el Header de nuestra respuesta
+            $response = $this->getResponse();
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //ACCESS DENIED
+            $bodyResponse = array(
+                'Error' => array(
+                    'HTTP Status' => 403 . ' Forbidden',
+                    'Title' => 'Access denied',
+                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                ),
+            );
+            return new JsonModel($bodyResponse);
+        }
     }
-         
-    }
-        
-    
-    
 }

@@ -12,15 +12,21 @@ namespace API;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Shared\CustomListener\TokenListener;
+use Shared\CustomListener\ApiProblemListener;
 
 class Module
 {
     public function onBootstrap(MvcEvent $e)
     {
+
         $eventManager = $e->getApplication()->getEventManager();
         
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+        
+        //ApiProblemListener
+        $apiProblemListener = new ApiProblemListener();
+        $apiProblemListener->attach($eventManager);
         
         $tokenListener = new TokenListener();
         $tokenListener->attach($eventManager);

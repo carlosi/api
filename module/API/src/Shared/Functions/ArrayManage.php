@@ -85,17 +85,31 @@ class ArrayManage{
 
         //Page y limit
         $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
-
+        
+       $links = array(
+           'self' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPage()),
+           'prev' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPreviousPage()),
+           'next' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getNextPage()),
+           'first' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getFirstPage()),
+           'last' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getLastPage()),
+       );
+       
+        
         $resume = array(
-            'current page' => $result->getPage(),
-            'items per page' => $result->getMaxPerPage(),
-            'total items' => $result->count(),
-            'last page' => $result->getLastPage(),
+            'currentPage' => $result->getPage(),
+            'itemsPerPage' => $result->getMaxPerPage(),
+            'totalItems' => $result->count(),
+            'lastPage' => $result->getLastPage(),
         );
-
+        
+        $data = $result->getResults()->toArray(null,false,BasePeer::TYPE_FIELDNAME);
+        
+   
+    
         $resultArray = array(
+            'links' => $links,
             'resume' => $resume,
-            'data' => $result->getResults()->toArray(null,false,BasePeer::TYPE_FIELDNAME),
+            'data' => $data
         );
 
         //Retornamos nuestro resultado
