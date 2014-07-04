@@ -1,7 +1,7 @@
 <?php
-namespace Company\ACL\User;
+namespace Company\ACL\User\Form;
 
-use Company\ACL\User\UserForm;
+use Company\ACL\User\Form\UserForm;
 
 class UserFormGET{
 

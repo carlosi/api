@@ -1,13 +1,13 @@
 <?php 
 
-namespace Company\Filter\Table;
+namespace Company\ACL\User\Filter;
 
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\Factory as InputFactory;
 
-class User implements InputFilterAwareInterface
+class UserFilter implements InputFilterAwareInterface
 {
 
     protected $inputFilter;
