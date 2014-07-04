@@ -85,14 +85,21 @@ class ArrayManage{
 
         //Page y limit
         $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
-        
+            
        $links = array(
            'self' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPage()),
            'prev' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPreviousPage()),
            'next' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getNextPage()),
-           'first' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getFirstPage()),
+           'first' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table),
            'last' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getLastPage()),
        );
+       
+       if($result->getPreviousPage() == 1){
+           unset($links['prev']);
+       } 
+       if($result->isLastPage()){
+           unset($links['next']);
+       } 
        
         
         $resume = array(
