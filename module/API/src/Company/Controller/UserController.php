@@ -158,24 +158,48 @@ class UserController extends AbstractRestfulController
                     
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()
-                    ->addHeaderLine('Location', 'http://dev.api.buybuy.com.mx/user/'.$user->getIdUser().'/'.$this->getToken());
+                    $response->getHeaders()->addHeaderLine('Location', 'http://dev.api.buybuy.com.mx/user/'.$user->getIdUser());             
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
                     
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
                              'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$user->getIdUser(),
+                         ),           
+                    );
+                    foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                        $bodyResponse[$key] = $value;
+                    }                    
+                    $bodyResponse['user_password'] = $password; // Remplazamos el password ya que de lo contrario no lo trairia encriptado
+                    
+                    //Eliminamos los campos que hacen referencia a otras tablas
+                    unset($bodyResponse['idcompany']);
+
+                    //Agregamos el campo embedded a nuestro arreglo
+                    $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                    $companyForm = CompanyFormGET::init($userLevel);
+
+                    $companyArray = array();
+                    foreach ($companyForm->getElements() as $key=>$value){
+                        $companyArray[$key] = $company[$key];
+                    }                 
+                    $bodyResponse ['_embedded'] = array(
+                         'company' => array(
+                             '_links' => array(
+                                 'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                             ),
                          ),
                     );
-                    $companyArray = array();
-                    
-                    
-                    
-                    $bodyRespone = $user->toArray(BasePeer::TYPE_FIELDNAME);
-                    $bodyRespone['user_password'] = $password;
-                    return new JsonModel($bodyRespone);
-                    
+
+                    //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                   foreach ($companyArray as $key=>$value){
+                         $bodyResponse ['_embedded']['company'][$key] = $value;
+                   }
+                   
+                   return new JsonModel($bodyResponse);
+
                 }else{
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
@@ -250,15 +274,7 @@ class UserController extends AbstractRestfulController
                 
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //BAD REQUEST
-                $bodyResponse = array(
-                    'Success' => array(
-                        'HTTP Status' => 200 . ' OK',
-                        'Title' => 'User with id '.$id.' was deleted successfully!',
-                        'Details' => $user->toArray(BasePeer::TYPE_FIELDNAME),
-                    ),
-                );
-                return new JsonModel($bodyResponse);
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //NOT CONTENT
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
@@ -449,7 +465,7 @@ class UserController extends AbstractRestfulController
             $response = array(
                 '_links' => $result['links'],
                 'resume' => $result['resume'],
-                'users' => $userArray,
+                '_embedded' => array('users'=> $userArray),
             );
 
              return new JsonModel($response);
@@ -491,6 +507,12 @@ class UserController extends AbstractRestfulController
                 //Instanciamos nuestro user
                 $user = UserQuery::create()->findPk($id);
                 
+                //Si se quiere modificar el password
+                if(isset($data['user_password'])){
+                    $password = $data['user_password'];
+                    $data['user_password'] = hash('sha256', $data['user_password']);
+                }
+
                 //Remplzamos los datos del usuario por lo que se van a modifica
                 foreach ($data as $key => $value){
                     $user->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
@@ -510,15 +532,62 @@ class UserController extends AbstractRestfulController
                         $user->save();
                         //Modifiamos el Header de nuestra respuesta
                         $response = $this->getResponse();
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //BAD REQUEST
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+                        
+//                        $bodyResponse = array(
+//                            'Success' => array(
+//                                'HTTP Status' => 200 . ' OK',
+//                                'Title' => 'User with id '.$id.' was updated successfully!',
+//                                'Details' => $user->toArray(BasePeer::TYPE_FIELDNAME),
+//                            ),
+//                        );
+                        
+                        //Le damos formato a nuestra respuesta
                         $bodyResponse = array(
-                            'Success' => array(
-                                'HTTP Status' => 200 . ' OK',
-                                'Title' => 'User with id '.$id.' was updated successfully!',
-                                'Details' => $user->toArray(BasePeer::TYPE_FIELDNAME),
-                            ),
+                            "_links" => array(
+                                'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$user->getIdUser(),
+                            ),           
+                        );  
+
+                        foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                            $bodyResponse[$key] = $value;
+                        }
+                        
+                        //Si existe la variable password, esto quiere decir que el campo password fue modificamo y lo mostraos de lo contrario lo ocultamos
+                        if(isset($password)){
+                            $bodyResponse['user_password'] = $password;
+                        }else{
+                            unset($bodyResponse['user_password']);
+                        }
+                        
+                        //Eliminamos los campos que hacen referencia a otras tablas
+                        unset($bodyResponse['idcompany']);
+
+                        //Agregamos el campo embedded a nuestro arreglo
+                        $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                        //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                        $companyForm = CompanyFormGET::init($userLevel);
+
+                        $companyArray = array();
+                        foreach ($companyForm->getElements() as $key=>$value){
+                            $companyArray[$key] = $company[$key];
+                        }                 
+                        $bodyResponse ['_embedded'] = array(
+                             'company' => array(
+                                 '_links' => array(
+                                     'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                                 ),
+                             ),
                         );
-                        return new JsonModel($bodyResponse);
+
+                        //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                       foreach ($companyArray as $key=>$value){
+                             $bodyResponse ['_embedded']['company'][$key] = $value;
+                       }
+
+                       return new JsonModel($bodyResponse);
+                       
                     }else{
                         //Modifiamos el Header de nuestra respuesta
                         $response = $this->getResponse();
