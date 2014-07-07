@@ -14,19 +14,13 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\View\Model\JsonModel;
 
 //==============FORMS================
-use Company\ACL\Branch\Form\BranchForm;
 use Company\ACL\Branch\Form\BranchFormGET;
 use Company\ACL\Branch\Form\BranchFormPostPut;
-use Company\ACL\Branch\Filter\BranchFilter;
 use Company\ACL\Branch\Filter\BranchFilterPostPut;
-use Company\ACL\Company\CompanyForm;
 use Company\ACL\Company\CompanyFormGET;
 //=============PROPEL===============
 use Branch;
-use Useracl;
-use TokenQuery;
 use BranchQuery;
-use UseraclQuery;
 use BasePeer;
 //=============SHARED===============
 use Zend\Http\Request;

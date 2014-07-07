@@ -113,7 +113,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                         'HTTP Status' => $statusCode,
                         'Title' => 'Not Found' ,
                         'Details' => 'Resource not found',
-                        'More Info' => WEBSITE_API_DOCS
+                        'More Info' => 'http://buybuy.com/api/docs'
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -129,7 +129,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                     $body = array(
                         'HTTP Status' => $statusCode ,
                         'Title' => 'Internal Server Error' ,
-                        'More Info' => WEBSITE_API_DOCS
+                        'More Info' => 'http://buybuy.com/api/docs'
                     );
 
                     $getContentType = $requestHeaders->get('Content-Type')->getMediaType();
@@ -147,7 +147,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                             'HTTP Status' => $statusCode,
                             'Title' => 'Bad Request' ,
                             'Details' => 'JSON Sintax Error',
-                            'More Info' => WEBSITE_API_DOCS
+                            'More Info' => 'http://buybuy.com/api/docs'
                         );
                     }
 
