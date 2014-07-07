@@ -65,12 +65,12 @@ class UserController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => 'http://buybuy.com/api/docs/user'
+                'More Info' => WEBSITE_API_DOCS.'/user'
             ),
         );
         return new JsonModel($body);     
     }
-    
+
     public function create($data) {
 
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
@@ -127,7 +127,7 @@ class UserController extends AbstractRestfulController
                         'HTTP Status' => '400' ,
                         'Title' => 'Bad Request' ,
                         'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                        'More Info' => "http://buybuy.com/api/docs"
+                        'More Info' => WEBSITE_API_DOCS
                     );
 
                     return new JsonModel($body);
@@ -158,13 +158,13 @@ class UserController extends AbstractRestfulController
                     
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', 'http://dev.api.buybuy.com.mx/user/'.$user->getIdUser());             
+                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/user/'.$user->getIdUser());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
                     
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                             'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$user->getIdUser(),
+                             'self' => WEBSITE_API.'/'.$this->table.'/'.$user->getIdUser(),
                          ),           
                     );
                     foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -188,7 +188,7 @@ class UserController extends AbstractRestfulController
                     $bodyResponse ['_embedded'] = array(
                          'company' => array(
                              '_links' => array(
-                                 'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                                 'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
                              ),
                          ),
                     );
@@ -325,7 +325,7 @@ class UserController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);           
                 $userArray = array(
                     "_links" => array(
-                         'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$id,
+                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
                      ),
                 );
                 foreach ($userForm->getElements() as $key=>$value){
@@ -348,7 +348,7 @@ class UserController extends AbstractRestfulController
                 $userArray ['_embedded'] = array(
                      'company' => array(
                          '_links' => array(
-                             'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                             'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
                          ),
                      ),
                 );
@@ -431,7 +431,7 @@ class UserController extends AbstractRestfulController
                  $user = UserQuery::create()->filterByIdUser($item['iduser'])->findOne();
                  $row = array(
                      "_links" => array(
-                         'self' => array('href' => WEBSITE_API . $this->table.'/'.$item['iduser']),
+                         'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['iduser']),
                      ),
                  );
                  foreach ($userForm->getElements() as $key=>$value){
@@ -451,7 +451,7 @@ class UserController extends AbstractRestfulController
                  $row['_embedded'] = array(
                      'company' => array(
                          '_links' => array(
-                             'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                             'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
                          ),
                      ),
                  );
@@ -545,7 +545,7 @@ class UserController extends AbstractRestfulController
                         //Le damos formato a nuestra respuesta
                         $bodyResponse = array(
                             "_links" => array(
-                                'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$user->getIdUser(),
+                                'self' => WEBSITE_API.'/'.$this->table.'/'.$user->getIdUser(),
                             ),           
                         );  
 
@@ -576,7 +576,7 @@ class UserController extends AbstractRestfulController
                         $bodyResponse ['_embedded'] = array(
                              'company' => array(
                                  '_links' => array(
-                                     'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
+                                     'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
                                  ),
                              ),
                         );
