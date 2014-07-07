@@ -1,8 +1,7 @@
 <?php
-namespace Company\ACL\Branch;
+namespace Company\ACL\Branch\Form;
 
 use Zend\Form\Form;
-
 
 class BranchForm extends Form
 {
@@ -26,6 +25,17 @@ class BranchForm extends Form
         $this->add(array(
             'type' => 'Select',
             'name' => 'branch_iso_codecountry',
+            'options' => array(
+                'disable_inarray_validator' => true,
+                'value_options' => array(
+                    'MX' => 'MX',
+                    'US' => 'US',
+                    'ES' => 'ES'
+                ),
+            ),
+            'attributes' => array(
+                'MX' => 'MX' //set selected to 'MX'
+            )
         ));
         $this->add(array(
             'type' => 'Hidden',

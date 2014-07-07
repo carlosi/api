@@ -59,7 +59,7 @@ class UserController extends AbstractRestfulController
         
         $response->getHeaders()
                  ->addHeaderLine('Allow', implode(',', $this->_getOptions()));
-        
+
         //Retornamos la respuesta
         $body = array(
             'Success' => array(
@@ -431,7 +431,7 @@ class UserController extends AbstractRestfulController
                  $user = UserQuery::create()->filterByIdUser($item['iduser'])->findOne();
                  $row = array(
                      "_links" => array(
-                         'self' => array('href' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$item['iduser']),
+                         'self' => array('href' => WEBSITE_API . $this->table.'/'.$item['iduser']),
                      ),
                  );
                  foreach ($userForm->getElements() as $key=>$value){

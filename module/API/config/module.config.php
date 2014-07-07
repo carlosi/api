@@ -39,10 +39,14 @@ return array(
             'branch' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/branch[/:id]',
+                    'route'    => '/branch[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'Company\Controller\BranchController',
-                        'action'		=> 'index',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
                     ),
                 ),
             ),

@@ -1,10 +1,9 @@
 <?php
-namespace Company\ACL\Branch;
+namespace Company\ACL\Branch\Form;
 
-use Company\ACL\Branch\BranchForm;
+use Company\ACL\Branch\Form\BranchForm;
 
-class BranchFormGET
-{
+class BranchFormPostPut{
 
     public static function init($userLevel){
 
@@ -27,7 +26,7 @@ class BranchFormGET
             case 3: {
 
                 $branchForm->remove('branch_address');
-                break;
+
             }
 
             case 2: {
