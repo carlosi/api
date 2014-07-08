@@ -39,7 +39,6 @@ class ArrayManage{
         if($filters!=null){
             foreach ($filters as $filter){
                 $params = $query->getParams();
-                var_dump($params);
                 if(isset($filter['in'])){
                     if(!empty($params)){
                         foreach($params as $param){

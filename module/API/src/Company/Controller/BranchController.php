@@ -32,7 +32,7 @@ class BranchController extends AbstractRestfulController
     protected $table = 'branch';
     protected $collectionOptions = array('GET','POST');
     protected $entityOptions = array('GET', 'PATCH', 'PUT', 'DELETE');
-    protected $getFilters = array('neq','in','nin','gt','lt','from','to','like');
+    protected $getFilters = array('neq','in','gt','lt','from','to','like');
 
     public function _getOptions()
     {
@@ -64,7 +64,7 @@ class BranchController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS
+                'More Info' => WEBSITE_API_DOCS.'/branch'
             ),
         );
         return new JsonModel($body);

@@ -33,7 +33,7 @@ class UserController extends AbstractRestfulController
     protected $table = 'user';
     protected $collectionOptions = array('GET');
     protected $entityOptions = array('GET', 'POST', 'PUT', 'DELETE');
-    protected $getFilters = array('neq','in','nin','gt','lt','from','to','like');
+    protected $getFilters = array('neq','in','gt','lt','from','to','like');
     
     public function _getOptions()
     {
