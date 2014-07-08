@@ -1,8 +1,8 @@
 <?php
 
-namespace Company\ACL\BankOrderTransaction;
+namespace Company\ACL\BankOrderTransaction\Form;
 
-use Company\ACL\BankOrderTransaction\BankOrderTransactionForm;
+use Company\ACL\BankOrderTransaction\Form\BankOrderTransactionForm;
 
 class BankOrderTransactionFormGET
 {

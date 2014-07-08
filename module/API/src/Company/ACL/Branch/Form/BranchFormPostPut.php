@@ -26,7 +26,7 @@ class BranchFormPostPut{
             case 3: {
 
                 $branchForm->remove('branch_address');
-
+                break;
             }
 
             case 2: {

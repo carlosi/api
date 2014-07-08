@@ -1,6 +1,6 @@
 <?php
 
-namespace Company\ACL\BankOrderTransaction;
+namespace Company\ACL\BankOrderTransaction\Form;
 
 use Zend\Form\Form;
 
@@ -33,7 +33,11 @@ class BankOrderTransactionForm extends Form
         ));
         $this->add(array(
             'type' => 'Select',
-            'name' => 'bankordertransaction_paymentmethod'
+            'name' => 'bankordertransaction_paymentmethod',
+            'options' => array(
+                'disable_inarray_validator' => true,
+                'value_options' => array('No identificado','transferencia electrónica','efectivo','Tarjeta de crédito','Tarjeta de débito','Cheque nomitativo','monedero electrónico'),
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',

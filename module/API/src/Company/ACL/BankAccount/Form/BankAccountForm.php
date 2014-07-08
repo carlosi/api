@@ -1,6 +1,6 @@
 <?php
 
-namespace Company\ACL\BankAccount;
+namespace Company\ACL\BankAccount\Form;
 
 use Zend\Form\Form;
 

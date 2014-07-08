@@ -1,37 +1,44 @@
 <?php
+namespace Company\ACL\BankAccount\Form;
 
-namespace Company\ACL\BankAccount;
+use Company\ACL\BankAccount\Form\BankAccountForm;
 
-use Company\ACL\BankAccount\BankAccountForm;
+class BankAccountFormPostPut{
 
-class BankAccountFormGET
-{
-    public static function init($userlevel){
+    public static function init($userLevel){
 
         $bankAccountForm = new BankAccountForm();
 
-        switch ($userlevel){
+        switch ($userLevel){
+
             case 5: {
 
-                break;
-            }
-            case 4: {
 
                 break;
             }
+
+            case 4: {
+
+
+                break;
+            }
+
             case 3: {
+
                 $bankAccountForm->remove('bankaccount_name');
                 break;
             }
-            case 2: {
 
+            case 2: {
                 break;
             }
-            case 1: {
 
+            case 1: {
                 break;
             }
         }
+
         return $bankAccountForm;
     }
+
 }
