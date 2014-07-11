@@ -1,13 +1,13 @@
 <?php
-namespace Company\ACL\Branch\Form;
+namespace Company\ACL\MxTaxDocument\Form;
 
-use Company\ACL\Branch\Form\BranchForm;
+use Company\ACL\MxTaxDocument\Form\MxTaxDocumentForm;
 
-class BranchFormPostPut{
+class MxTaxDocumentFormPostPut{
 
     public static function init($userLevel){
 
-        $branchForm = new BranchForm();
+        $mxTaxDocumentForm = new MxTaxDocumentForm();
 
         switch ($userLevel){
 
@@ -37,7 +37,8 @@ class BranchFormPostPut{
             }
         }
 
-        return $branchForm;
+        return $mxTaxDocumentForm;
     }
 
 }
+

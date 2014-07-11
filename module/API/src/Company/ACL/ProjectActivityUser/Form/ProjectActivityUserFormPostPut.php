@@ -1,13 +1,13 @@
 <?php
-namespace Company\ACL\Branch\Form;
+namespace Company\ACL\ProjectActivityUser\Form;
 
-use Company\ACL\Branch\Form\BranchForm;
+use Company\ACL\ProjectActivityUser\Form\ProjectActivityUserForm;
 
-class BranchFormPostPut{
+class ProjectActivityUserFormPostPut{
 
     public static function init($userLevel){
 
-        $branchForm = new BranchForm();
+        $projectActivityUserForm = new ProjectActivityUserForm();
 
         switch ($userLevel){
 
@@ -37,7 +37,8 @@ class BranchFormPostPut{
             }
         }
 
-        return $branchForm;
+        return $projectActivityUserForm;
     }
 
 }
+

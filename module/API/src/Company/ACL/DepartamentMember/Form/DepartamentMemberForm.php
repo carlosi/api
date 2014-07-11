@@ -1,29 +1,27 @@
 <?php
 
-namespace Company\ACL\BranchUser\Form;
+namespace Company\ACL\DepartamentMember\Form;
 
 use Zend\Form\Form;
 
-class BranchUserForm extends Form
+class DepartamentMemberForm extends Form
 {
     public function __construct(){
-        parent::__construct('BranchUserForm');
+        parent::__construct('DepartamentMemberForm');
 
         $this->setAttribute('method', 'post');
 
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idbranch_user',
-
+            'name' => 'iddepartamentmember',
         ));
         $this->add(array(
-            'type' => 'Select',
-            'name' => 'idbranch',
+            'type' => 'Hidden',
+            'name' => 'iddepartament'
         ));
         $this->add(array(
-            'type' => 'Select',
+            'type' => 'Hidden',
             'name' => 'iduser',
         ));
-
     }
 }

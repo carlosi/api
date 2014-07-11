@@ -1,14 +1,13 @@
 <?php
 
-namespace Company\ACL\BranchUser\Form;
+namespace Company\ACL\ProjectActivity\Form;
 
-use Company\ACL\BranchUser\Form\BranchUserForm;
+use Company\ACL\ProjectActivity\Form\ProjectActivityForm;
 
-class BranchUserFormGET
+class ProjectActivityFormGET
 {
     public static function init($userlevel){
-
-        $branchUserForm = new BranchUserForm();
+        $projectActivityForm = new ProjectActivityForm();
 
         switch($userlevel){
             case 5: {
@@ -21,19 +20,18 @@ class BranchUserFormGET
             }
             case 3: {
 
-                $branchUserForm->remove('idbranch');
+                $projectActivityForm->remove('projectactivity_description');
                 break;
             }
             case 2: {
 
                 break;
             }
-            case 1: {
+            case 2: {
 
-                break;
             }
         }
 
-        return $branchUserForm;
+        return $projectActivityForm;
     }
 }

@@ -36,6 +36,7 @@ class UserFormPostPut{
                         'value_options' => array('pending','active'),
                     ),
                 ));
+                break;
             }
 
             case 2: {

@@ -1,28 +1,26 @@
 <?php
 
-namespace Company\ACL\BranchUser\Form;
+namespace Company\ACL\ClientFile\Form;
 
-use Company\ACL\BranchUser\Form\BranchUserForm;
+use Company\ACL\ClientFile\Form\ClientFileForm;
 
-class BranchUserFormGET
+class ClientFileFormGET
 {
     public static function init($userlevel){
 
-        $branchUserForm = new BranchUserForm();
+        $clientFileForm = new ClientFileForm();
 
         switch($userlevel){
             case 5: {
 
                 break;
             }
-            case 4: {
+            case 4 :{
 
                 break;
             }
             case 3: {
-
-                $branchUserForm->remove('idbranch');
-                break;
+                $clientFileForm->remove('clientfile_url');
             }
             case 2: {
 
@@ -33,7 +31,6 @@ class BranchUserFormGET
                 break;
             }
         }
-
-        return $branchUserForm;
+        return $clientFileForm;
     }
 }

@@ -1,13 +1,13 @@
 <?php
-namespace Company\ACL\Branch\Form;
+namespace Company\ACL\ExpenseCategory\Form;
 
-use Company\ACL\Branch\Form\BranchForm;
+use Company\ACL\ExpenseCategory\Form\ExpenseCategoryForm;
 
-class BranchFormPostPut{
+class ExpenseCategoryFormPostPut{
 
     public static function init($userLevel){
 
-        $branchForm = new BranchForm();
+        $expenseCategoryForm = new ExpenseCategoryForm();
 
         switch ($userLevel){
 
@@ -37,7 +37,8 @@ class BranchFormPostPut{
             }
         }
 
-        return $branchForm;
+        return $expenseCategoryForm;
     }
 
 }
+

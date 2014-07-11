@@ -1,14 +1,13 @@
 <?php
 
-namespace Company\ACL\BranchUser\Form;
+namespace Company\ACL\Staff\Form;
 
-use Company\ACL\BranchUser\Form\BranchUserForm;
+use Company\ACL\Staff\Form\StaffForm;
 
-class BranchUserFormGET
+class StaffFormGET
 {
     public static function init($userlevel){
-
-        $branchUserForm = new BranchUserForm();
+        $staffForm = new StaffForm();
 
         switch($userlevel){
             case 5: {
@@ -21,19 +20,18 @@ class BranchUserFormGET
             }
             case 3: {
 
-                $branchUserForm->remove('idbranch');
+                $staffForm->remove('iduser');
                 break;
             }
             case 2: {
 
                 break;
             }
-            case 1: {
+            case 2: {
 
-                break;
             }
         }
 
-        return $branchUserForm;
+        return $staffForm;
     }
 }

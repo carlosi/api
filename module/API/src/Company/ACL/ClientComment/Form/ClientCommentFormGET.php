@@ -1,14 +1,14 @@
 <?php
 
-namespace Company\ACL\BranchUser\Form;
+namespace Company\ACL\ClientComment\Form;
 
-use Company\ACL\BranchUser\Form\BranchUserForm;
+use Company\ACL\ClientComment\Form\ClientCommentForm;
 
-class BranchUserFormGET
+class ClientCommentFormGET
 {
     public static function init($userlevel){
 
-        $branchUserForm = new BranchUserForm();
+        $clientCommentFormGET = new ClientCommentForm();
 
         switch($userlevel){
             case 5: {
@@ -21,7 +21,7 @@ class BranchUserFormGET
             }
             case 3: {
 
-                $branchUserForm->remove('idbranch');
+                $clientCommentFormGET->remove('clientcomment_note');
                 break;
             }
             case 2: {
@@ -34,6 +34,6 @@ class BranchUserFormGET
             }
         }
 
-        return $branchUserForm;
+        return $clientCommentFormGET;
     }
 }

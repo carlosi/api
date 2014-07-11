@@ -1,14 +1,13 @@
 <?php
 
-namespace Company\ACL\BranchUser\Form;
+namespace Company\ACL\MxTaxInfo\Form;
 
-use Company\ACL\BranchUser\Form\BranchUserForm;
+use Company\ACL\MxTaxInfo\Form\MxTaxInfoForm;
 
-class BranchUserFormGET
+class MxTaxInfoFormGET
 {
     public static function init($userlevel){
-
-        $branchUserForm = new BranchUserForm();
+        $mxTaxInfoForm = new MxTaxInfoForm();
 
         switch($userlevel){
             case 5: {
@@ -21,19 +20,18 @@ class BranchUserFormGET
             }
             case 3: {
 
-                $branchUserForm->remove('idbranch');
+                $mxTaxInfoForm->remove('mxtaxinfo_rfc');
                 break;
             }
             case 2: {
 
                 break;
             }
-            case 1: {
+            case 2: {
 
-                break;
             }
         }
 
-        return $branchUserForm;
+        return $mxTaxInfoForm;
     }
 }

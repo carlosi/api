@@ -1,14 +1,13 @@
 <?php
 
-namespace Company\ACL\BranchUser\Form;
+namespace Company\ACL\ExpenseRecurrency\Form;
 
-use Company\ACL\BranchUser\Form\BranchUserForm;
+use Company\ACL\ExpenseRecurrency\Form\ExpenseRecurrencyForm;
 
-class BranchUserFormGET
+class ExpenseRecurrencyFormGET
 {
     public static function init($userlevel){
-
-        $branchUserForm = new BranchUserForm();
+        $expenseRecurrencyForm = new ExpenseRecurrencyForm();
 
         switch($userlevel){
             case 5: {
@@ -20,8 +19,7 @@ class BranchUserFormGET
                 break;
             }
             case 3: {
-
-                $branchUserForm->remove('idbranch');
+                $expenseRecurrencyForm->remove('expenserecurrency_themevalue');
                 break;
             }
             case 2: {
@@ -33,7 +31,6 @@ class BranchUserFormGET
                 break;
             }
         }
-
-        return $branchUserForm;
+        return $expenseRecurrencyForm;
     }
 }
