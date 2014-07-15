@@ -68,14 +68,35 @@ class ClientForm extends Form
 				'type' => 'Select',
 				'name' => 'client_language',
 		));
-		
-		$this->add(array(
-				'type' => 'Select',
-				'name' => 'client_status',
-		));
-		$this->add(array(
-				'type' => 'Select',
-				'name' => 'client_type',
-		));             
+
+        $this->add(array(
+            'type' => 'Select',
+            'name' => 'client_status',
+            'options' => array(
+                'disable_inarray_validator' => true,
+                'value_options' => array(
+                    'pending' => 'pending',
+                    'active' => 'active',
+                    'suspended' => 'suspended',
+                    'fraud' => 'fraud',
+                ),
+            ),
+        ));
+
+        $this->add(array(
+            'type' => 'Select',
+            'name' => 'client_type',
+            'options' => array(
+                'disable_inarray_validator' => true,
+                'value_options' => array(
+                    'NORMAL' => 'NORMAL',
+                    'GENERALPUBLIC' => 'GENERALPUBLIC',
+                    'INVENTORYMANAGER' => 'INVENTORYMANAGER',
+                ),
+            ),
+            'attributes' => array(
+                'NORMAL' => 'NORMAL' //set selected to 'NORMAL'
+            )
+        ));
 	}
 }

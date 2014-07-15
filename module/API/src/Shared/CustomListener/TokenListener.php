@@ -39,6 +39,7 @@ class TokenListener implements ListenerAggregateInterface {
     
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
+
         define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
         define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
 

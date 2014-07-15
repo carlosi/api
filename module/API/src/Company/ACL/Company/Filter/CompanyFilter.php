@@ -1,4 +1,17 @@
-<?php 
+<?php
+
+/**
+ * Los comentarios de cada "$inputFilter" son datos del SQL Model dna.
+ * En algunos casos el parámetro Not Null es igual a verdadero (NN = true), sin embargo,
+ * en algunos filtros, el  parámetro 'require' es 'false',
+ * esto se debe a que el campo no es un dato requerido para el usuario, sin embargo,
+ * estos datos nosotros los seteamos internamente.
+ * Por ejemplo el id del PK, es NN = true en nuetsro SQL Model dna,
+ * pero en los filtros ($inputFilter) el parámetro require es falso ('require' => 'false') para que
+ * en la tabla el PK sea autoincrementable.
+ * Otro ejemplo es el id relacionado a otra tabla,
+ * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
+ */
 
 namespace Company\ACL\Company\Filter;
 
@@ -22,6 +35,7 @@ class CompanyFilter implements InputFilterAwareInterface
             {
                 $inputFilter = new InputFilter();
 
+                // idcompany: DataType = INT, PK = true, NN = true, AI = true
                 $inputFilter->add(array(
                     'name'     => 'idcompany',
                     'required' => false,
@@ -30,6 +44,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_name: DataType = VARCHAR(65), NN = true
                 $inputFilter->add(array(
                     'name' => 'company_name',
                     'required' => true,
@@ -49,6 +64,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_timezone: DataType = VARCHAR(65), NN = false
                 $inputFilter->add(array(
                     'name' => 'company_timezone',
                     'required' => false,
@@ -68,6 +84,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_iso_codecountry: DataType = VARCHAR(65), NN = false
                 $inputFilter->add(array(
                     'name' => 'company_iso_codecountry',
                     'required' => false,
@@ -87,6 +104,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_address: DataType = VARCHAR(65), NN = false
                 $inputFilter->add(array(
                     'name' => 'company_address',
                     'required' => false,
@@ -106,6 +124,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_address2: DataType = VARCHAR(65), NN = false
                 $inputFilter->add(array(
                     'name' => 'company_address2',
                     'required' => false,
@@ -125,6 +144,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_city: DataType = VARCHAR(65), NN = false
                 $inputFilter->add(array(
                     'name' => 'company_city',
                     'required' => false,
@@ -144,6 +164,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_state: DataType = VARCHAR(65), NN = false
                 $inputFilter->add(array(
                     'name' => 'company_state',
                     'required' => false,
@@ -163,6 +184,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     ),
                 ));
 
+                // company_zipcode: DataType = VARCHAR(5), NN = false
                 $inputFilter->add(array(
                     'name' => 'company_zipcode',
                     'required' => false,

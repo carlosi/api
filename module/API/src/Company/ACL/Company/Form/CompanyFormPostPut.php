@@ -7,7 +7,7 @@ class CompanyFormPostPut{
 
     public static function init($userLevel){
 
-        $clientTaxForm = new CompanyForm();
+        $companyForm = new CompanyForm();
 
         switch ($userLevel){
 
@@ -37,7 +37,7 @@ class CompanyFormPostPut{
             }
         }
 
-        return $clientTaxForm;
+        return $companyForm;
     }
 
 }

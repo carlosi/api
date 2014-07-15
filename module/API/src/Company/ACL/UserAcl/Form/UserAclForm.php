@@ -20,12 +20,38 @@ class UserAclForm extends Form
             'name' => 'iduser',
         ));
         $this->add(array(
-            'type' => 'Hidden',
+            'type' => 'Select',
             'name' => 'module_name',
+            'options' => array(
+                'disable_inarray_validator' => true,
+                'value_options' => array(
+                    'basic' => 'basic',
+                    'sales' => 'sales',
+                    'company' => 'company',
+                    'manufacture' => 'manufacture',
+                    'contents' => 'contents',
+                ),
+            ),
+            'attributes' => array(
+                'basic' => 'basic' //set selected to 'basic'
+            )
         ));
         $this->add(array(
-            'type' => 'Hiddeb',
+            'type' => 'Select',
             'name' => 'user_accesslevel',
+            'options' => array(
+                'disable_inarray_validator' => true,
+                'value_options' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                ),
+            ),
+            'attributes' => array(
+                '1' => '1' //set selected to '1'
+            )
         ));
     }
 }

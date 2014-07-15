@@ -9,8 +9,8 @@ use Zend\View\Model\JsonModel;
 use Company\ACL\User\UserForm;
 use Company\ACL\User\Form\UserFormGET;
 use Company\ACL\User\Form\UserFormPostPut;
-use Company\ACL\Company\CompanyForm;
-use Company\ACL\Company\CompanyFormGET;
+use Company\ACL\Company\Form\CompanyForm;
+use Company\ACL\Company\Form\CompanyFormGET;
 //==============FILTERS==============
 use Company\ACL\User\Filter\UserFilter;
 use Company\ACL\User\Filter\UserFilterGET;
@@ -389,7 +389,7 @@ class UserController extends AbstractRestfulController
     }
 
     public function getList() {
-              
+
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
         

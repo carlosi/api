@@ -38,6 +38,9 @@ class UserForm extends Form
                 'disable_inarray_validator' => true,
                 'value_options' => array('human','system'),
             ),
+            'attributes' => array(
+                'human' => 'human' // set selected to 'human'
+            )
         ));
         $this->add(array(
             'type' => 'Select',
@@ -46,6 +49,9 @@ class UserForm extends Form
                 'disable_inarray_validator' => true,
                 'value_options' => array('pending','active','suspended','inactive'),
             ),
+            'attributes' => array(
+                'pending' => 'pending' //set selected to 'pending'
+            )
         ));
     }
 }
