@@ -31,13 +31,7 @@ class ClientForm extends Form
 				'type' => 'Select',
 				'name' => 'client_iso_codephone',
 		));
-		
-		$this->add(array(
-				'type' => 'Hidden',
-				'name' => 'client_name',
-				
-		));
-		
+
 		$this->add(array(
 				'type' => 'Email',
 				'name' => 'client_email',

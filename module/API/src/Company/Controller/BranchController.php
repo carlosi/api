@@ -15,9 +15,9 @@ use Zend\Mvc\MvcEvent;
 use Zend\View\Model\JsonModel;
 
 //==============FORMS================
-use Sales\ACL\Branch\Form\BranchFormGET;
-use Sales\ACL\Branch\Form\BranchFormPostPut;
-use Sales\ACL\Branch\Filter\BranchFilterPostPut;
+use Company\ACL\Branch\Form\BranchFormGET;
+use Company\ACL\Branch\Form\BranchFormPostPut;
+use Company\ACL\Branch\Filter\BranchFilterPostPut;
 use Company\ACL\Company\CompanyFormGET;
 //=============PROPEL===============
 use Branch;

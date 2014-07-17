@@ -39,6 +39,50 @@ return array(
                 ),
             ),
 
+            'useracl' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/useracl[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\UserAclController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'branchuser' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/branchuser[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\BranchUserController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+
+            'clientaddress' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/clientaddress[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\ClientAddressController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+
         	// Documentation
             'documentation' => array(
                 'type' => 'segment',

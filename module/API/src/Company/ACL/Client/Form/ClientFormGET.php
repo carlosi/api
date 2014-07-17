@@ -1,5 +1,5 @@
 <?php 
-namespace Company\ACL\Client;
+namespace Company\ACL\Client\Form;
 
 use Company\ACL\Client\Form\ClientForm;
 

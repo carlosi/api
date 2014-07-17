@@ -422,7 +422,7 @@ class UserController extends AbstractRestfulController
             $page= (int) $this->params()->fromQuery('page') ? (int)$this->params()->fromQuery('page')  : 1;
             $filters = $this->params()->fromQuery('filter') ? $this->params()->fromQuery('filter') : null;        
             if($filters!=null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
-            
+
             $result = ArrayManage::executeQuery($this->getQuery(), $this->table, $idCompany,$page,$limit,$filters,$order,$dir);
             
             $userArray = array();
@@ -441,13 +441,14 @@ class UserController extends AbstractRestfulController
                  unset($row['idcompany']);
                  //Agregamos el campo embedded a nuestro arreglo
                  $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
                  //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
                  $companyForm = CompanyFormGET::init($userLevel);
                  
                  $companyArray = array();
                  foreach ($companyForm->getElements() as $key=>$value){
                     $companyArray[$key] = $company[$key];
-                 }                 
+                 }
                  $row['_embedded'] = array(
                      'company' => array(
                          '_links' => array(
