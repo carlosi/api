@@ -273,7 +273,7 @@ class BranchController extends AbstractRestfulController
         }       
    }
     
-    }
+    
 
     public function create($data) {
 
@@ -293,8 +293,8 @@ class BranchController extends AbstractRestfulController
         if($userLevel!=0){
 
             $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
-
-            switch($requestContentType){
+            
+            switch ($requestContentType){
                 case 'application/x-www-form-urlencoded':{
 
                     $request = $this->getRequest();
@@ -326,7 +326,7 @@ class BranchController extends AbstractRestfulController
                     $branchArray['branch_city'] = isset($requestArray['branch_city']) ? $requestArray['branch_city'] : null;
                     $branchArray['branch_state'] = isset($requestArray['branch_state']) ? $requestArray['branch_state'] : null;
                     $branchArray['branch_zipcode'] = isset($requestArray['branch_zipcode']) ? $requestArray['branch_zipcode'] : null;
-
+                    
                     break;
                 }
                 default :{
@@ -340,10 +340,11 @@ class BranchController extends AbstractRestfulController
                 );
 
                 return new JsonModel($body);
+                
                 break;
                 }
             }
-
+            
             //Le ponemos los datos a nuestro formulario
             $branchForm = BranchFormPostPut::init($userLevel);
             $branchForm->setData($branchArray);
@@ -461,6 +462,7 @@ class BranchController extends AbstractRestfulController
             return new JsonModel($bodyResponse);
         }
     }
+ 
 
     public function update($id,$data) {
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
