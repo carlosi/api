@@ -149,6 +149,18 @@ class SessionManager {
                 throw new Exception('Token can not be null');
             }
 	}
+        
+        public static function getValidToken($iduser){
+            $currentDate = date('Y-m-d H:i:s');
+            $tokenList = \TokenQuery::create()->filterByIduser($iduser)->find();
+            foreach ($tokenList as $token){
+                if($currentDate < $token->getExpiresIn()){
+                   return $token;
+                }
+            }
+            //Si no encontro token validos, genera uno nuevo y lo retorna PENDIENTE
+            
+        }
 }
 
 ?>

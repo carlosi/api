@@ -21,6 +21,15 @@ return array(
 								),
         				),
         	),
+            'allowedProperties' => array(
+        				'type' => 'segment',
+						'options' => array(
+        						'route'    => '/allow/:resource[/:token][/]',
+        						'defaults' => array(
+        								'controller' => 'Shared\Controller\AllowedPropertiesController',
+								),
+        				),
+        	),
             'user' => array(
         				'type' => 'segment',
 						'options' => array(
@@ -37,15 +46,29 @@ return array(
         	),
             //$limit=50, array $conditions=null, $orderBy=null, $order='DESC', $column_like=null, $word=null, $exactly=false
             'branch' => array(
-                'type' => 'Segment',
-                'options' => array(
-                    'route'    => '/branch[/:id]',
-                    'defaults' => array(
-                        'controller' => 'Company\Controller\BranchController',
-                        'action'		=> 'index',
-                    ),
-                ),
-            ),
+        				'type' => 'segment',
+						'options' => array(
+        						'route'    => '/branch[/:id][/:token][/]',
+        						'defaults' => array(
+        								'controller' => 'Company\Controller\BranchController',
+								),
+                                                    'constraints' => array(
+                                                        'id' => '[0-9]+',
+                                                        'limit' => '[0-9]+',
+                                                        'order' => 'asc|desc',
+                                                    ),
+        				),
+        	),
+            'login' => array(
+        				'type' => 'segment',
+						'options' => array(
+        						'route'    => '/login',
+        						'defaults' => array(
+        								'controller' => 'Login\Controller\LoginController',
+                                                                        'action' => 'login',
+								),
+        				),
+        	),
 
             // End Propel Test
 
@@ -408,6 +431,9 @@ return array(
 
             'Documentation\Controller\IndexController'		=> 'Documentation\Controller\IndexController',
             'Documentation\Controller\ModulesController'	=> 'Documentation\Controller\ModulesController',
+            
+            'Login\Controller\LoginController' => 'Login\Controller\LoginController',
+            'Shared\Controller\AllowedPropertiesController' => 'Shared\Controller\AllowedPropertiesController',
             
             ),
     ),

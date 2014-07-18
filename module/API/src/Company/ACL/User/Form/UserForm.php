@@ -14,6 +14,9 @@ class UserForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iduser',
+            'options' => array(
+                'label' => 'ID',
+            ),
 
         ));
         $this->add(array(
@@ -24,6 +27,9 @@ class UserForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'user_nickname',
+            'options' => array(
+                'label' => 'Nombre de Usuario',
+            ),
 
         ));
         $this->add(array(
@@ -37,7 +43,9 @@ class UserForm extends Form
             'options' => array(
                 'disable_inarray_validator' => true,
                 'value_options' => array('human','system'),
+                'label' => 'Tipo',
             ),
+            
         ));
         $this->add(array(
             'type' => 'Select',
@@ -45,6 +53,7 @@ class UserForm extends Form
             'options' => array(
                 'disable_inarray_validator' => true,
                 'value_options' => array('pending','active','suspended','inactive'),
+                'label' => 'Estado',
             ),
         ));
     }

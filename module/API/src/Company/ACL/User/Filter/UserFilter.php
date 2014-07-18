@@ -68,13 +68,10 @@ class UserFilter implements InputFilterAwareInterface
                         ),
                         'validators' => array(
                             array(
-                                    'name' => 'StringLength',
-                                    'options' => array(
-                                            'encoding' => 'UTF-8',
-                                            'min' => '1',
-                                            'max' => '245',
-                                    ),
+                                'name' => '\Zend\Validator\PasswordStrength',
                             ),
+
+                            
                         ),
                     ));
                     

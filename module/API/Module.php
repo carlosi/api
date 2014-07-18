@@ -41,6 +41,9 @@ class Module
     public function getAutoloaderConfig()
     {
         return array(
+            'Zend\Loader\ClassMapAutoloader' => array(
+                __DIR__ . '/autoload_classmap.php',  
+            ),
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                 	'Company' 	    => __DIR__ . '/src/' . 'Company',
@@ -49,9 +52,10 @@ class Module
                 	'Sales'		    => __DIR__ . '/src/' . 'Sales',
                         'Shared' 	    => __DIR__ . '/src/' . 'Shared',
                         'Manufacture' 	=> __DIR__ . '/src/' . 'Manufacture',
-                        'Test' 	=> __DIR__ . '/src/' . 'Test',
+                        'Login' 	=> __DIR__ . '/src/' . 'Login',
                 ),
             ),
+            
         );
     }
 }

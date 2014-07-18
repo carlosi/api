@@ -4,6 +4,7 @@
 
 $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
+$apiDir = $baseDir.'/module/Api/src';
 
 return array(
     'AbstractFileSet' => $vendorDir . '/phing/phing/classes/phing/types/AbstractFileSet.php',
@@ -953,4 +954,7 @@ return array(
     'sfYamlDumper' => $vendorDir . '/propel/propel1/runtime/lib/parser/yaml/sfYamlDumper.php',
     'sfYamlInline' => $vendorDir . '/propel/propel1/runtime/lib/parser/yaml/sfYamlInline.php',
     'sfYamlParser' => $vendorDir . '/propel/propel1/runtime/lib/parser/yaml/sfYamlParser.php',
+    
+    //'UserForm' => $apiDir.'/Company/ACL/User/Form/UserFormGET.php',
+   
 );
