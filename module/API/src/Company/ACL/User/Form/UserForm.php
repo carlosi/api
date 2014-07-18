@@ -45,7 +45,7 @@ class UserForm extends Form
                 'value_options' => array('human','system'),
                 'label' => 'Tipo',
             ),
-            
+
         ));
         $this->add(array(
             'type' => 'Select',
@@ -55,6 +55,9 @@ class UserForm extends Form
                 'value_options' => array('pending','active','suspended','inactive'),
                 'label' => 'Estado',
             ),
+            'attributes' => array(
+                'pending' => 'pending' //set selected to 'pending'
+            )
         ));
     }
 }

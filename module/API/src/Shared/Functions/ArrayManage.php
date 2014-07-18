@@ -5,7 +5,7 @@ namespace Shared\Functions;
 use BasePeer;
 
 class ArrayManage{
-    
+
     // Los componentes SELECT de un Form, llevan 2 componentes, la parte Visible al usuario y la invisible. Esta funcion convierte el array recibido para lograr dicha estructura.
     public function duplicatearray(array $array=null){
         if($array!=null){
@@ -82,37 +82,65 @@ class ArrayManage{
             $query->orderBy($order, $dir);
         }
 
+        // Validamos y guardamos si XXXQuery() contiene la columna "idcompany"
+        $hasIdCompany = $query->getTableMap()->hasColumn('idcompany');
 
-        //Page y limit
-        $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
-            
-       $links = array(
-           'self' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPage()),
-           'prev' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPreviousPage()),
-           'next' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getNextPage()),
-           'first' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table),
-           'last' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getLastPage()),
-       );
-       
-       if($result->getPreviousPage() == 1){
-           unset($links['prev']);
-       } 
-       if($result->isLastPage()){
-           unset($links['next']);
-       } 
-       
-        
+        if($hasIdCompany == false){
+
+            // Iniciamos el Join de 1er nivel
+            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+            $idForeingKey = key($query->getTablemap()->getForeignKeys());
+
+            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+            $tableJoin = substr($idForeingKey, 2);
+
+            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+            $useQuery = ucfirst($tableJoin);
+
+            /**
+             * example Query generated for a MySQL database:
+             *
+             * $query = 'SELECT table1.* from table1
+             * INNER JOIN table2 ON table1.id = table2.id
+             * WHERE table2.idcompany = :p1'; // :p1 => $idcompany
+             */
+
+            $result = $query->create('alias')
+                ->join('alias.'.$useQuery.' alias2')
+                ->useQuery('alias2')
+                ->filterByIdCompany($idcompany)
+                ->endUse()
+                ->paginate($page,$limit);
+
+        }else{
+            //Page y limit
+            $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
+        }
+
+        $links = array(
+           'self' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getPage()),
+           'prev' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getPreviousPage()),
+           'next' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getNextPage()),
+           'first' => array('href' => WEBSITE_API.'/'.$table),
+           'last' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getLastPage()),
+        );
+
+        if($result->getPreviousPage() == 1){
+            unset($links['prev']);
+        }
+        if($result->isLastPage()){
+            unset($links['next']);
+        }
+
         $resume = array(
             'currentPage' => $result->getPage(),
             'itemsPerPage' => $result->getMaxPerPage(),
             'totalItems' => $result->count(),
             'lastPage' => $result->getLastPage(),
         );
-        
+
         $data = $result->getResults()->toArray(null,false,BasePeer::TYPE_FIELDNAME);
-        
-   
-    
+
         $resultArray = array(
             'links' => $links,
             'resume' => $resume,
