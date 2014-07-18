@@ -49,21 +49,16 @@ class Module
                 	'Company' 	    => __DIR__ . '/src/' . 'Company',
                 	'Contents' 	    => __DIR__ . '/src/' . 'Contents',
                 	'Documentation' => __DIR__ . '/src/' . 'Documentation',
-<<<<<<< HEAD
-                	'Sales'		    => __DIR__ . '/src/' . 'Sales',
-                        'Shared' 	    => __DIR__ . '/src/' . 'Shared',
-                        'Manufacture' 	=> __DIR__ . '/src/' . 'Manufacture',
                         'Login' 	=> __DIR__ . '/src/' . 'Login',
-=======
-                    'Expense'	    => __DIR__ . '/src/' . 'Expense',
-                    'MercadoLibre'  => __DIR__ . '/src/' . 'MercadoLibre',
-                    'Production'    => __DIR__ . '/src/' . 'Production',
-                    'Project'		=> __DIR__ . '/src/' . 'Project',
-                    'Sales'		    => __DIR__ . '/src/' . 'Sales',
-                    'SATMexico'		=> __DIR__ . '/src/' . 'SATMexico',
-                    'Shared'		=> __DIR__ . '/src/' . 'Shared',
-                    'Shipping'		=> __DIR__ . '/src/' . 'Shipping',
->>>>>>> 958413e54761734acaf546d53e5f9d70cc25ed45
+                        'Expense'	    => __DIR__ . '/src/' . 'Expense',
+                        'MercadoLibre'  => __DIR__ . '/src/' . 'MercadoLibre',
+                        'Production'    => __DIR__ . '/src/' . 'Production',
+                        'Project'		=> __DIR__ . '/src/' . 'Project',
+                        'Sales'		    => __DIR__ . '/src/' . 'Sales',
+                        'SATMexico'		=> __DIR__ . '/src/' . 'SATMexico',
+                        'Shared'		=> __DIR__ . '/src/' . 'Shared',
+                        'Shipping'		=> __DIR__ . '/src/' . 'Shipping',
+
                 ),
             ),
             

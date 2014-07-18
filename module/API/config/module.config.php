@@ -10,29 +10,6 @@
 return array(
     'router' => array(
         'routes' => array(
-<<<<<<< HEAD
-            // Propel Test
-        	'client' => array(
-        				'type' => 'segment',
-						'options' => array(
-        						'route'    => '/client[/:id][/:token]',
-        						'defaults' => array(
-        								'controller' => 'Company\Controller\ClientController',
-										'action'		=> 'index',
-								),
-        				),
-        	),
-            'allowedProperties' => array(
-        				'type' => 'segment',
-						'options' => array(
-        						'route'    => '/allow/:resource[/:token][/]',
-        						'defaults' => array(
-        								'controller' => 'Shared\Controller\AllowedPropertiesController',
-								),
-        				),
-        	),
-=======
->>>>>>> 958413e54761734acaf546d53e5f9d70cc25ed45
             'user' => array(
                 'type' => 'segment',
                 'options' => array(
@@ -48,31 +25,6 @@ return array(
                 ),
         	),
             'branch' => array(
-<<<<<<< HEAD
-        				'type' => 'segment',
-						'options' => array(
-        						'route'    => '/branch[/:id][/:token][/]',
-        						'defaults' => array(
-        								'controller' => 'Company\Controller\BranchController',
-								),
-                                                    'constraints' => array(
-                                                        'id' => '[0-9]+',
-                                                        'limit' => '[0-9]+',
-                                                        'order' => 'asc|desc',
-                                                    ),
-        				),
-        	),
-            'login' => array(
-        				'type' => 'segment',
-						'options' => array(
-        						'route'    => '/login',
-        						'defaults' => array(
-        								'controller' => 'Login\Controller\LoginController',
-                                                                        'action' => 'login',
-								),
-        				),
-        	),
-=======
                 'type' => 'Segment',
                 'options' => array(
                     'route'    => '/branch[/:id][/:token][/]',
@@ -86,8 +38,6 @@ return array(
                     ),
                 ),
             ),
->>>>>>> 958413e54761734acaf546d53e5f9d70cc25ed45
-
             'useracl' => array(
                 'type' => 'Segment',
                 'options' => array(

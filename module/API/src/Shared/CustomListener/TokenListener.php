@@ -41,11 +41,6 @@ class TokenListener implements ListenerAggregateInterface {
     
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
-<<<<<<< HEAD
-        define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
-        if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
-            $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
-=======
 
         define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
         define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
@@ -57,7 +52,7 @@ class TokenListener implements ListenerAggregateInterface {
             $response = $e->getResponse();
             $response->setStatusCode(Response::STATUS_CODE_401);
             $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
->>>>>>> 958413e54761734acaf546d53e5f9d70cc25ed45
+
 
             if(SessionManager::TokenIsValid($token)){
             
@@ -66,21 +61,15 @@ class TokenListener implements ListenerAggregateInterface {
                 $response->setStatusCode(Response::STATUS_CODE_401);
                 $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
 
-<<<<<<< HEAD
-                $body = array(
-                        'HTTP Status' => '401' ,
-                        'Title' => 'Unauthorized' ,
-                        'Details' => 'Invalid or expired token',
-                        'More Info' => WEBSITE_API_DOCS
-                );
-=======
+
+
             $body = array(
                     'HTTP Status' => '401' ,
                     'Title' => 'Unauthorized' ,
                     'Details' => 'Invalid or expired token',
                     'More Info' => WEBSITE_API_DOCS
             );
->>>>>>> 958413e54761734acaf546d53e5f9d70cc25ed45
+
 
                  $jsonModel = new JsonModel($body);
                  $jsonModel->setTerminal(true);
@@ -88,13 +77,9 @@ class TokenListener implements ListenerAggregateInterface {
                  $e->setViewModel($jsonModel)->stopPropagation();
             }
         }
-<<<<<<< HEAD
-        
-        
-        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
-=======
 
->>>>>>> 958413e54761734acaf546d53e5f9d70cc25ed45
+
+
     }
 }
 ?>

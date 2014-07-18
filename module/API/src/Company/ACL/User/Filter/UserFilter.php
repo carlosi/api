@@ -32,70 +32,7 @@ class UserFilter implements InputFilterAwareInterface
     
 	public function getInputFilter()
 	{
-<<<<<<< HEAD
-            if(!$this->inputFilter)
-            {
-                    $inputFilter = new InputFilter();
-                    $factory     = new InputFactory();
 
-                    $inputFilter->add(array(
-                        'name'     => 'iduser',
-                        'required' => false,
-                        'filters'  => array(
-                                        array('name' => 'Int'),
-                        ),
-                    ));
-                    
-                    $inputFilter->add(array(
-                        'name'     => 'idcompany',
-                        'required' => false,
-                        'filters'  => array(
-                                array('name' => 'Int'),
-                        ),
-                    ));
-                    
-                    $inputFilter->add(array(
-                        'name' => 'user_nickname',
-                        'required' => true,
-                        'filters' => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                        ),
-                        'validators' => array(
-                            array(
-                                'name' => 'StringLength',
-                                'options' => array(
-                                        'encoding' => 'UTF-8',
-                                        'min' => '1',
-                                        'max' => '100',
-                                ),
-                            ),
-                        ),
-                    ));
-                    
-                    $inputFilter->add(array(
-                        'name' => 'user_password',
-                        'required' => true,
-                        'filters' => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim')
-                        ),
-                        'validators' => array(
-                            array(
-                                'name' => '\Zend\Validator\PasswordStrength',
-                            ),
-
-                            
-                        ),
-                    ));
-                    
-                    $inputFilter->add($factory->createInput(array(
-                        'name' => 'user_type',
-                        'required' => true,
-                        'filters' => array(
-                            array('name' => 'StripTags'),
-                            array('name' => 'StringTrim')
-=======
         if(!$this->inputFilter)
         {
             $inputFilter = new InputFilter();
@@ -134,7 +71,6 @@ class UserFilter implements InputFilterAwareInterface
                                 'encoding' => 'UTF-8',
                                 'min' => '1',
                                 'max' => '245',
->>>>>>> 958413e54761734acaf546d53e5f9d70cc25ed45
                         ),
                     ),
                 ),
