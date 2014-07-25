@@ -74,14 +74,15 @@ class ApiProblemListener implements ListenerAggregateInterface
      */
     public static function onRender(MvcEvent $e)
     {
-
+ 
         $request = $e->getRequest();
         $response = $e->getResponse();
         $requestHeaders = $request->getHeaders();
         $responseHeaders = $response->getHeaders();
-        
+
         // If method is PUT
         if($request->getMethod() == "PUT"){
+
             // getting id of route
             $id = $e->getRouteMatch()->getParam('id');
             // If request id is null
@@ -103,12 +104,37 @@ class ApiProblemListener implements ListenerAggregateInterface
                 $e->setViewModel($jsonModel);
             }
         }
-        
+
+        // If method is PUT
+        if($request->getMethod() == "DELETE"){
+
+            // getting id of route
+            $id = $e->getRouteMatch()->getParam('id');
+            // If request id is null
+            if($id == null){
+
+                $response->setStatusCode(Response::STATUS_CODE_400);
+                $statusCode = $response->getStatusCode();
+
+                $body = array(
+                    'HTTP Status' => $statusCode,
+                    'Method' => 'DELETE' ,
+                    'Title' => 'The request id is null' ,
+                    'Details' => 'The request id can´t be null',
+                    'More Info' => 'http://buybuy.com/api/docs'
+                );
+                $jsonModel = new JsonModel($body);
+                $jsonModel->setTerminal(true);
+                $e->setResult($jsonModel);
+                $e->setViewModel($jsonModel);
+            }
+        }
+
         // only worried about error pages
         if (!$e->isError()) {
             return;
         }
-        
+
         // and then, only if we have an Accept header...
         if (!$request instanceof HttpRequest) {
             return;
@@ -126,7 +152,7 @@ class ApiProblemListener implements ListenerAggregateInterface
 
             // Obtenemos el StatusCode
             $responseStatusCode = $response->getStatusCode();
-
+   
             switch($responseStatusCode){
                 case '404':{
 
@@ -167,7 +193,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                         if($decodeJson == null){
 
                             $response->setStatusCode(Response::STATUS_CODE_400);
-                            $response->getHeaders()->addHeaderLine('Message', 'Sintax Error');
+                            $responseHeaders->addHeaderLine('Message', 'Sintax Error');
                             $statusCode = $response->getStatusCode();
 
                             $body = array(

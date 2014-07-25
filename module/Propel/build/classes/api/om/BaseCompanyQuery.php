@@ -800,20 +800,20 @@ abstract class BaseCompanyQuery extends ModelCriteria
      * @return                 CompanyQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
-    public function filterByCompanyaddress($companyaddress, $comparison = null)
-    {
-        if ($companyaddress instanceof Companyaddress) {
-            return $this
-                ->addUsingAlias(CompanyPeer::IDCOMPANY, $companyaddress->getIdcompany(), $comparison);
-        } elseif ($companyaddress instanceof PropelObjectCollection) {
-            return $this
-                ->useCompanyaddressQuery()
-                ->filterByPrimaryKeys($companyaddress->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByCompanyaddress() only accepts arguments of type Companyaddress or PropelCollection');
-        }
-    }
+//    public function filterByCompanyaddress($companyaddress, $comparison = null)
+//    {
+//        if ($companyaddress instanceof Companyaddress) {
+//            return $this
+//                ->addUsingAlias(CompanyPeer::IDCOMPANY, $companyaddress->getIdcompany(), $comparison);
+//        } elseif ($companyaddress instanceof PropelObjectCollection) {
+//            return $this
+//                ->useCompanyaddressQuery()
+//                ->filterByPrimaryKeys($companyaddress->getPrimaryKeys())
+//                ->endUse();
+//        } else {
+//            throw new PropelException('filterByCompanyaddress() only accepts arguments of type Companyaddress or PropelCollection');
+//        }
+//    }
 
     /**
      * Adds a JOIN clause to the query using the Companyaddress relation

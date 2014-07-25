@@ -15,15 +15,15 @@ class LoginController extends AbstractActionController
         
         
         $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
+
             
              switch($requestContentType){
                 case 'application/x-www-form-urlencoded':{
-
+                    
                     $request = $this->getRequest();
  
                     $user_nickname = $this->getRequest()->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
                     $user_password = $this->getRequest()->getPost()->user_password ? hash('sha256', $this->getRequest()->getPost()->user_password) : null;
-
                     break;
                 }
                 case 'application/json':{
