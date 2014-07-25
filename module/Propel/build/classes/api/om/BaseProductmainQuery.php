@@ -11,10 +11,6 @@
  * @method ProductmainQuery orderByIdproductcategory($order = Criteria::ASC) Order by the idproductcategory column
  * @method ProductmainQuery orderByProductmainName($order = Criteria::ASC) Order by the productmain_name column
  * @method ProductmainQuery orderByProductmainUnit($order = Criteria::ASC) Order by the productmain_unit column
- * @method ProductmainQuery orderByProductmainDiscount($order = Criteria::ASC) Order by the productmain_discount column
- * @method ProductmainQuery orderByProductmainEachpieces($order = Criteria::ASC) Order by the productmain_eachpieces column
- * @method ProductmainQuery orderByProductmainMaxdiscount($order = Criteria::ASC) Order by the productmain_maxdiscount column
- * @method ProductmainQuery orderByProductmainBaseproperty($order = Criteria::ASC) Order by the productmain_baseproperty column
  * @method ProductmainQuery orderByProductmainType($order = Criteria::ASC) Order by the productmain_type column
  *
  * @method ProductmainQuery groupByIdproductmain() Group by the idproductmain column
@@ -22,10 +18,6 @@
  * @method ProductmainQuery groupByIdproductcategory() Group by the idproductcategory column
  * @method ProductmainQuery groupByProductmainName() Group by the productmain_name column
  * @method ProductmainQuery groupByProductmainUnit() Group by the productmain_unit column
- * @method ProductmainQuery groupByProductmainDiscount() Group by the productmain_discount column
- * @method ProductmainQuery groupByProductmainEachpieces() Group by the productmain_eachpieces column
- * @method ProductmainQuery groupByProductmainMaxdiscount() Group by the productmain_maxdiscount column
- * @method ProductmainQuery groupByProductmainBaseproperty() Group by the productmain_baseproperty column
  * @method ProductmainQuery groupByProductmainType() Group by the productmain_type column
  *
  * @method ProductmainQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -52,6 +44,10 @@
  * @method ProductmainQuery rightJoinProductmainphoto($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productmainphoto relation
  * @method ProductmainQuery innerJoinProductmainphoto($relationAlias = null) Adds a INNER JOIN clause to the query using the Productmainphoto relation
  *
+ * @method ProductmainQuery leftJoinProductmainproperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productmainproperty relation
+ * @method ProductmainQuery rightJoinProductmainproperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productmainproperty relation
+ * @method ProductmainQuery innerJoinProductmainproperty($relationAlias = null) Adds a INNER JOIN clause to the query using the Productmainproperty relation
+ *
  * @method Productmain findOne(PropelPDO $con = null) Return the first Productmain matching the query
  * @method Productmain findOneOrCreate(PropelPDO $con = null) Return the first Productmain matching the query, or a new Productmain object populated from the query conditions when no match is found
  *
@@ -59,10 +55,6 @@
  * @method Productmain findOneByIdproductcategory(int $idproductcategory) Return the first Productmain filtered by the idproductcategory column
  * @method Productmain findOneByProductmainName(string $productmain_name) Return the first Productmain filtered by the productmain_name column
  * @method Productmain findOneByProductmainUnit(string $productmain_unit) Return the first Productmain filtered by the productmain_unit column
- * @method Productmain findOneByProductmainDiscount(int $productmain_discount) Return the first Productmain filtered by the productmain_discount column
- * @method Productmain findOneByProductmainEachpieces(int $productmain_eachpieces) Return the first Productmain filtered by the productmain_eachpieces column
- * @method Productmain findOneByProductmainMaxdiscount(int $productmain_maxdiscount) Return the first Productmain filtered by the productmain_maxdiscount column
- * @method Productmain findOneByProductmainBaseproperty(string $productmain_baseproperty) Return the first Productmain filtered by the productmain_baseproperty column
  * @method Productmain findOneByProductmainType(string $productmain_type) Return the first Productmain filtered by the productmain_type column
  *
  * @method array findByIdproductmain(int $idproductmain) Return Productmain objects filtered by the idproductmain column
@@ -70,10 +62,6 @@
  * @method array findByIdproductcategory(int $idproductcategory) Return Productmain objects filtered by the idproductcategory column
  * @method array findByProductmainName(string $productmain_name) Return Productmain objects filtered by the productmain_name column
  * @method array findByProductmainUnit(string $productmain_unit) Return Productmain objects filtered by the productmain_unit column
- * @method array findByProductmainDiscount(int $productmain_discount) Return Productmain objects filtered by the productmain_discount column
- * @method array findByProductmainEachpieces(int $productmain_eachpieces) Return Productmain objects filtered by the productmain_eachpieces column
- * @method array findByProductmainMaxdiscount(int $productmain_maxdiscount) Return Productmain objects filtered by the productmain_maxdiscount column
- * @method array findByProductmainBaseproperty(string $productmain_baseproperty) Return Productmain objects filtered by the productmain_baseproperty column
  * @method array findByProductmainType(string $productmain_type) Return Productmain objects filtered by the productmain_type column
  *
  * @package    propel.generator.api.om
@@ -182,7 +170,7 @@ abstract class BaseProductmainQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idproductmain`, `idcompany`, `idproductcategory`, `productmain_name`, `productmain_unit`, `productmain_discount`, `productmain_eachpieces`, `productmain_maxdiscount`, `productmain_baseproperty`, `productmain_type` FROM `productmain` WHERE `idproductmain` = :p0';
+        $sql = 'SELECT `idproductmain`, `idcompany`, `idproductcategory`, `productmain_name`, `productmain_unit`, `productmain_type` FROM `productmain` WHERE `idproductmain` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -457,161 +445,6 @@ abstract class BaseProductmainQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_UNIT, $productmainUnit, $comparison);
-    }
-
-    /**
-     * Filter the query on the productmain_discount column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByProductmainDiscount(1234); // WHERE productmain_discount = 1234
-     * $query->filterByProductmainDiscount(array(12, 34)); // WHERE productmain_discount IN (12, 34)
-     * $query->filterByProductmainDiscount(array('min' => 12)); // WHERE productmain_discount >= 12
-     * $query->filterByProductmainDiscount(array('max' => 12)); // WHERE productmain_discount <= 12
-     * </code>
-     *
-     * @param     mixed $productmainDiscount The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ProductmainQuery The current query, for fluid interface
-     */
-    public function filterByProductmainDiscount($productmainDiscount = null, $comparison = null)
-    {
-        if (is_array($productmainDiscount)) {
-            $useMinMax = false;
-            if (isset($productmainDiscount['min'])) {
-                $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_DISCOUNT, $productmainDiscount['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($productmainDiscount['max'])) {
-                $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_DISCOUNT, $productmainDiscount['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_DISCOUNT, $productmainDiscount, $comparison);
-    }
-
-    /**
-     * Filter the query on the productmain_eachpieces column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByProductmainEachpieces(1234); // WHERE productmain_eachpieces = 1234
-     * $query->filterByProductmainEachpieces(array(12, 34)); // WHERE productmain_eachpieces IN (12, 34)
-     * $query->filterByProductmainEachpieces(array('min' => 12)); // WHERE productmain_eachpieces >= 12
-     * $query->filterByProductmainEachpieces(array('max' => 12)); // WHERE productmain_eachpieces <= 12
-     * </code>
-     *
-     * @param     mixed $productmainEachpieces The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ProductmainQuery The current query, for fluid interface
-     */
-    public function filterByProductmainEachpieces($productmainEachpieces = null, $comparison = null)
-    {
-        if (is_array($productmainEachpieces)) {
-            $useMinMax = false;
-            if (isset($productmainEachpieces['min'])) {
-                $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_EACHPIECES, $productmainEachpieces['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($productmainEachpieces['max'])) {
-                $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_EACHPIECES, $productmainEachpieces['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_EACHPIECES, $productmainEachpieces, $comparison);
-    }
-
-    /**
-     * Filter the query on the productmain_maxdiscount column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByProductmainMaxdiscount(1234); // WHERE productmain_maxdiscount = 1234
-     * $query->filterByProductmainMaxdiscount(array(12, 34)); // WHERE productmain_maxdiscount IN (12, 34)
-     * $query->filterByProductmainMaxdiscount(array('min' => 12)); // WHERE productmain_maxdiscount >= 12
-     * $query->filterByProductmainMaxdiscount(array('max' => 12)); // WHERE productmain_maxdiscount <= 12
-     * </code>
-     *
-     * @param     mixed $productmainMaxdiscount The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ProductmainQuery The current query, for fluid interface
-     */
-    public function filterByProductmainMaxdiscount($productmainMaxdiscount = null, $comparison = null)
-    {
-        if (is_array($productmainMaxdiscount)) {
-            $useMinMax = false;
-            if (isset($productmainMaxdiscount['min'])) {
-                $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT, $productmainMaxdiscount['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($productmainMaxdiscount['max'])) {
-                $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT, $productmainMaxdiscount['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT, $productmainMaxdiscount, $comparison);
-    }
-
-    /**
-     * Filter the query on the productmain_baseproperty column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByProductmainBaseproperty('fooValue');   // WHERE productmain_baseproperty = 'fooValue'
-     * $query->filterByProductmainBaseproperty('%fooValue%'); // WHERE productmain_baseproperty LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $productmainBaseproperty The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ProductmainQuery The current query, for fluid interface
-     */
-    public function filterByProductmainBaseproperty($productmainBaseproperty = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($productmainBaseproperty)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $productmainBaseproperty)) {
-                $productmainBaseproperty = str_replace('*', '%', $productmainBaseproperty);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ProductmainPeer::PRODUCTMAIN_BASEPROPERTY, $productmainBaseproperty, $comparison);
     }
 
     /**
@@ -1015,6 +848,80 @@ abstract class BaseProductmainQuery extends ModelCriteria
         return $this
             ->joinProductmainphoto($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Productmainphoto', 'ProductmainphotoQuery');
+    }
+
+    /**
+     * Filter the query by a related Productmainproperty object
+     *
+     * @param   Productmainproperty|PropelObjectCollection $productmainproperty  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProductmainQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductmainproperty($productmainproperty, $comparison = null)
+    {
+        if ($productmainproperty instanceof Productmainproperty) {
+            return $this
+                ->addUsingAlias(ProductmainPeer::IDPRODUCTMAIN, $productmainproperty->getIdproductmain(), $comparison);
+        } elseif ($productmainproperty instanceof PropelObjectCollection) {
+            return $this
+                ->useProductmainpropertyQuery()
+                ->filterByPrimaryKeys($productmainproperty->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByProductmainproperty() only accepts arguments of type Productmainproperty or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productmainproperty relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProductmainQuery The current query, for fluid interface
+     */
+    public function joinProductmainproperty($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productmainproperty');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productmainproperty');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productmainproperty relation Productmainproperty object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductmainpropertyQuery A secondary query class using the current class as primary query
+     */
+    public function useProductmainpropertyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductmainproperty($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productmainproperty', 'ProductmainpropertyQuery');
     }
 
     /**

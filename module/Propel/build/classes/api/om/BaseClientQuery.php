@@ -42,6 +42,10 @@
  * @method ClientQuery rightJoinCompany($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Company relation
  * @method ClientQuery innerJoinCompany($relationAlias = null) Adds a INNER JOIN clause to the query using the Company relation
  *
+ * @method ClientQuery leftJoinChatpublic($relationAlias = null) Adds a LEFT JOIN clause to the query using the Chatpublic relation
+ * @method ClientQuery rightJoinChatpublic($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Chatpublic relation
+ * @method ClientQuery innerJoinChatpublic($relationAlias = null) Adds a INNER JOIN clause to the query using the Chatpublic relation
+ *
  * @method ClientQuery leftJoinClientaddress($relationAlias = null) Adds a LEFT JOIN clause to the query using the Clientaddress relation
  * @method ClientQuery rightJoinClientaddress($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Clientaddress relation
  * @method ClientQuery innerJoinClientaddress($relationAlias = null) Adds a INNER JOIN clause to the query using the Clientaddress relation
@@ -766,6 +770,80 @@ abstract class BaseClientQuery extends ModelCriteria
         return $this
             ->joinCompany($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Company', 'CompanyQuery');
+    }
+
+    /**
+     * Filter the query by a related Chatpublic object
+     *
+     * @param   Chatpublic|PropelObjectCollection $chatpublic  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ClientQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByChatpublic($chatpublic, $comparison = null)
+    {
+        if ($chatpublic instanceof Chatpublic) {
+            return $this
+                ->addUsingAlias(ClientPeer::IDCLIENT, $chatpublic->getIdclient(), $comparison);
+        } elseif ($chatpublic instanceof PropelObjectCollection) {
+            return $this
+                ->useChatpublicQuery()
+                ->filterByPrimaryKeys($chatpublic->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByChatpublic() only accepts arguments of type Chatpublic or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Chatpublic relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ClientQuery The current query, for fluid interface
+     */
+    public function joinChatpublic($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Chatpublic');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Chatpublic');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Chatpublic relation Chatpublic object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ChatpublicQuery A secondary query class using the current class as primary query
+     */
+    public function useChatpublicQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinChatpublic($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Chatpublic', 'ChatpublicQuery');
     }
 
     /**

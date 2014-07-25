@@ -365,6 +365,9 @@ abstract class BaseBankaccountPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in BankexpensetransactionPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        BankexpensetransactionPeer::clearInstancePool();
         // Invalidate objects in BankordertransactionPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         BankordertransactionPeer::clearInstancePool();
@@ -939,6 +942,12 @@ abstract class BaseBankaccountPeer
         $objects = BankaccountPeer::doSelect($criteria, $con);
         foreach ($objects as $obj) {
 
+
+            // delete related Bankexpensetransaction objects
+            $criteria = new Criteria(BankexpensetransactionPeer::DATABASE_NAME);
+
+            $criteria->add(BankexpensetransactionPeer::IDBANKACCOUNT, $obj->getIdbankaccount());
+            $affectedRows += BankexpensetransactionPeer::doDelete($criteria, $con);
 
             // delete related Bankordertransaction objects
             $criteria = new Criteria(BankordertransactionPeer::DATABASE_NAME);

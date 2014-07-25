@@ -404,6 +404,12 @@ abstract class BaseCompanyPeer
         // Invalidate objects in ClientPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ClientPeer::clearInstancePool();
+        // Invalidate objects in CompanyaddressPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        CompanyaddressPeer::clearInstancePool();
+        // Invalidate objects in ContactgroupPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ContactgroupPeer::clearInstancePool();
         // Invalidate objects in DepartmentPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         DepartmentPeer::clearInstancePool();
@@ -413,6 +419,9 @@ abstract class BaseCompanyPeer
         // Invalidate objects in MxtaxinfoPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         MxtaxinfoPeer::clearInstancePool();
+        // Invalidate objects in ProductionlinePeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ProductionlinePeer::clearInstancePool();
         // Invalidate objects in ProductionteamPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductionteamPeer::clearInstancePool();
@@ -774,6 +783,18 @@ abstract class BaseCompanyPeer
             $criteria->add(ClientPeer::IDCOMPANY, $obj->getIdcompany());
             $affectedRows += ClientPeer::doDelete($criteria, $con);
 
+            // delete related Companyaddress objects
+            $criteria = new Criteria(CompanyaddressPeer::DATABASE_NAME);
+
+            $criteria->add(CompanyaddressPeer::IDCOMPANY, $obj->getIdcompany());
+            $affectedRows += CompanyaddressPeer::doDelete($criteria, $con);
+
+            // delete related Contactgroup objects
+            $criteria = new Criteria(ContactgroupPeer::DATABASE_NAME);
+
+            $criteria->add(ContactgroupPeer::IDCOMPANY, $obj->getIdcompany());
+            $affectedRows += ContactgroupPeer::doDelete($criteria, $con);
+
             // delete related Department objects
             $criteria = new Criteria(DepartmentPeer::DATABASE_NAME);
 
@@ -791,6 +812,12 @@ abstract class BaseCompanyPeer
 
             $criteria->add(MxtaxinfoPeer::IDCOMPANY, $obj->getIdcompany());
             $affectedRows += MxtaxinfoPeer::doDelete($criteria, $con);
+
+            // delete related Productionline objects
+            $criteria = new Criteria(ProductionlinePeer::DATABASE_NAME);
+
+            $criteria->add(ProductionlinePeer::IDCOMPANY, $obj->getIdcompany());
+            $affectedRows += ProductionlinePeer::doDelete($criteria, $con);
 
             // delete related Productionteam objects
             $criteria = new Criteria(ProductionteamPeer::DATABASE_NAME);

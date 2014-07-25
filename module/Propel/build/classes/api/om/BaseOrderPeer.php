@@ -68,6 +68,14 @@ abstract class BaseOrderPeer
     const ORDER_PAYMENTMODE_UNIQUE = 'UNIQUE';
     const ORDER_PAYMENTMODE_PARTIAL = 'PARTIAL';
 
+    /** The enumerated values for the order_delivery field */
+    const ORDER_DELIVERY_LOCALMODE = 'LOCALMODE';
+    const ORDER_DELIVERY_SHIPMODE = 'SHIPMODE';
+    const ORDER_DELIVERY_TRANSIT = 'TRANSIT';
+    const ORDER_DELIVERY_FINISHED = 'FINISHED';
+    const ORDER_DELIVERY_TRANSITTOBRANCH = 'TRANSITTOBRANCH';
+    const ORDER_DELIVERY_REFUND = 'REFUND';
+
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
@@ -123,6 +131,14 @@ abstract class BaseOrderPeer
         OrderPeer::ORDER_PAYMENTMODE => array(
             OrderPeer::ORDER_PAYMENTMODE_UNIQUE,
             OrderPeer::ORDER_PAYMENTMODE_PARTIAL,
+        ),
+        OrderPeer::ORDER_DELIVERY => array(
+            OrderPeer::ORDER_DELIVERY_LOCALMODE,
+            OrderPeer::ORDER_DELIVERY_SHIPMODE,
+            OrderPeer::ORDER_DELIVERY_TRANSIT,
+            OrderPeer::ORDER_DELIVERY_FINISHED,
+            OrderPeer::ORDER_DELIVERY_TRANSITTOBRANCH,
+            OrderPeer::ORDER_DELIVERY_REFUND,
         ),
     );
 
@@ -481,9 +497,9 @@ abstract class BaseOrderPeer
         // Invalidate objects in OrderrecordPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         OrderrecordPeer::clearInstancePool();
-        // Invalidate objects in ShippingPeer instance pool,
+        // Invalidate objects in OrdershippingPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ShippingPeer::clearInstancePool();
+        OrdershippingPeer::clearInstancePool();
     }
 
     /**
@@ -1485,11 +1501,11 @@ abstract class BaseOrderPeer
             $criteria->add(OrderrecordPeer::IDORDER, $obj->getIdorder());
             $affectedRows += OrderrecordPeer::doDelete($criteria, $con);
 
-            // delete related Shipping objects
-            $criteria = new Criteria(ShippingPeer::DATABASE_NAME);
+            // delete related Ordershipping objects
+            $criteria = new Criteria(OrdershippingPeer::DATABASE_NAME);
 
-            $criteria->add(ShippingPeer::IDORDER, $obj->getIdorder());
-            $affectedRows += ShippingPeer::doDelete($criteria, $con);
+            $criteria->add(OrdershippingPeer::IDORDER, $obj->getIdorder());
+            $affectedRows += OrdershippingPeer::doDelete($criteria, $con);
         }
 
         return $affectedRows;

@@ -24,13 +24,13 @@ abstract class BaseProductmainPeer
     const TM_CLASS = 'ProductmainTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 10;
+    const NUM_COLUMNS = 6;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 10;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /** the column name for the idproductmain field */
     const IDPRODUCTMAIN = 'productmain.idproductmain';
@@ -46,18 +46,6 @@ abstract class BaseProductmainPeer
 
     /** the column name for the productmain_unit field */
     const PRODUCTMAIN_UNIT = 'productmain.productmain_unit';
-
-    /** the column name for the productmain_discount field */
-    const PRODUCTMAIN_DISCOUNT = 'productmain.productmain_discount';
-
-    /** the column name for the productmain_eachpieces field */
-    const PRODUCTMAIN_EACHPIECES = 'productmain.productmain_eachpieces';
-
-    /** the column name for the productmain_maxdiscount field */
-    const PRODUCTMAIN_MAXDISCOUNT = 'productmain.productmain_maxdiscount';
-
-    /** the column name for the productmain_baseproperty field */
-    const PRODUCTMAIN_BASEPROPERTY = 'productmain.productmain_baseproperty';
 
     /** the column name for the productmain_type field */
     const PRODUCTMAIN_TYPE = 'productmain.productmain_type';
@@ -108,12 +96,12 @@ abstract class BaseProductmainPeer
      * e.g. ProductmainPeer::$fieldNames[ProductmainPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductmain', 'Idcompany', 'Idproductcategory', 'ProductmainName', 'ProductmainUnit', 'ProductmainDiscount', 'ProductmainEachpieces', 'ProductmainMaxdiscount', 'ProductmainBaseproperty', 'ProductmainType', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmain', 'idcompany', 'idproductcategory', 'productmainName', 'productmainUnit', 'productmainDiscount', 'productmainEachpieces', 'productmainMaxdiscount', 'productmainBaseproperty', 'productmainType', ),
-        BasePeer::TYPE_COLNAME => array (ProductmainPeer::IDPRODUCTMAIN, ProductmainPeer::IDCOMPANY, ProductmainPeer::IDPRODUCTCATEGORY, ProductmainPeer::PRODUCTMAIN_NAME, ProductmainPeer::PRODUCTMAIN_UNIT, ProductmainPeer::PRODUCTMAIN_DISCOUNT, ProductmainPeer::PRODUCTMAIN_EACHPIECES, ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT, ProductmainPeer::PRODUCTMAIN_BASEPROPERTY, ProductmainPeer::PRODUCTMAIN_TYPE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAIN', 'IDCOMPANY', 'IDPRODUCTCATEGORY', 'PRODUCTMAIN_NAME', 'PRODUCTMAIN_UNIT', 'PRODUCTMAIN_DISCOUNT', 'PRODUCTMAIN_EACHPIECES', 'PRODUCTMAIN_MAXDISCOUNT', 'PRODUCTMAIN_BASEPROPERTY', 'PRODUCTMAIN_TYPE', ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductmain', 'idcompany', 'idproductcategory', 'productmain_name', 'productmain_unit', 'productmain_discount', 'productmain_eachpieces', 'productmain_maxdiscount', 'productmain_baseproperty', 'productmain_type', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        BasePeer::TYPE_PHPNAME => array ('Idproductmain', 'Idcompany', 'Idproductcategory', 'ProductmainName', 'ProductmainUnit', 'ProductmainType', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmain', 'idcompany', 'idproductcategory', 'productmainName', 'productmainUnit', 'productmainType', ),
+        BasePeer::TYPE_COLNAME => array (ProductmainPeer::IDPRODUCTMAIN, ProductmainPeer::IDCOMPANY, ProductmainPeer::IDPRODUCTCATEGORY, ProductmainPeer::PRODUCTMAIN_NAME, ProductmainPeer::PRODUCTMAIN_UNIT, ProductmainPeer::PRODUCTMAIN_TYPE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAIN', 'IDCOMPANY', 'IDPRODUCTCATEGORY', 'PRODUCTMAIN_NAME', 'PRODUCTMAIN_UNIT', 'PRODUCTMAIN_TYPE', ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductmain', 'idcompany', 'idproductcategory', 'productmain_name', 'productmain_unit', 'productmain_type', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -123,12 +111,12 @@ abstract class BaseProductmainPeer
      * e.g. ProductmainPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductmain' => 0, 'Idcompany' => 1, 'Idproductcategory' => 2, 'ProductmainName' => 3, 'ProductmainUnit' => 4, 'ProductmainDiscount' => 5, 'ProductmainEachpieces' => 6, 'ProductmainMaxdiscount' => 7, 'ProductmainBaseproperty' => 8, 'ProductmainType' => 9, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmain' => 0, 'idcompany' => 1, 'idproductcategory' => 2, 'productmainName' => 3, 'productmainUnit' => 4, 'productmainDiscount' => 5, 'productmainEachpieces' => 6, 'productmainMaxdiscount' => 7, 'productmainBaseproperty' => 8, 'productmainType' => 9, ),
-        BasePeer::TYPE_COLNAME => array (ProductmainPeer::IDPRODUCTMAIN => 0, ProductmainPeer::IDCOMPANY => 1, ProductmainPeer::IDPRODUCTCATEGORY => 2, ProductmainPeer::PRODUCTMAIN_NAME => 3, ProductmainPeer::PRODUCTMAIN_UNIT => 4, ProductmainPeer::PRODUCTMAIN_DISCOUNT => 5, ProductmainPeer::PRODUCTMAIN_EACHPIECES => 6, ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT => 7, ProductmainPeer::PRODUCTMAIN_BASEPROPERTY => 8, ProductmainPeer::PRODUCTMAIN_TYPE => 9, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAIN' => 0, 'IDCOMPANY' => 1, 'IDPRODUCTCATEGORY' => 2, 'PRODUCTMAIN_NAME' => 3, 'PRODUCTMAIN_UNIT' => 4, 'PRODUCTMAIN_DISCOUNT' => 5, 'PRODUCTMAIN_EACHPIECES' => 6, 'PRODUCTMAIN_MAXDISCOUNT' => 7, 'PRODUCTMAIN_BASEPROPERTY' => 8, 'PRODUCTMAIN_TYPE' => 9, ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductmain' => 0, 'idcompany' => 1, 'idproductcategory' => 2, 'productmain_name' => 3, 'productmain_unit' => 4, 'productmain_discount' => 5, 'productmain_eachpieces' => 6, 'productmain_maxdiscount' => 7, 'productmain_baseproperty' => 8, 'productmain_type' => 9, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        BasePeer::TYPE_PHPNAME => array ('Idproductmain' => 0, 'Idcompany' => 1, 'Idproductcategory' => 2, 'ProductmainName' => 3, 'ProductmainUnit' => 4, 'ProductmainType' => 5, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmain' => 0, 'idcompany' => 1, 'idproductcategory' => 2, 'productmainName' => 3, 'productmainUnit' => 4, 'productmainType' => 5, ),
+        BasePeer::TYPE_COLNAME => array (ProductmainPeer::IDPRODUCTMAIN => 0, ProductmainPeer::IDCOMPANY => 1, ProductmainPeer::IDPRODUCTCATEGORY => 2, ProductmainPeer::PRODUCTMAIN_NAME => 3, ProductmainPeer::PRODUCTMAIN_UNIT => 4, ProductmainPeer::PRODUCTMAIN_TYPE => 5, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAIN' => 0, 'IDCOMPANY' => 1, 'IDPRODUCTCATEGORY' => 2, 'PRODUCTMAIN_NAME' => 3, 'PRODUCTMAIN_UNIT' => 4, 'PRODUCTMAIN_TYPE' => 5, ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductmain' => 0, 'idcompany' => 1, 'idproductcategory' => 2, 'productmain_name' => 3, 'productmain_unit' => 4, 'productmain_type' => 5, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
     );
 
     /** The enumerated values for this table */
@@ -283,10 +271,6 @@ abstract class BaseProductmainPeer
             $criteria->addSelectColumn(ProductmainPeer::IDPRODUCTCATEGORY);
             $criteria->addSelectColumn(ProductmainPeer::PRODUCTMAIN_NAME);
             $criteria->addSelectColumn(ProductmainPeer::PRODUCTMAIN_UNIT);
-            $criteria->addSelectColumn(ProductmainPeer::PRODUCTMAIN_DISCOUNT);
-            $criteria->addSelectColumn(ProductmainPeer::PRODUCTMAIN_EACHPIECES);
-            $criteria->addSelectColumn(ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT);
-            $criteria->addSelectColumn(ProductmainPeer::PRODUCTMAIN_BASEPROPERTY);
             $criteria->addSelectColumn(ProductmainPeer::PRODUCTMAIN_TYPE);
         } else {
             $criteria->addSelectColumn($alias . '.idproductmain');
@@ -294,10 +278,6 @@ abstract class BaseProductmainPeer
             $criteria->addSelectColumn($alias . '.idproductcategory');
             $criteria->addSelectColumn($alias . '.productmain_name');
             $criteria->addSelectColumn($alias . '.productmain_unit');
-            $criteria->addSelectColumn($alias . '.productmain_discount');
-            $criteria->addSelectColumn($alias . '.productmain_eachpieces');
-            $criteria->addSelectColumn($alias . '.productmain_maxdiscount');
-            $criteria->addSelectColumn($alias . '.productmain_baseproperty');
             $criteria->addSelectColumn($alias . '.productmain_type');
         }
     }
@@ -509,6 +489,9 @@ abstract class BaseProductmainPeer
         // Invalidate objects in ProductmainphotoPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductmainphotoPeer::clearInstancePool();
+        // Invalidate objects in ProductmainpropertyPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ProductmainpropertyPeer::clearInstancePool();
     }
 
     /**
@@ -1485,6 +1468,12 @@ abstract class BaseProductmainPeer
 
             $criteria->add(ProductmainphotoPeer::IDPRODUCTMAIN, $obj->getIdproductmain());
             $affectedRows += ProductmainphotoPeer::doDelete($criteria, $con);
+
+            // delete related Productmainproperty objects
+            $criteria = new Criteria(ProductmainpropertyPeer::DATABASE_NAME);
+
+            $criteria->add(ProductmainpropertyPeer::IDPRODUCTMAIN, $obj->getIdproductmain());
+            $affectedRows += ProductmainpropertyPeer::doDelete($criteria, $con);
         }
 
         return $affectedRows;

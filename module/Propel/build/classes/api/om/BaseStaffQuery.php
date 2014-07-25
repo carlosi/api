@@ -586,14 +586,14 @@ abstract class BaseStaffQuery extends ModelCriteria
     {
         if ($user instanceof User) {
             return $this
-                ->addUsingAlias(StaffPeer::IDUSER, $user->getIdUser(), $comparison);
+                ->addUsingAlias(StaffPeer::IDUSER, $user->getIduser(), $comparison);
         } elseif ($user instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(StaffPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'IdUser'), $comparison);
+                ->addUsingAlias(StaffPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
         }

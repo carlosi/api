@@ -74,6 +74,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
 
     /**
      * The value for the order_delivery field.
+     * Note: this column has a database default value of: 'SHIPMODE'
      * @var        string
      */
     protected $order_delivery;
@@ -125,10 +126,10 @@ abstract class BaseOrder extends BaseObject implements Persistent
     protected $collOrderrecordsPartial;
 
     /**
-     * @var        PropelObjectCollection|Shipping[] Collection to store aggregation of Shipping objects.
+     * @var        PropelObjectCollection|Ordershipping[] Collection to store aggregation of Ordershipping objects.
      */
-    protected $collShippings;
-    protected $collShippingsPartial;
+    protected $collOrdershippings;
+    protected $collOrdershippingsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -190,7 +191,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $shippingsScheduledForDeletion = null;
+    protected $ordershippingsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -201,6 +202,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
     public function applyDefaultValues()
     {
         $this->order_paymentmode = 'UNIQUE';
+        $this->order_delivery = 'SHIPMODE';
     }
 
     /**
@@ -522,6 +524,10 @@ abstract class BaseOrder extends BaseObject implements Persistent
                 return false;
             }
 
+            if ($this->order_delivery !== 'SHIPMODE') {
+                return false;
+            }
+
         // otherwise, everything was equal, so return true
         return true;
     } // hasOnlyDefaultValues()
@@ -643,7 +649,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
 
             $this->collOrderrecords = null;
 
-            $this->collShippings = null;
+            $this->collOrdershippings = null;
 
         } // if (deep)
     }
@@ -890,17 +896,17 @@ abstract class BaseOrder extends BaseObject implements Persistent
                 }
             }
 
-            if ($this->shippingsScheduledForDeletion !== null) {
-                if (!$this->shippingsScheduledForDeletion->isEmpty()) {
-                    ShippingQuery::create()
-                        ->filterByPrimaryKeys($this->shippingsScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->ordershippingsScheduledForDeletion !== null) {
+                if (!$this->ordershippingsScheduledForDeletion->isEmpty()) {
+                    OrdershippingQuery::create()
+                        ->filterByPrimaryKeys($this->ordershippingsScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->shippingsScheduledForDeletion = null;
+                    $this->ordershippingsScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collShippings !== null) {
-                foreach ($this->collShippings as $referrerFK) {
+            if ($this->collOrdershippings !== null) {
+                foreach ($this->collOrdershippings as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1157,8 +1163,8 @@ abstract class BaseOrder extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collShippings !== null) {
-                    foreach ($this->collShippings as $referrerFK) {
+                if ($this->collOrdershippings !== null) {
+                    foreach ($this->collOrdershippings as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1292,8 +1298,8 @@ abstract class BaseOrder extends BaseObject implements Persistent
             if (null !== $this->collOrderrecords) {
                 $result['Orderrecords'] = $this->collOrderrecords->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collShippings) {
-                $result['Shippings'] = $this->collShippings->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->collOrdershippings) {
+                $result['Ordershippings'] = $this->collOrdershippings->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1518,9 +1524,9 @@ abstract class BaseOrder extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getShippings() as $relObj) {
+            foreach ($this->getOrdershippings() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addShipping($relObj->copy($deepCopy));
+                    $copyObj->addOrdershipping($relObj->copy($deepCopy));
                 }
             }
 
@@ -1707,8 +1713,8 @@ abstract class BaseOrder extends BaseObject implements Persistent
         if ('Orderrecord' == $relationName) {
             $this->initOrderrecords();
         }
-        if ('Shipping' == $relationName) {
-            $this->initShippings();
+        if ('Ordershipping' == $relationName) {
+            $this->initOrdershippings();
         }
     }
 
@@ -3138,36 +3144,36 @@ abstract class BaseOrder extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collShippings collection
+     * Clears out the collOrdershippings collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return Order The current object (for fluent API support)
-     * @see        addShippings()
+     * @see        addOrdershippings()
      */
-    public function clearShippings()
+    public function clearOrdershippings()
     {
-        $this->collShippings = null; // important to set this to null since that means it is uninitialized
-        $this->collShippingsPartial = null;
+        $this->collOrdershippings = null; // important to set this to null since that means it is uninitialized
+        $this->collOrdershippingsPartial = null;
 
         return $this;
     }
 
     /**
-     * reset is the collShippings collection loaded partially
+     * reset is the collOrdershippings collection loaded partially
      *
      * @return void
      */
-    public function resetPartialShippings($v = true)
+    public function resetPartialOrdershippings($v = true)
     {
-        $this->collShippingsPartial = $v;
+        $this->collOrdershippingsPartial = $v;
     }
 
     /**
-     * Initializes the collShippings collection.
+     * Initializes the collOrdershippings collection.
      *
-     * By default this just sets the collShippings collection to an empty array (like clearcollShippings());
+     * By default this just sets the collOrdershippings collection to an empty array (like clearcollOrdershippings());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -3176,17 +3182,17 @@ abstract class BaseOrder extends BaseObject implements Persistent
      *
      * @return void
      */
-    public function initShippings($overrideExisting = true)
+    public function initOrdershippings($overrideExisting = true)
     {
-        if (null !== $this->collShippings && !$overrideExisting) {
+        if (null !== $this->collOrdershippings && !$overrideExisting) {
             return;
         }
-        $this->collShippings = new PropelObjectCollection();
-        $this->collShippings->setModel('Shipping');
+        $this->collOrdershippings = new PropelObjectCollection();
+        $this->collOrdershippings->setModel('Ordershipping');
     }
 
     /**
-     * Gets an array of Shipping objects which contain a foreign key that references this object.
+     * Gets an array of Ordershipping objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -3196,107 +3202,107 @@ abstract class BaseOrder extends BaseObject implements Persistent
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Shipping[] List of Shipping objects
+     * @return PropelObjectCollection|Ordershipping[] List of Ordershipping objects
      * @throws PropelException
      */
-    public function getShippings($criteria = null, PropelPDO $con = null)
+    public function getOrdershippings($criteria = null, PropelPDO $con = null)
     {
-        $partial = $this->collShippingsPartial && !$this->isNew();
-        if (null === $this->collShippings || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collShippings) {
+        $partial = $this->collOrdershippingsPartial && !$this->isNew();
+        if (null === $this->collOrdershippings || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collOrdershippings) {
                 // return empty collection
-                $this->initShippings();
+                $this->initOrdershippings();
             } else {
-                $collShippings = ShippingQuery::create(null, $criteria)
+                $collOrdershippings = OrdershippingQuery::create(null, $criteria)
                     ->filterByOrder($this)
                     ->find($con);
                 if (null !== $criteria) {
-                    if (false !== $this->collShippingsPartial && count($collShippings)) {
-                      $this->initShippings(false);
+                    if (false !== $this->collOrdershippingsPartial && count($collOrdershippings)) {
+                      $this->initOrdershippings(false);
 
-                      foreach ($collShippings as $obj) {
-                        if (false == $this->collShippings->contains($obj)) {
-                          $this->collShippings->append($obj);
+                      foreach ($collOrdershippings as $obj) {
+                        if (false == $this->collOrdershippings->contains($obj)) {
+                          $this->collOrdershippings->append($obj);
                         }
                       }
 
-                      $this->collShippingsPartial = true;
+                      $this->collOrdershippingsPartial = true;
                     }
 
-                    $collShippings->getInternalIterator()->rewind();
+                    $collOrdershippings->getInternalIterator()->rewind();
 
-                    return $collShippings;
+                    return $collOrdershippings;
                 }
 
-                if ($partial && $this->collShippings) {
-                    foreach ($this->collShippings as $obj) {
+                if ($partial && $this->collOrdershippings) {
+                    foreach ($this->collOrdershippings as $obj) {
                         if ($obj->isNew()) {
-                            $collShippings[] = $obj;
+                            $collOrdershippings[] = $obj;
                         }
                     }
                 }
 
-                $this->collShippings = $collShippings;
-                $this->collShippingsPartial = false;
+                $this->collOrdershippings = $collOrdershippings;
+                $this->collOrdershippingsPartial = false;
             }
         }
 
-        return $this->collShippings;
+        return $this->collOrdershippings;
     }
 
     /**
-     * Sets a collection of Shipping objects related by a one-to-many relationship
+     * Sets a collection of Ordershipping objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param PropelCollection $shippings A Propel collection.
+     * @param PropelCollection $ordershippings A Propel collection.
      * @param PropelPDO $con Optional connection object
      * @return Order The current object (for fluent API support)
      */
-    public function setShippings(PropelCollection $shippings, PropelPDO $con = null)
+    public function setOrdershippings(PropelCollection $ordershippings, PropelPDO $con = null)
     {
-        $shippingsToDelete = $this->getShippings(new Criteria(), $con)->diff($shippings);
+        $ordershippingsToDelete = $this->getOrdershippings(new Criteria(), $con)->diff($ordershippings);
 
 
-        $this->shippingsScheduledForDeletion = $shippingsToDelete;
+        $this->ordershippingsScheduledForDeletion = $ordershippingsToDelete;
 
-        foreach ($shippingsToDelete as $shippingRemoved) {
-            $shippingRemoved->setOrder(null);
+        foreach ($ordershippingsToDelete as $ordershippingRemoved) {
+            $ordershippingRemoved->setOrder(null);
         }
 
-        $this->collShippings = null;
-        foreach ($shippings as $shipping) {
-            $this->addShipping($shipping);
+        $this->collOrdershippings = null;
+        foreach ($ordershippings as $ordershipping) {
+            $this->addOrdershipping($ordershipping);
         }
 
-        $this->collShippings = $shippings;
-        $this->collShippingsPartial = false;
+        $this->collOrdershippings = $ordershippings;
+        $this->collOrdershippingsPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related Shipping objects.
+     * Returns the number of related Ordershipping objects.
      *
      * @param Criteria $criteria
      * @param boolean $distinct
      * @param PropelPDO $con
-     * @return int             Count of related Shipping objects.
+     * @return int             Count of related Ordershipping objects.
      * @throws PropelException
      */
-    public function countShippings(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    public function countOrdershippings(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
     {
-        $partial = $this->collShippingsPartial && !$this->isNew();
-        if (null === $this->collShippings || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collShippings) {
+        $partial = $this->collOrdershippingsPartial && !$this->isNew();
+        if (null === $this->collOrdershippings || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collOrdershippings) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getShippings());
+                return count($this->getOrdershippings());
             }
-            $query = ShippingQuery::create(null, $criteria);
+            $query = OrdershippingQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -3306,28 +3312,28 @@ abstract class BaseOrder extends BaseObject implements Persistent
                 ->count($con);
         }
 
-        return count($this->collShippings);
+        return count($this->collOrdershippings);
     }
 
     /**
-     * Method called to associate a Shipping object to this object
-     * through the Shipping foreign key attribute.
+     * Method called to associate a Ordershipping object to this object
+     * through the Ordershipping foreign key attribute.
      *
-     * @param    Shipping $l Shipping
+     * @param    Ordershipping $l Ordershipping
      * @return Order The current object (for fluent API support)
      */
-    public function addShipping(Shipping $l)
+    public function addOrdershipping(Ordershipping $l)
     {
-        if ($this->collShippings === null) {
-            $this->initShippings();
-            $this->collShippingsPartial = true;
+        if ($this->collOrdershippings === null) {
+            $this->initOrdershippings();
+            $this->collOrdershippingsPartial = true;
         }
 
-        if (!in_array($l, $this->collShippings->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddShipping($l);
+        if (!in_array($l, $this->collOrdershippings->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddOrdershipping($l);
 
-            if ($this->shippingsScheduledForDeletion and $this->shippingsScheduledForDeletion->contains($l)) {
-                $this->shippingsScheduledForDeletion->remove($this->shippingsScheduledForDeletion->search($l));
+            if ($this->ordershippingsScheduledForDeletion and $this->ordershippingsScheduledForDeletion->contains($l)) {
+                $this->ordershippingsScheduledForDeletion->remove($this->ordershippingsScheduledForDeletion->search($l));
             }
         }
 
@@ -3335,31 +3341,56 @@ abstract class BaseOrder extends BaseObject implements Persistent
     }
 
     /**
-     * @param	Shipping $shipping The shipping object to add.
+     * @param	Ordershipping $ordershipping The ordershipping object to add.
      */
-    protected function doAddShipping($shipping)
+    protected function doAddOrdershipping($ordershipping)
     {
-        $this->collShippings[]= $shipping;
-        $shipping->setOrder($this);
+        $this->collOrdershippings[]= $ordershipping;
+        $ordershipping->setOrder($this);
     }
 
     /**
-     * @param	Shipping $shipping The shipping object to remove.
+     * @param	Ordershipping $ordershipping The ordershipping object to remove.
      * @return Order The current object (for fluent API support)
      */
-    public function removeShipping($shipping)
+    public function removeOrdershipping($ordershipping)
     {
-        if ($this->getShippings()->contains($shipping)) {
-            $this->collShippings->remove($this->collShippings->search($shipping));
-            if (null === $this->shippingsScheduledForDeletion) {
-                $this->shippingsScheduledForDeletion = clone $this->collShippings;
-                $this->shippingsScheduledForDeletion->clear();
+        if ($this->getOrdershippings()->contains($ordershipping)) {
+            $this->collOrdershippings->remove($this->collOrdershippings->search($ordershipping));
+            if (null === $this->ordershippingsScheduledForDeletion) {
+                $this->ordershippingsScheduledForDeletion = clone $this->collOrdershippings;
+                $this->ordershippingsScheduledForDeletion->clear();
             }
-            $this->shippingsScheduledForDeletion[]= clone $shipping;
-            $shipping->setOrder(null);
+            $this->ordershippingsScheduledForDeletion[]= clone $ordershipping;
+            $ordershipping->setOrder(null);
         }
 
         return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Order is new, it will return
+     * an empty collection; or if this Order has previously
+     * been saved, it will retrieve related Ordershippings from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Order.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Ordershipping[] List of Ordershipping objects
+     */
+    public function getOrdershippingsJoinShipping($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = OrdershippingQuery::create(null, $criteria);
+        $query->joinWith('Shipping', $join_behavior);
+
+        return $this->getOrdershippings($query, $con);
     }
 
     /**
@@ -3428,8 +3459,8 @@ abstract class BaseOrder extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collShippings) {
-                foreach ($this->collShippings as $o) {
+            if ($this->collOrdershippings) {
+                foreach ($this->collOrdershippings as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -3467,10 +3498,10 @@ abstract class BaseOrder extends BaseObject implements Persistent
             $this->collOrderrecords->clearIterator();
         }
         $this->collOrderrecords = null;
-        if ($this->collShippings instanceof PropelCollection) {
-            $this->collShippings->clearIterator();
+        if ($this->collOrdershippings instanceof PropelCollection) {
+            $this->collOrdershippings->clearIterator();
         }
-        $this->collShippings = null;
+        $this->collOrdershippings = null;
         $this->aBranch = null;
         $this->aClient = null;
     }

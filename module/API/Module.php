@@ -41,17 +41,27 @@ class Module
     public function getAutoloaderConfig()
     {
         return array(
+            'Zend\Loader\ClassMapAutoloader' => array(
+                __DIR__ . '/autoload_classmap.php',  
+            ),
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                 	'Company' 	    => __DIR__ . '/src/' . 'Company',
                 	'Contents' 	    => __DIR__ . '/src/' . 'Contents',
                 	'Documentation' => __DIR__ . '/src/' . 'Documentation',
-                	'Sales'		    => __DIR__ . '/src/' . 'Sales',
-                        'Shared' 	    => __DIR__ . '/src/' . 'Shared',
-                        'Manufacture' 	=> __DIR__ . '/src/' . 'Manufacture',
-                        'Test' 	=> __DIR__ . '/src/' . 'Test',
+                        'Login' 	=> __DIR__ . '/src/' . 'Login',
+                        'Expense'	    => __DIR__ . '/src/' . 'Expense',
+                        'MercadoLibre'  => __DIR__ . '/src/' . 'MercadoLibre',
+                        'Production'    => __DIR__ . '/src/' . 'Production',
+                        'Project'		=> __DIR__ . '/src/' . 'Project',
+                        'Sales'		    => __DIR__ . '/src/' . 'Sales',
+                        'SATMexico'		=> __DIR__ . '/src/' . 'SATMexico',
+                        'Shared'		=> __DIR__ . '/src/' . 'Shared',
+                        'Shipping'		=> __DIR__ . '/src/' . 'Shipping',
+
                 ),
             ),
+            
         );
     }
 }

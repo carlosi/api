@@ -10,332 +10,99 @@
 return array(
     'router' => array(
         'routes' => array(
-            // Propel Test
-        	'client' => array(
-        				'type' => 'segment',
-						'options' => array(
-        						'route'    => '/client[/:id][/:token]',
-        						'defaults' => array(
-        								'controller' => 'Company\Controller\ClientController',
-										'action'		=> 'index',
-								),
-        				),
-        	),
             'user' => array(
-        				'type' => 'segment',
-						'options' => array(
-        						'route'    => '/user[/:id][/:token][/]',
-        						'defaults' => array(
-        								'controller' => 'Company\Controller\UserController',
-								),
-                                                    'constraints' => array(
-                                                        'id' => '[0-9]+',
-                                                        'limit' => '[0-9]+',
-                                                        'order' => 'asc|desc',
-                                                    ),
-        				),
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/user[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\UserController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
         	),
-            //$limit=50, array $conditions=null, $orderBy=null, $order='DESC', $column_like=null, $word=null, $exactly=false
             'branch' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/branch[/:id]',
+                    'route'    => '/branch[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'Company\Controller\BranchController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'useracl' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/useracl[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\UserAclController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'branchuser' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/branchuser[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\BranchUserController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+
+            'clientaddress' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/clientaddress[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\ClientAddressController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'login' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/login[/]',
+                    'defaults' => array(
+                        'controller' => 'Login\Controller\LoginController',
+                        'action' => 'login',
+                    ),
+                ),
+            ),
+
+        	// Documentation
+            'documentation' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/documentation[/]',
+                    'defaults' => array(
+                        'controller' => 'Documentation\Controller\IndexController',
                         'action'		=> 'index',
                     ),
                 ),
             ),
-
-            // End Propel Test
-
-        	// Documentation
-        	'documentation' => array(
-        				'type' => 'segment',
-        				'options' => array(
-        						'route'    => '/documentation[/]',
-        						'defaults' => array(
-        								'controller' => 'Documentation\Controller\IndexController',
-        								'action'		=> 'index',
-        								 
-        						),
-        				),
-        	),
-        	
-       	  //Inicio de rutas del sub-modulo Company
-       	  'company-login' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/company/login',
-        			'defaults' => array(
-        				'controller' => 'Company\Controller\LoginController',
-        				'action'	 => 'index',
-        			),
-        		),
-	       	),
-	       	'company-company' => array(
-	       		'type' => 'segment',
-	       		'options' => array(
-   					'route'    => '/v1/json/company/company[.:action][/token][/:token][/]',
-	       			'defaults' => array(
-	       				'controller' => 'Company\Controller\CompanyController',
-	       				'action'	 => 'index',
-	       			),
-	       		),
-	       	),
-	       	'company-bank-account' => array(
-	       		'type' => 'segment',
-	       		'options' => array(
-	       			'route'    => '/v1/json/company/bank-account[.:action][/token][/:token][/]',
-	       			'defaults' => array(
-	       				'controller'	=> 'Company\Controller\BankAccountController',
-	       				'action'		=> 'list',
-	       				'token'			=>	null,
-	       			),
-	       		),
-	       	),
-        	'company-branch' => array(
-      			'type' => 'segment',
-      			'options' => array(
-   					'route'    => '/v1/json/company/branch[.:action][/token][/:token][/]',
-   					'defaults' => array(
-  						'controller'	=> 'Company\Controller\BranchCompanyController',
-  						'action'		=> 'list',
-  						'token'			=>	null,
-    				),
-      			),
-        	),
-        	'company-client' => array(
-       			'type' => 'segment',
-       			'options' => array(
-   					'route'    => '/v1/json/company/client[.:action][/token][/:token][/]',
-   					'defaults' => array(
-						'controller' => 'Company\Controller\ClientController',
-						'action'		=> 'list',
-						'token'			=>	null,
-   					),
-       			),
-        	),
-        	'company-client-tax' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/company/client-tax[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Company\Controller\ClientTaxController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-        	'company-client-address' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/company/client-address[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' => 'Company\Controller\ClientAddressController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	'company-client-comment' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/company/client-comment[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Company\Controller\ClientCommentController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-        	'company-client-file' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/company/client-file[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' => 'Company\Controller\ClientFileController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	'company-mx-tax-document' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/company/mx-tax-document[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' 	=> 'Company\Controller\MxTaxDocumentController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	'company-mx-tax-info' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/company/mx-tax-info[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' 	=> 'Company\Controller\MxTaxInfoController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	//Fin de rutas del sub-modulo Company
-
-        	//Inicio de rutas del sub-modulo Contents
-        	'contents-product' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/contents/product[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Contents\Controller\ProductController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-        	'contents-product-main' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/contents/product-main[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Contents\Controller\ProductMainController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-        	'contents-product-main-photo' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/contents/product-main-photo[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Contents\Controller\ProductMainPhotoController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-        	//Fin de rutas del sub-modulo Contents
-
-            //Inicio de rutas del sub-módulo Manufacture
-            'manufacture-production-team' => array(
-                'type' => 'segment',
-                'options' => array(
-                    'route'    => '/v1/json/manufacture/production-team[.:action][/token][/:token][/]',
-                    'defaults' => array(
-                        'controller' => 'Manufacture\Controller\ProductionTeamController',
-                        'action'		=> 'list',
-                        'token'			=>	null,
-                    ),
-                ),
-            ),
-            'manufacture-production-order-item' => array(
-                'type' => 'segment',
-                'options' => array(
-                    'route'    => '/v1/json/manufacture/production-order-item[.:action][/token][/:token][/]',
-                    'defaults' => array(
-                        'controller' => 'Manufacture\Controller\ProductionOrderItemController',
-                        'action'		=> 'list',
-                        'token'			=>	null,
-                    ),
-                ),
-            ),
-            //Fin de rutas del sub-módulo Manufacture
-
-            //Inicio de rutas del sub-modulo Sales
-        	'sales-order' => array(
-       			'type' => 'segment',
-       			'options' => array(
-   					'route'    => '/v1/json/sales/order[.:action][/token][/:token][/]',
-   					'defaults' => array(
-						'controller' => 'Sales\Controller\OrderController',
-						'action'		=> 'list',
-						'token'			=>	null,
-   					),
-       			),
-        	),
-        	'sales-order-file' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/sales/order-file[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Sales\Controller\OrderFileController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-        	'sales-order-comment' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/sales/order-comment[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Sales\Controller\OrderCommentController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-        	'sales-order-item' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/sales/order-item[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' => 'Sales\Controller\OrderItemController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	'sales-order-shipping' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/sales/order-shipping[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' => 'Sales\Controller\OrderShippingController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	'sales-product-category' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/sales/product-category[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' => 'Sales\Controller\ProductCategoryController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	'sales-product-category-property' => array(
-        		'type' => 'segment',
-        		'options' => array(
-        			'route'    => '/v1/json/sales/product-category-property[.:action][/token][/:token][/]',
-        			'defaults' => array(
-        				'controller' => 'Sales\Controller\ProductCategoryPropertyController',
-        				'action'		=> 'list',
-        				'token'			=>	null,
-        			),
-        		),
-        	),
-        	'sales-product-category-property-option' => array(
-        			'type' => 'segment',
-        			'options' => array(
-        					'route'    => '/v1/json/sales/product-category-property-option[.:action][/token][/:token][/]',
-        					'defaults' => array(
-        							'controller' => 'Sales\Controller\ProductCategoryPropertyOptionController',
-        							'action'		=> 'list',
-        							'token'			=>	null,
-        					),
-        			),
-        	),
-            //Fin de rutas del sub-m���dulo Sales
-
         ),
     ),
 //    'input_filters' => array(
@@ -408,6 +175,9 @@ return array(
 
             'Documentation\Controller\IndexController'		=> 'Documentation\Controller\IndexController',
             'Documentation\Controller\ModulesController'	=> 'Documentation\Controller\ModulesController',
+            
+            'Login\Controller\LoginController' => 'Login\Controller\LoginController',
+            'Shared\Controller\AllowedPropertiesController' => 'Shared\Controller\AllowedPropertiesController',
             
             ),
     ),

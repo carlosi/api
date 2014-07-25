@@ -57,7 +57,15 @@ class OrderTableMap extends TableMap
   0 => 'UNIQUE',
   1 => 'PARTIAL',
 ));
-        $this->addColumn('order_delivery', 'OrderDelivery', 'CHAR', true, null, null);
+        $this->addColumn('order_delivery', 'OrderDelivery', 'CHAR', true, null, 'SHIPMODE');
+        $this->getColumn('order_delivery', false)->setValueSet(array (
+  0 => 'LOCALMODE',
+  1 => 'SHIPMODE',
+  2 => 'TRANSIT',
+  3 => 'FINISHED',
+  4 => 'TRANSITTOBRANCH',
+  5 => 'REFUND',
+));
         // validators
     } // initialize()
 
@@ -74,7 +82,7 @@ class OrderTableMap extends TableMap
         $this->addRelation('Orderfile', 'Orderfile', RelationMap::ONE_TO_MANY, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE', 'Orderfiles');
         $this->addRelation('Orderitem', 'Orderitem', RelationMap::ONE_TO_MANY, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE', 'Orderitems');
         $this->addRelation('Orderrecord', 'Orderrecord', RelationMap::ONE_TO_MANY, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE', 'Orderrecords');
-        $this->addRelation('Shipping', 'Shipping', RelationMap::ONE_TO_MANY, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE', 'Shippings');
+        $this->addRelation('Ordershipping', 'Ordershipping', RelationMap::ONE_TO_MANY, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE', 'Ordershippings');
     } // buildRelations()
 
 } // OrderTableMap

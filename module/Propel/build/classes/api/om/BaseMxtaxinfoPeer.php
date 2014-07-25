@@ -759,6 +759,10 @@ abstract class BaseMxtaxinfoPeer
             $criteria = $values->buildCriteria(); // build Criteria from Mxtaxinfo object
         }
 
+        if ($criteria->containsKey(MxtaxinfoPeer::IDMXTAXINFO) && $criteria->keyContainsValue(MxtaxinfoPeer::IDMXTAXINFO) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MxtaxinfoPeer::IDMXTAXINFO.')');
+        }
+
 
         // Set the correct dbName
         $criteria->setDbName(MxtaxinfoPeer::DATABASE_NAME);

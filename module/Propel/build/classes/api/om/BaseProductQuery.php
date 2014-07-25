@@ -28,6 +28,10 @@
  * @method ProductQuery rightJoinOrderitem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Orderitem relation
  * @method ProductQuery innerJoinOrderitem($relationAlias = null) Adds a INNER JOIN clause to the query using the Orderitem relation
  *
+ * @method ProductQuery leftJoinProductproperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productproperty relation
+ * @method ProductQuery rightJoinProductproperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productproperty relation
+ * @method ProductQuery innerJoinProductproperty($relationAlias = null) Adds a INNER JOIN clause to the query using the Productproperty relation
+ *
  * @method Product findOne(PropelPDO $con = null) Return the first Product matching the query
  * @method Product findOneOrCreate(PropelPDO $con = null) Return the first Product matching the query, or a new Product object populated from the query conditions when no match is found
  *
@@ -527,6 +531,80 @@ abstract class BaseProductQuery extends ModelCriteria
         return $this
             ->joinOrderitem($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Orderitem', 'OrderitemQuery');
+    }
+
+    /**
+     * Filter the query by a related Productproperty object
+     *
+     * @param   Productproperty|PropelObjectCollection $productproperty  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProductQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductproperty($productproperty, $comparison = null)
+    {
+        if ($productproperty instanceof Productproperty) {
+            return $this
+                ->addUsingAlias(ProductPeer::IDPRODUCT, $productproperty->getIdproduct(), $comparison);
+        } elseif ($productproperty instanceof PropelObjectCollection) {
+            return $this
+                ->useProductpropertyQuery()
+                ->filterByPrimaryKeys($productproperty->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByProductproperty() only accepts arguments of type Productproperty or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productproperty relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProductQuery The current query, for fluid interface
+     */
+    public function joinProductproperty($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productproperty');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productproperty');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productproperty relation Productproperty object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductpropertyQuery A secondary query class using the current class as primary query
+     */
+    public function useProductpropertyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductproperty($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productproperty', 'ProductpropertyQuery');
     }
 
     /**

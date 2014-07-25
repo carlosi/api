@@ -24,22 +24,16 @@ abstract class BaseShippingPeer
     const TM_CLASS = 'ShippingTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 17;
+    const NUM_COLUMNS = 27;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 17;
+    const NUM_HYDRATE_COLUMNS = 27;
 
     /** the column name for the idshipping field */
     const IDSHIPPING = 'shipping.idshipping';
-
-    /** the column name for the idorder field */
-    const IDORDER = 'shipping.idorder';
-
-    /** the column name for the shipping_address field */
-    const SHIPPING_ADDRESS = 'shipping.shipping_address';
 
     /** the column name for the shipping_tracking field */
     const SHIPPING_TRACKING = 'shipping.shipping_tracking';
@@ -56,32 +50,68 @@ abstract class BaseShippingPeer
     /** the column name for the shipping_daterealdelivery field */
     const SHIPPING_DATEREALDELIVERY = 'shipping.shipping_daterealdelivery';
 
-    /** the column name for the shipping_iso_codecountry field */
-    const SHIPPING_ISO_CODECOUNTRY = 'shipping.shipping_iso_codecountry';
+    /** the column name for the shipping_status field */
+    const SHIPPING_STATUS = 'shipping.shipping_status';
 
-    /** the column name for the shipping_iso_codephone field */
-    const SHIPPING_ISO_CODEPHONE = 'shipping.shipping_iso_codephone';
+    /** the column name for the sender_iso_codecountry field */
+    const SENDER_ISO_CODECOUNTRY = 'shipping.sender_iso_codecountry';
 
-    /** the column name for the shipping_addressee field */
-    const SHIPPING_ADDRESSEE = 'shipping.shipping_addressee';
+    /** the column name for the sender_iso_codephone field */
+    const SENDER_ISO_CODEPHONE = 'shipping.sender_iso_codephone';
 
-    /** the column name for the shipping_addressee_cellular field */
-    const SHIPPING_ADDRESSEE_CELLULAR = 'shipping.shipping_addressee_cellular';
+    /** the column name for the sender_name field */
+    const SENDER_NAME = 'shipping.sender_name';
 
-    /** the column name for the shipping_addressee_phone field */
-    const SHIPPING_ADDRESSEE_PHONE = 'shipping.shipping_addressee_phone';
+    /** the column name for the sender_addressee_cellular field */
+    const SENDER_ADDRESSEE_CELLULAR = 'shipping.sender_addressee_cellular';
 
-    /** the column name for the shipping_address2 field */
-    const SHIPPING_ADDRESS2 = 'shipping.shipping_address2';
+    /** the column name for the sender_addressee_phone field */
+    const SENDER_ADDRESSEE_PHONE = 'shipping.sender_addressee_phone';
 
-    /** the column name for the shipping_city field */
-    const SHIPPING_CITY = 'shipping.shipping_city';
+    /** the column name for the sender_address field */
+    const SENDER_ADDRESS = 'shipping.sender_address';
 
-    /** the column name for the shipping_state field */
-    const SHIPPING_STATE = 'shipping.shipping_state';
+    /** the column name for the sender_address2 field */
+    const SENDER_ADDRESS2 = 'shipping.sender_address2';
 
-    /** the column name for the shipping_zipcode field */
-    const SHIPPING_ZIPCODE = 'shipping.shipping_zipcode';
+    /** the column name for the sender_city field */
+    const SENDER_CITY = 'shipping.sender_city';
+
+    /** the column name for the sender_state field */
+    const SENDER_STATE = 'shipping.sender_state';
+
+    /** the column name for the sender_zipcode field */
+    const SENDER_ZIPCODE = 'shipping.sender_zipcode';
+
+    /** the column name for the addressee_iso_codecountry field */
+    const ADDRESSEE_ISO_CODECOUNTRY = 'shipping.addressee_iso_codecountry';
+
+    /** the column name for the addressee_iso_codephone field */
+    const ADDRESSEE_ISO_CODEPHONE = 'shipping.addressee_iso_codephone';
+
+    /** the column name for the addressee_name field */
+    const ADDRESSEE_NAME = 'shipping.addressee_name';
+
+    /** the column name for the addressee_addressee_cellular field */
+    const ADDRESSEE_ADDRESSEE_CELLULAR = 'shipping.addressee_addressee_cellular';
+
+    /** the column name for the addressee_addressee_phone field */
+    const ADDRESSEE_ADDRESSEE_PHONE = 'shipping.addressee_addressee_phone';
+
+    /** the column name for the addressee_address field */
+    const ADDRESSEE_ADDRESS = 'shipping.addressee_address';
+
+    /** the column name for the addressee_address2 field */
+    const ADDRESSEE_ADDRESS2 = 'shipping.addressee_address2';
+
+    /** the column name for the addressee_city field */
+    const ADDRESSEE_CITY = 'shipping.addressee_city';
+
+    /** the column name for the addressee_state field */
+    const ADDRESSEE_STATE = 'shipping.addressee_state';
+
+    /** the column name for the addressee_zipcode field */
+    const ADDRESSEE_ZIPCODE = 'shipping.addressee_zipcode';
 
     /** The enumerated values for the transport_company field */
     const TRANSPORT_COMPANY_FEDEX = 'FEDEX';
@@ -93,6 +123,11 @@ abstract class BaseShippingPeer
     const TRANSPORT_COMPANY_EMS = 'EMS';
     const TRANSPORT_COMPANY_CORREOS_DE_MÉXICO = 'CORREOS DE MÉXICO';
     const TRANSPORT_COMPANY_SEPOMEX = 'SEPOMEX';
+
+    /** The enumerated values for the shipping_status field */
+    const SHIPPING_STATUS_PENDING = 'pending';
+    const SHIPPING_STATUS_TRANSIT = 'transit';
+    const SHIPPING_STATUS_COMPLETE = 'complete';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -113,12 +148,12 @@ abstract class BaseShippingPeer
      * e.g. ShippingPeer::$fieldNames[ShippingPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idshipping', 'Idorder', 'ShippingAddress', 'ShippingTracking', 'TransportCompany', 'ShippingDate', 'ShippingDatecompromise', 'ShippingDaterealdelivery', 'ShippingIsoCodecountry', 'ShippingIsoCodephone', 'ShippingAddressee', 'ShippingAddresseeCellular', 'ShippingAddresseePhone', 'ShippingAddress2', 'ShippingCity', 'ShippingState', 'ShippingZipcode', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idshipping', 'idorder', 'shippingAddress', 'shippingTracking', 'transportCompany', 'shippingDate', 'shippingDatecompromise', 'shippingDaterealdelivery', 'shippingIsoCodecountry', 'shippingIsoCodephone', 'shippingAddressee', 'shippingAddresseeCellular', 'shippingAddresseePhone', 'shippingAddress2', 'shippingCity', 'shippingState', 'shippingZipcode', ),
-        BasePeer::TYPE_COLNAME => array (ShippingPeer::IDSHIPPING, ShippingPeer::IDORDER, ShippingPeer::SHIPPING_ADDRESS, ShippingPeer::SHIPPING_TRACKING, ShippingPeer::TRANSPORT_COMPANY, ShippingPeer::SHIPPING_DATE, ShippingPeer::SHIPPING_DATECOMPROMISE, ShippingPeer::SHIPPING_DATEREALDELIVERY, ShippingPeer::SHIPPING_ISO_CODECOUNTRY, ShippingPeer::SHIPPING_ISO_CODEPHONE, ShippingPeer::SHIPPING_ADDRESSEE, ShippingPeer::SHIPPING_ADDRESSEE_CELLULAR, ShippingPeer::SHIPPING_ADDRESSEE_PHONE, ShippingPeer::SHIPPING_ADDRESS2, ShippingPeer::SHIPPING_CITY, ShippingPeer::SHIPPING_STATE, ShippingPeer::SHIPPING_ZIPCODE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDSHIPPING', 'IDORDER', 'SHIPPING_ADDRESS', 'SHIPPING_TRACKING', 'TRANSPORT_COMPANY', 'SHIPPING_DATE', 'SHIPPING_DATECOMPROMISE', 'SHIPPING_DATEREALDELIVERY', 'SHIPPING_ISO_CODECOUNTRY', 'SHIPPING_ISO_CODEPHONE', 'SHIPPING_ADDRESSEE', 'SHIPPING_ADDRESSEE_CELLULAR', 'SHIPPING_ADDRESSEE_PHONE', 'SHIPPING_ADDRESS2', 'SHIPPING_CITY', 'SHIPPING_STATE', 'SHIPPING_ZIPCODE', ),
-        BasePeer::TYPE_FIELDNAME => array ('idshipping', 'idorder', 'shipping_address', 'shipping_tracking', 'transport_company', 'shipping_date', 'shipping_datecompromise', 'shipping_daterealdelivery', 'shipping_iso_codecountry', 'shipping_iso_codephone', 'shipping_addressee', 'shipping_addressee_cellular', 'shipping_addressee_phone', 'shipping_address2', 'shipping_city', 'shipping_state', 'shipping_zipcode', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+        BasePeer::TYPE_PHPNAME => array ('Idshipping', 'ShippingTracking', 'TransportCompany', 'ShippingDate', 'ShippingDatecompromise', 'ShippingDaterealdelivery', 'ShippingStatus', 'SenderIsoCodecountry', 'SenderIsoCodephone', 'SenderName', 'SenderAddresseeCellular', 'SenderAddresseePhone', 'SenderAddress', 'SenderAddress2', 'SenderCity', 'SenderState', 'SenderZipcode', 'AddresseeIsoCodecountry', 'AddresseeIsoCodephone', 'AddresseeName', 'AddresseeAddresseeCellular', 'AddresseeAddresseePhone', 'AddresseeAddress', 'AddresseeAddress2', 'AddresseeCity', 'AddresseeState', 'AddresseeZipcode', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idshipping', 'shippingTracking', 'transportCompany', 'shippingDate', 'shippingDatecompromise', 'shippingDaterealdelivery', 'shippingStatus', 'senderIsoCodecountry', 'senderIsoCodephone', 'senderName', 'senderAddresseeCellular', 'senderAddresseePhone', 'senderAddress', 'senderAddress2', 'senderCity', 'senderState', 'senderZipcode', 'addresseeIsoCodecountry', 'addresseeIsoCodephone', 'addresseeName', 'addresseeAddresseeCellular', 'addresseeAddresseePhone', 'addresseeAddress', 'addresseeAddress2', 'addresseeCity', 'addresseeState', 'addresseeZipcode', ),
+        BasePeer::TYPE_COLNAME => array (ShippingPeer::IDSHIPPING, ShippingPeer::SHIPPING_TRACKING, ShippingPeer::TRANSPORT_COMPANY, ShippingPeer::SHIPPING_DATE, ShippingPeer::SHIPPING_DATECOMPROMISE, ShippingPeer::SHIPPING_DATEREALDELIVERY, ShippingPeer::SHIPPING_STATUS, ShippingPeer::SENDER_ISO_CODECOUNTRY, ShippingPeer::SENDER_ISO_CODEPHONE, ShippingPeer::SENDER_NAME, ShippingPeer::SENDER_ADDRESSEE_CELLULAR, ShippingPeer::SENDER_ADDRESSEE_PHONE, ShippingPeer::SENDER_ADDRESS, ShippingPeer::SENDER_ADDRESS2, ShippingPeer::SENDER_CITY, ShippingPeer::SENDER_STATE, ShippingPeer::SENDER_ZIPCODE, ShippingPeer::ADDRESSEE_ISO_CODECOUNTRY, ShippingPeer::ADDRESSEE_ISO_CODEPHONE, ShippingPeer::ADDRESSEE_NAME, ShippingPeer::ADDRESSEE_ADDRESSEE_CELLULAR, ShippingPeer::ADDRESSEE_ADDRESSEE_PHONE, ShippingPeer::ADDRESSEE_ADDRESS, ShippingPeer::ADDRESSEE_ADDRESS2, ShippingPeer::ADDRESSEE_CITY, ShippingPeer::ADDRESSEE_STATE, ShippingPeer::ADDRESSEE_ZIPCODE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDSHIPPING', 'SHIPPING_TRACKING', 'TRANSPORT_COMPANY', 'SHIPPING_DATE', 'SHIPPING_DATECOMPROMISE', 'SHIPPING_DATEREALDELIVERY', 'SHIPPING_STATUS', 'SENDER_ISO_CODECOUNTRY', 'SENDER_ISO_CODEPHONE', 'SENDER_NAME', 'SENDER_ADDRESSEE_CELLULAR', 'SENDER_ADDRESSEE_PHONE', 'SENDER_ADDRESS', 'SENDER_ADDRESS2', 'SENDER_CITY', 'SENDER_STATE', 'SENDER_ZIPCODE', 'ADDRESSEE_ISO_CODECOUNTRY', 'ADDRESSEE_ISO_CODEPHONE', 'ADDRESSEE_NAME', 'ADDRESSEE_ADDRESSEE_CELLULAR', 'ADDRESSEE_ADDRESSEE_PHONE', 'ADDRESSEE_ADDRESS', 'ADDRESSEE_ADDRESS2', 'ADDRESSEE_CITY', 'ADDRESSEE_STATE', 'ADDRESSEE_ZIPCODE', ),
+        BasePeer::TYPE_FIELDNAME => array ('idshipping', 'shipping_tracking', 'transport_company', 'shipping_date', 'shipping_datecompromise', 'shipping_daterealdelivery', 'shipping_status', 'sender_iso_codecountry', 'sender_iso_codephone', 'sender_name', 'sender_addressee_cellular', 'sender_addressee_phone', 'sender_address', 'sender_address2', 'sender_city', 'sender_state', 'sender_zipcode', 'addressee_iso_codecountry', 'addressee_iso_codephone', 'addressee_name', 'addressee_addressee_cellular', 'addressee_addressee_phone', 'addressee_address', 'addressee_address2', 'addressee_city', 'addressee_state', 'addressee_zipcode', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, )
     );
 
     /**
@@ -128,12 +163,12 @@ abstract class BaseShippingPeer
      * e.g. ShippingPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idshipping' => 0, 'Idorder' => 1, 'ShippingAddress' => 2, 'ShippingTracking' => 3, 'TransportCompany' => 4, 'ShippingDate' => 5, 'ShippingDatecompromise' => 6, 'ShippingDaterealdelivery' => 7, 'ShippingIsoCodecountry' => 8, 'ShippingIsoCodephone' => 9, 'ShippingAddressee' => 10, 'ShippingAddresseeCellular' => 11, 'ShippingAddresseePhone' => 12, 'ShippingAddress2' => 13, 'ShippingCity' => 14, 'ShippingState' => 15, 'ShippingZipcode' => 16, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idshipping' => 0, 'idorder' => 1, 'shippingAddress' => 2, 'shippingTracking' => 3, 'transportCompany' => 4, 'shippingDate' => 5, 'shippingDatecompromise' => 6, 'shippingDaterealdelivery' => 7, 'shippingIsoCodecountry' => 8, 'shippingIsoCodephone' => 9, 'shippingAddressee' => 10, 'shippingAddresseeCellular' => 11, 'shippingAddresseePhone' => 12, 'shippingAddress2' => 13, 'shippingCity' => 14, 'shippingState' => 15, 'shippingZipcode' => 16, ),
-        BasePeer::TYPE_COLNAME => array (ShippingPeer::IDSHIPPING => 0, ShippingPeer::IDORDER => 1, ShippingPeer::SHIPPING_ADDRESS => 2, ShippingPeer::SHIPPING_TRACKING => 3, ShippingPeer::TRANSPORT_COMPANY => 4, ShippingPeer::SHIPPING_DATE => 5, ShippingPeer::SHIPPING_DATECOMPROMISE => 6, ShippingPeer::SHIPPING_DATEREALDELIVERY => 7, ShippingPeer::SHIPPING_ISO_CODECOUNTRY => 8, ShippingPeer::SHIPPING_ISO_CODEPHONE => 9, ShippingPeer::SHIPPING_ADDRESSEE => 10, ShippingPeer::SHIPPING_ADDRESSEE_CELLULAR => 11, ShippingPeer::SHIPPING_ADDRESSEE_PHONE => 12, ShippingPeer::SHIPPING_ADDRESS2 => 13, ShippingPeer::SHIPPING_CITY => 14, ShippingPeer::SHIPPING_STATE => 15, ShippingPeer::SHIPPING_ZIPCODE => 16, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDSHIPPING' => 0, 'IDORDER' => 1, 'SHIPPING_ADDRESS' => 2, 'SHIPPING_TRACKING' => 3, 'TRANSPORT_COMPANY' => 4, 'SHIPPING_DATE' => 5, 'SHIPPING_DATECOMPROMISE' => 6, 'SHIPPING_DATEREALDELIVERY' => 7, 'SHIPPING_ISO_CODECOUNTRY' => 8, 'SHIPPING_ISO_CODEPHONE' => 9, 'SHIPPING_ADDRESSEE' => 10, 'SHIPPING_ADDRESSEE_CELLULAR' => 11, 'SHIPPING_ADDRESSEE_PHONE' => 12, 'SHIPPING_ADDRESS2' => 13, 'SHIPPING_CITY' => 14, 'SHIPPING_STATE' => 15, 'SHIPPING_ZIPCODE' => 16, ),
-        BasePeer::TYPE_FIELDNAME => array ('idshipping' => 0, 'idorder' => 1, 'shipping_address' => 2, 'shipping_tracking' => 3, 'transport_company' => 4, 'shipping_date' => 5, 'shipping_datecompromise' => 6, 'shipping_daterealdelivery' => 7, 'shipping_iso_codecountry' => 8, 'shipping_iso_codephone' => 9, 'shipping_addressee' => 10, 'shipping_addressee_cellular' => 11, 'shipping_addressee_phone' => 12, 'shipping_address2' => 13, 'shipping_city' => 14, 'shipping_state' => 15, 'shipping_zipcode' => 16, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+        BasePeer::TYPE_PHPNAME => array ('Idshipping' => 0, 'ShippingTracking' => 1, 'TransportCompany' => 2, 'ShippingDate' => 3, 'ShippingDatecompromise' => 4, 'ShippingDaterealdelivery' => 5, 'ShippingStatus' => 6, 'SenderIsoCodecountry' => 7, 'SenderIsoCodephone' => 8, 'SenderName' => 9, 'SenderAddresseeCellular' => 10, 'SenderAddresseePhone' => 11, 'SenderAddress' => 12, 'SenderAddress2' => 13, 'SenderCity' => 14, 'SenderState' => 15, 'SenderZipcode' => 16, 'AddresseeIsoCodecountry' => 17, 'AddresseeIsoCodephone' => 18, 'AddresseeName' => 19, 'AddresseeAddresseeCellular' => 20, 'AddresseeAddresseePhone' => 21, 'AddresseeAddress' => 22, 'AddresseeAddress2' => 23, 'AddresseeCity' => 24, 'AddresseeState' => 25, 'AddresseeZipcode' => 26, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idshipping' => 0, 'shippingTracking' => 1, 'transportCompany' => 2, 'shippingDate' => 3, 'shippingDatecompromise' => 4, 'shippingDaterealdelivery' => 5, 'shippingStatus' => 6, 'senderIsoCodecountry' => 7, 'senderIsoCodephone' => 8, 'senderName' => 9, 'senderAddresseeCellular' => 10, 'senderAddresseePhone' => 11, 'senderAddress' => 12, 'senderAddress2' => 13, 'senderCity' => 14, 'senderState' => 15, 'senderZipcode' => 16, 'addresseeIsoCodecountry' => 17, 'addresseeIsoCodephone' => 18, 'addresseeName' => 19, 'addresseeAddresseeCellular' => 20, 'addresseeAddresseePhone' => 21, 'addresseeAddress' => 22, 'addresseeAddress2' => 23, 'addresseeCity' => 24, 'addresseeState' => 25, 'addresseeZipcode' => 26, ),
+        BasePeer::TYPE_COLNAME => array (ShippingPeer::IDSHIPPING => 0, ShippingPeer::SHIPPING_TRACKING => 1, ShippingPeer::TRANSPORT_COMPANY => 2, ShippingPeer::SHIPPING_DATE => 3, ShippingPeer::SHIPPING_DATECOMPROMISE => 4, ShippingPeer::SHIPPING_DATEREALDELIVERY => 5, ShippingPeer::SHIPPING_STATUS => 6, ShippingPeer::SENDER_ISO_CODECOUNTRY => 7, ShippingPeer::SENDER_ISO_CODEPHONE => 8, ShippingPeer::SENDER_NAME => 9, ShippingPeer::SENDER_ADDRESSEE_CELLULAR => 10, ShippingPeer::SENDER_ADDRESSEE_PHONE => 11, ShippingPeer::SENDER_ADDRESS => 12, ShippingPeer::SENDER_ADDRESS2 => 13, ShippingPeer::SENDER_CITY => 14, ShippingPeer::SENDER_STATE => 15, ShippingPeer::SENDER_ZIPCODE => 16, ShippingPeer::ADDRESSEE_ISO_CODECOUNTRY => 17, ShippingPeer::ADDRESSEE_ISO_CODEPHONE => 18, ShippingPeer::ADDRESSEE_NAME => 19, ShippingPeer::ADDRESSEE_ADDRESSEE_CELLULAR => 20, ShippingPeer::ADDRESSEE_ADDRESSEE_PHONE => 21, ShippingPeer::ADDRESSEE_ADDRESS => 22, ShippingPeer::ADDRESSEE_ADDRESS2 => 23, ShippingPeer::ADDRESSEE_CITY => 24, ShippingPeer::ADDRESSEE_STATE => 25, ShippingPeer::ADDRESSEE_ZIPCODE => 26, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDSHIPPING' => 0, 'SHIPPING_TRACKING' => 1, 'TRANSPORT_COMPANY' => 2, 'SHIPPING_DATE' => 3, 'SHIPPING_DATECOMPROMISE' => 4, 'SHIPPING_DATEREALDELIVERY' => 5, 'SHIPPING_STATUS' => 6, 'SENDER_ISO_CODECOUNTRY' => 7, 'SENDER_ISO_CODEPHONE' => 8, 'SENDER_NAME' => 9, 'SENDER_ADDRESSEE_CELLULAR' => 10, 'SENDER_ADDRESSEE_PHONE' => 11, 'SENDER_ADDRESS' => 12, 'SENDER_ADDRESS2' => 13, 'SENDER_CITY' => 14, 'SENDER_STATE' => 15, 'SENDER_ZIPCODE' => 16, 'ADDRESSEE_ISO_CODECOUNTRY' => 17, 'ADDRESSEE_ISO_CODEPHONE' => 18, 'ADDRESSEE_NAME' => 19, 'ADDRESSEE_ADDRESSEE_CELLULAR' => 20, 'ADDRESSEE_ADDRESSEE_PHONE' => 21, 'ADDRESSEE_ADDRESS' => 22, 'ADDRESSEE_ADDRESS2' => 23, 'ADDRESSEE_CITY' => 24, 'ADDRESSEE_STATE' => 25, 'ADDRESSEE_ZIPCODE' => 26, ),
+        BasePeer::TYPE_FIELDNAME => array ('idshipping' => 0, 'shipping_tracking' => 1, 'transport_company' => 2, 'shipping_date' => 3, 'shipping_datecompromise' => 4, 'shipping_daterealdelivery' => 5, 'shipping_status' => 6, 'sender_iso_codecountry' => 7, 'sender_iso_codephone' => 8, 'sender_name' => 9, 'sender_addressee_cellular' => 10, 'sender_addressee_phone' => 11, 'sender_address' => 12, 'sender_address2' => 13, 'sender_city' => 14, 'sender_state' => 15, 'sender_zipcode' => 16, 'addressee_iso_codecountry' => 17, 'addressee_iso_codephone' => 18, 'addressee_name' => 19, 'addressee_addressee_cellular' => 20, 'addressee_addressee_phone' => 21, 'addressee_address' => 22, 'addressee_address2' => 23, 'addressee_city' => 24, 'addressee_state' => 25, 'addressee_zipcode' => 26, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, )
     );
 
     /** The enumerated values for this table */
@@ -148,6 +183,11 @@ abstract class BaseShippingPeer
             ShippingPeer::TRANSPORT_COMPANY_EMS,
             ShippingPeer::TRANSPORT_COMPANY_CORREOS_DE_MÉXICO,
             ShippingPeer::TRANSPORT_COMPANY_SEPOMEX,
+        ),
+        ShippingPeer::SHIPPING_STATUS => array(
+            ShippingPeer::SHIPPING_STATUS_PENDING,
+            ShippingPeer::SHIPPING_STATUS_TRANSIT,
+            ShippingPeer::SHIPPING_STATUS_COMPLETE,
         ),
     );
 
@@ -268,40 +308,60 @@ abstract class BaseShippingPeer
     {
         if (null === $alias) {
             $criteria->addSelectColumn(ShippingPeer::IDSHIPPING);
-            $criteria->addSelectColumn(ShippingPeer::IDORDER);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ADDRESS);
             $criteria->addSelectColumn(ShippingPeer::SHIPPING_TRACKING);
             $criteria->addSelectColumn(ShippingPeer::TRANSPORT_COMPANY);
             $criteria->addSelectColumn(ShippingPeer::SHIPPING_DATE);
             $criteria->addSelectColumn(ShippingPeer::SHIPPING_DATECOMPROMISE);
             $criteria->addSelectColumn(ShippingPeer::SHIPPING_DATEREALDELIVERY);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ISO_CODECOUNTRY);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ISO_CODEPHONE);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ADDRESSEE);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ADDRESSEE_CELLULAR);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ADDRESSEE_PHONE);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ADDRESS2);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_CITY);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_STATE);
-            $criteria->addSelectColumn(ShippingPeer::SHIPPING_ZIPCODE);
+            $criteria->addSelectColumn(ShippingPeer::SHIPPING_STATUS);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_ISO_CODECOUNTRY);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_ISO_CODEPHONE);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_NAME);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_ADDRESSEE_CELLULAR);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_ADDRESSEE_PHONE);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_ADDRESS);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_ADDRESS2);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_CITY);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_STATE);
+            $criteria->addSelectColumn(ShippingPeer::SENDER_ZIPCODE);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_ISO_CODECOUNTRY);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_ISO_CODEPHONE);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_NAME);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_ADDRESSEE_CELLULAR);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_ADDRESSEE_PHONE);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_ADDRESS);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_ADDRESS2);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_CITY);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_STATE);
+            $criteria->addSelectColumn(ShippingPeer::ADDRESSEE_ZIPCODE);
         } else {
             $criteria->addSelectColumn($alias . '.idshipping');
-            $criteria->addSelectColumn($alias . '.idorder');
-            $criteria->addSelectColumn($alias . '.shipping_address');
             $criteria->addSelectColumn($alias . '.shipping_tracking');
             $criteria->addSelectColumn($alias . '.transport_company');
             $criteria->addSelectColumn($alias . '.shipping_date');
             $criteria->addSelectColumn($alias . '.shipping_datecompromise');
             $criteria->addSelectColumn($alias . '.shipping_daterealdelivery');
-            $criteria->addSelectColumn($alias . '.shipping_iso_codecountry');
-            $criteria->addSelectColumn($alias . '.shipping_iso_codephone');
-            $criteria->addSelectColumn($alias . '.shipping_addressee');
-            $criteria->addSelectColumn($alias . '.shipping_addressee_cellular');
-            $criteria->addSelectColumn($alias . '.shipping_addressee_phone');
-            $criteria->addSelectColumn($alias . '.shipping_address2');
-            $criteria->addSelectColumn($alias . '.shipping_city');
-            $criteria->addSelectColumn($alias . '.shipping_state');
-            $criteria->addSelectColumn($alias . '.shipping_zipcode');
+            $criteria->addSelectColumn($alias . '.shipping_status');
+            $criteria->addSelectColumn($alias . '.sender_iso_codecountry');
+            $criteria->addSelectColumn($alias . '.sender_iso_codephone');
+            $criteria->addSelectColumn($alias . '.sender_name');
+            $criteria->addSelectColumn($alias . '.sender_addressee_cellular');
+            $criteria->addSelectColumn($alias . '.sender_addressee_phone');
+            $criteria->addSelectColumn($alias . '.sender_address');
+            $criteria->addSelectColumn($alias . '.sender_address2');
+            $criteria->addSelectColumn($alias . '.sender_city');
+            $criteria->addSelectColumn($alias . '.sender_state');
+            $criteria->addSelectColumn($alias . '.sender_zipcode');
+            $criteria->addSelectColumn($alias . '.addressee_iso_codecountry');
+            $criteria->addSelectColumn($alias . '.addressee_iso_codephone');
+            $criteria->addSelectColumn($alias . '.addressee_name');
+            $criteria->addSelectColumn($alias . '.addressee_addressee_cellular');
+            $criteria->addSelectColumn($alias . '.addressee_addressee_phone');
+            $criteria->addSelectColumn($alias . '.addressee_address');
+            $criteria->addSelectColumn($alias . '.addressee_address2');
+            $criteria->addSelectColumn($alias . '.addressee_city');
+            $criteria->addSelectColumn($alias . '.addressee_state');
+            $criteria->addSelectColumn($alias . '.addressee_zipcode');
         }
     }
 
@@ -506,6 +566,12 @@ abstract class BaseShippingPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in OrdershippingPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        OrdershippingPeer::clearInstancePool();
+        // Invalidate objects in ShippingHistoryPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ShippingHistoryPeer::clearInstancePool();
     }
 
     /**
@@ -600,244 +666,6 @@ abstract class BaseShippingPeer
         }
 
         return array($obj, $col);
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Order table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinOrder(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ShippingPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ShippingPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(ShippingPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ShippingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ShippingPeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Selects a collection of Shipping objects pre-filled with their Order objects.
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Shipping objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinOrder(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ShippingPeer::DATABASE_NAME);
-        }
-
-        ShippingPeer::addSelectColumns($criteria);
-        $startcol = ShippingPeer::NUM_HYDRATE_COLUMNS;
-        OrderPeer::addSelectColumns($criteria);
-
-        $criteria->addJoin(ShippingPeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ShippingPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ShippingPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = ShippingPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ShippingPeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = OrderPeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = OrderPeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = OrderPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    OrderPeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (Shipping) to $obj2 (Order)
-                $obj2->addShipping($obj1);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining all related tables
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ShippingPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ShippingPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(ShippingPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ShippingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ShippingPeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-    /**
-     * Selects a collection of Shipping objects pre-filled with all related objects.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Shipping objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ShippingPeer::DATABASE_NAME);
-        }
-
-        ShippingPeer::addSelectColumns($criteria);
-        $startcol2 = ShippingPeer::NUM_HYDRATE_COLUMNS;
-
-        OrderPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + OrderPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ShippingPeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ShippingPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ShippingPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ShippingPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ShippingPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-            // Add objects for joined Order rows
-
-            $key2 = OrderPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-            if ($key2 !== null) {
-                $obj2 = OrderPeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = OrderPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    OrderPeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 loaded
-
-                // Add the $obj1 (Shipping) to the collection in $obj2 (Order)
-                $obj2->addShipping($obj1);
-            } // if joined row not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
     }
 
     /**
@@ -973,6 +801,7 @@ abstract class BaseShippingPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
+            $affectedRows += ShippingPeer::doOnDeleteCascade(new Criteria(ShippingPeer::DATABASE_NAME), $con);
             $affectedRows += BasePeer::doDeleteAll(ShippingPeer::TABLE_NAME, $con, ShippingPeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
@@ -1006,24 +835,14 @@ abstract class BaseShippingPeer
         }
 
         if ($values instanceof Criteria) {
-            // invalidate the cache for all objects of this type, since we have no
-            // way of knowing (without running a query) what objects should be invalidated
-            // from the cache based on this Criteria.
-            ShippingPeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
         } elseif ($values instanceof Shipping) { // it's a model object
-            // invalidate the cache for this single object
-            ShippingPeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(ShippingPeer::DATABASE_NAME);
             $criteria->add(ShippingPeer::IDSHIPPING, (array) $values, Criteria::IN);
-            // invalidate the cache for this object(s)
-            foreach ((array) $values as $singleval) {
-                ShippingPeer::removeInstanceFromPool($singleval);
-            }
         }
 
         // Set the correct dbName
@@ -1036,6 +855,23 @@ abstract class BaseShippingPeer
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
 
+            // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+            $c = clone $criteria;
+            $affectedRows += ShippingPeer::doOnDeleteCascade($c, $con);
+
+            // Because this db requires some delete cascade/set null emulation, we have to
+            // clear the cached instance *after* the emulation has happened (since
+            // instances get re-added by the select statement contained therein).
+            if ($values instanceof Criteria) {
+                ShippingPeer::clearInstancePool();
+            } elseif ($values instanceof Shipping) { // it's a model object
+                ShippingPeer::removeInstanceFromPool($values);
+            } else { // it's a primary key, or an array of pks
+                foreach ((array) $values as $singleval) {
+                    ShippingPeer::removeInstanceFromPool($singleval);
+                }
+            }
+
             $affectedRows += BasePeer::doDelete($criteria, $con);
             ShippingPeer::clearRelatedInstancePool();
             $con->commit();
@@ -1045,6 +881,45 @@ abstract class BaseShippingPeer
             $con->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
+     * feature (like MySQL or SQLite).
+     *
+     * This method is not very speedy because it must perform a query first to get
+     * the implicated records and then perform the deletes by calling those Peer classes.
+     *
+     * This method should be used within a transaction if possible.
+     *
+     * @param      Criteria $criteria
+     * @param      PropelPDO $con
+     * @return int The number of affected rows (if supported by underlying database driver).
+     */
+    protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
+    {
+        // initialize var to track total num of affected rows
+        $affectedRows = 0;
+
+        // first find the objects that are implicated by the $criteria
+        $objects = ShippingPeer::doSelect($criteria, $con);
+        foreach ($objects as $obj) {
+
+
+            // delete related Ordershipping objects
+            $criteria = new Criteria(OrdershippingPeer::DATABASE_NAME);
+
+            $criteria->add(OrdershippingPeer::IDSHIPPING, $obj->getIdshipping());
+            $affectedRows += OrdershippingPeer::doDelete($criteria, $con);
+
+            // delete related ShippingHistory objects
+            $criteria = new Criteria(ShippingHistoryPeer::DATABASE_NAME);
+
+            $criteria->add(ShippingHistoryPeer::IDSHIPPING, $obj->getIdshipping());
+            $affectedRows += ShippingHistoryPeer::doDelete($criteria, $con);
+        }
+
+        return $affectedRows;
     }
 
     /**

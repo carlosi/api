@@ -30,13 +30,13 @@
  * @method MxtaxdocumentQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method MxtaxdocumentQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method MxtaxdocumentQuery leftJoinClienttax($relationAlias = null) Adds a LEFT JOIN clause to the query using the Clienttax relation
- * @method MxtaxdocumentQuery rightJoinClienttax($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Clienttax relation
- * @method MxtaxdocumentQuery innerJoinClienttax($relationAlias = null) Adds a INNER JOIN clause to the query using the Clienttax relation
- *
  * @method MxtaxdocumentQuery leftJoinOrder($relationAlias = null) Adds a LEFT JOIN clause to the query using the Order relation
  * @method MxtaxdocumentQuery rightJoinOrder($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Order relation
  * @method MxtaxdocumentQuery innerJoinOrder($relationAlias = null) Adds a INNER JOIN clause to the query using the Order relation
+ *
+ * @method MxtaxdocumentQuery leftJoinClienttax($relationAlias = null) Adds a LEFT JOIN clause to the query using the Clienttax relation
+ * @method MxtaxdocumentQuery rightJoinClienttax($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Clienttax relation
+ * @method MxtaxdocumentQuery innerJoinClienttax($relationAlias = null) Adds a INNER JOIN clause to the query using the Clienttax relation
  *
  * @method Mxtaxdocument findOne(PropelPDO $con = null) Return the first Mxtaxdocument matching the query
  * @method Mxtaxdocument findOneOrCreate(PropelPDO $con = null) Return the first Mxtaxdocument matching the query, or a new Mxtaxdocument object populated from the query conditions when no match is found
@@ -560,82 +560,6 @@ abstract class BaseMxtaxdocumentQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Clienttax object
-     *
-     * @param   Clienttax|PropelObjectCollection $clienttax The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 MxtaxdocumentQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByClienttax($clienttax, $comparison = null)
-    {
-        if ($clienttax instanceof Clienttax) {
-            return $this
-                ->addUsingAlias(MxtaxdocumentPeer::IDCLIENTTAX, $clienttax->getIdclienttax(), $comparison);
-        } elseif ($clienttax instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(MxtaxdocumentPeer::IDCLIENTTAX, $clienttax->toKeyValue('PrimaryKey', 'Idclienttax'), $comparison);
-        } else {
-            throw new PropelException('filterByClienttax() only accepts arguments of type Clienttax or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Clienttax relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return MxtaxdocumentQuery The current query, for fluid interface
-     */
-    public function joinClienttax($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Clienttax');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Clienttax');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Clienttax relation Clienttax object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   ClienttaxQuery A secondary query class using the current class as primary query
-     */
-    public function useClienttaxQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinClienttax($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Clienttax', 'ClienttaxQuery');
-    }
-
-    /**
      * Filter the query by a related Order object
      *
      * @param   Order|PropelObjectCollection $order The related object(s) to use as filter
@@ -709,6 +633,82 @@ abstract class BaseMxtaxdocumentQuery extends ModelCriteria
         return $this
             ->joinOrder($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Order', 'OrderQuery');
+    }
+
+    /**
+     * Filter the query by a related Clienttax object
+     *
+     * @param   Clienttax|PropelObjectCollection $clienttax The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 MxtaxdocumentQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByClienttax($clienttax, $comparison = null)
+    {
+        if ($clienttax instanceof Clienttax) {
+            return $this
+                ->addUsingAlias(MxtaxdocumentPeer::IDCLIENTTAX, $clienttax->getIdclienttax(), $comparison);
+        } elseif ($clienttax instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(MxtaxdocumentPeer::IDCLIENTTAX, $clienttax->toKeyValue('PrimaryKey', 'Idclienttax'), $comparison);
+        } else {
+            throw new PropelException('filterByClienttax() only accepts arguments of type Clienttax or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Clienttax relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return MxtaxdocumentQuery The current query, for fluid interface
+     */
+    public function joinClienttax($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Clienttax');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Clienttax');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Clienttax relation Clienttax object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ClienttaxQuery A secondary query class using the current class as primary query
+     */
+    public function useClienttaxQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinClienttax($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Clienttax', 'ClienttaxQuery');
     }
 
     /**

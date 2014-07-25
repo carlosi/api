@@ -48,12 +48,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
     protected $productcategory_dependency;
 
     /**
-     * The value for the productcategory_property field.
-     * @var        string
-     */
-    protected $productcategory_property;
-
-    /**
      * @var        Productcategory
      */
     protected $aProductcategoryRelatedByProductcategoryDependency;
@@ -65,10 +59,10 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
     protected $collProductcategorysRelatedByIdproductcategoryPartial;
 
     /**
-     * @var        PropelObjectCollection|Productcategoryproperty[] Collection to store aggregation of Productcategoryproperty objects.
+     * @var        PropelObjectCollection|Productcategorystaticproperty[] Collection to store aggregation of Productcategorystaticproperty objects.
      */
-    protected $collProductcategorypropertys;
-    protected $collProductcategorypropertysPartial;
+    protected $collProductcategorystaticpropertys;
+    protected $collProductcategorystaticpropertysPartial;
 
     /**
      * @var        PropelObjectCollection|Productmain[] Collection to store aggregation of Productmain objects.
@@ -106,7 +100,7 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $productcategorypropertysScheduledForDeletion = null;
+    protected $productcategorystaticpropertysScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -145,17 +139,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
     {
 
         return $this->productcategory_dependency;
-    }
-
-    /**
-     * Get the [productcategory_property] column value.
-     *
-     * @return string
-     */
-    public function getProductcategoryProperty()
-    {
-
-        return $this->productcategory_property;
     }
 
     /**
@@ -226,27 +209,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
     } // setProductcategoryDependency()
 
     /**
-     * Set the value of [productcategory_property] column.
-     *
-     * @param  string $v new value
-     * @return Productcategory The current object (for fluent API support)
-     */
-    public function setProductcategoryProperty($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->productcategory_property !== $v) {
-            $this->productcategory_property = $v;
-            $this->modifiedColumns[] = ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY;
-        }
-
-
-        return $this;
-    } // setProductcategoryProperty()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -281,7 +243,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             $this->idproductcategory = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->category_name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
             $this->productcategory_dependency = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->productcategory_property = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -291,7 +252,7 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 4; // 4 = ProductcategoryPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = ProductcategoryPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Productcategory object", $e);
@@ -359,7 +320,7 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             $this->aProductcategoryRelatedByProductcategoryDependency = null;
             $this->collProductcategorysRelatedByIdproductcategory = null;
 
-            $this->collProductcategorypropertys = null;
+            $this->collProductcategorystaticpropertys = null;
 
             $this->collProductmains = null;
 
@@ -516,17 +477,17 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
                 }
             }
 
-            if ($this->productcategorypropertysScheduledForDeletion !== null) {
-                if (!$this->productcategorypropertysScheduledForDeletion->isEmpty()) {
-                    ProductcategorypropertyQuery::create()
-                        ->filterByPrimaryKeys($this->productcategorypropertysScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->productcategorystaticpropertysScheduledForDeletion !== null) {
+                if (!$this->productcategorystaticpropertysScheduledForDeletion->isEmpty()) {
+                    ProductcategorystaticpropertyQuery::create()
+                        ->filterByPrimaryKeys($this->productcategorystaticpropertysScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->productcategorypropertysScheduledForDeletion = null;
+                    $this->productcategorystaticpropertysScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collProductcategorypropertys !== null) {
-                foreach ($this->collProductcategorypropertys as $referrerFK) {
+            if ($this->collProductcategorystaticpropertys !== null) {
+                foreach ($this->collProductcategorystaticpropertys as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -585,9 +546,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
         if ($this->isColumnModified(ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY)) {
             $modifiedColumns[':p' . $index++]  = '`productcategory_dependency`';
         }
-        if ($this->isColumnModified(ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY)) {
-            $modifiedColumns[':p' . $index++]  = '`productcategory_property`';
-        }
 
         $sql = sprintf(
             'INSERT INTO `productcategory` (%s) VALUES (%s)',
@@ -607,9 +565,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
                         break;
                     case '`productcategory_dependency`':
                         $stmt->bindValue($identifier, $this->productcategory_dependency, PDO::PARAM_INT);
-                        break;
-                    case '`productcategory_property`':
-                        $stmt->bindValue($identifier, $this->productcategory_property, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -730,8 +685,8 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collProductcategorypropertys !== null) {
-                    foreach ($this->collProductcategorypropertys as $referrerFK) {
+                if ($this->collProductcategorystaticpropertys !== null) {
+                    foreach ($this->collProductcategorystaticpropertys as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -790,9 +745,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             case 2:
                 return $this->getProductcategoryDependency();
                 break;
-            case 3:
-                return $this->getProductcategoryProperty();
-                break;
             default:
                 return null;
                 break;
@@ -825,7 +777,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             $keys[0] => $this->getIdproductcategory(),
             $keys[1] => $this->getCategoryName(),
             $keys[2] => $this->getProductcategoryDependency(),
-            $keys[3] => $this->getProductcategoryProperty(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -839,8 +790,8 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             if (null !== $this->collProductcategorysRelatedByIdproductcategory) {
                 $result['ProductcategorysRelatedByIdproductcategory'] = $this->collProductcategorysRelatedByIdproductcategory->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collProductcategorypropertys) {
-                $result['Productcategorypropertys'] = $this->collProductcategorypropertys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->collProductcategorystaticpropertys) {
+                $result['Productcategorystaticpropertys'] = $this->collProductcategorystaticpropertys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collProductmains) {
                 $result['Productmains'] = $this->collProductmains->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -888,9 +839,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             case 2:
                 $this->setProductcategoryDependency($value);
                 break;
-            case 3:
-                $this->setProductcategoryProperty($value);
-                break;
         } // switch()
     }
 
@@ -918,7 +866,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
         if (array_key_exists($keys[0], $arr)) $this->setIdproductcategory($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setCategoryName($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setProductcategoryDependency($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setProductcategoryProperty($arr[$keys[3]]);
     }
 
     /**
@@ -933,7 +880,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
         if ($this->isColumnModified(ProductcategoryPeer::IDPRODUCTCATEGORY)) $criteria->add(ProductcategoryPeer::IDPRODUCTCATEGORY, $this->idproductcategory);
         if ($this->isColumnModified(ProductcategoryPeer::CATEGORY_NAME)) $criteria->add(ProductcategoryPeer::CATEGORY_NAME, $this->category_name);
         if ($this->isColumnModified(ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY)) $criteria->add(ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY, $this->productcategory_dependency);
-        if ($this->isColumnModified(ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY)) $criteria->add(ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY, $this->productcategory_property);
 
         return $criteria;
     }
@@ -999,7 +945,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
     {
         $copyObj->setCategoryName($this->getCategoryName());
         $copyObj->setProductcategoryDependency($this->getProductcategoryDependency());
-        $copyObj->setProductcategoryProperty($this->getProductcategoryProperty());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1014,9 +959,9 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getProductcategorypropertys() as $relObj) {
+            foreach ($this->getProductcategorystaticpropertys() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addProductcategoryproperty($relObj->copy($deepCopy));
+                    $copyObj->addProductcategorystaticproperty($relObj->copy($deepCopy));
                 }
             }
 
@@ -1142,8 +1087,8 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
         if ('ProductcategoryRelatedByIdproductcategory' == $relationName) {
             $this->initProductcategorysRelatedByIdproductcategory();
         }
-        if ('Productcategoryproperty' == $relationName) {
-            $this->initProductcategorypropertys();
+        if ('Productcategorystaticproperty' == $relationName) {
+            $this->initProductcategorystaticpropertys();
         }
         if ('Productmain' == $relationName) {
             $this->initProductmains();
@@ -1376,36 +1321,36 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collProductcategorypropertys collection
+     * Clears out the collProductcategorystaticpropertys collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return Productcategory The current object (for fluent API support)
-     * @see        addProductcategorypropertys()
+     * @see        addProductcategorystaticpropertys()
      */
-    public function clearProductcategorypropertys()
+    public function clearProductcategorystaticpropertys()
     {
-        $this->collProductcategorypropertys = null; // important to set this to null since that means it is uninitialized
-        $this->collProductcategorypropertysPartial = null;
+        $this->collProductcategorystaticpropertys = null; // important to set this to null since that means it is uninitialized
+        $this->collProductcategorystaticpropertysPartial = null;
 
         return $this;
     }
 
     /**
-     * reset is the collProductcategorypropertys collection loaded partially
+     * reset is the collProductcategorystaticpropertys collection loaded partially
      *
      * @return void
      */
-    public function resetPartialProductcategorypropertys($v = true)
+    public function resetPartialProductcategorystaticpropertys($v = true)
     {
-        $this->collProductcategorypropertysPartial = $v;
+        $this->collProductcategorystaticpropertysPartial = $v;
     }
 
     /**
-     * Initializes the collProductcategorypropertys collection.
+     * Initializes the collProductcategorystaticpropertys collection.
      *
-     * By default this just sets the collProductcategorypropertys collection to an empty array (like clearcollProductcategorypropertys());
+     * By default this just sets the collProductcategorystaticpropertys collection to an empty array (like clearcollProductcategorystaticpropertys());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1414,17 +1359,17 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
      *
      * @return void
      */
-    public function initProductcategorypropertys($overrideExisting = true)
+    public function initProductcategorystaticpropertys($overrideExisting = true)
     {
-        if (null !== $this->collProductcategorypropertys && !$overrideExisting) {
+        if (null !== $this->collProductcategorystaticpropertys && !$overrideExisting) {
             return;
         }
-        $this->collProductcategorypropertys = new PropelObjectCollection();
-        $this->collProductcategorypropertys->setModel('Productcategoryproperty');
+        $this->collProductcategorystaticpropertys = new PropelObjectCollection();
+        $this->collProductcategorystaticpropertys->setModel('Productcategorystaticproperty');
     }
 
     /**
-     * Gets an array of Productcategoryproperty objects which contain a foreign key that references this object.
+     * Gets an array of Productcategorystaticproperty objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1434,107 +1379,107 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Productcategoryproperty[] List of Productcategoryproperty objects
+     * @return PropelObjectCollection|Productcategorystaticproperty[] List of Productcategorystaticproperty objects
      * @throws PropelException
      */
-    public function getProductcategorypropertys($criteria = null, PropelPDO $con = null)
+    public function getProductcategorystaticpropertys($criteria = null, PropelPDO $con = null)
     {
-        $partial = $this->collProductcategorypropertysPartial && !$this->isNew();
-        if (null === $this->collProductcategorypropertys || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collProductcategorypropertys) {
+        $partial = $this->collProductcategorystaticpropertysPartial && !$this->isNew();
+        if (null === $this->collProductcategorystaticpropertys || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collProductcategorystaticpropertys) {
                 // return empty collection
-                $this->initProductcategorypropertys();
+                $this->initProductcategorystaticpropertys();
             } else {
-                $collProductcategorypropertys = ProductcategorypropertyQuery::create(null, $criteria)
+                $collProductcategorystaticpropertys = ProductcategorystaticpropertyQuery::create(null, $criteria)
                     ->filterByProductcategory($this)
                     ->find($con);
                 if (null !== $criteria) {
-                    if (false !== $this->collProductcategorypropertysPartial && count($collProductcategorypropertys)) {
-                      $this->initProductcategorypropertys(false);
+                    if (false !== $this->collProductcategorystaticpropertysPartial && count($collProductcategorystaticpropertys)) {
+                      $this->initProductcategorystaticpropertys(false);
 
-                      foreach ($collProductcategorypropertys as $obj) {
-                        if (false == $this->collProductcategorypropertys->contains($obj)) {
-                          $this->collProductcategorypropertys->append($obj);
+                      foreach ($collProductcategorystaticpropertys as $obj) {
+                        if (false == $this->collProductcategorystaticpropertys->contains($obj)) {
+                          $this->collProductcategorystaticpropertys->append($obj);
                         }
                       }
 
-                      $this->collProductcategorypropertysPartial = true;
+                      $this->collProductcategorystaticpropertysPartial = true;
                     }
 
-                    $collProductcategorypropertys->getInternalIterator()->rewind();
+                    $collProductcategorystaticpropertys->getInternalIterator()->rewind();
 
-                    return $collProductcategorypropertys;
+                    return $collProductcategorystaticpropertys;
                 }
 
-                if ($partial && $this->collProductcategorypropertys) {
-                    foreach ($this->collProductcategorypropertys as $obj) {
+                if ($partial && $this->collProductcategorystaticpropertys) {
+                    foreach ($this->collProductcategorystaticpropertys as $obj) {
                         if ($obj->isNew()) {
-                            $collProductcategorypropertys[] = $obj;
+                            $collProductcategorystaticpropertys[] = $obj;
                         }
                     }
                 }
 
-                $this->collProductcategorypropertys = $collProductcategorypropertys;
-                $this->collProductcategorypropertysPartial = false;
+                $this->collProductcategorystaticpropertys = $collProductcategorystaticpropertys;
+                $this->collProductcategorystaticpropertysPartial = false;
             }
         }
 
-        return $this->collProductcategorypropertys;
+        return $this->collProductcategorystaticpropertys;
     }
 
     /**
-     * Sets a collection of Productcategoryproperty objects related by a one-to-many relationship
+     * Sets a collection of Productcategorystaticproperty objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param PropelCollection $productcategorypropertys A Propel collection.
+     * @param PropelCollection $productcategorystaticpropertys A Propel collection.
      * @param PropelPDO $con Optional connection object
      * @return Productcategory The current object (for fluent API support)
      */
-    public function setProductcategorypropertys(PropelCollection $productcategorypropertys, PropelPDO $con = null)
+    public function setProductcategorystaticpropertys(PropelCollection $productcategorystaticpropertys, PropelPDO $con = null)
     {
-        $productcategorypropertysToDelete = $this->getProductcategorypropertys(new Criteria(), $con)->diff($productcategorypropertys);
+        $productcategorystaticpropertysToDelete = $this->getProductcategorystaticpropertys(new Criteria(), $con)->diff($productcategorystaticpropertys);
 
 
-        $this->productcategorypropertysScheduledForDeletion = $productcategorypropertysToDelete;
+        $this->productcategorystaticpropertysScheduledForDeletion = $productcategorystaticpropertysToDelete;
 
-        foreach ($productcategorypropertysToDelete as $productcategorypropertyRemoved) {
-            $productcategorypropertyRemoved->setProductcategory(null);
+        foreach ($productcategorystaticpropertysToDelete as $productcategorystaticpropertyRemoved) {
+            $productcategorystaticpropertyRemoved->setProductcategory(null);
         }
 
-        $this->collProductcategorypropertys = null;
-        foreach ($productcategorypropertys as $productcategoryproperty) {
-            $this->addProductcategoryproperty($productcategoryproperty);
+        $this->collProductcategorystaticpropertys = null;
+        foreach ($productcategorystaticpropertys as $productcategorystaticproperty) {
+            $this->addProductcategorystaticproperty($productcategorystaticproperty);
         }
 
-        $this->collProductcategorypropertys = $productcategorypropertys;
-        $this->collProductcategorypropertysPartial = false;
+        $this->collProductcategorystaticpropertys = $productcategorystaticpropertys;
+        $this->collProductcategorystaticpropertysPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related Productcategoryproperty objects.
+     * Returns the number of related Productcategorystaticproperty objects.
      *
      * @param Criteria $criteria
      * @param boolean $distinct
      * @param PropelPDO $con
-     * @return int             Count of related Productcategoryproperty objects.
+     * @return int             Count of related Productcategorystaticproperty objects.
      * @throws PropelException
      */
-    public function countProductcategorypropertys(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    public function countProductcategorystaticpropertys(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
     {
-        $partial = $this->collProductcategorypropertysPartial && !$this->isNew();
-        if (null === $this->collProductcategorypropertys || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collProductcategorypropertys) {
+        $partial = $this->collProductcategorystaticpropertysPartial && !$this->isNew();
+        if (null === $this->collProductcategorystaticpropertys || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collProductcategorystaticpropertys) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getProductcategorypropertys());
+                return count($this->getProductcategorystaticpropertys());
             }
-            $query = ProductcategorypropertyQuery::create(null, $criteria);
+            $query = ProductcategorystaticpropertyQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1544,28 +1489,28 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
                 ->count($con);
         }
 
-        return count($this->collProductcategorypropertys);
+        return count($this->collProductcategorystaticpropertys);
     }
 
     /**
-     * Method called to associate a Productcategoryproperty object to this object
-     * through the Productcategoryproperty foreign key attribute.
+     * Method called to associate a Productcategorystaticproperty object to this object
+     * through the Productcategorystaticproperty foreign key attribute.
      *
-     * @param    Productcategoryproperty $l Productcategoryproperty
+     * @param    Productcategorystaticproperty $l Productcategorystaticproperty
      * @return Productcategory The current object (for fluent API support)
      */
-    public function addProductcategoryproperty(Productcategoryproperty $l)
+    public function addProductcategorystaticproperty(Productcategorystaticproperty $l)
     {
-        if ($this->collProductcategorypropertys === null) {
-            $this->initProductcategorypropertys();
-            $this->collProductcategorypropertysPartial = true;
+        if ($this->collProductcategorystaticpropertys === null) {
+            $this->initProductcategorystaticpropertys();
+            $this->collProductcategorystaticpropertysPartial = true;
         }
 
-        if (!in_array($l, $this->collProductcategorypropertys->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddProductcategoryproperty($l);
+        if (!in_array($l, $this->collProductcategorystaticpropertys->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddProductcategorystaticproperty($l);
 
-            if ($this->productcategorypropertysScheduledForDeletion and $this->productcategorypropertysScheduledForDeletion->contains($l)) {
-                $this->productcategorypropertysScheduledForDeletion->remove($this->productcategorypropertysScheduledForDeletion->search($l));
+            if ($this->productcategorystaticpropertysScheduledForDeletion and $this->productcategorystaticpropertysScheduledForDeletion->contains($l)) {
+                $this->productcategorystaticpropertysScheduledForDeletion->remove($this->productcategorystaticpropertysScheduledForDeletion->search($l));
             }
         }
 
@@ -1573,28 +1518,28 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
     }
 
     /**
-     * @param	Productcategoryproperty $productcategoryproperty The productcategoryproperty object to add.
+     * @param	Productcategorystaticproperty $productcategorystaticproperty The productcategorystaticproperty object to add.
      */
-    protected function doAddProductcategoryproperty($productcategoryproperty)
+    protected function doAddProductcategorystaticproperty($productcategorystaticproperty)
     {
-        $this->collProductcategorypropertys[]= $productcategoryproperty;
-        $productcategoryproperty->setProductcategory($this);
+        $this->collProductcategorystaticpropertys[]= $productcategorystaticproperty;
+        $productcategorystaticproperty->setProductcategory($this);
     }
 
     /**
-     * @param	Productcategoryproperty $productcategoryproperty The productcategoryproperty object to remove.
+     * @param	Productcategorystaticproperty $productcategorystaticproperty The productcategorystaticproperty object to remove.
      * @return Productcategory The current object (for fluent API support)
      */
-    public function removeProductcategoryproperty($productcategoryproperty)
+    public function removeProductcategorystaticproperty($productcategorystaticproperty)
     {
-        if ($this->getProductcategorypropertys()->contains($productcategoryproperty)) {
-            $this->collProductcategorypropertys->remove($this->collProductcategorypropertys->search($productcategoryproperty));
-            if (null === $this->productcategorypropertysScheduledForDeletion) {
-                $this->productcategorypropertysScheduledForDeletion = clone $this->collProductcategorypropertys;
-                $this->productcategorypropertysScheduledForDeletion->clear();
+        if ($this->getProductcategorystaticpropertys()->contains($productcategorystaticproperty)) {
+            $this->collProductcategorystaticpropertys->remove($this->collProductcategorystaticpropertys->search($productcategorystaticproperty));
+            if (null === $this->productcategorystaticpropertysScheduledForDeletion) {
+                $this->productcategorystaticpropertysScheduledForDeletion = clone $this->collProductcategorystaticpropertys;
+                $this->productcategorystaticpropertysScheduledForDeletion->clear();
             }
-            $this->productcategorypropertysScheduledForDeletion[]= clone $productcategoryproperty;
-            $productcategoryproperty->setProductcategory(null);
+            $this->productcategorystaticpropertysScheduledForDeletion[]= clone $productcategorystaticproperty;
+            $productcategorystaticproperty->setProductcategory(null);
         }
 
         return $this;
@@ -1858,7 +1803,6 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
         $this->idproductcategory = null;
         $this->category_name = null;
         $this->productcategory_dependency = null;
-        $this->productcategory_property = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1886,8 +1830,8 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collProductcategorypropertys) {
-                foreach ($this->collProductcategorypropertys as $o) {
+            if ($this->collProductcategorystaticpropertys) {
+                foreach ($this->collProductcategorystaticpropertys as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -1907,10 +1851,10 @@ abstract class BaseProductcategory extends BaseObject implements Persistent
             $this->collProductcategorysRelatedByIdproductcategory->clearIterator();
         }
         $this->collProductcategorysRelatedByIdproductcategory = null;
-        if ($this->collProductcategorypropertys instanceof PropelCollection) {
-            $this->collProductcategorypropertys->clearIterator();
+        if ($this->collProductcategorystaticpropertys instanceof PropelCollection) {
+            $this->collProductcategorystaticpropertys->clearIterator();
         }
-        $this->collProductcategorypropertys = null;
+        $this->collProductcategorystaticpropertys = null;
         if ($this->collProductmains instanceof PropelCollection) {
             $this->collProductmains->clearIterator();
         }

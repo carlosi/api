@@ -54,12 +54,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
     protected $expenseitem_description;
 
     /**
-     * The value for the expenseitem_cause field.
-     * @var        string
-     */
-    protected $expenseitem_cause;
-
-    /**
      * @var        Expensecategory
      */
     protected $aExpensecategory;
@@ -153,17 +147,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [expenseitem_cause] column value.
-     *
-     * @return string
-     */
-    public function getExpenseitemCause()
-    {
-
-        return $this->expenseitem_cause;
-    }
-
-    /**
      * Set the value of [idexpenseitem] column.
      *
      * @param  int $v new value
@@ -252,27 +235,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
     } // setExpenseitemDescription()
 
     /**
-     * Set the value of [expenseitem_cause] column.
-     *
-     * @param  string $v new value
-     * @return Expenseitem The current object (for fluent API support)
-     */
-    public function setExpenseitemCause($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->expenseitem_cause !== $v) {
-            $this->expenseitem_cause = $v;
-            $this->modifiedColumns[] = ExpenseitemPeer::EXPENSEITEM_CAUSE;
-        }
-
-
-        return $this;
-    } // setExpenseitemCause()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -308,7 +270,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
             $this->idexpensecategory = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->expenseitem_name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
             $this->expenseitem_description = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            $this->expenseitem_cause = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -318,7 +279,7 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 5; // 5 = ExpenseitemPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = ExpenseitemPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Expenseitem object", $e);
@@ -596,9 +557,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
         if ($this->isColumnModified(ExpenseitemPeer::EXPENSEITEM_DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = '`expenseitem_description`';
         }
-        if ($this->isColumnModified(ExpenseitemPeer::EXPENSEITEM_CAUSE)) {
-            $modifiedColumns[':p' . $index++]  = '`expenseitem_cause`';
-        }
 
         $sql = sprintf(
             'INSERT INTO `expenseitem` (%s) VALUES (%s)',
@@ -621,9 +579,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
                         break;
                     case '`expenseitem_description`':
                         $stmt->bindValue($identifier, $this->expenseitem_description, PDO::PARAM_STR);
-                        break;
-                    case '`expenseitem_cause`':
-                        $stmt->bindValue($identifier, $this->expenseitem_cause, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -799,9 +754,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
             case 3:
                 return $this->getExpenseitemDescription();
                 break;
-            case 4:
-                return $this->getExpenseitemCause();
-                break;
             default:
                 return null;
                 break;
@@ -835,7 +787,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
             $keys[1] => $this->getIdexpensecategory(),
             $keys[2] => $this->getExpenseitemName(),
             $keys[3] => $this->getExpenseitemDescription(),
-            $keys[4] => $this->getExpenseitemCause(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -898,9 +849,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
             case 3:
                 $this->setExpenseitemDescription($value);
                 break;
-            case 4:
-                $this->setExpenseitemCause($value);
-                break;
         } // switch()
     }
 
@@ -929,7 +877,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
         if (array_key_exists($keys[1], $arr)) $this->setIdexpensecategory($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setExpenseitemName($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setExpenseitemDescription($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setExpenseitemCause($arr[$keys[4]]);
     }
 
     /**
@@ -945,7 +892,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
         if ($this->isColumnModified(ExpenseitemPeer::IDEXPENSECATEGORY)) $criteria->add(ExpenseitemPeer::IDEXPENSECATEGORY, $this->idexpensecategory);
         if ($this->isColumnModified(ExpenseitemPeer::EXPENSEITEM_NAME)) $criteria->add(ExpenseitemPeer::EXPENSEITEM_NAME, $this->expenseitem_name);
         if ($this->isColumnModified(ExpenseitemPeer::EXPENSEITEM_DESCRIPTION)) $criteria->add(ExpenseitemPeer::EXPENSEITEM_DESCRIPTION, $this->expenseitem_description);
-        if ($this->isColumnModified(ExpenseitemPeer::EXPENSEITEM_CAUSE)) $criteria->add(ExpenseitemPeer::EXPENSEITEM_CAUSE, $this->expenseitem_cause);
 
         return $criteria;
     }
@@ -1012,7 +958,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
         $copyObj->setIdexpensecategory($this->getIdexpensecategory());
         $copyObj->setExpenseitemName($this->getExpenseitemName());
         $copyObj->setExpenseitemDescription($this->getExpenseitemDescription());
-        $copyObj->setExpenseitemCause($this->getExpenseitemCause());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1613,7 +1558,6 @@ abstract class BaseExpenseitem extends BaseObject implements Persistent
         $this->idexpensecategory = null;
         $this->expenseitem_name = null;
         $this->expenseitem_description = null;
-        $this->expenseitem_cause = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;

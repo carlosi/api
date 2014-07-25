@@ -24,13 +24,13 @@ abstract class BaseExpensetransactionPeer
     const TM_CLASS = 'ExpensetransactionTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 8;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /** the column name for the idexpensetransaction field */
     const IDEXPENSETRANSACTION = 'expensetransaction.idexpensetransaction';
@@ -53,10 +53,18 @@ abstract class BaseExpensetransactionPeer
     /** the column name for the expensetransaction_date field */
     const EXPENSETRANSACTION_DATE = 'expensetransaction.expensetransaction_date';
 
+    /** the column name for the expensetransaction_reason field */
+    const EXPENSETRANSACTION_REASON = 'expensetransaction.expensetransaction_reason';
+
     /** The enumerated values for the expensetransaction_status field */
     const EXPENSETRANSACTION_STATUS_SUGGESTION = 'suggestion';
     const EXPENSETRANSACTION_STATUS_PENDING = 'pending';
     const EXPENSETRANSACTION_STATUS_COMPLETED = 'completed';
+
+    /** The enumerated values for the expensetransaction_reason field */
+    const EXPENSETRANSACTION_REASON_BUYGOODS = 'buygoods';
+    const EXPENSETRANSACTION_REASON_COSTBYSALES = 'costbysales';
+    const EXPENSETRANSACTION_REASON_OPERATIONCOST = 'operationcost';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -77,12 +85,12 @@ abstract class BaseExpensetransactionPeer
      * e.g. ExpensetransactionPeer::$fieldNames[ExpensetransactionPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idexpensetransaction', 'Idexpenseitem', 'ExpensetransactionStatus', 'ExpensetransactionComment', 'ExpensetransactionQuantity', 'ExpensetransactionValue', 'ExpensetransactionDate', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpensetransaction', 'idexpenseitem', 'expensetransactionStatus', 'expensetransactionComment', 'expensetransactionQuantity', 'expensetransactionValue', 'expensetransactionDate', ),
-        BasePeer::TYPE_COLNAME => array (ExpensetransactionPeer::IDEXPENSETRANSACTION, ExpensetransactionPeer::IDEXPENSEITEM, ExpensetransactionPeer::EXPENSETRANSACTION_STATUS, ExpensetransactionPeer::EXPENSETRANSACTION_COMMENT, ExpensetransactionPeer::EXPENSETRANSACTION_QUANTITY, ExpensetransactionPeer::EXPENSETRANSACTION_VALUE, ExpensetransactionPeer::EXPENSETRANSACTION_DATE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSETRANSACTION', 'IDEXPENSEITEM', 'EXPENSETRANSACTION_STATUS', 'EXPENSETRANSACTION_COMMENT', 'EXPENSETRANSACTION_QUANTITY', 'EXPENSETRANSACTION_VALUE', 'EXPENSETRANSACTION_DATE', ),
-        BasePeer::TYPE_FIELDNAME => array ('idexpensetransaction', 'idexpenseitem', 'expensetransaction_status', 'expensetransaction_comment', 'expensetransaction_quantity', 'expensetransaction_value', 'expensetransaction_date', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Idexpensetransaction', 'Idexpenseitem', 'ExpensetransactionStatus', 'ExpensetransactionComment', 'ExpensetransactionQuantity', 'ExpensetransactionValue', 'ExpensetransactionDate', 'ExpensetransactionReason', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpensetransaction', 'idexpenseitem', 'expensetransactionStatus', 'expensetransactionComment', 'expensetransactionQuantity', 'expensetransactionValue', 'expensetransactionDate', 'expensetransactionReason', ),
+        BasePeer::TYPE_COLNAME => array (ExpensetransactionPeer::IDEXPENSETRANSACTION, ExpensetransactionPeer::IDEXPENSEITEM, ExpensetransactionPeer::EXPENSETRANSACTION_STATUS, ExpensetransactionPeer::EXPENSETRANSACTION_COMMENT, ExpensetransactionPeer::EXPENSETRANSACTION_QUANTITY, ExpensetransactionPeer::EXPENSETRANSACTION_VALUE, ExpensetransactionPeer::EXPENSETRANSACTION_DATE, ExpensetransactionPeer::EXPENSETRANSACTION_REASON, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSETRANSACTION', 'IDEXPENSEITEM', 'EXPENSETRANSACTION_STATUS', 'EXPENSETRANSACTION_COMMENT', 'EXPENSETRANSACTION_QUANTITY', 'EXPENSETRANSACTION_VALUE', 'EXPENSETRANSACTION_DATE', 'EXPENSETRANSACTION_REASON', ),
+        BasePeer::TYPE_FIELDNAME => array ('idexpensetransaction', 'idexpenseitem', 'expensetransaction_status', 'expensetransaction_comment', 'expensetransaction_quantity', 'expensetransaction_value', 'expensetransaction_date', 'expensetransaction_reason', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -92,12 +100,12 @@ abstract class BaseExpensetransactionPeer
      * e.g. ExpensetransactionPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idexpensetransaction' => 0, 'Idexpenseitem' => 1, 'ExpensetransactionStatus' => 2, 'ExpensetransactionComment' => 3, 'ExpensetransactionQuantity' => 4, 'ExpensetransactionValue' => 5, 'ExpensetransactionDate' => 6, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpensetransaction' => 0, 'idexpenseitem' => 1, 'expensetransactionStatus' => 2, 'expensetransactionComment' => 3, 'expensetransactionQuantity' => 4, 'expensetransactionValue' => 5, 'expensetransactionDate' => 6, ),
-        BasePeer::TYPE_COLNAME => array (ExpensetransactionPeer::IDEXPENSETRANSACTION => 0, ExpensetransactionPeer::IDEXPENSEITEM => 1, ExpensetransactionPeer::EXPENSETRANSACTION_STATUS => 2, ExpensetransactionPeer::EXPENSETRANSACTION_COMMENT => 3, ExpensetransactionPeer::EXPENSETRANSACTION_QUANTITY => 4, ExpensetransactionPeer::EXPENSETRANSACTION_VALUE => 5, ExpensetransactionPeer::EXPENSETRANSACTION_DATE => 6, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSETRANSACTION' => 0, 'IDEXPENSEITEM' => 1, 'EXPENSETRANSACTION_STATUS' => 2, 'EXPENSETRANSACTION_COMMENT' => 3, 'EXPENSETRANSACTION_QUANTITY' => 4, 'EXPENSETRANSACTION_VALUE' => 5, 'EXPENSETRANSACTION_DATE' => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('idexpensetransaction' => 0, 'idexpenseitem' => 1, 'expensetransaction_status' => 2, 'expensetransaction_comment' => 3, 'expensetransaction_quantity' => 4, 'expensetransaction_value' => 5, 'expensetransaction_date' => 6, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Idexpensetransaction' => 0, 'Idexpenseitem' => 1, 'ExpensetransactionStatus' => 2, 'ExpensetransactionComment' => 3, 'ExpensetransactionQuantity' => 4, 'ExpensetransactionValue' => 5, 'ExpensetransactionDate' => 6, 'ExpensetransactionReason' => 7, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpensetransaction' => 0, 'idexpenseitem' => 1, 'expensetransactionStatus' => 2, 'expensetransactionComment' => 3, 'expensetransactionQuantity' => 4, 'expensetransactionValue' => 5, 'expensetransactionDate' => 6, 'expensetransactionReason' => 7, ),
+        BasePeer::TYPE_COLNAME => array (ExpensetransactionPeer::IDEXPENSETRANSACTION => 0, ExpensetransactionPeer::IDEXPENSEITEM => 1, ExpensetransactionPeer::EXPENSETRANSACTION_STATUS => 2, ExpensetransactionPeer::EXPENSETRANSACTION_COMMENT => 3, ExpensetransactionPeer::EXPENSETRANSACTION_QUANTITY => 4, ExpensetransactionPeer::EXPENSETRANSACTION_VALUE => 5, ExpensetransactionPeer::EXPENSETRANSACTION_DATE => 6, ExpensetransactionPeer::EXPENSETRANSACTION_REASON => 7, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSETRANSACTION' => 0, 'IDEXPENSEITEM' => 1, 'EXPENSETRANSACTION_STATUS' => 2, 'EXPENSETRANSACTION_COMMENT' => 3, 'EXPENSETRANSACTION_QUANTITY' => 4, 'EXPENSETRANSACTION_VALUE' => 5, 'EXPENSETRANSACTION_DATE' => 6, 'EXPENSETRANSACTION_REASON' => 7, ),
+        BasePeer::TYPE_FIELDNAME => array ('idexpensetransaction' => 0, 'idexpenseitem' => 1, 'expensetransaction_status' => 2, 'expensetransaction_comment' => 3, 'expensetransaction_quantity' => 4, 'expensetransaction_value' => 5, 'expensetransaction_date' => 6, 'expensetransaction_reason' => 7, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /** The enumerated values for this table */
@@ -106,6 +114,11 @@ abstract class BaseExpensetransactionPeer
             ExpensetransactionPeer::EXPENSETRANSACTION_STATUS_SUGGESTION,
             ExpensetransactionPeer::EXPENSETRANSACTION_STATUS_PENDING,
             ExpensetransactionPeer::EXPENSETRANSACTION_STATUS_COMPLETED,
+        ),
+        ExpensetransactionPeer::EXPENSETRANSACTION_REASON => array(
+            ExpensetransactionPeer::EXPENSETRANSACTION_REASON_BUYGOODS,
+            ExpensetransactionPeer::EXPENSETRANSACTION_REASON_COSTBYSALES,
+            ExpensetransactionPeer::EXPENSETRANSACTION_REASON_OPERATIONCOST,
         ),
     );
 
@@ -232,6 +245,7 @@ abstract class BaseExpensetransactionPeer
             $criteria->addSelectColumn(ExpensetransactionPeer::EXPENSETRANSACTION_QUANTITY);
             $criteria->addSelectColumn(ExpensetransactionPeer::EXPENSETRANSACTION_VALUE);
             $criteria->addSelectColumn(ExpensetransactionPeer::EXPENSETRANSACTION_DATE);
+            $criteria->addSelectColumn(ExpensetransactionPeer::EXPENSETRANSACTION_REASON);
         } else {
             $criteria->addSelectColumn($alias . '.idexpensetransaction');
             $criteria->addSelectColumn($alias . '.idexpenseitem');
@@ -240,6 +254,7 @@ abstract class BaseExpensetransactionPeer
             $criteria->addSelectColumn($alias . '.expensetransaction_quantity');
             $criteria->addSelectColumn($alias . '.expensetransaction_value');
             $criteria->addSelectColumn($alias . '.expensetransaction_date');
+            $criteria->addSelectColumn($alias . '.expensetransaction_reason');
         }
     }
 
@@ -444,6 +459,9 @@ abstract class BaseExpensetransactionPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in BankexpensetransactionPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        BankexpensetransactionPeer::clearInstancePool();
         // Invalidate objects in ExpensetransactionfilePeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ExpensetransactionfilePeer::clearInstancePool();
@@ -1018,6 +1036,12 @@ abstract class BaseExpensetransactionPeer
         $objects = ExpensetransactionPeer::doSelect($criteria, $con);
         foreach ($objects as $obj) {
 
+
+            // delete related Bankexpensetransaction objects
+            $criteria = new Criteria(BankexpensetransactionPeer::DATABASE_NAME);
+
+            $criteria->add(BankexpensetransactionPeer::IDEXPENSETRANSACTION, $obj->getIdexpensetransaction());
+            $affectedRows += BankexpensetransactionPeer::doDelete($criteria, $con);
 
             // delete related Expensetransactionfile objects
             $criteria = new Criteria(ExpensetransactionfilePeer::DATABASE_NAME);

@@ -50,6 +50,7 @@ class BankaccountTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Company', 'Company', RelationMap::MANY_TO_ONE, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Bankexpensetransaction', 'Bankexpensetransaction', RelationMap::ONE_TO_MANY, array('idbankaccount' => 'idbankaccount', ), 'CASCADE', 'CASCADE', 'Bankexpensetransactions');
         $this->addRelation('Bankordertransaction', 'Bankordertransaction', RelationMap::ONE_TO_MANY, array('idbankaccount' => 'idbankaccount', ), 'CASCADE', 'CASCADE', 'Bankordertransactions');
     } // buildRelations()
 

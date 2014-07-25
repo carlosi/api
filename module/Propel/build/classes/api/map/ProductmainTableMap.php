@@ -66,10 +66,6 @@ class ProductmainTableMap extends TableMap
   19 => 'cientos',
   20 => 'botella',
 ));
-        $this->addColumn('productmain_discount', 'ProductmainDiscount', 'INTEGER', false, null, 0);
-        $this->addColumn('productmain_eachpieces', 'ProductmainEachpieces', 'INTEGER', false, null, 0);
-        $this->addColumn('productmain_maxdiscount', 'ProductmainMaxdiscount', 'INTEGER', false, null, 0);
-        $this->addColumn('productmain_baseproperty', 'ProductmainBaseproperty', 'LONGVARCHAR', true, null, null);
         $this->addColumn('productmain_type', 'ProductmainType', 'CHAR', false, null, 'PRODUCT');
         $this->getColumn('productmain_type', false)->setValueSet(array (
   0 => 'COMPLEMENT',
@@ -88,6 +84,7 @@ class ProductmainTableMap extends TableMap
         $this->addRelation('Mlitem', 'Mlitem', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), null, null, 'Mlitems');
         $this->addRelation('Product', 'Product', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), 'CASCADE', 'CASCADE', 'Products');
         $this->addRelation('Productmainphoto', 'Productmainphoto', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), 'CASCADE', 'CASCADE', 'Productmainphotos');
+        $this->addRelation('Productmainproperty', 'Productmainproperty', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), 'CASCADE', 'CASCADE', 'Productmainpropertys');
     } // buildRelations()
 
 } // ProductmainTableMap

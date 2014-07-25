@@ -54,6 +54,7 @@ class OrderitemTableMap extends TableMap
     {
         $this->addRelation('Order', 'Order', RelationMap::MANY_TO_ONE, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Product', 'Product', RelationMap::MANY_TO_ONE, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Orderconflict', 'Orderconflict', RelationMap::ONE_TO_MANY, array('idorderitem' => 'idorderitem', ), 'CASCADE', 'CASCADE', 'Orderconflicts');
         $this->addRelation('Productionorderitem', 'Productionorderitem', RelationMap::ONE_TO_MANY, array('idorderitem' => 'idorderitem', ), 'CASCADE', 'CASCADE', 'Productionorderitems');
     } // buildRelations()
 

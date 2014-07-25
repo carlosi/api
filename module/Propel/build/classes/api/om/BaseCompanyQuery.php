@@ -42,6 +42,14 @@
  * @method CompanyQuery rightJoinClient($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Client relation
  * @method CompanyQuery innerJoinClient($relationAlias = null) Adds a INNER JOIN clause to the query using the Client relation
  *
+ * @method CompanyQuery leftJoinCompanyaddress($relationAlias = null) Adds a LEFT JOIN clause to the query using the Companyaddress relation
+ * @method CompanyQuery rightJoinCompanyaddress($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Companyaddress relation
+ * @method CompanyQuery innerJoinCompanyaddress($relationAlias = null) Adds a INNER JOIN clause to the query using the Companyaddress relation
+ *
+ * @method CompanyQuery leftJoinContactgroup($relationAlias = null) Adds a LEFT JOIN clause to the query using the Contactgroup relation
+ * @method CompanyQuery rightJoinContactgroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Contactgroup relation
+ * @method CompanyQuery innerJoinContactgroup($relationAlias = null) Adds a INNER JOIN clause to the query using the Contactgroup relation
+ *
  * @method CompanyQuery leftJoinDepartment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Department relation
  * @method CompanyQuery rightJoinDepartment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Department relation
  * @method CompanyQuery innerJoinDepartment($relationAlias = null) Adds a INNER JOIN clause to the query using the Department relation
@@ -53,6 +61,10 @@
  * @method CompanyQuery leftJoinMxtaxinfo($relationAlias = null) Adds a LEFT JOIN clause to the query using the Mxtaxinfo relation
  * @method CompanyQuery rightJoinMxtaxinfo($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Mxtaxinfo relation
  * @method CompanyQuery innerJoinMxtaxinfo($relationAlias = null) Adds a INNER JOIN clause to the query using the Mxtaxinfo relation
+ *
+ * @method CompanyQuery leftJoinProductionline($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionline relation
+ * @method CompanyQuery rightJoinProductionline($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionline relation
+ * @method CompanyQuery innerJoinProductionline($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionline relation
  *
  * @method CompanyQuery leftJoinProductionteam($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionteam relation
  * @method CompanyQuery rightJoinProductionteam($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionteam relation
@@ -780,6 +792,154 @@ abstract class BaseCompanyQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related Companyaddress object
+     *
+     * @param   Companyaddress|PropelObjectCollection $companyaddress  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 CompanyQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByCompanyaddress($companyaddress, $comparison = null)
+    {
+        if ($companyaddress instanceof Companyaddress) {
+            return $this
+                ->addUsingAlias(CompanyPeer::IDCOMPANY, $companyaddress->getIdcompany(), $comparison);
+        } elseif ($companyaddress instanceof PropelObjectCollection) {
+            return $this
+                ->useCompanyaddressQuery()
+                ->filterByPrimaryKeys($companyaddress->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByCompanyaddress() only accepts arguments of type Companyaddress or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Companyaddress relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return CompanyQuery The current query, for fluid interface
+     */
+    public function joinCompanyaddress($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Companyaddress');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Companyaddress');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Companyaddress relation Companyaddress object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   CompanyaddressQuery A secondary query class using the current class as primary query
+     */
+    public function useCompanyaddressQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinCompanyaddress($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Companyaddress', 'CompanyaddressQuery');
+    }
+
+    /**
+     * Filter the query by a related Contactgroup object
+     *
+     * @param   Contactgroup|PropelObjectCollection $contactgroup  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 CompanyQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByContactgroup($contactgroup, $comparison = null)
+    {
+        if ($contactgroup instanceof Contactgroup) {
+            return $this
+                ->addUsingAlias(CompanyPeer::IDCOMPANY, $contactgroup->getIdcompany(), $comparison);
+        } elseif ($contactgroup instanceof PropelObjectCollection) {
+            return $this
+                ->useContactgroupQuery()
+                ->filterByPrimaryKeys($contactgroup->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByContactgroup() only accepts arguments of type Contactgroup or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Contactgroup relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return CompanyQuery The current query, for fluid interface
+     */
+    public function joinContactgroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Contactgroup');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Contactgroup');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Contactgroup relation Contactgroup object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ContactgroupQuery A secondary query class using the current class as primary query
+     */
+    public function useContactgroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinContactgroup($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Contactgroup', 'ContactgroupQuery');
+    }
+
+    /**
      * Filter the query by a related Department object
      *
      * @param   Department|PropelObjectCollection $department  the related object to use as filter
@@ -1002,6 +1162,80 @@ abstract class BaseCompanyQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related Productionline object
+     *
+     * @param   Productionline|PropelObjectCollection $productionline  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 CompanyQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductionline($productionline, $comparison = null)
+    {
+        if ($productionline instanceof Productionline) {
+            return $this
+                ->addUsingAlias(CompanyPeer::IDCOMPANY, $productionline->getIdcompany(), $comparison);
+        } elseif ($productionline instanceof PropelObjectCollection) {
+            return $this
+                ->useProductionlineQuery()
+                ->filterByPrimaryKeys($productionline->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByProductionline() only accepts arguments of type Productionline or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productionline relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return CompanyQuery The current query, for fluid interface
+     */
+    public function joinProductionline($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productionline');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productionline');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productionline relation Productionline object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductionlineQuery A secondary query class using the current class as primary query
+     */
+    public function useProductionlineQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductionline($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productionline', 'ProductionlineQuery');
+    }
+
+    /**
      * Filter the query by a related Productionteam object
      *
      * @param   Productionteam|PropelObjectCollection $productionteam  the related object to use as filter
@@ -1162,7 +1396,7 @@ abstract class BaseCompanyQuery extends ModelCriteria
     {
         if ($user instanceof User) {
             return $this
-                ->addUsingAlias(CompanyPeer::IDCOMPANY, $user->getIdCompany(), $comparison);
+                ->addUsingAlias(CompanyPeer::IDCOMPANY, $user->getIdcompany(), $comparison);
         } elseif ($user instanceof PropelObjectCollection) {
             return $this
                 ->useUserQuery()

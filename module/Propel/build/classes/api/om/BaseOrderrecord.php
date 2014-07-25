@@ -547,6 +547,10 @@ abstract class BaseOrderrecord extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[] = OrderrecordPeer::IDORDERRECORD;
+        if (null !== $this->idorderrecord) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . OrderrecordPeer::IDORDERRECORD . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(OrderrecordPeer::IDORDERRECORD)) {
@@ -597,6 +601,13 @@ abstract class BaseOrderrecord extends BaseObject implements Persistent
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', $e);
+        }
+        $this->setIdorderrecord($pk);
 
         $this->setNew(false);
     }

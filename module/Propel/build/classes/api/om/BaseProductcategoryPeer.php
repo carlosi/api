@@ -24,13 +24,13 @@ abstract class BaseProductcategoryPeer
     const TM_CLASS = 'ProductcategoryTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 3;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /** the column name for the idproductcategory field */
     const IDPRODUCTCATEGORY = 'productcategory.idproductcategory';
@@ -40,9 +40,6 @@ abstract class BaseProductcategoryPeer
 
     /** the column name for the productcategory_dependency field */
     const PRODUCTCATEGORY_DEPENDENCY = 'productcategory.productcategory_dependency';
-
-    /** the column name for the productcategory_property field */
-    const PRODUCTCATEGORY_PROPERTY = 'productcategory.productcategory_property';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -63,12 +60,12 @@ abstract class BaseProductcategoryPeer
      * e.g. ProductcategoryPeer::$fieldNames[ProductcategoryPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductcategory', 'CategoryName', 'ProductcategoryDependency', 'ProductcategoryProperty', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductcategory', 'categoryName', 'productcategoryDependency', 'productcategoryProperty', ),
-        BasePeer::TYPE_COLNAME => array (ProductcategoryPeer::IDPRODUCTCATEGORY, ProductcategoryPeer::CATEGORY_NAME, ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY, ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTCATEGORY', 'CATEGORY_NAME', 'PRODUCTCATEGORY_DEPENDENCY', 'PRODUCTCATEGORY_PROPERTY', ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductcategory', 'category_name', 'productcategory_dependency', 'productcategory_property', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Idproductcategory', 'CategoryName', 'ProductcategoryDependency', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductcategory', 'categoryName', 'productcategoryDependency', ),
+        BasePeer::TYPE_COLNAME => array (ProductcategoryPeer::IDPRODUCTCATEGORY, ProductcategoryPeer::CATEGORY_NAME, ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTCATEGORY', 'CATEGORY_NAME', 'PRODUCTCATEGORY_DEPENDENCY', ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductcategory', 'category_name', 'productcategory_dependency', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
     /**
@@ -78,12 +75,12 @@ abstract class BaseProductcategoryPeer
      * e.g. ProductcategoryPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductcategory' => 0, 'CategoryName' => 1, 'ProductcategoryDependency' => 2, 'ProductcategoryProperty' => 3, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductcategory' => 0, 'categoryName' => 1, 'productcategoryDependency' => 2, 'productcategoryProperty' => 3, ),
-        BasePeer::TYPE_COLNAME => array (ProductcategoryPeer::IDPRODUCTCATEGORY => 0, ProductcategoryPeer::CATEGORY_NAME => 1, ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY => 2, ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY => 3, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTCATEGORY' => 0, 'CATEGORY_NAME' => 1, 'PRODUCTCATEGORY_DEPENDENCY' => 2, 'PRODUCTCATEGORY_PROPERTY' => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductcategory' => 0, 'category_name' => 1, 'productcategory_dependency' => 2, 'productcategory_property' => 3, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Idproductcategory' => 0, 'CategoryName' => 1, 'ProductcategoryDependency' => 2, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductcategory' => 0, 'categoryName' => 1, 'productcategoryDependency' => 2, ),
+        BasePeer::TYPE_COLNAME => array (ProductcategoryPeer::IDPRODUCTCATEGORY => 0, ProductcategoryPeer::CATEGORY_NAME => 1, ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY => 2, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTCATEGORY' => 0, 'CATEGORY_NAME' => 1, 'PRODUCTCATEGORY_DEPENDENCY' => 2, ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductcategory' => 0, 'category_name' => 1, 'productcategory_dependency' => 2, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
     /**
@@ -160,12 +157,10 @@ abstract class BaseProductcategoryPeer
             $criteria->addSelectColumn(ProductcategoryPeer::IDPRODUCTCATEGORY);
             $criteria->addSelectColumn(ProductcategoryPeer::CATEGORY_NAME);
             $criteria->addSelectColumn(ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY);
-            $criteria->addSelectColumn(ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY);
         } else {
             $criteria->addSelectColumn($alias . '.idproductcategory');
             $criteria->addSelectColumn($alias . '.category_name');
             $criteria->addSelectColumn($alias . '.productcategory_dependency');
-            $criteria->addSelectColumn($alias . '.productcategory_property');
         }
     }
 
@@ -373,9 +368,9 @@ abstract class BaseProductcategoryPeer
         // Invalidate objects in ProductcategoryPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductcategoryPeer::clearInstancePool();
-        // Invalidate objects in ProductcategorypropertyPeer instance pool,
+        // Invalidate objects in ProductcategorystaticpropertyPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ProductcategorypropertyPeer::clearInstancePool();
+        ProductcategorystaticpropertyPeer::clearInstancePool();
         // Invalidate objects in ProductmainPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductmainPeer::clearInstancePool();
@@ -814,11 +809,11 @@ abstract class BaseProductcategoryPeer
             $criteria->add(ProductcategoryPeer::PRODUCTCATEGORY_DEPENDENCY, $obj->getIdproductcategory());
             $affectedRows += ProductcategoryPeer::doDelete($criteria, $con);
 
-            // delete related Productcategoryproperty objects
-            $criteria = new Criteria(ProductcategorypropertyPeer::DATABASE_NAME);
+            // delete related Productcategorystaticproperty objects
+            $criteria = new Criteria(ProductcategorystaticpropertyPeer::DATABASE_NAME);
 
-            $criteria->add(ProductcategorypropertyPeer::IDPRODUCTCATEGORY, $obj->getIdproductcategory());
-            $affectedRows += ProductcategorypropertyPeer::doDelete($criteria, $con);
+            $criteria->add(ProductcategorystaticpropertyPeer::IDPRODUCTCATEGORY, $obj->getIdproductcategory());
+            $affectedRows += ProductcategorystaticpropertyPeer::doDelete($criteria, $con);
 
             // delete related Productmain objects
             $criteria = new Criteria(ProductmainPeer::DATABASE_NAME);

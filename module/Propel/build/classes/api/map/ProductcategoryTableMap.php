@@ -41,7 +41,6 @@ class ProductcategoryTableMap extends TableMap
         $this->addPrimaryKey('idproductcategory', 'Idproductcategory', 'INTEGER', true, null, null);
         $this->addColumn('category_name', 'CategoryName', 'VARCHAR', true, 45, null);
         $this->addForeignKey('productcategory_dependency', 'ProductcategoryDependency', 'INTEGER', 'productcategory', 'idproductcategory', false, null, null);
-        $this->addColumn('productcategory_property', 'ProductcategoryProperty', 'LONGVARCHAR', true, null, null);
         // validators
     } // initialize()
 
@@ -52,7 +51,7 @@ class ProductcategoryTableMap extends TableMap
     {
         $this->addRelation('ProductcategoryRelatedByProductcategoryDependency', 'Productcategory', RelationMap::MANY_TO_ONE, array('productcategory_dependency' => 'idproductcategory', ), 'CASCADE', 'CASCADE');
         $this->addRelation('ProductcategoryRelatedByIdproductcategory', 'Productcategory', RelationMap::ONE_TO_MANY, array('idproductcategory' => 'productcategory_dependency', ), 'CASCADE', 'CASCADE', 'ProductcategorysRelatedByIdproductcategory');
-        $this->addRelation('Productcategoryproperty', 'Productcategoryproperty', RelationMap::ONE_TO_MANY, array('idproductcategory' => 'idproductcategory', ), 'CASCADE', 'CASCADE', 'Productcategorypropertys');
+        $this->addRelation('Productcategorystaticproperty', 'Productcategorystaticproperty', RelationMap::ONE_TO_MANY, array('idproductcategory' => 'idproductcategory', ), 'CASCADE', 'CASCADE', 'Productcategorystaticpropertys');
         $this->addRelation('Productmain', 'Productmain', RelationMap::ONE_TO_MANY, array('idproductcategory' => 'idproductcategory', ), 'CASCADE', 'CASCADE', 'Productmains');
     } // buildRelations()
 

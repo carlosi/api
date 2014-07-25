@@ -643,14 +643,14 @@ abstract class BaseMlquestionQuery extends ModelCriteria
     {
         if ($user instanceof User) {
             return $this
-                ->addUsingAlias(MlquestionPeer::IDUSER, $user->getIdUser(), $comparison);
+                ->addUsingAlias(MlquestionPeer::IDUSER, $user->getIduser(), $comparison);
         } elseif ($user instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(MlquestionPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'IdUser'), $comparison);
+                ->addUsingAlias(MlquestionPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
         }

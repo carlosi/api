@@ -13,6 +13,8 @@ use Zend\Http\Response;
 
 class TokenListener implements ListenerAggregateInterface {
     
+    
+    
     /*Primero registramos el listener y asignamos una proridad alta (1000 es la mas alta)
      * para que se ejecute lo antes posible dentro del stack de
      * listeners registrados en el evento.
@@ -39,27 +41,33 @@ class TokenListener implements ListenerAggregateInterface {
     
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
-        $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
-        if(SessionManager::TokenIsValid($token)){
+        define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
+        if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
+            $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
+
+            if(SessionManager::TokenIsValid($token)){
             
-        }else{        
-            $response = $e->getResponse();
-            $response->setStatusCode(Response::STATUS_CODE_401);
-            $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
+            }else{        
+                $response = $e->getResponse();
+                $response->setStatusCode(Response::STATUS_CODE_401);
+                $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
 
+                $body = array(
+                        'HTTP Status' => '401' ,
+                        'Title' => 'Unauthorized' ,
+                        'Details' => 'Invalid or expired token',
+                        'More Info' => WEBSITE_API_DOCS
+                );
 
-            $body = array(
-                    'HTTP Status' => '401' ,
-                    'Title' => 'Unauthorized' ,
-                    'Details' => 'Invalid or expired token',
-                    'More Info' => "http://buybuy.com/api/docs"
-            );
-
-             $jsonModel = new JsonModel($body);
-             $jsonModel->setTerminal(true);
-             $e->setResult($jsonModel);
-             $e->setViewModel($jsonModel)->stopPropagation();
+                 $jsonModel = new JsonModel($body);
+                 $jsonModel->setTerminal(true);
+                 $e->setResult($jsonModel);
+                 $e->setViewModel($jsonModel)->stopPropagation();
+            }
         }
+        
+        
+        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
     }
 }
 ?>

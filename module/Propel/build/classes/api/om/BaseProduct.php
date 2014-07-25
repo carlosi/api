@@ -66,6 +66,12 @@ abstract class BaseProduct extends BaseObject implements Persistent
     protected $collOrderitemsPartial;
 
     /**
+     * @var        PropelObjectCollection|Productproperty[] Collection to store aggregation of Productproperty objects.
+     */
+    protected $collProductpropertys;
+    protected $collProductpropertysPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -90,6 +96,12 @@ abstract class BaseProduct extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $orderitemsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $productpropertysScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -361,6 +373,8 @@ abstract class BaseProduct extends BaseObject implements Persistent
             $this->aProductmain = null;
             $this->collOrderitems = null;
 
+            $this->collProductpropertys = null;
+
         } // if (deep)
     }
 
@@ -508,6 +522,23 @@ abstract class BaseProduct extends BaseObject implements Persistent
 
             if ($this->collOrderitems !== null) {
                 foreach ($this->collOrderitems as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->productpropertysScheduledForDeletion !== null) {
+                if (!$this->productpropertysScheduledForDeletion->isEmpty()) {
+                    ProductpropertyQuery::create()
+                        ->filterByPrimaryKeys($this->productpropertysScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->productpropertysScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collProductpropertys !== null) {
+                foreach ($this->collProductpropertys as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -694,6 +725,14 @@ abstract class BaseProduct extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collProductpropertys !== null) {
+                    foreach ($this->collProductpropertys as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -786,6 +825,9 @@ abstract class BaseProduct extends BaseObject implements Persistent
             }
             if (null !== $this->collOrderitems) {
                 $result['Orderitems'] = $this->collOrderitems->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collProductpropertys) {
+                $result['Productpropertys'] = $this->collProductpropertys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -956,6 +998,12 @@ abstract class BaseProduct extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getProductpropertys() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addProductproperty($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -1071,6 +1119,9 @@ abstract class BaseProduct extends BaseObject implements Persistent
     {
         if ('Orderitem' == $relationName) {
             $this->initOrderitems();
+        }
+        if ('Productproperty' == $relationName) {
+            $this->initProductpropertys();
         }
     }
 
@@ -1325,6 +1376,256 @@ abstract class BaseProduct extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collProductpropertys collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Product The current object (for fluent API support)
+     * @see        addProductpropertys()
+     */
+    public function clearProductpropertys()
+    {
+        $this->collProductpropertys = null; // important to set this to null since that means it is uninitialized
+        $this->collProductpropertysPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collProductpropertys collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialProductpropertys($v = true)
+    {
+        $this->collProductpropertysPartial = $v;
+    }
+
+    /**
+     * Initializes the collProductpropertys collection.
+     *
+     * By default this just sets the collProductpropertys collection to an empty array (like clearcollProductpropertys());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initProductpropertys($overrideExisting = true)
+    {
+        if (null !== $this->collProductpropertys && !$overrideExisting) {
+            return;
+        }
+        $this->collProductpropertys = new PropelObjectCollection();
+        $this->collProductpropertys->setModel('Productproperty');
+    }
+
+    /**
+     * Gets an array of Productproperty objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Product is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Productproperty[] List of Productproperty objects
+     * @throws PropelException
+     */
+    public function getProductpropertys($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collProductpropertysPartial && !$this->isNew();
+        if (null === $this->collProductpropertys || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collProductpropertys) {
+                // return empty collection
+                $this->initProductpropertys();
+            } else {
+                $collProductpropertys = ProductpropertyQuery::create(null, $criteria)
+                    ->filterByProduct($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collProductpropertysPartial && count($collProductpropertys)) {
+                      $this->initProductpropertys(false);
+
+                      foreach ($collProductpropertys as $obj) {
+                        if (false == $this->collProductpropertys->contains($obj)) {
+                          $this->collProductpropertys->append($obj);
+                        }
+                      }
+
+                      $this->collProductpropertysPartial = true;
+                    }
+
+                    $collProductpropertys->getInternalIterator()->rewind();
+
+                    return $collProductpropertys;
+                }
+
+                if ($partial && $this->collProductpropertys) {
+                    foreach ($this->collProductpropertys as $obj) {
+                        if ($obj->isNew()) {
+                            $collProductpropertys[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collProductpropertys = $collProductpropertys;
+                $this->collProductpropertysPartial = false;
+            }
+        }
+
+        return $this->collProductpropertys;
+    }
+
+    /**
+     * Sets a collection of Productproperty objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $productpropertys A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Product The current object (for fluent API support)
+     */
+    public function setProductpropertys(PropelCollection $productpropertys, PropelPDO $con = null)
+    {
+        $productpropertysToDelete = $this->getProductpropertys(new Criteria(), $con)->diff($productpropertys);
+
+
+        $this->productpropertysScheduledForDeletion = $productpropertysToDelete;
+
+        foreach ($productpropertysToDelete as $productpropertyRemoved) {
+            $productpropertyRemoved->setProduct(null);
+        }
+
+        $this->collProductpropertys = null;
+        foreach ($productpropertys as $productproperty) {
+            $this->addProductproperty($productproperty);
+        }
+
+        $this->collProductpropertys = $productpropertys;
+        $this->collProductpropertysPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Productproperty objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Productproperty objects.
+     * @throws PropelException
+     */
+    public function countProductpropertys(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collProductpropertysPartial && !$this->isNew();
+        if (null === $this->collProductpropertys || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collProductpropertys) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getProductpropertys());
+            }
+            $query = ProductpropertyQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByProduct($this)
+                ->count($con);
+        }
+
+        return count($this->collProductpropertys);
+    }
+
+    /**
+     * Method called to associate a Productproperty object to this object
+     * through the Productproperty foreign key attribute.
+     *
+     * @param    Productproperty $l Productproperty
+     * @return Product The current object (for fluent API support)
+     */
+    public function addProductproperty(Productproperty $l)
+    {
+        if ($this->collProductpropertys === null) {
+            $this->initProductpropertys();
+            $this->collProductpropertysPartial = true;
+        }
+
+        if (!in_array($l, $this->collProductpropertys->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddProductproperty($l);
+
+            if ($this->productpropertysScheduledForDeletion and $this->productpropertysScheduledForDeletion->contains($l)) {
+                $this->productpropertysScheduledForDeletion->remove($this->productpropertysScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Productproperty $productproperty The productproperty object to add.
+     */
+    protected function doAddProductproperty($productproperty)
+    {
+        $this->collProductpropertys[]= $productproperty;
+        $productproperty->setProduct($this);
+    }
+
+    /**
+     * @param	Productproperty $productproperty The productproperty object to remove.
+     * @return Product The current object (for fluent API support)
+     */
+    public function removeProductproperty($productproperty)
+    {
+        if ($this->getProductpropertys()->contains($productproperty)) {
+            $this->collProductpropertys->remove($this->collProductpropertys->search($productproperty));
+            if (null === $this->productpropertysScheduledForDeletion) {
+                $this->productpropertysScheduledForDeletion = clone $this->collProductpropertys;
+                $this->productpropertysScheduledForDeletion->clear();
+            }
+            $this->productpropertysScheduledForDeletion[]= clone $productproperty;
+            $productproperty->setProduct(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Product is new, it will return
+     * an empty collection; or if this Product has previously
+     * been saved, it will retrieve related Productpropertys from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Product.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Productproperty[] List of Productproperty objects
+     */
+    public function getProductpropertysJoinProductmainproperty($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ProductpropertyQuery::create(null, $criteria);
+        $query->joinWith('Productmainproperty', $join_behavior);
+
+        return $this->getProductpropertys($query, $con);
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1361,6 +1662,11 @@ abstract class BaseProduct extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collProductpropertys) {
+                foreach ($this->collProductpropertys as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->aProductmain instanceof Persistent) {
               $this->aProductmain->clearAllReferences($deep);
             }
@@ -1372,6 +1678,10 @@ abstract class BaseProduct extends BaseObject implements Persistent
             $this->collOrderitems->clearIterator();
         }
         $this->collOrderitems = null;
+        if ($this->collProductpropertys instanceof PropelCollection) {
+            $this->collProductpropertys->clearIterator();
+        }
+        $this->collProductpropertys = null;
         $this->aProductmain = null;
     }
 

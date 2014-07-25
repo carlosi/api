@@ -9,12 +9,10 @@
  * @method ProductcategoryQuery orderByIdproductcategory($order = Criteria::ASC) Order by the idproductcategory column
  * @method ProductcategoryQuery orderByCategoryName($order = Criteria::ASC) Order by the category_name column
  * @method ProductcategoryQuery orderByProductcategoryDependency($order = Criteria::ASC) Order by the productcategory_dependency column
- * @method ProductcategoryQuery orderByProductcategoryProperty($order = Criteria::ASC) Order by the productcategory_property column
  *
  * @method ProductcategoryQuery groupByIdproductcategory() Group by the idproductcategory column
  * @method ProductcategoryQuery groupByCategoryName() Group by the category_name column
  * @method ProductcategoryQuery groupByProductcategoryDependency() Group by the productcategory_dependency column
- * @method ProductcategoryQuery groupByProductcategoryProperty() Group by the productcategory_property column
  *
  * @method ProductcategoryQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method ProductcategoryQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -28,9 +26,9 @@
  * @method ProductcategoryQuery rightJoinProductcategoryRelatedByIdproductcategory($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProductcategoryRelatedByIdproductcategory relation
  * @method ProductcategoryQuery innerJoinProductcategoryRelatedByIdproductcategory($relationAlias = null) Adds a INNER JOIN clause to the query using the ProductcategoryRelatedByIdproductcategory relation
  *
- * @method ProductcategoryQuery leftJoinProductcategoryproperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productcategoryproperty relation
- * @method ProductcategoryQuery rightJoinProductcategoryproperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productcategoryproperty relation
- * @method ProductcategoryQuery innerJoinProductcategoryproperty($relationAlias = null) Adds a INNER JOIN clause to the query using the Productcategoryproperty relation
+ * @method ProductcategoryQuery leftJoinProductcategorystaticproperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productcategorystaticproperty relation
+ * @method ProductcategoryQuery rightJoinProductcategorystaticproperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productcategorystaticproperty relation
+ * @method ProductcategoryQuery innerJoinProductcategorystaticproperty($relationAlias = null) Adds a INNER JOIN clause to the query using the Productcategorystaticproperty relation
  *
  * @method ProductcategoryQuery leftJoinProductmain($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productmain relation
  * @method ProductcategoryQuery rightJoinProductmain($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productmain relation
@@ -41,12 +39,10 @@
  *
  * @method Productcategory findOneByCategoryName(string $category_name) Return the first Productcategory filtered by the category_name column
  * @method Productcategory findOneByProductcategoryDependency(int $productcategory_dependency) Return the first Productcategory filtered by the productcategory_dependency column
- * @method Productcategory findOneByProductcategoryProperty(string $productcategory_property) Return the first Productcategory filtered by the productcategory_property column
  *
  * @method array findByIdproductcategory(int $idproductcategory) Return Productcategory objects filtered by the idproductcategory column
  * @method array findByCategoryName(string $category_name) Return Productcategory objects filtered by the category_name column
  * @method array findByProductcategoryDependency(int $productcategory_dependency) Return Productcategory objects filtered by the productcategory_dependency column
- * @method array findByProductcategoryProperty(string $productcategory_property) Return Productcategory objects filtered by the productcategory_property column
  *
  * @package    propel.generator.api.om
  */
@@ -154,7 +150,7 @@ abstract class BaseProductcategoryQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idproductcategory`, `category_name`, `productcategory_dependency`, `productcategory_property` FROM `productcategory` WHERE `idproductcategory` = :p0';
+        $sql = 'SELECT `idproductcategory`, `category_name`, `productcategory_dependency` FROM `productcategory` WHERE `idproductcategory` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -359,35 +355,6 @@ abstract class BaseProductcategoryQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the productcategory_property column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByProductcategoryProperty('fooValue');   // WHERE productcategory_property = 'fooValue'
-     * $query->filterByProductcategoryProperty('%fooValue%'); // WHERE productcategory_property LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $productcategoryProperty The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ProductcategoryQuery The current query, for fluid interface
-     */
-    public function filterByProductcategoryProperty($productcategoryProperty = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($productcategoryProperty)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $productcategoryProperty)) {
-                $productcategoryProperty = str_replace('*', '%', $productcategoryProperty);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ProductcategoryPeer::PRODUCTCATEGORY_PROPERTY, $productcategoryProperty, $comparison);
-    }
-
-    /**
      * Filter the query by a related Productcategory object
      *
      * @param   Productcategory|PropelObjectCollection $productcategory The related object(s) to use as filter
@@ -538,41 +505,41 @@ abstract class BaseProductcategoryQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Productcategoryproperty object
+     * Filter the query by a related Productcategorystaticproperty object
      *
-     * @param   Productcategoryproperty|PropelObjectCollection $productcategoryproperty  the related object to use as filter
+     * @param   Productcategorystaticproperty|PropelObjectCollection $productcategorystaticproperty  the related object to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return                 ProductcategoryQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
-    public function filterByProductcategoryproperty($productcategoryproperty, $comparison = null)
+    public function filterByProductcategorystaticproperty($productcategorystaticproperty, $comparison = null)
     {
-        if ($productcategoryproperty instanceof Productcategoryproperty) {
+        if ($productcategorystaticproperty instanceof Productcategorystaticproperty) {
             return $this
-                ->addUsingAlias(ProductcategoryPeer::IDPRODUCTCATEGORY, $productcategoryproperty->getIdproductcategory(), $comparison);
-        } elseif ($productcategoryproperty instanceof PropelObjectCollection) {
+                ->addUsingAlias(ProductcategoryPeer::IDPRODUCTCATEGORY, $productcategorystaticproperty->getIdproductcategory(), $comparison);
+        } elseif ($productcategorystaticproperty instanceof PropelObjectCollection) {
             return $this
-                ->useProductcategorypropertyQuery()
-                ->filterByPrimaryKeys($productcategoryproperty->getPrimaryKeys())
+                ->useProductcategorystaticpropertyQuery()
+                ->filterByPrimaryKeys($productcategorystaticproperty->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByProductcategoryproperty() only accepts arguments of type Productcategoryproperty or PropelCollection');
+            throw new PropelException('filterByProductcategorystaticproperty() only accepts arguments of type Productcategorystaticproperty or PropelCollection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Productcategoryproperty relation
+     * Adds a JOIN clause to the query using the Productcategorystaticproperty relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return ProductcategoryQuery The current query, for fluid interface
      */
-    public function joinProductcategoryproperty($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinProductcategorystaticproperty($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Productcategoryproperty');
+        $relationMap = $tableMap->getRelation('Productcategorystaticproperty');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -587,14 +554,14 @@ abstract class BaseProductcategoryQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Productcategoryproperty');
+            $this->addJoinObject($join, 'Productcategorystaticproperty');
         }
 
         return $this;
     }
 
     /**
-     * Use the Productcategoryproperty relation Productcategoryproperty object
+     * Use the Productcategorystaticproperty relation Productcategorystaticproperty object
      *
      * @see       useQuery()
      *
@@ -602,13 +569,13 @@ abstract class BaseProductcategoryQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   ProductcategorypropertyQuery A secondary query class using the current class as primary query
+     * @return   ProductcategorystaticpropertyQuery A secondary query class using the current class as primary query
      */
-    public function useProductcategorypropertyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useProductcategorystaticpropertyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinProductcategoryproperty($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Productcategoryproperty', 'ProductcategorypropertyQuery');
+            ->joinProductcategorystaticproperty($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productcategorystaticproperty', 'ProductcategorystaticpropertyQuery');
     }
 
     /**

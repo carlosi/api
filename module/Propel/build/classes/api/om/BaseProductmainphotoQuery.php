@@ -12,6 +12,7 @@
  * @method ProductmainphotoQuery orderByProductmainphotoWidth($order = Criteria::ASC) Order by the productmainphoto_width column
  * @method ProductmainphotoQuery orderByProductmainphotoHeight($order = Criteria::ASC) Order by the productmainphoto_height column
  * @method ProductmainphotoQuery orderByProductmainphotoStatus($order = Criteria::ASC) Order by the productmainphoto_status column
+ * @method ProductmainphotoQuery orderByProductmainphotoType($order = Criteria::ASC) Order by the productmainphoto_type column
  *
  * @method ProductmainphotoQuery groupByIdproductmainphoto() Group by the idproductmainphoto column
  * @method ProductmainphotoQuery groupByIdproductmain() Group by the idproductmain column
@@ -19,6 +20,7 @@
  * @method ProductmainphotoQuery groupByProductmainphotoWidth() Group by the productmainphoto_width column
  * @method ProductmainphotoQuery groupByProductmainphotoHeight() Group by the productmainphoto_height column
  * @method ProductmainphotoQuery groupByProductmainphotoStatus() Group by the productmainphoto_status column
+ * @method ProductmainphotoQuery groupByProductmainphotoType() Group by the productmainphoto_type column
  *
  * @method ProductmainphotoQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method ProductmainphotoQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -36,6 +38,7 @@
  * @method Productmainphoto findOneByProductmainphotoWidth(string $productmainphoto_width) Return the first Productmainphoto filtered by the productmainphoto_width column
  * @method Productmainphoto findOneByProductmainphotoHeight(string $productmainphoto_height) Return the first Productmainphoto filtered by the productmainphoto_height column
  * @method Productmainphoto findOneByProductmainphotoStatus(string $productmainphoto_status) Return the first Productmainphoto filtered by the productmainphoto_status column
+ * @method Productmainphoto findOneByProductmainphotoType(string $productmainphoto_type) Return the first Productmainphoto filtered by the productmainphoto_type column
  *
  * @method array findByIdproductmainphoto(int $idproductmainphoto) Return Productmainphoto objects filtered by the idproductmainphoto column
  * @method array findByIdproductmain(int $idproductmain) Return Productmainphoto objects filtered by the idproductmain column
@@ -43,6 +46,7 @@
  * @method array findByProductmainphotoWidth(string $productmainphoto_width) Return Productmainphoto objects filtered by the productmainphoto_width column
  * @method array findByProductmainphotoHeight(string $productmainphoto_height) Return Productmainphoto objects filtered by the productmainphoto_height column
  * @method array findByProductmainphotoStatus(string $productmainphoto_status) Return Productmainphoto objects filtered by the productmainphoto_status column
+ * @method array findByProductmainphotoType(string $productmainphoto_type) Return Productmainphoto objects filtered by the productmainphoto_type column
  *
  * @package    propel.generator.api.om
  */
@@ -150,7 +154,7 @@ abstract class BaseProductmainphotoQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idproductmainphoto`, `idproductmain`, `productmainphoto_url`, `productmainphoto_width`, `productmainphoto_height`, `productmainphoto_status` FROM `productmainphoto` WHERE `idproductmainphoto` = :p0';
+        $sql = 'SELECT `idproductmainphoto`, `idproductmain`, `productmainphoto_url`, `productmainphoto_width`, `productmainphoto_height`, `productmainphoto_status`, `productmainphoto_type` FROM `productmainphoto` WHERE `idproductmainphoto` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -439,6 +443,35 @@ abstract class BaseProductmainphotoQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS, $productmainphotoStatus, $comparison);
+    }
+
+    /**
+     * Filter the query on the productmainphoto_type column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByProductmainphotoType('fooValue');   // WHERE productmainphoto_type = 'fooValue'
+     * $query->filterByProductmainphotoType('%fooValue%'); // WHERE productmainphoto_type LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $productmainphotoType The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ProductmainphotoQuery The current query, for fluid interface
+     */
+    public function filterByProductmainphotoType($productmainphotoType = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($productmainphotoType)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $productmainphotoType)) {
+                $productmainphotoType = str_replace('*', '%', $productmainphotoType);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE, $productmainphotoType, $comparison);
     }
 
     /**

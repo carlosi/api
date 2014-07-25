@@ -20,13 +20,13 @@
  * @method ProjectactivitypostQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method ProjectactivitypostQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method ProjectactivitypostQuery leftJoinProjectactivity($relationAlias = null) Adds a LEFT JOIN clause to the query using the Projectactivity relation
- * @method ProjectactivitypostQuery rightJoinProjectactivity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Projectactivity relation
- * @method ProjectactivitypostQuery innerJoinProjectactivity($relationAlias = null) Adds a INNER JOIN clause to the query using the Projectactivity relation
- *
  * @method ProjectactivitypostQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
  * @method ProjectactivitypostQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
  * @method ProjectactivitypostQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ *
+ * @method ProjectactivitypostQuery leftJoinProjectactivity($relationAlias = null) Adds a LEFT JOIN clause to the query using the Projectactivity relation
+ * @method ProjectactivitypostQuery rightJoinProjectactivity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Projectactivity relation
+ * @method ProjectactivitypostQuery innerJoinProjectactivity($relationAlias = null) Adds a INNER JOIN clause to the query using the Projectactivity relation
  *
  * @method Projectactivitypost findOne(PropelPDO $con = null) Return the first Projectactivitypost matching the query
  * @method Projectactivitypost findOneOrCreate(PropelPDO $con = null) Return the first Projectactivitypost matching the query, or a new Projectactivitypost object populated from the query conditions when no match is found
@@ -395,6 +395,82 @@ abstract class BaseProjectactivitypostQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related User object
+     *
+     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProjectactivitypostQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByUser($user, $comparison = null)
+    {
+        if ($user instanceof User) {
+            return $this
+                ->addUsingAlias(ProjectactivitypostPeer::IDUSER, $user->getIduser(), $comparison);
+        } elseif ($user instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ProjectactivitypostPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
+        } else {
+            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the User relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProjectactivitypostQuery The current query, for fluid interface
+     */
+    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('User');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'User');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the User relation User object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   UserQuery A secondary query class using the current class as primary query
+     */
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
+    }
+
+    /**
      * Filter the query by a related Projectactivity object
      *
      * @param   Projectactivity|PropelObjectCollection $projectactivity The related object(s) to use as filter
@@ -468,82 +544,6 @@ abstract class BaseProjectactivitypostQuery extends ModelCriteria
         return $this
             ->joinProjectactivity($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Projectactivity', 'ProjectactivityQuery');
-    }
-
-    /**
-     * Filter the query by a related User object
-     *
-     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ProjectactivitypostQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByUser($user, $comparison = null)
-    {
-        if ($user instanceof User) {
-            return $this
-                ->addUsingAlias(ProjectactivitypostPeer::IDUSER, $user->getIdUser(), $comparison);
-        } elseif ($user instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(ProjectactivitypostPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'IdUser'), $comparison);
-        } else {
-            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the User relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ProjectactivitypostQuery The current query, for fluid interface
-     */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('User');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'User');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the User relation User object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   UserQuery A secondary query class using the current class as primary query
-     */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinUser($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
     }
 
     /**

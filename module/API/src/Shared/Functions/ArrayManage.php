@@ -5,7 +5,7 @@ namespace Shared\Functions;
 use BasePeer;
 
 class ArrayManage{
-    
+
     // Los componentes SELECT de un Form, llevan 2 componentes, la parte Visible al usuario y la invisible. Esta funcion convierte el array recibido para lograr dicha estructura.
     public function duplicatearray(array $array=null){
         if($array!=null){
@@ -29,27 +29,133 @@ class ArrayManage{
             return $array;
         }
     }
+    
+    public static function getHasCompanyId($query, $idcompany, $id){
+        // Iniciamos el Join de 1er nivel
+        // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+        $idForeingKeyJoin = key($query->getTablemap()->getForeignKeys());
 
+        // Eliminamos los 2 primeros caracteres (id) de nuestro string
+        $tableJoin = substr($idForeingKeyJoin, 2);
+
+        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+        $useQuery = ucfirst($tableJoin);
+
+        $result = $query->create('alias')->join('alias.'.$useQuery.' alias2')->useQuery('alias2')->filterByIdCompany($idcompany)->endUse()->findPk($id);
+
+        return $result;
+    }
+
+    public static function getHasCompany($query, $idcompany, $page, $limit){
+
+        // Guardamos y validamos si XXXQuery() contiene la columna "idcompany"
+        $hasIdCompany = $query->getTableMap()->hasColumn('idcompany');
+        if(!$hasIdCompany){
+
+            // Iniciamos el Join de 1er nivel
+            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+            $idForeingKeyJoin = key($query->getTablemap()->getForeignKeys());
+
+            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+            $tableJoin = substr($idForeingKeyJoin, 2);
+
+            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+            $useQuery = ucfirst($tableJoin);
+
+            // Iniciamos el Join de 2do nivel
+            $class = $useQuery."Query";
+            $queryJoin = new $class;
+
+            $hasIdCompanyJoin1 = $queryJoin->getTablemap()->hasColumn('idcompany');
+
+            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+            $idForeingKeyJoin2 = key($queryJoin->getTablemap()->getForeignKeys());
+
+            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+            $tableJoin2 = substr($idForeingKeyJoin2, 2);
+
+            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+            $useQuery2 = ucfirst($tableJoin2);
+
+            // Iniciamos el Join de 3er nivel
+            $class = $useQuery2."Query";
+            $queryJoin2 = new $class;
+
+            $hasIdCompanyJoin2 = $queryJoin2->getTablemap()->hasColumn('idcompany');
+
+            if($hasIdCompanyJoin1){
+
+                /**
+                 * example Query generated for a MySQL database:
+                 *
+                 * $query = 'SELECT table1.* from table1
+                 * INNER JOIN table2 ON table1.id = table2.id
+                 * WHERE table2.idcompany = :p1'; // :p1 => $idcompany
+                 */
+
+                $result = $query->create('alias')
+                    ->join('alias.'.$useQuery.' alias2')
+                    ->useQuery('alias2')
+                    ->filterByIdCompany($idcompany)
+                    ->endUse()
+                    ->paginate($page,$limit);
+
+            }else if($hasIdCompanyJoin2){
+
+                $result = $query->create('alias')
+                    ->join('alias.'.$useQuery.' alias2')
+                        ->join('alias2.'.$useQuery2.' alias3')
+                        ->useQuery('alias3')
+                            ->filterByIdCompany($idcompany)
+                        ->endUse()
+                    ->paginate($page,$limit);
+            }
+        }else{
+            $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
+        }
+
+        return $result;
+    }
 
     /*Funcion para ejecutar una consulto a la base de datos. $query debe ser una variable de tipo Query que genera propel por ejemplo:
     ClientQuery, CompanyQuery, BranchQuery, etc....
     */
     public static function executeQuery($query, $table, $idcompany,$page,$limit, array $filters=null, $order, $dir){
+        
         //Los Filtros
         if($filters!=null){
             foreach ($filters as $filter){
+                //var_dump("attribute: ".$filter['attribute']);
                 $params = $query->getParams();
+                
                 if(isset($filter['in'])){
+                    
                     if(!empty($params)){
-                        foreach($params as $param){
-                            if($filter['attribute'] = $param['column']){
-                                $query->addOr($table.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                        //var_dump($params);
+                        foreach($params as $param){  
+                            
+                            if($filter['attribute'] == $param['column']){
+                                $flag = true;                          
+                            }else{   
+                                $flag=false;                        
                             }
                         }
+                        if($flag){
+
+                            $query->addOr($table.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);                           
+                        }else{   
+
+
+                            $query->addAnd($table.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);                           
+                        }
+                        
                     }else{
+                        
+                        //var_dump("entro 3");
                         $query->filterBy(BasePeer::translateFieldname($table, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
                     }
                 }
+
                 if(isset($filter['neq'])){
                     if(!empty($params)){
                         foreach($params as $param){
@@ -82,37 +188,32 @@ class ArrayManage{
             $query->orderBy($order, $dir);
         }
 
+        $result = ArrayManage::getHasCompany($query, $idcompany, $page, $limit);
 
-        //Page y limit
-        $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
-            
-       $links = array(
-           'self' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPage()),
-           'prev' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getPreviousPage()),
-           'next' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getNextPage()),
-           'first' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table),
-           'last' => array('href' => 'http://dev.api.buybuy.com.mx/'.$table.'?page='.$result->getLastPage()),
-       );
-       
-       if($result->getPreviousPage() == 1){
-           unset($links['prev']);
-       } 
-       if($result->isLastPage()){
-           unset($links['next']);
-       } 
-       
-        
+        $links = array(
+           'self' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getPage()),
+           'prev' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getPreviousPage()),
+           'next' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getNextPage()),
+           'first' => array('href' => WEBSITE_API.'/'.$table),
+           'last' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getLastPage()),
+        );
+
+        if($result->getPreviousPage() == 1){
+            unset($links['prev']);
+        }
+        if($result->isLastPage()){
+            unset($links['next']);
+        }
+
         $resume = array(
             'currentPage' => $result->getPage(),
             'itemsPerPage' => $result->getMaxPerPage(),
             'totalItems' => $result->count(),
             'lastPage' => $result->getLastPage(),
         );
-        
+
         $data = $result->getResults()->toArray(null,false,BasePeer::TYPE_FIELDNAME);
-        
-   
-    
+
         $resultArray = array(
             'links' => $links,
             'resume' => $resume,

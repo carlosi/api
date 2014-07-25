@@ -42,12 +42,6 @@ class ExpenseitemTableMap extends TableMap
         $this->addForeignKey('idexpensecategory', 'Idexpensecategory', 'INTEGER', 'expensecategory', 'idexpensecategory', true, null, null);
         $this->addColumn('expenseitem_name', 'ExpenseitemName', 'VARCHAR', true, 225, null);
         $this->addColumn('expenseitem_description', 'ExpenseitemDescription', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('expenseitem_cause', 'ExpenseitemCause', 'CHAR', true, null, null);
-        $this->getColumn('expenseitem_cause', false)->setValueSet(array (
-  0 => 'operation',
-  1 => 'sale',
-  2 => 'purchasedgoods',
-));
         // validators
     } // initialize()
 

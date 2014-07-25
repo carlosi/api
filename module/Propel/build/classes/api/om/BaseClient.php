@@ -114,6 +114,12 @@ abstract class BaseClient extends BaseObject implements Persistent
     protected $aCompany;
 
     /**
+     * @var        PropelObjectCollection|Chatpublic[] Collection to store aggregation of Chatpublic objects.
+     */
+    protected $collChatpublics;
+    protected $collChatpublicsPartial;
+
+    /**
      * @var        PropelObjectCollection|Clientaddress[] Collection to store aggregation of Clientaddress objects.
      */
     protected $collClientaddresss;
@@ -162,6 +168,12 @@ abstract class BaseClient extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $chatpublicsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -758,6 +770,8 @@ abstract class BaseClient extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aCompany = null;
+            $this->collChatpublics = null;
+
             $this->collClientaddresss = null;
 
             $this->collClientcomments = null;
@@ -902,6 +916,23 @@ abstract class BaseClient extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->chatpublicsScheduledForDeletion !== null) {
+                if (!$this->chatpublicsScheduledForDeletion->isEmpty()) {
+                    ChatpublicQuery::create()
+                        ->filterByPrimaryKeys($this->chatpublicsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->chatpublicsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collChatpublics !== null) {
+                foreach ($this->collChatpublics as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             if ($this->clientaddresssScheduledForDeletion !== null) {
@@ -1215,6 +1246,14 @@ abstract class BaseClient extends BaseObject implements Persistent
             }
 
 
+                if ($this->collChatpublics !== null) {
+                    foreach ($this->collChatpublics as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collClientaddresss !== null) {
                     foreach ($this->collClientaddresss as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1380,6 +1419,9 @@ abstract class BaseClient extends BaseObject implements Persistent
         if ($includeForeignObjects) {
             if (null !== $this->aCompany) {
                 $result['Company'] = $this->aCompany->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collChatpublics) {
+                $result['Chatpublics'] = $this->collChatpublics->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collClientaddresss) {
                 $result['Clientaddresss'] = $this->collClientaddresss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1613,6 +1655,12 @@ abstract class BaseClient extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            foreach ($this->getChatpublics() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addChatpublic($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getClientaddresss() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addClientaddress($relObj->copy($deepCopy));
@@ -1756,6 +1804,9 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
+        if ('Chatpublic' == $relationName) {
+            $this->initChatpublics();
+        }
         if ('Clientaddress' == $relationName) {
             $this->initClientaddresss();
         }
@@ -1771,6 +1822,256 @@ abstract class BaseClient extends BaseObject implements Persistent
         if ('Order' == $relationName) {
             $this->initOrders();
         }
+    }
+
+    /**
+     * Clears out the collChatpublics collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Client The current object (for fluent API support)
+     * @see        addChatpublics()
+     */
+    public function clearChatpublics()
+    {
+        $this->collChatpublics = null; // important to set this to null since that means it is uninitialized
+        $this->collChatpublicsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collChatpublics collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialChatpublics($v = true)
+    {
+        $this->collChatpublicsPartial = $v;
+    }
+
+    /**
+     * Initializes the collChatpublics collection.
+     *
+     * By default this just sets the collChatpublics collection to an empty array (like clearcollChatpublics());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initChatpublics($overrideExisting = true)
+    {
+        if (null !== $this->collChatpublics && !$overrideExisting) {
+            return;
+        }
+        $this->collChatpublics = new PropelObjectCollection();
+        $this->collChatpublics->setModel('Chatpublic');
+    }
+
+    /**
+     * Gets an array of Chatpublic objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Client is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Chatpublic[] List of Chatpublic objects
+     * @throws PropelException
+     */
+    public function getChatpublics($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collChatpublicsPartial && !$this->isNew();
+        if (null === $this->collChatpublics || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collChatpublics) {
+                // return empty collection
+                $this->initChatpublics();
+            } else {
+                $collChatpublics = ChatpublicQuery::create(null, $criteria)
+                    ->filterByClient($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collChatpublicsPartial && count($collChatpublics)) {
+                      $this->initChatpublics(false);
+
+                      foreach ($collChatpublics as $obj) {
+                        if (false == $this->collChatpublics->contains($obj)) {
+                          $this->collChatpublics->append($obj);
+                        }
+                      }
+
+                      $this->collChatpublicsPartial = true;
+                    }
+
+                    $collChatpublics->getInternalIterator()->rewind();
+
+                    return $collChatpublics;
+                }
+
+                if ($partial && $this->collChatpublics) {
+                    foreach ($this->collChatpublics as $obj) {
+                        if ($obj->isNew()) {
+                            $collChatpublics[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collChatpublics = $collChatpublics;
+                $this->collChatpublicsPartial = false;
+            }
+        }
+
+        return $this->collChatpublics;
+    }
+
+    /**
+     * Sets a collection of Chatpublic objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $chatpublics A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Client The current object (for fluent API support)
+     */
+    public function setChatpublics(PropelCollection $chatpublics, PropelPDO $con = null)
+    {
+        $chatpublicsToDelete = $this->getChatpublics(new Criteria(), $con)->diff($chatpublics);
+
+
+        $this->chatpublicsScheduledForDeletion = $chatpublicsToDelete;
+
+        foreach ($chatpublicsToDelete as $chatpublicRemoved) {
+            $chatpublicRemoved->setClient(null);
+        }
+
+        $this->collChatpublics = null;
+        foreach ($chatpublics as $chatpublic) {
+            $this->addChatpublic($chatpublic);
+        }
+
+        $this->collChatpublics = $chatpublics;
+        $this->collChatpublicsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Chatpublic objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Chatpublic objects.
+     * @throws PropelException
+     */
+    public function countChatpublics(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collChatpublicsPartial && !$this->isNew();
+        if (null === $this->collChatpublics || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collChatpublics) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getChatpublics());
+            }
+            $query = ChatpublicQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByClient($this)
+                ->count($con);
+        }
+
+        return count($this->collChatpublics);
+    }
+
+    /**
+     * Method called to associate a Chatpublic object to this object
+     * through the Chatpublic foreign key attribute.
+     *
+     * @param    Chatpublic $l Chatpublic
+     * @return Client The current object (for fluent API support)
+     */
+    public function addChatpublic(Chatpublic $l)
+    {
+        if ($this->collChatpublics === null) {
+            $this->initChatpublics();
+            $this->collChatpublicsPartial = true;
+        }
+
+        if (!in_array($l, $this->collChatpublics->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddChatpublic($l);
+
+            if ($this->chatpublicsScheduledForDeletion and $this->chatpublicsScheduledForDeletion->contains($l)) {
+                $this->chatpublicsScheduledForDeletion->remove($this->chatpublicsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Chatpublic $chatpublic The chatpublic object to add.
+     */
+    protected function doAddChatpublic($chatpublic)
+    {
+        $this->collChatpublics[]= $chatpublic;
+        $chatpublic->setClient($this);
+    }
+
+    /**
+     * @param	Chatpublic $chatpublic The chatpublic object to remove.
+     * @return Client The current object (for fluent API support)
+     */
+    public function removeChatpublic($chatpublic)
+    {
+        if ($this->getChatpublics()->contains($chatpublic)) {
+            $this->collChatpublics->remove($this->collChatpublics->search($chatpublic));
+            if (null === $this->chatpublicsScheduledForDeletion) {
+                $this->chatpublicsScheduledForDeletion = clone $this->collChatpublics;
+                $this->chatpublicsScheduledForDeletion->clear();
+            }
+            $this->chatpublicsScheduledForDeletion[]= $chatpublic;
+            $chatpublic->setClient(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Chatpublics from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Chatpublic[] List of Chatpublic objects
+     */
+    public function getChatpublicsJoinUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChatpublicQuery::create(null, $criteria);
+        $query->joinWith('User', $join_behavior);
+
+        return $this->getChatpublics($query, $con);
     }
 
     /**
@@ -2964,6 +3265,11 @@ abstract class BaseClient extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collChatpublics) {
+                foreach ($this->collChatpublics as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collClientaddresss) {
                 foreach ($this->collClientaddresss as $o) {
                     $o->clearAllReferences($deep);
@@ -2996,6 +3302,10 @@ abstract class BaseClient extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collChatpublics instanceof PropelCollection) {
+            $this->collChatpublics->clearIterator();
+        }
+        $this->collChatpublics = null;
         if ($this->collClientaddresss instanceof PropelCollection) {
             $this->collClientaddresss->clearIterator();
         }

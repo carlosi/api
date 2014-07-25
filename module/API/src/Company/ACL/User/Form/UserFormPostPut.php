@@ -26,7 +26,8 @@ class UserFormPostPut{
             case 3: {
 
                 $userForm->remove('user_status');
-                
+                $userForm->remove('user_password');
+
                 $userForm->add(array(
                     'type' => 'Select',
                     'name' => 'user_status',
@@ -35,6 +36,7 @@ class UserFormPostPut{
                         'value_options' => array('pending','active'),
                     ),
                 ));
+                break;
             }
 
             case 2: {

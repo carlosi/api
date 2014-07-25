@@ -79,12 +79,36 @@ class ApiProblemListener implements ListenerAggregateInterface
         $response = $e->getResponse();
         $requestHeaders = $request->getHeaders();
         $responseHeaders = $response->getHeaders();
+        
+        // If method is PUT
+        if($request->getMethod() == "PUT"){
+            // getting id of route
+            $id = $e->getRouteMatch()->getParam('id');
+            // If request id is null
+            if($id == null){
 
+                $response->setStatusCode(Response::STATUS_CODE_400);
+                $statusCode = $response->getStatusCode();
+
+                $body = array(
+                    'HTTP Status' => $statusCode,
+                    'Method' => 'PUT' ,
+                    'Title' => 'The request id is null' ,
+                    'Details' => 'The request id can´t be null',
+                    'More Info' => 'http://buybuy.com/api/docs'
+                );
+                $jsonModel = new JsonModel($body);
+                $jsonModel->setTerminal(true);
+                $e->setResult($jsonModel);
+                $e->setViewModel($jsonModel);
+            }
+        }
+        
         // only worried about error pages
         if (!$e->isError()) {
             return;
         }
-
+        
         // and then, only if we have an Accept header...
         if (!$request instanceof HttpRequest) {
             return;
@@ -113,7 +137,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                         'HTTP Status' => $statusCode,
                         'Title' => 'Not Found' ,
                         'Details' => 'Resource not found',
-                        'More Info' => "http://buybuy.com/api/docs"
+                        'More Info' => 'http://buybuy.com/api/docs'
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -129,28 +153,31 @@ class ApiProblemListener implements ListenerAggregateInterface
                     $body = array(
                         'HTTP Status' => $statusCode ,
                         'Title' => 'Internal Server Error' ,
-                        'More Info' => "http://buybuy.com/api/docs"
+                        'More Info' => 'http://buybuy.com/api/docs'
                     );
 
-                    $getContentType = $requestHeaders->get('Content-Type')->getMediaType();
-                    $getContentBody = $request->getContent();
+                    if($requestHeaders->get('Content-Type') == null){
 
-                    // Validate that the Body ​​are of type json
-                    $decodeJson = json_decode($getContentBody);
-                    if($decodeJson == null){
+                    }else{
+                        $getContentType = $requestHeaders->get('Content-Type')->getMediaType();
+                        $getContentBody = $request->getContent($getContentType);
 
-                        $response->setStatusCode(Response::STATUS_CODE_400);
-                        $response->getHeaders()->addHeaderLine('Message', 'Sintax Error');
-                        $statusCode = $response->getStatusCode();
+                        // Validate that the Body ​​are of type json
+                        $decodeJson = json_decode($getContentBody);
+                        if($decodeJson == null){
 
-                        $body = array(
-                            'HTTP Status' => $statusCode,
-                            'Title' => 'Bad Request' ,
-                            'Details' => 'JSON Sintax Error',
-                            'More Info' => "http://buybuy.com/api/docs"
-                        );
+                            $response->setStatusCode(Response::STATUS_CODE_400);
+                            $response->getHeaders()->addHeaderLine('Message', 'Sintax Error');
+                            $statusCode = $response->getStatusCode();
+
+                            $body = array(
+                                'HTTP Status' => $statusCode,
+                                'Title' => 'Bad Request' ,
+                                'Details' => 'JSON Sintax Error',
+                                'More Info' => 'http://buybuy.com/api/docs'
+                            );
+                        }
                     }
-
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
                     $e->setResult($jsonModel);
