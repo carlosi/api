@@ -41,18 +41,9 @@ class TokenListener implements ListenerAggregateInterface {
     
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
-
         define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
-        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
-
-        $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
-        if(SessionManager::TokenIsValid($token)){
-
-        }else{
-            $response = $e->getResponse();
-            $response->setStatusCode(Response::STATUS_CODE_401);
-            $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
-
+        if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
+            $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
 
             if(SessionManager::TokenIsValid($token)){
             
@@ -61,15 +52,12 @@ class TokenListener implements ListenerAggregateInterface {
                 $response->setStatusCode(Response::STATUS_CODE_401);
                 $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
 
-
-
-            $body = array(
-                    'HTTP Status' => '401' ,
-                    'Title' => 'Unauthorized' ,
-                    'Details' => 'Invalid or expired token',
-                    'More Info' => WEBSITE_API_DOCS
-            );
-
+                $body = array(
+                        'HTTP Status' => '401' ,
+                        'Title' => 'Unauthorized' ,
+                        'Details' => 'Invalid or expired token',
+                        'More Info' => WEBSITE_API_DOCS
+                );
 
                  $jsonModel = new JsonModel($body);
                  $jsonModel->setTerminal(true);
@@ -77,9 +65,9 @@ class TokenListener implements ListenerAggregateInterface {
                  $e->setViewModel($jsonModel)->stopPropagation();
             }
         }
-
-
-
+        
+        
+        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
     }
 }
 ?>

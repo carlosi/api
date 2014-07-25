@@ -55,7 +55,7 @@ class UserController extends AbstractRestfulController
     
     public function options()
     {
-  
+        $response = $this->getResponse();
         $response->getHeaders()
                  ->addHeaderLine('Allow', implode(',', $this->_getOptions()));
 
@@ -411,13 +411,43 @@ class UserController extends AbstractRestfulController
             
             //Instanciamos nuestro formulario de acuerdo al nivel del usuario que realiza la peticion.
             $userForm = UserFormGET::init($userLevel);
-
             
+            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+            $companyForm = CompanyFormGET::init($userLevel);
+     
             //Guardamos en un arrglo los campos a los que el usuario va poder tener acceso de acuerdo a su nivel?
             $allowedColumns = array();
             foreach ($userForm->getElements() as $key=>$value){
                 array_push($allowedColumns, $key);
-            }    
+            }
+            
+            /*
+             * ACL
+             */
+
+           //Guardamos en un arreglo las columnas y los atributos a los que el usuario tiene permiso
+            $acl = array();
+            foreach ($userForm->getElements() as $element){
+                if($element->getOption('value_options')!=null){
+                    $acl[$element->getAttribute('name')] = array('viewName' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                    //array_push($acl, array($element->getAttribute('name') => array('value_options' => $element->getOption('value_options'))));
+                }else{
+                    $acl[$element->getAttribute('name')] = $element->getOption('label');
+                    //array_push($acl, $element->getAttribute('name'));
+                }
+            }
+
+            //Eliminamos el id company Si es visible y lo agregamos como embbeded toda la informacion de company a la que tiene visible el usuario
+            if(key_exists('idcompany',$acl)){
+                unset($acl['idcompany']);
+                $companyColumns = array();
+                foreach ($companyForm->getElements() as $element){
+                   $companyColumns[$element->getAttribute('name')] =  $element->getOption('label');
+                }
+                $acl['_embedded'] = array(
+                    'company' =>  $companyColumns,
+                );
+            }
             
             //Verificamos que si nos envian filtros por GET si no ponemos valores por default
             $limit= (int) $this->params()->fromQuery('limit') ? (int)$this->params()->fromQuery('limit')  : 10;
@@ -428,11 +458,13 @@ class UserController extends AbstractRestfulController
             $filters = $this->params()->fromQuery('filter') ? $this->params()->fromQuery('filter') : null;        
             if($filters!=null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
 
+            //Realizamos nuestra peticion
             $result = ArrayManage::executeQuery($this->getQuery(), $this->table, $idCompany,$page,$limit,$filters,$order,$dir);
             
             $userArray = array();
-
+            
             foreach ($result['data'] as $item){
+                
                  $user = UserQuery::create()->filterByIdUser($item['iduser'])->findOne();
                  $row = array(
                      "_links" => array(
@@ -442,15 +474,14 @@ class UserController extends AbstractRestfulController
                  foreach ($userForm->getElements() as $key=>$value){
                     $row[$key] = $item[$key];
                  }
-                 
+
                  //Eliminamos los campos que hacen referencia a otras tablas
                  //unset($row['idcompany']);
                  //Agregamos el campo embedded a nuestro arreglo
                  $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
 
-                 //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                 $companyForm = CompanyFormGET::init($userLevel);
                  
+
                  $companyArray = array();
 
                  foreach ($companyForm->getElements() as $key=>$value){
@@ -468,50 +499,16 @@ class UserController extends AbstractRestfulController
                      $row['_embedded']['company'][$key] = $value;
                  }
                  array_push($userArray, $row);
-               
-                 
-                 /*
-                 * ACL
-                 */
-                 
-               //Guardamos en un arreglo las columnas y los atributos a los que el usuario tiene permiso
-                $acl = array();
-                foreach ($userForm->getElements() as $element){
-                    if($element->getOption('value_options')!=null){
-                        $acl[$element->getAttribute('name')] = array('viewName' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                        //array_push($acl, array($element->getAttribute('name') => array('value_options' => $element->getOption('value_options'))));
-                    }else{
-                        $acl[$element->getAttribute('name')] = $element->getOption('label');
-                        //array_push($acl, $element->getAttribute('name'));
-                    }
-                }
- 
-                //Eliminamos el id company Si es visible y lo agregamos como embbeded toda la informacion de company a la que tiene visible el usuario
-                if(key_exists('idcompany',$acl)){
-                    unset($acl['idcompany']);
-                    $companyColumns = array();
-                    foreach ($companyForm->getElements() as $element){
-                       $companyColumns[$element->getAttribute('name')] =  $element->getOption('label');
-                    }
-                    $acl['_embedded'] = array(
-                        'company' =>  $companyColumns,
-                    );
-                }
-                
-                
-
             }
-           
-            
             
             $response = array(
                 '_links' => $result['links'],
-                'resume' => $result['resume'],
                 'ACL' => $acl,
+                'resume' => $result['resume'],
                 '_embedded' => array('users'=> $userArray),
             );
-
-             return new JsonModel($response);
+      
+            return new JsonModel($response);
   
         }else{
             //Modifiamos el Header de nuestra respuesta

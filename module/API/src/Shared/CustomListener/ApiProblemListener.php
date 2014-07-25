@@ -79,12 +79,36 @@ class ApiProblemListener implements ListenerAggregateInterface
         $response = $e->getResponse();
         $requestHeaders = $request->getHeaders();
         $responseHeaders = $response->getHeaders();
+        
+        // If method is PUT
+        if($request->getMethod() == "PUT"){
+            // getting id of route
+            $id = $e->getRouteMatch()->getParam('id');
+            // If request id is null
+            if($id == null){
 
+                $response->setStatusCode(Response::STATUS_CODE_400);
+                $statusCode = $response->getStatusCode();
+
+                $body = array(
+                    'HTTP Status' => $statusCode,
+                    'Method' => 'PUT' ,
+                    'Title' => 'The request id is null' ,
+                    'Details' => 'The request id can´t be null',
+                    'More Info' => 'http://buybuy.com/api/docs'
+                );
+                $jsonModel = new JsonModel($body);
+                $jsonModel->setTerminal(true);
+                $e->setResult($jsonModel);
+                $e->setViewModel($jsonModel);
+            }
+        }
+        
         // only worried about error pages
         if (!$e->isError()) {
             return;
         }
-
+        
         // and then, only if we have an Accept header...
         if (!$request instanceof HttpRequest) {
             return;

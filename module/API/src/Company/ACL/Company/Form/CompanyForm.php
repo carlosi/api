@@ -22,7 +22,7 @@ class CompanyForm extends Form
             'type' => 'Hidden',
             'name' => 'company_name',
             'options' => array(
-                'label' => 'Nombre',
+                'label' => 'Compañia',
             ),
             
         ));
