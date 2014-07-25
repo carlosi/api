@@ -60,33 +60,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
     protected $productmain_unit;
 
     /**
-     * The value for the productmain_discount field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $productmain_discount;
-
-    /**
-     * The value for the productmain_eachpieces field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $productmain_eachpieces;
-
-    /**
-     * The value for the productmain_maxdiscount field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $productmain_maxdiscount;
-
-    /**
-     * The value for the productmain_baseproperty field.
-     * @var        string
-     */
-    protected $productmain_baseproperty;
-
-    /**
      * The value for the productmain_type field.
      * Note: this column has a database default value of: 'PRODUCT'
      * @var        string
@@ -120,6 +93,12 @@ abstract class BaseProductmain extends BaseObject implements Persistent
      */
     protected $collProductmainphotos;
     protected $collProductmainphotosPartial;
+
+    /**
+     * @var        PropelObjectCollection|Productmainproperty[] Collection to store aggregation of Productmainproperty objects.
+     */
+    protected $collProductmainpropertys;
+    protected $collProductmainpropertysPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -160,6 +139,12 @@ abstract class BaseProductmain extends BaseObject implements Persistent
     protected $productmainphotosScheduledForDeletion = null;
 
     /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $productmainpropertysScheduledForDeletion = null;
+
+    /**
      * Applies default values to this object.
      * This method should be called from the object's constructor (or
      * equivalent initialization method).
@@ -167,9 +152,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
      */
     public function applyDefaultValues()
     {
-        $this->productmain_discount = 0;
-        $this->productmain_eachpieces = 0;
-        $this->productmain_maxdiscount = 0;
         $this->productmain_type = 'PRODUCT';
     }
 
@@ -236,50 +218,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
     {
 
         return $this->productmain_unit;
-    }
-
-    /**
-     * Get the [productmain_discount] column value.
-     *
-     * @return int
-     */
-    public function getProductmainDiscount()
-    {
-
-        return $this->productmain_discount;
-    }
-
-    /**
-     * Get the [productmain_eachpieces] column value.
-     *
-     * @return int
-     */
-    public function getProductmainEachpieces()
-    {
-
-        return $this->productmain_eachpieces;
-    }
-
-    /**
-     * Get the [productmain_maxdiscount] column value.
-     *
-     * @return int
-     */
-    public function getProductmainMaxdiscount()
-    {
-
-        return $this->productmain_maxdiscount;
-    }
-
-    /**
-     * Get the [productmain_baseproperty] column value.
-     *
-     * @return string
-     */
-    public function getProductmainBaseproperty()
-    {
-
-        return $this->productmain_baseproperty;
     }
 
     /**
@@ -407,90 +345,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
     } // setProductmainUnit()
 
     /**
-     * Set the value of [productmain_discount] column.
-     *
-     * @param  int $v new value
-     * @return Productmain The current object (for fluent API support)
-     */
-    public function setProductmainDiscount($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->productmain_discount !== $v) {
-            $this->productmain_discount = $v;
-            $this->modifiedColumns[] = ProductmainPeer::PRODUCTMAIN_DISCOUNT;
-        }
-
-
-        return $this;
-    } // setProductmainDiscount()
-
-    /**
-     * Set the value of [productmain_eachpieces] column.
-     *
-     * @param  int $v new value
-     * @return Productmain The current object (for fluent API support)
-     */
-    public function setProductmainEachpieces($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->productmain_eachpieces !== $v) {
-            $this->productmain_eachpieces = $v;
-            $this->modifiedColumns[] = ProductmainPeer::PRODUCTMAIN_EACHPIECES;
-        }
-
-
-        return $this;
-    } // setProductmainEachpieces()
-
-    /**
-     * Set the value of [productmain_maxdiscount] column.
-     *
-     * @param  int $v new value
-     * @return Productmain The current object (for fluent API support)
-     */
-    public function setProductmainMaxdiscount($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->productmain_maxdiscount !== $v) {
-            $this->productmain_maxdiscount = $v;
-            $this->modifiedColumns[] = ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT;
-        }
-
-
-        return $this;
-    } // setProductmainMaxdiscount()
-
-    /**
-     * Set the value of [productmain_baseproperty] column.
-     *
-     * @param  string $v new value
-     * @return Productmain The current object (for fluent API support)
-     */
-    public function setProductmainBaseproperty($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->productmain_baseproperty !== $v) {
-            $this->productmain_baseproperty = $v;
-            $this->modifiedColumns[] = ProductmainPeer::PRODUCTMAIN_BASEPROPERTY;
-        }
-
-
-        return $this;
-    } // setProductmainBaseproperty()
-
-    /**
      * Set the value of [productmain_type] column.
      *
      * @param  string $v new value
@@ -521,18 +375,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->productmain_discount !== 0) {
-                return false;
-            }
-
-            if ($this->productmain_eachpieces !== 0) {
-                return false;
-            }
-
-            if ($this->productmain_maxdiscount !== 0) {
-                return false;
-            }
-
             if ($this->productmain_type !== 'PRODUCT') {
                 return false;
             }
@@ -564,11 +406,7 @@ abstract class BaseProductmain extends BaseObject implements Persistent
             $this->idproductcategory = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->productmain_name = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->productmain_unit = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-            $this->productmain_discount = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
-            $this->productmain_eachpieces = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
-            $this->productmain_maxdiscount = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-            $this->productmain_baseproperty = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-            $this->productmain_type = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+            $this->productmain_type = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -578,7 +416,7 @@ abstract class BaseProductmain extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 10; // 10 = ProductmainPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ProductmainPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Productmain object", $e);
@@ -653,6 +491,8 @@ abstract class BaseProductmain extends BaseObject implements Persistent
             $this->collProducts = null;
 
             $this->collProductmainphotos = null;
+
+            $this->collProductmainpropertys = null;
 
         } // if (deep)
     }
@@ -848,6 +688,23 @@ abstract class BaseProductmain extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->productmainpropertysScheduledForDeletion !== null) {
+                if (!$this->productmainpropertysScheduledForDeletion->isEmpty()) {
+                    ProductmainpropertyQuery::create()
+                        ->filterByPrimaryKeys($this->productmainpropertysScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->productmainpropertysScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collProductmainpropertys !== null) {
+                foreach ($this->collProductmainpropertys as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -889,18 +746,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
         if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_UNIT)) {
             $modifiedColumns[':p' . $index++]  = '`productmain_unit`';
         }
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_DISCOUNT)) {
-            $modifiedColumns[':p' . $index++]  = '`productmain_discount`';
-        }
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_EACHPIECES)) {
-            $modifiedColumns[':p' . $index++]  = '`productmain_eachpieces`';
-        }
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT)) {
-            $modifiedColumns[':p' . $index++]  = '`productmain_maxdiscount`';
-        }
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_BASEPROPERTY)) {
-            $modifiedColumns[':p' . $index++]  = '`productmain_baseproperty`';
-        }
         if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_TYPE)) {
             $modifiedColumns[':p' . $index++]  = '`productmain_type`';
         }
@@ -929,18 +774,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
                         break;
                     case '`productmain_unit`':
                         $stmt->bindValue($identifier, $this->productmain_unit, PDO::PARAM_STR);
-                        break;
-                    case '`productmain_discount`':
-                        $stmt->bindValue($identifier, $this->productmain_discount, PDO::PARAM_INT);
-                        break;
-                    case '`productmain_eachpieces`':
-                        $stmt->bindValue($identifier, $this->productmain_eachpieces, PDO::PARAM_INT);
-                        break;
-                    case '`productmain_maxdiscount`':
-                        $stmt->bindValue($identifier, $this->productmain_maxdiscount, PDO::PARAM_INT);
-                        break;
-                    case '`productmain_baseproperty`':
-                        $stmt->bindValue($identifier, $this->productmain_baseproperty, PDO::PARAM_STR);
                         break;
                     case '`productmain_type`':
                         $stmt->bindValue($identifier, $this->productmain_type, PDO::PARAM_STR);
@@ -1086,6 +919,14 @@ abstract class BaseProductmain extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collProductmainpropertys !== null) {
+                    foreach ($this->collProductmainpropertys as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -1137,18 +978,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
                 return $this->getProductmainUnit();
                 break;
             case 5:
-                return $this->getProductmainDiscount();
-                break;
-            case 6:
-                return $this->getProductmainEachpieces();
-                break;
-            case 7:
-                return $this->getProductmainMaxdiscount();
-                break;
-            case 8:
-                return $this->getProductmainBaseproperty();
-                break;
-            case 9:
                 return $this->getProductmainType();
                 break;
             default:
@@ -1185,11 +1014,7 @@ abstract class BaseProductmain extends BaseObject implements Persistent
             $keys[2] => $this->getIdproductcategory(),
             $keys[3] => $this->getProductmainName(),
             $keys[4] => $this->getProductmainUnit(),
-            $keys[5] => $this->getProductmainDiscount(),
-            $keys[6] => $this->getProductmainEachpieces(),
-            $keys[7] => $this->getProductmainMaxdiscount(),
-            $keys[8] => $this->getProductmainBaseproperty(),
-            $keys[9] => $this->getProductmainType(),
+            $keys[5] => $this->getProductmainType(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1211,6 +1036,9 @@ abstract class BaseProductmain extends BaseObject implements Persistent
             }
             if (null !== $this->collProductmainphotos) {
                 $result['Productmainphotos'] = $this->collProductmainphotos->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collProductmainpropertys) {
+                $result['Productmainpropertys'] = $this->collProductmainpropertys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1262,18 +1090,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
                 $this->setProductmainUnit($value);
                 break;
             case 5:
-                $this->setProductmainDiscount($value);
-                break;
-            case 6:
-                $this->setProductmainEachpieces($value);
-                break;
-            case 7:
-                $this->setProductmainMaxdiscount($value);
-                break;
-            case 8:
-                $this->setProductmainBaseproperty($value);
-                break;
-            case 9:
                 $this->setProductmainType($value);
                 break;
         } // switch()
@@ -1305,11 +1121,7 @@ abstract class BaseProductmain extends BaseObject implements Persistent
         if (array_key_exists($keys[2], $arr)) $this->setIdproductcategory($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setProductmainName($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setProductmainUnit($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setProductmainDiscount($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setProductmainEachpieces($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setProductmainMaxdiscount($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setProductmainBaseproperty($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setProductmainType($arr[$keys[9]]);
+        if (array_key_exists($keys[5], $arr)) $this->setProductmainType($arr[$keys[5]]);
     }
 
     /**
@@ -1326,10 +1138,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
         if ($this->isColumnModified(ProductmainPeer::IDPRODUCTCATEGORY)) $criteria->add(ProductmainPeer::IDPRODUCTCATEGORY, $this->idproductcategory);
         if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_NAME)) $criteria->add(ProductmainPeer::PRODUCTMAIN_NAME, $this->productmain_name);
         if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_UNIT)) $criteria->add(ProductmainPeer::PRODUCTMAIN_UNIT, $this->productmain_unit);
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_DISCOUNT)) $criteria->add(ProductmainPeer::PRODUCTMAIN_DISCOUNT, $this->productmain_discount);
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_EACHPIECES)) $criteria->add(ProductmainPeer::PRODUCTMAIN_EACHPIECES, $this->productmain_eachpieces);
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT)) $criteria->add(ProductmainPeer::PRODUCTMAIN_MAXDISCOUNT, $this->productmain_maxdiscount);
-        if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_BASEPROPERTY)) $criteria->add(ProductmainPeer::PRODUCTMAIN_BASEPROPERTY, $this->productmain_baseproperty);
         if ($this->isColumnModified(ProductmainPeer::PRODUCTMAIN_TYPE)) $criteria->add(ProductmainPeer::PRODUCTMAIN_TYPE, $this->productmain_type);
 
         return $criteria;
@@ -1398,10 +1206,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
         $copyObj->setIdproductcategory($this->getIdproductcategory());
         $copyObj->setProductmainName($this->getProductmainName());
         $copyObj->setProductmainUnit($this->getProductmainUnit());
-        $copyObj->setProductmainDiscount($this->getProductmainDiscount());
-        $copyObj->setProductmainEachpieces($this->getProductmainEachpieces());
-        $copyObj->setProductmainMaxdiscount($this->getProductmainMaxdiscount());
-        $copyObj->setProductmainBaseproperty($this->getProductmainBaseproperty());
         $copyObj->setProductmainType($this->getProductmainType());
 
         if ($deepCopy && !$this->startCopy) {
@@ -1426,6 +1230,12 @@ abstract class BaseProductmain extends BaseObject implements Persistent
             foreach ($this->getProductmainphotos() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addProductmainphoto($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getProductmainpropertys() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addProductmainproperty($relObj->copy($deepCopy));
                 }
             }
 
@@ -1602,6 +1412,9 @@ abstract class BaseProductmain extends BaseObject implements Persistent
         }
         if ('Productmainphoto' == $relationName) {
             $this->initProductmainphotos();
+        }
+        if ('Productmainproperty' == $relationName) {
+            $this->initProductmainpropertys();
         }
     }
 
@@ -2281,6 +2094,231 @@ abstract class BaseProductmain extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collProductmainpropertys collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Productmain The current object (for fluent API support)
+     * @see        addProductmainpropertys()
+     */
+    public function clearProductmainpropertys()
+    {
+        $this->collProductmainpropertys = null; // important to set this to null since that means it is uninitialized
+        $this->collProductmainpropertysPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collProductmainpropertys collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialProductmainpropertys($v = true)
+    {
+        $this->collProductmainpropertysPartial = $v;
+    }
+
+    /**
+     * Initializes the collProductmainpropertys collection.
+     *
+     * By default this just sets the collProductmainpropertys collection to an empty array (like clearcollProductmainpropertys());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initProductmainpropertys($overrideExisting = true)
+    {
+        if (null !== $this->collProductmainpropertys && !$overrideExisting) {
+            return;
+        }
+        $this->collProductmainpropertys = new PropelObjectCollection();
+        $this->collProductmainpropertys->setModel('Productmainproperty');
+    }
+
+    /**
+     * Gets an array of Productmainproperty objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Productmain is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Productmainproperty[] List of Productmainproperty objects
+     * @throws PropelException
+     */
+    public function getProductmainpropertys($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collProductmainpropertysPartial && !$this->isNew();
+        if (null === $this->collProductmainpropertys || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collProductmainpropertys) {
+                // return empty collection
+                $this->initProductmainpropertys();
+            } else {
+                $collProductmainpropertys = ProductmainpropertyQuery::create(null, $criteria)
+                    ->filterByProductmain($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collProductmainpropertysPartial && count($collProductmainpropertys)) {
+                      $this->initProductmainpropertys(false);
+
+                      foreach ($collProductmainpropertys as $obj) {
+                        if (false == $this->collProductmainpropertys->contains($obj)) {
+                          $this->collProductmainpropertys->append($obj);
+                        }
+                      }
+
+                      $this->collProductmainpropertysPartial = true;
+                    }
+
+                    $collProductmainpropertys->getInternalIterator()->rewind();
+
+                    return $collProductmainpropertys;
+                }
+
+                if ($partial && $this->collProductmainpropertys) {
+                    foreach ($this->collProductmainpropertys as $obj) {
+                        if ($obj->isNew()) {
+                            $collProductmainpropertys[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collProductmainpropertys = $collProductmainpropertys;
+                $this->collProductmainpropertysPartial = false;
+            }
+        }
+
+        return $this->collProductmainpropertys;
+    }
+
+    /**
+     * Sets a collection of Productmainproperty objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $productmainpropertys A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Productmain The current object (for fluent API support)
+     */
+    public function setProductmainpropertys(PropelCollection $productmainpropertys, PropelPDO $con = null)
+    {
+        $productmainpropertysToDelete = $this->getProductmainpropertys(new Criteria(), $con)->diff($productmainpropertys);
+
+
+        $this->productmainpropertysScheduledForDeletion = $productmainpropertysToDelete;
+
+        foreach ($productmainpropertysToDelete as $productmainpropertyRemoved) {
+            $productmainpropertyRemoved->setProductmain(null);
+        }
+
+        $this->collProductmainpropertys = null;
+        foreach ($productmainpropertys as $productmainproperty) {
+            $this->addProductmainproperty($productmainproperty);
+        }
+
+        $this->collProductmainpropertys = $productmainpropertys;
+        $this->collProductmainpropertysPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Productmainproperty objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Productmainproperty objects.
+     * @throws PropelException
+     */
+    public function countProductmainpropertys(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collProductmainpropertysPartial && !$this->isNew();
+        if (null === $this->collProductmainpropertys || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collProductmainpropertys) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getProductmainpropertys());
+            }
+            $query = ProductmainpropertyQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByProductmain($this)
+                ->count($con);
+        }
+
+        return count($this->collProductmainpropertys);
+    }
+
+    /**
+     * Method called to associate a Productmainproperty object to this object
+     * through the Productmainproperty foreign key attribute.
+     *
+     * @param    Productmainproperty $l Productmainproperty
+     * @return Productmain The current object (for fluent API support)
+     */
+    public function addProductmainproperty(Productmainproperty $l)
+    {
+        if ($this->collProductmainpropertys === null) {
+            $this->initProductmainpropertys();
+            $this->collProductmainpropertysPartial = true;
+        }
+
+        if (!in_array($l, $this->collProductmainpropertys->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddProductmainproperty($l);
+
+            if ($this->productmainpropertysScheduledForDeletion and $this->productmainpropertysScheduledForDeletion->contains($l)) {
+                $this->productmainpropertysScheduledForDeletion->remove($this->productmainpropertysScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Productmainproperty $productmainproperty The productmainproperty object to add.
+     */
+    protected function doAddProductmainproperty($productmainproperty)
+    {
+        $this->collProductmainpropertys[]= $productmainproperty;
+        $productmainproperty->setProductmain($this);
+    }
+
+    /**
+     * @param	Productmainproperty $productmainproperty The productmainproperty object to remove.
+     * @return Productmain The current object (for fluent API support)
+     */
+    public function removeProductmainproperty($productmainproperty)
+    {
+        if ($this->getProductmainpropertys()->contains($productmainproperty)) {
+            $this->collProductmainpropertys->remove($this->collProductmainpropertys->search($productmainproperty));
+            if (null === $this->productmainpropertysScheduledForDeletion) {
+                $this->productmainpropertysScheduledForDeletion = clone $this->collProductmainpropertys;
+                $this->productmainpropertysScheduledForDeletion->clear();
+            }
+            $this->productmainpropertysScheduledForDeletion[]= clone $productmainproperty;
+            $productmainproperty->setProductmain(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -2290,10 +2328,6 @@ abstract class BaseProductmain extends BaseObject implements Persistent
         $this->idproductcategory = null;
         $this->productmain_name = null;
         $this->productmain_unit = null;
-        $this->productmain_discount = null;
-        $this->productmain_eachpieces = null;
-        $this->productmain_maxdiscount = null;
-        $this->productmain_baseproperty = null;
         $this->productmain_type = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
@@ -2333,6 +2367,11 @@ abstract class BaseProductmain extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collProductmainpropertys) {
+                foreach ($this->collProductmainpropertys as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->aCompany instanceof Persistent) {
               $this->aCompany->clearAllReferences($deep);
             }
@@ -2355,6 +2394,10 @@ abstract class BaseProductmain extends BaseObject implements Persistent
             $this->collProductmainphotos->clearIterator();
         }
         $this->collProductmainphotos = null;
+        if ($this->collProductmainpropertys instanceof PropelCollection) {
+            $this->collProductmainpropertys->clearIterator();
+        }
+        $this->collProductmainpropertys = null;
         $this->aCompany = null;
         $this->aProductcategory = null;
     }

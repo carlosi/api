@@ -36,7 +36,7 @@ class MxtaxdocumentTableMap extends TableMap
         $this->setPhpName('Mxtaxdocument');
         $this->setClassname('Mxtaxdocument');
         $this->setPackage('api');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('idmxtaxdocument', 'Idmxtaxdocument', 'INTEGER', true, null, null);
         $this->addForeignKey('idclienttax', 'Idclienttax', 'INTEGER', 'clienttax', 'idclienttax', true, null, null);
@@ -63,8 +63,8 @@ class MxtaxdocumentTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Clienttax', 'Clienttax', RelationMap::MANY_TO_ONE, array('idclienttax' => 'idclienttax', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Order', 'Order', RelationMap::MANY_TO_ONE, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Clienttax', 'Clienttax', RelationMap::MANY_TO_ONE, array('idclienttax' => 'idclienttax', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // MxtaxdocumentTableMap

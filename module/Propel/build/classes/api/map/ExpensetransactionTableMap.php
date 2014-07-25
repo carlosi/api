@@ -50,6 +50,12 @@ class ExpensetransactionTableMap extends TableMap
         $this->addColumn('expensetransaction_quantity', 'ExpensetransactionQuantity', 'DECIMAL', true, 10, 0);
         $this->addColumn('expensetransaction_value', 'ExpensetransactionValue', 'DECIMAL', true, 10, 0);
         $this->addColumn('expensetransaction_date', 'ExpensetransactionDate', 'TIMESTAMP', true, null, null);
+        $this->addColumn('expensetransaction_reason', 'ExpensetransactionReason', 'CHAR', true, null, 'operationcost');
+        $this->getColumn('expensetransaction_reason', false)->setValueSet(array (
+  0 => 'buygoods',
+  1 => 'costbysales',
+  2 => 'operationcost',
+));
         // validators
     } // initialize()
 
@@ -59,6 +65,7 @@ class ExpensetransactionTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Expenseitem', 'Expenseitem', RelationMap::MANY_TO_ONE, array('idexpenseitem' => 'idexpenseitem', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Bankexpensetransaction', 'Bankexpensetransaction', RelationMap::ONE_TO_MANY, array('idexpensetransaction' => 'idexpensetransaction', ), 'CASCADE', 'CASCADE', 'Bankexpensetransactions');
         $this->addRelation('Expensetransactionfile', 'Expensetransactionfile', RelationMap::ONE_TO_MANY, array('idexpensetransaction' => 'idexpensetransaction', ), 'CASCADE', 'CASCADE', 'Expensetransactionfiles');
     } // buildRelations()
 

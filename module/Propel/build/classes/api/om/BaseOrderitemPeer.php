@@ -380,6 +380,9 @@ abstract class BaseOrderitemPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in OrderconflictPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        OrderconflictPeer::clearInstancePool();
         // Invalidate objects in ProductionorderitemPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductionorderitemPeer::clearInstancePool();
@@ -1347,6 +1350,12 @@ abstract class BaseOrderitemPeer
         $objects = OrderitemPeer::doSelect($criteria, $con);
         foreach ($objects as $obj) {
 
+
+            // delete related Orderconflict objects
+            $criteria = new Criteria(OrderconflictPeer::DATABASE_NAME);
+
+            $criteria->add(OrderconflictPeer::IDORDERITEM, $obj->getIdorderitem());
+            $affectedRows += OrderconflictPeer::doDelete($criteria, $con);
 
             // delete related Productionorderitem objects
             $criteria = new Criteria(ProductionorderitemPeer::DATABASE_NAME);

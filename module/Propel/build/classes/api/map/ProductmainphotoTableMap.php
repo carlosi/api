@@ -50,6 +50,11 @@ class ProductmainphotoTableMap extends TableMap
   2 => 'active',
   3 => 'revision',
 ));
+        $this->addColumn('productmainphoto_type', 'ProductmainphotoType', 'CHAR', true, null, 'private');
+        $this->getColumn('productmainphoto_type', false)->setValueSet(array (
+  0 => 'private',
+  1 => 'public',
+));
         // validators
     } // initialize()
 

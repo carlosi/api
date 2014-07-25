@@ -486,6 +486,9 @@ abstract class BaseClientPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in ChatpublicPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ChatpublicPeer::clearInstancePool();
         // Invalidate objects in ClientaddressPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ClientaddressPeer::clearInstancePool();
@@ -1072,6 +1075,12 @@ abstract class BaseClientPeer
         $objects = ClientPeer::doSelect($criteria, $con);
         foreach ($objects as $obj) {
 
+
+            // delete related Chatpublic objects
+            $criteria = new Criteria(ChatpublicPeer::DATABASE_NAME);
+
+            $criteria->add(ChatpublicPeer::IDCLIENT, $obj->getIdclient());
+            $affectedRows += ChatpublicPeer::doDelete($criteria, $con);
 
             // delete related Clientaddress objects
             $criteria = new Criteria(ClientaddressPeer::DATABASE_NAME);

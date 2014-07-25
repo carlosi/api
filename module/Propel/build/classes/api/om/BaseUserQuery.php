@@ -6,15 +6,15 @@
  *
  *
  *
- * @method UserQuery orderByIdUser($order = Criteria::ASC) Order by the iduser column
- * @method UserQuery orderByIdCompany($order = Criteria::ASC) Order by the idcompany column
+ * @method UserQuery orderByIduser($order = Criteria::ASC) Order by the iduser column
+ * @method UserQuery orderByIdcompany($order = Criteria::ASC) Order by the idcompany column
  * @method UserQuery orderByUserNickname($order = Criteria::ASC) Order by the user_nickname column
  * @method UserQuery orderByUserPassword($order = Criteria::ASC) Order by the user_password column
  * @method UserQuery orderByUserType($order = Criteria::ASC) Order by the user_type column
  * @method UserQuery orderByUserStatus($order = Criteria::ASC) Order by the user_status column
  *
- * @method UserQuery groupByIdUser() Group by the iduser column
- * @method UserQuery groupByIdCompany() Group by the idcompany column
+ * @method UserQuery groupByIduser() Group by the iduser column
+ * @method UserQuery groupByIdcompany() Group by the idcompany column
  * @method UserQuery groupByUserNickname() Group by the user_nickname column
  * @method UserQuery groupByUserPassword() Group by the user_password column
  * @method UserQuery groupByUserType() Group by the user_type column
@@ -32,6 +32,14 @@
  * @method UserQuery rightJoinBranchUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the BranchUser relation
  * @method UserQuery innerJoinBranchUser($relationAlias = null) Adds a INNER JOIN clause to the query using the BranchUser relation
  *
+ * @method UserQuery leftJoinChatcorp($relationAlias = null) Adds a LEFT JOIN clause to the query using the Chatcorp relation
+ * @method UserQuery rightJoinChatcorp($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Chatcorp relation
+ * @method UserQuery innerJoinChatcorp($relationAlias = null) Adds a INNER JOIN clause to the query using the Chatcorp relation
+ *
+ * @method UserQuery leftJoinChatpublic($relationAlias = null) Adds a LEFT JOIN clause to the query using the Chatpublic relation
+ * @method UserQuery rightJoinChatpublic($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Chatpublic relation
+ * @method UserQuery innerJoinChatpublic($relationAlias = null) Adds a INNER JOIN clause to the query using the Chatpublic relation
+ *
  * @method UserQuery leftJoinDepartamentmember($relationAlias = null) Adds a LEFT JOIN clause to the query using the Departamentmember relation
  * @method UserQuery rightJoinDepartamentmember($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Departamentmember relation
  * @method UserQuery innerJoinDepartamentmember($relationAlias = null) Adds a INNER JOIN clause to the query using the Departamentmember relation
@@ -43,6 +51,14 @@
  * @method UserQuery leftJoinMlquestion($relationAlias = null) Adds a LEFT JOIN clause to the query using the Mlquestion relation
  * @method UserQuery rightJoinMlquestion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Mlquestion relation
  * @method UserQuery innerJoinMlquestion($relationAlias = null) Adds a INNER JOIN clause to the query using the Mlquestion relation
+ *
+ * @method UserQuery leftJoinOrderconflictComment($relationAlias = null) Adds a LEFT JOIN clause to the query using the OrderconflictComment relation
+ * @method UserQuery rightJoinOrderconflictComment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the OrderconflictComment relation
+ * @method UserQuery innerJoinOrderconflictComment($relationAlias = null) Adds a INNER JOIN clause to the query using the OrderconflictComment relation
+ *
+ * @method UserQuery leftJoinProductionordercomment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionordercomment relation
+ * @method UserQuery rightJoinProductionordercomment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionordercomment relation
+ * @method UserQuery innerJoinProductionordercomment($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionordercomment relation
  *
  * @method UserQuery leftJoinProductionuser($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionuser relation
  * @method UserQuery rightJoinProductionuser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionuser relation
@@ -75,14 +91,14 @@
  * @method User findOne(PropelPDO $con = null) Return the first User matching the query
  * @method User findOneOrCreate(PropelPDO $con = null) Return the first User matching the query, or a new User object populated from the query conditions when no match is found
  *
- * @method User findOneByIdCompany(int $idcompany) Return the first User filtered by the idcompany column
+ * @method User findOneByIdcompany(int $idcompany) Return the first User filtered by the idcompany column
  * @method User findOneByUserNickname(string $user_nickname) Return the first User filtered by the user_nickname column
  * @method User findOneByUserPassword(string $user_password) Return the first User filtered by the user_password column
  * @method User findOneByUserType(string $user_type) Return the first User filtered by the user_type column
  * @method User findOneByUserStatus(string $user_status) Return the first User filtered by the user_status column
  *
- * @method array findByIdUser(int $iduser) Return User objects filtered by the iduser column
- * @method array findByIdCompany(int $idcompany) Return User objects filtered by the idcompany column
+ * @method array findByIduser(int $iduser) Return User objects filtered by the iduser column
+ * @method array findByIdcompany(int $idcompany) Return User objects filtered by the idcompany column
  * @method array findByUserNickname(string $user_nickname) Return User objects filtered by the user_nickname column
  * @method array findByUserPassword(string $user_password) Return User objects filtered by the user_password column
  * @method array findByUserType(string $user_type) Return User objects filtered by the user_type column
@@ -177,7 +193,7 @@ abstract class BaseUserQuery extends ModelCriteria
      * @return                 User A model object, or null if the key is not found
      * @throws PropelException
      */
-     public function findOneByIdUser($key, $con = null)
+     public function findOneByIduser($key, $con = null)
      {
         return $this->findPk($key, $con);
      }
@@ -288,13 +304,13 @@ abstract class BaseUserQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByIdUser(1234); // WHERE iduser = 1234
-     * $query->filterByIdUser(array(12, 34)); // WHERE iduser IN (12, 34)
-     * $query->filterByIdUser(array('min' => 12)); // WHERE iduser >= 12
-     * $query->filterByIdUser(array('max' => 12)); // WHERE iduser <= 12
+     * $query->filterByIduser(1234); // WHERE iduser = 1234
+     * $query->filterByIduser(array(12, 34)); // WHERE iduser IN (12, 34)
+     * $query->filterByIduser(array('min' => 12)); // WHERE iduser >= 12
+     * $query->filterByIduser(array('max' => 12)); // WHERE iduser <= 12
      * </code>
      *
-     * @param     mixed $idUser The value to use as filter.
+     * @param     mixed $iduser The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -302,16 +318,16 @@ abstract class BaseUserQuery extends ModelCriteria
      *
      * @return UserQuery The current query, for fluid interface
      */
-    public function filterByIdUser($idUser = null, $comparison = null)
+    public function filterByIduser($iduser = null, $comparison = null)
     {
-        if (is_array($idUser)) {
+        if (is_array($iduser)) {
             $useMinMax = false;
-            if (isset($idUser['min'])) {
-                $this->addUsingAlias(UserPeer::IDUSER, $idUser['min'], Criteria::GREATER_EQUAL);
+            if (isset($iduser['min'])) {
+                $this->addUsingAlias(UserPeer::IDUSER, $iduser['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($idUser['max'])) {
-                $this->addUsingAlias(UserPeer::IDUSER, $idUser['max'], Criteria::LESS_EQUAL);
+            if (isset($iduser['max'])) {
+                $this->addUsingAlias(UserPeer::IDUSER, $iduser['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -322,7 +338,7 @@ abstract class BaseUserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserPeer::IDUSER, $idUser, $comparison);
+        return $this->addUsingAlias(UserPeer::IDUSER, $iduser, $comparison);
     }
 
     /**
@@ -330,15 +346,15 @@ abstract class BaseUserQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByIdCompany(1234); // WHERE idcompany = 1234
-     * $query->filterByIdCompany(array(12, 34)); // WHERE idcompany IN (12, 34)
-     * $query->filterByIdCompany(array('min' => 12)); // WHERE idcompany >= 12
-     * $query->filterByIdCompany(array('max' => 12)); // WHERE idcompany <= 12
+     * $query->filterByIdcompany(1234); // WHERE idcompany = 1234
+     * $query->filterByIdcompany(array(12, 34)); // WHERE idcompany IN (12, 34)
+     * $query->filterByIdcompany(array('min' => 12)); // WHERE idcompany >= 12
+     * $query->filterByIdcompany(array('max' => 12)); // WHERE idcompany <= 12
      * </code>
      *
      * @see       filterByCompany()
      *
-     * @param     mixed $idCompany The value to use as filter.
+     * @param     mixed $idcompany The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -346,16 +362,16 @@ abstract class BaseUserQuery extends ModelCriteria
      *
      * @return UserQuery The current query, for fluid interface
      */
-    public function filterByIdCompany($idCompany = null, $comparison = null)
+    public function filterByIdcompany($idcompany = null, $comparison = null)
     {
-        if (is_array($idCompany)) {
+        if (is_array($idcompany)) {
             $useMinMax = false;
-            if (isset($idCompany['min'])) {
-                $this->addUsingAlias(UserPeer::IDCOMPANY, $idCompany['min'], Criteria::GREATER_EQUAL);
+            if (isset($idcompany['min'])) {
+                $this->addUsingAlias(UserPeer::IDCOMPANY, $idcompany['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($idCompany['max'])) {
-                $this->addUsingAlias(UserPeer::IDCOMPANY, $idCompany['max'], Criteria::LESS_EQUAL);
+            if (isset($idcompany['max'])) {
+                $this->addUsingAlias(UserPeer::IDCOMPANY, $idcompany['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -366,7 +382,7 @@ abstract class BaseUserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserPeer::IDCOMPANY, $idCompany, $comparison);
+        return $this->addUsingAlias(UserPeer::IDCOMPANY, $idcompany, $comparison);
     }
 
     /**
@@ -636,6 +652,154 @@ abstract class BaseUserQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related Chatcorp object
+     *
+     * @param   Chatcorp|PropelObjectCollection $chatcorp  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByChatcorp($chatcorp, $comparison = null)
+    {
+        if ($chatcorp instanceof Chatcorp) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $chatcorp->getIduser(), $comparison);
+        } elseif ($chatcorp instanceof PropelObjectCollection) {
+            return $this
+                ->useChatcorpQuery()
+                ->filterByPrimaryKeys($chatcorp->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByChatcorp() only accepts arguments of type Chatcorp or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Chatcorp relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinChatcorp($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Chatcorp');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Chatcorp');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Chatcorp relation Chatcorp object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ChatcorpQuery A secondary query class using the current class as primary query
+     */
+    public function useChatcorpQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinChatcorp($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Chatcorp', 'ChatcorpQuery');
+    }
+
+    /**
+     * Filter the query by a related Chatpublic object
+     *
+     * @param   Chatpublic|PropelObjectCollection $chatpublic  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByChatpublic($chatpublic, $comparison = null)
+    {
+        if ($chatpublic instanceof Chatpublic) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $chatpublic->getIduser(), $comparison);
+        } elseif ($chatpublic instanceof PropelObjectCollection) {
+            return $this
+                ->useChatpublicQuery()
+                ->filterByPrimaryKeys($chatpublic->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByChatpublic() only accepts arguments of type Chatpublic or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Chatpublic relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinChatpublic($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Chatpublic');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Chatpublic');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Chatpublic relation Chatpublic object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ChatpublicQuery A secondary query class using the current class as primary query
+     */
+    public function useChatpublicQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinChatpublic($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Chatpublic', 'ChatpublicQuery');
+    }
+
+    /**
      * Filter the query by a related Departamentmember object
      *
      * @param   Departamentmember|PropelObjectCollection $departamentmember  the related object to use as filter
@@ -855,6 +1019,154 @@ abstract class BaseUserQuery extends ModelCriteria
         return $this
             ->joinMlquestion($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Mlquestion', 'MlquestionQuery');
+    }
+
+    /**
+     * Filter the query by a related OrderconflictComment object
+     *
+     * @param   OrderconflictComment|PropelObjectCollection $orderconflictComment  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByOrderconflictComment($orderconflictComment, $comparison = null)
+    {
+        if ($orderconflictComment instanceof OrderconflictComment) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $orderconflictComment->getIduser(), $comparison);
+        } elseif ($orderconflictComment instanceof PropelObjectCollection) {
+            return $this
+                ->useOrderconflictCommentQuery()
+                ->filterByPrimaryKeys($orderconflictComment->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByOrderconflictComment() only accepts arguments of type OrderconflictComment or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the OrderconflictComment relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinOrderconflictComment($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('OrderconflictComment');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'OrderconflictComment');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the OrderconflictComment relation OrderconflictComment object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   OrderconflictCommentQuery A secondary query class using the current class as primary query
+     */
+    public function useOrderconflictCommentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinOrderconflictComment($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'OrderconflictComment', 'OrderconflictCommentQuery');
+    }
+
+    /**
+     * Filter the query by a related Productionordercomment object
+     *
+     * @param   Productionordercomment|PropelObjectCollection $productionordercomment  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductionordercomment($productionordercomment, $comparison = null)
+    {
+        if ($productionordercomment instanceof Productionordercomment) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $productionordercomment->getIduser(), $comparison);
+        } elseif ($productionordercomment instanceof PropelObjectCollection) {
+            return $this
+                ->useProductionordercommentQuery()
+                ->filterByPrimaryKeys($productionordercomment->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByProductionordercomment() only accepts arguments of type Productionordercomment or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productionordercomment relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinProductionordercomment($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productionordercomment');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productionordercomment');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productionordercomment relation Productionordercomment object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductionordercommentQuery A secondary query class using the current class as primary query
+     */
+    public function useProductionordercommentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductionordercomment($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productionordercomment', 'ProductionordercommentQuery');
     }
 
     /**
@@ -1385,7 +1697,7 @@ abstract class BaseUserQuery extends ModelCriteria
     public function prune($user = null)
     {
         if ($user) {
-            $this->addUsingAlias(UserPeer::IDUSER, $user->getIdUser(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(UserPeer::IDUSER, $user->getIduser(), Criteria::NOT_EQUAL);
         }
 
         return $this;

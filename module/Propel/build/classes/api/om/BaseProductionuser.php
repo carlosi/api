@@ -173,7 +173,7 @@ abstract class BaseProductionuser extends BaseObject implements Persistent
             $this->modifiedColumns[] = ProductionuserPeer::IDUSER;
         }
 
-        if ($this->aUser !== null && $this->aUser->getIdUser() !== $v) {
+        if ($this->aUser !== null && $this->aUser->getIduser() !== $v) {
             $this->aUser = null;
         }
 
@@ -251,7 +251,7 @@ abstract class BaseProductionuser extends BaseObject implements Persistent
         if ($this->aProductionteam !== null && $this->idproductionteam !== $this->aProductionteam->getIdproductionteam()) {
             $this->aProductionteam = null;
         }
-        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIdUser()) {
+        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIduser()) {
             $this->aUser = null;
         }
     } // ensureConsistency
@@ -970,7 +970,7 @@ abstract class BaseProductionuser extends BaseObject implements Persistent
         if ($v === null) {
             $this->setIduser(NULL);
         } else {
-            $this->setIduser($v->getIdUser());
+            $this->setIduser($v->getIduser());
         }
 
         $this->aUser = $v;

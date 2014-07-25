@@ -75,9 +75,22 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
     protected $expensetransaction_date;
 
     /**
+     * The value for the expensetransaction_reason field.
+     * Note: this column has a database default value of: 'operationcost'
+     * @var        string
+     */
+    protected $expensetransaction_reason;
+
+    /**
      * @var        Expenseitem
      */
     protected $aExpenseitem;
+
+    /**
+     * @var        PropelObjectCollection|Bankexpensetransaction[] Collection to store aggregation of Bankexpensetransaction objects.
+     */
+    protected $collBankexpensetransactions;
+    protected $collBankexpensetransactionsPartial;
 
     /**
      * @var        PropelObjectCollection|Expensetransactionfile[] Collection to store aggregation of Expensetransactionfile objects.
@@ -109,6 +122,12 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
+    protected $bankexpensetransactionsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
     protected $expensetransactionfilesScheduledForDeletion = null;
 
     /**
@@ -122,6 +141,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         $this->expensetransaction_status = 'suggestion';
         $this->expensetransaction_quantity = '0.00';
         $this->expensetransaction_value = '0.00';
+        $this->expensetransaction_reason = 'operationcost';
     }
 
     /**
@@ -238,6 +258,17 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
 
         return $dt->format($format);
 
+    }
+
+    /**
+     * Get the [expensetransaction_reason] column value.
+     *
+     * @return string
+     */
+    public function getExpensetransactionReason()
+    {
+
+        return $this->expensetransaction_reason;
     }
 
     /**
@@ -394,6 +425,27 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
     } // setExpensetransactionDate()
 
     /**
+     * Set the value of [expensetransaction_reason] column.
+     *
+     * @param  string $v new value
+     * @return Expensetransaction The current object (for fluent API support)
+     */
+    public function setExpensetransactionReason($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->expensetransaction_reason !== $v) {
+            $this->expensetransaction_reason = $v;
+            $this->modifiedColumns[] = ExpensetransactionPeer::EXPENSETRANSACTION_REASON;
+        }
+
+
+        return $this;
+    } // setExpensetransactionReason()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -412,6 +464,10 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             }
 
             if ($this->expensetransaction_value !== '0.00') {
+                return false;
+            }
+
+            if ($this->expensetransaction_reason !== 'operationcost') {
                 return false;
             }
 
@@ -444,6 +500,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             $this->expensetransaction_quantity = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->expensetransaction_value = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
             $this->expensetransaction_date = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+            $this->expensetransaction_reason = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -453,7 +510,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 7; // 7 = ExpensetransactionPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = ExpensetransactionPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Expensetransaction object", $e);
@@ -519,6 +576,8 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aExpenseitem = null;
+            $this->collBankexpensetransactions = null;
+
             $this->collExpensetransactionfiles = null;
 
         } // if (deep)
@@ -657,6 +716,23 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
+            if ($this->bankexpensetransactionsScheduledForDeletion !== null) {
+                if (!$this->bankexpensetransactionsScheduledForDeletion->isEmpty()) {
+                    BankexpensetransactionQuery::create()
+                        ->filterByPrimaryKeys($this->bankexpensetransactionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->bankexpensetransactionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collBankexpensetransactions !== null) {
+                foreach ($this->collBankexpensetransactions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             if ($this->expensetransactionfilesScheduledForDeletion !== null) {
                 if (!$this->expensetransactionfilesScheduledForDeletion->isEmpty()) {
                     ExpensetransactionfileQuery::create()
@@ -721,6 +797,9 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         if ($this->isColumnModified(ExpensetransactionPeer::EXPENSETRANSACTION_DATE)) {
             $modifiedColumns[':p' . $index++]  = '`expensetransaction_date`';
         }
+        if ($this->isColumnModified(ExpensetransactionPeer::EXPENSETRANSACTION_REASON)) {
+            $modifiedColumns[':p' . $index++]  = '`expensetransaction_reason`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `expensetransaction` (%s) VALUES (%s)',
@@ -752,6 +831,9 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
                         break;
                     case '`expensetransaction_date`':
                         $stmt->bindValue($identifier, $this->expensetransaction_date, PDO::PARAM_STR);
+                        break;
+                    case '`expensetransaction_reason`':
+                        $stmt->bindValue($identifier, $this->expensetransaction_reason, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -864,6 +946,14 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             }
 
 
+                if ($this->collBankexpensetransactions !== null) {
+                    foreach ($this->collBankexpensetransactions as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collExpensetransactionfiles !== null) {
                     foreach ($this->collExpensetransactionfiles as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -928,6 +1018,9 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             case 6:
                 return $this->getExpensetransactionDate();
                 break;
+            case 7:
+                return $this->getExpensetransactionReason();
+                break;
             default:
                 return null;
                 break;
@@ -964,6 +1057,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             $keys[4] => $this->getExpensetransactionQuantity(),
             $keys[5] => $this->getExpensetransactionValue(),
             $keys[6] => $this->getExpensetransactionDate(),
+            $keys[7] => $this->getExpensetransactionReason(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -973,6 +1067,9 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         if ($includeForeignObjects) {
             if (null !== $this->aExpenseitem) {
                 $result['Expenseitem'] = $this->aExpenseitem->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collBankexpensetransactions) {
+                $result['Bankexpensetransactions'] = $this->collBankexpensetransactions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collExpensetransactionfiles) {
                 $result['Expensetransactionfiles'] = $this->collExpensetransactionfiles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1032,6 +1129,9 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             case 6:
                 $this->setExpensetransactionDate($value);
                 break;
+            case 7:
+                $this->setExpensetransactionReason($value);
+                break;
         } // switch()
     }
 
@@ -1063,6 +1163,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         if (array_key_exists($keys[4], $arr)) $this->setExpensetransactionQuantity($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setExpensetransactionValue($arr[$keys[5]]);
         if (array_key_exists($keys[6], $arr)) $this->setExpensetransactionDate($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setExpensetransactionReason($arr[$keys[7]]);
     }
 
     /**
@@ -1081,6 +1182,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         if ($this->isColumnModified(ExpensetransactionPeer::EXPENSETRANSACTION_QUANTITY)) $criteria->add(ExpensetransactionPeer::EXPENSETRANSACTION_QUANTITY, $this->expensetransaction_quantity);
         if ($this->isColumnModified(ExpensetransactionPeer::EXPENSETRANSACTION_VALUE)) $criteria->add(ExpensetransactionPeer::EXPENSETRANSACTION_VALUE, $this->expensetransaction_value);
         if ($this->isColumnModified(ExpensetransactionPeer::EXPENSETRANSACTION_DATE)) $criteria->add(ExpensetransactionPeer::EXPENSETRANSACTION_DATE, $this->expensetransaction_date);
+        if ($this->isColumnModified(ExpensetransactionPeer::EXPENSETRANSACTION_REASON)) $criteria->add(ExpensetransactionPeer::EXPENSETRANSACTION_REASON, $this->expensetransaction_reason);
 
         return $criteria;
     }
@@ -1150,6 +1252,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         $copyObj->setExpensetransactionQuantity($this->getExpensetransactionQuantity());
         $copyObj->setExpensetransactionValue($this->getExpensetransactionValue());
         $copyObj->setExpensetransactionDate($this->getExpensetransactionDate());
+        $copyObj->setExpensetransactionReason($this->getExpensetransactionReason());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1157,6 +1260,12 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             $copyObj->setNew(false);
             // store object hash to prevent cycle
             $this->startCopy = true;
+
+            foreach ($this->getBankexpensetransactions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addBankexpensetransaction($relObj->copy($deepCopy));
+                }
+            }
 
             foreach ($this->getExpensetransactionfiles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1277,9 +1386,262 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
+        if ('Bankexpensetransaction' == $relationName) {
+            $this->initBankexpensetransactions();
+        }
         if ('Expensetransactionfile' == $relationName) {
             $this->initExpensetransactionfiles();
         }
+    }
+
+    /**
+     * Clears out the collBankexpensetransactions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Expensetransaction The current object (for fluent API support)
+     * @see        addBankexpensetransactions()
+     */
+    public function clearBankexpensetransactions()
+    {
+        $this->collBankexpensetransactions = null; // important to set this to null since that means it is uninitialized
+        $this->collBankexpensetransactionsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collBankexpensetransactions collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialBankexpensetransactions($v = true)
+    {
+        $this->collBankexpensetransactionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collBankexpensetransactions collection.
+     *
+     * By default this just sets the collBankexpensetransactions collection to an empty array (like clearcollBankexpensetransactions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initBankexpensetransactions($overrideExisting = true)
+    {
+        if (null !== $this->collBankexpensetransactions && !$overrideExisting) {
+            return;
+        }
+        $this->collBankexpensetransactions = new PropelObjectCollection();
+        $this->collBankexpensetransactions->setModel('Bankexpensetransaction');
+    }
+
+    /**
+     * Gets an array of Bankexpensetransaction objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Expensetransaction is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Bankexpensetransaction[] List of Bankexpensetransaction objects
+     * @throws PropelException
+     */
+    public function getBankexpensetransactions($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collBankexpensetransactionsPartial && !$this->isNew();
+        if (null === $this->collBankexpensetransactions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collBankexpensetransactions) {
+                // return empty collection
+                $this->initBankexpensetransactions();
+            } else {
+                $collBankexpensetransactions = BankexpensetransactionQuery::create(null, $criteria)
+                    ->filterByExpensetransaction($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collBankexpensetransactionsPartial && count($collBankexpensetransactions)) {
+                      $this->initBankexpensetransactions(false);
+
+                      foreach ($collBankexpensetransactions as $obj) {
+                        if (false == $this->collBankexpensetransactions->contains($obj)) {
+                          $this->collBankexpensetransactions->append($obj);
+                        }
+                      }
+
+                      $this->collBankexpensetransactionsPartial = true;
+                    }
+
+                    $collBankexpensetransactions->getInternalIterator()->rewind();
+
+                    return $collBankexpensetransactions;
+                }
+
+                if ($partial && $this->collBankexpensetransactions) {
+                    foreach ($this->collBankexpensetransactions as $obj) {
+                        if ($obj->isNew()) {
+                            $collBankexpensetransactions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collBankexpensetransactions = $collBankexpensetransactions;
+                $this->collBankexpensetransactionsPartial = false;
+            }
+        }
+
+        return $this->collBankexpensetransactions;
+    }
+
+    /**
+     * Sets a collection of Bankexpensetransaction objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $bankexpensetransactions A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Expensetransaction The current object (for fluent API support)
+     */
+    public function setBankexpensetransactions(PropelCollection $bankexpensetransactions, PropelPDO $con = null)
+    {
+        $bankexpensetransactionsToDelete = $this->getBankexpensetransactions(new Criteria(), $con)->diff($bankexpensetransactions);
+
+
+        $this->bankexpensetransactionsScheduledForDeletion = $bankexpensetransactionsToDelete;
+
+        foreach ($bankexpensetransactionsToDelete as $bankexpensetransactionRemoved) {
+            $bankexpensetransactionRemoved->setExpensetransaction(null);
+        }
+
+        $this->collBankexpensetransactions = null;
+        foreach ($bankexpensetransactions as $bankexpensetransaction) {
+            $this->addBankexpensetransaction($bankexpensetransaction);
+        }
+
+        $this->collBankexpensetransactions = $bankexpensetransactions;
+        $this->collBankexpensetransactionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Bankexpensetransaction objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Bankexpensetransaction objects.
+     * @throws PropelException
+     */
+    public function countBankexpensetransactions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collBankexpensetransactionsPartial && !$this->isNew();
+        if (null === $this->collBankexpensetransactions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collBankexpensetransactions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getBankexpensetransactions());
+            }
+            $query = BankexpensetransactionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByExpensetransaction($this)
+                ->count($con);
+        }
+
+        return count($this->collBankexpensetransactions);
+    }
+
+    /**
+     * Method called to associate a Bankexpensetransaction object to this object
+     * through the Bankexpensetransaction foreign key attribute.
+     *
+     * @param    Bankexpensetransaction $l Bankexpensetransaction
+     * @return Expensetransaction The current object (for fluent API support)
+     */
+    public function addBankexpensetransaction(Bankexpensetransaction $l)
+    {
+        if ($this->collBankexpensetransactions === null) {
+            $this->initBankexpensetransactions();
+            $this->collBankexpensetransactionsPartial = true;
+        }
+
+        if (!in_array($l, $this->collBankexpensetransactions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddBankexpensetransaction($l);
+
+            if ($this->bankexpensetransactionsScheduledForDeletion and $this->bankexpensetransactionsScheduledForDeletion->contains($l)) {
+                $this->bankexpensetransactionsScheduledForDeletion->remove($this->bankexpensetransactionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Bankexpensetransaction $bankexpensetransaction The bankexpensetransaction object to add.
+     */
+    protected function doAddBankexpensetransaction($bankexpensetransaction)
+    {
+        $this->collBankexpensetransactions[]= $bankexpensetransaction;
+        $bankexpensetransaction->setExpensetransaction($this);
+    }
+
+    /**
+     * @param	Bankexpensetransaction $bankexpensetransaction The bankexpensetransaction object to remove.
+     * @return Expensetransaction The current object (for fluent API support)
+     */
+    public function removeBankexpensetransaction($bankexpensetransaction)
+    {
+        if ($this->getBankexpensetransactions()->contains($bankexpensetransaction)) {
+            $this->collBankexpensetransactions->remove($this->collBankexpensetransactions->search($bankexpensetransaction));
+            if (null === $this->bankexpensetransactionsScheduledForDeletion) {
+                $this->bankexpensetransactionsScheduledForDeletion = clone $this->collBankexpensetransactions;
+                $this->bankexpensetransactionsScheduledForDeletion->clear();
+            }
+            $this->bankexpensetransactionsScheduledForDeletion[]= clone $bankexpensetransaction;
+            $bankexpensetransaction->setExpensetransaction(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Expensetransaction is new, it will return
+     * an empty collection; or if this Expensetransaction has previously
+     * been saved, it will retrieve related Bankexpensetransactions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Expensetransaction.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Bankexpensetransaction[] List of Bankexpensetransaction objects
+     */
+    public function getBankexpensetransactionsJoinBankaccount($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = BankexpensetransactionQuery::create(null, $criteria);
+        $query->joinWith('Bankaccount', $join_behavior);
+
+        return $this->getBankexpensetransactions($query, $con);
     }
 
     /**
@@ -1519,6 +1881,7 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         $this->expensetransaction_quantity = null;
         $this->expensetransaction_value = null;
         $this->expensetransaction_date = null;
+        $this->expensetransaction_reason = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1542,6 +1905,11 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collBankexpensetransactions) {
+                foreach ($this->collBankexpensetransactions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collExpensetransactionfiles) {
                 foreach ($this->collExpensetransactionfiles as $o) {
                     $o->clearAllReferences($deep);
@@ -1554,6 +1922,10 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collBankexpensetransactions instanceof PropelCollection) {
+            $this->collBankexpensetransactions->clearIterator();
+        }
+        $this->collBankexpensetransactions = null;
         if ($this->collExpensetransactionfiles instanceof PropelCollection) {
             $this->collExpensetransactionfiles->clearIterator();
         }

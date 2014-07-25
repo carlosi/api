@@ -32,6 +32,10 @@
  * @method OrderitemQuery rightJoinProduct($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Product relation
  * @method OrderitemQuery innerJoinProduct($relationAlias = null) Adds a INNER JOIN clause to the query using the Product relation
  *
+ * @method OrderitemQuery leftJoinOrderconflict($relationAlias = null) Adds a LEFT JOIN clause to the query using the Orderconflict relation
+ * @method OrderitemQuery rightJoinOrderconflict($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Orderconflict relation
+ * @method OrderitemQuery innerJoinOrderconflict($relationAlias = null) Adds a INNER JOIN clause to the query using the Orderconflict relation
+ *
  * @method OrderitemQuery leftJoinProductionorderitem($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionorderitem relation
  * @method OrderitemQuery rightJoinProductionorderitem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionorderitem relation
  * @method OrderitemQuery innerJoinProductionorderitem($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionorderitem relation
@@ -640,6 +644,80 @@ abstract class BaseOrderitemQuery extends ModelCriteria
         return $this
             ->joinProduct($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Product', 'ProductQuery');
+    }
+
+    /**
+     * Filter the query by a related Orderconflict object
+     *
+     * @param   Orderconflict|PropelObjectCollection $orderconflict  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 OrderitemQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByOrderconflict($orderconflict, $comparison = null)
+    {
+        if ($orderconflict instanceof Orderconflict) {
+            return $this
+                ->addUsingAlias(OrderitemPeer::IDORDERITEM, $orderconflict->getIdorderitem(), $comparison);
+        } elseif ($orderconflict instanceof PropelObjectCollection) {
+            return $this
+                ->useOrderconflictQuery()
+                ->filterByPrimaryKeys($orderconflict->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByOrderconflict() only accepts arguments of type Orderconflict or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Orderconflict relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return OrderitemQuery The current query, for fluid interface
+     */
+    public function joinOrderconflict($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Orderconflict');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Orderconflict');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Orderconflict relation Orderconflict object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   OrderconflictQuery A secondary query class using the current class as primary query
+     */
+    public function useOrderconflictQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinOrderconflict($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Orderconflict', 'OrderconflictQuery');
     }
 
     /**

@@ -79,8 +79,8 @@ abstract class BaseUserPeer
      * e.g. UserPeer::$fieldNames[UserPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('IdUser', 'IdCompany', 'UserNickname', 'UserPassword', 'UserType', 'UserStatus', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idUser', 'idCompany', 'userNickname', 'userPassword', 'userType', 'userStatus', ),
+        BasePeer::TYPE_PHPNAME => array ('Iduser', 'Idcompany', 'UserNickname', 'UserPassword', 'UserType', 'UserStatus', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('iduser', 'idcompany', 'userNickname', 'userPassword', 'userType', 'userStatus', ),
         BasePeer::TYPE_COLNAME => array (UserPeer::IDUSER, UserPeer::IDCOMPANY, UserPeer::USER_NICKNAME, UserPeer::USER_PASSWORD, UserPeer::USER_TYPE, UserPeer::USER_STATUS, ),
         BasePeer::TYPE_RAW_COLNAME => array ('IDUSER', 'IDCOMPANY', 'USER_NICKNAME', 'USER_PASSWORD', 'USER_TYPE', 'USER_STATUS', ),
         BasePeer::TYPE_FIELDNAME => array ('iduser', 'idcompany', 'user_nickname', 'user_password', 'user_type', 'user_status', ),
@@ -94,8 +94,8 @@ abstract class BaseUserPeer
      * e.g. UserPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('IdUser' => 0, 'IdCompany' => 1, 'UserNickname' => 2, 'UserPassword' => 3, 'UserType' => 4, 'UserStatus' => 5, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idUser' => 0, 'idCompany' => 1, 'userNickname' => 2, 'userPassword' => 3, 'userType' => 4, 'userStatus' => 5, ),
+        BasePeer::TYPE_PHPNAME => array ('Iduser' => 0, 'Idcompany' => 1, 'UserNickname' => 2, 'UserPassword' => 3, 'UserType' => 4, 'UserStatus' => 5, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('iduser' => 0, 'idcompany' => 1, 'userNickname' => 2, 'userPassword' => 3, 'userType' => 4, 'userStatus' => 5, ),
         BasePeer::TYPE_COLNAME => array (UserPeer::IDUSER => 0, UserPeer::IDCOMPANY => 1, UserPeer::USER_NICKNAME => 2, UserPeer::USER_PASSWORD => 3, UserPeer::USER_TYPE => 4, UserPeer::USER_STATUS => 5, ),
         BasePeer::TYPE_RAW_COLNAME => array ('IDUSER' => 0, 'IDCOMPANY' => 1, 'USER_NICKNAME' => 2, 'USER_PASSWORD' => 3, 'USER_TYPE' => 4, 'USER_STATUS' => 5, ),
         BasePeer::TYPE_FIELDNAME => array ('iduser' => 0, 'idcompany' => 1, 'user_nickname' => 2, 'user_password' => 3, 'user_type' => 4, 'user_status' => 5, ),
@@ -371,7 +371,7 @@ abstract class BaseUserPeer
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = (string) $obj->getIdUser();
+                $key = (string) $obj->getIduser();
             } // if key === null
             UserPeer::$instances[$key] = $obj;
         }
@@ -394,7 +394,7 @@ abstract class BaseUserPeer
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
             if (is_object($value) && $value instanceof User) {
-                $key = (string) $value->getIdUser();
+                $key = (string) $value->getIduser();
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;
@@ -452,6 +452,12 @@ abstract class BaseUserPeer
         // Invalidate objects in BranchUserPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         BranchUserPeer::clearInstancePool();
+        // Invalidate objects in ChatcorpPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ChatcorpPeer::clearInstancePool();
+        // Invalidate objects in ChatpublicPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ChatpublicPeer::clearInstancePool();
         // Invalidate objects in DepartamentmemberPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         DepartamentmemberPeer::clearInstancePool();
@@ -461,6 +467,12 @@ abstract class BaseUserPeer
         // Invalidate objects in MlquestionPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         MlquestionPeer::clearInstancePool();
+        // Invalidate objects in OrderconflictCommentPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        OrderconflictCommentPeer::clearInstancePool();
+        // Invalidate objects in ProductionordercommentPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ProductionordercommentPeer::clearInstancePool();
         // Invalidate objects in ProductionuserPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductionuserPeer::clearInstancePool();
@@ -1054,61 +1066,85 @@ abstract class BaseUserPeer
             // delete related BranchUser objects
             $criteria = new Criteria(BranchUserPeer::DATABASE_NAME);
 
-            $criteria->add(BranchUserPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(BranchUserPeer::IDUSER, $obj->getIduser());
             $affectedRows += BranchUserPeer::doDelete($criteria, $con);
+
+            // delete related Chatcorp objects
+            $criteria = new Criteria(ChatcorpPeer::DATABASE_NAME);
+
+            $criteria->add(ChatcorpPeer::IDUSER, $obj->getIduser());
+            $affectedRows += ChatcorpPeer::doDelete($criteria, $con);
+
+            // delete related Chatpublic objects
+            $criteria = new Criteria(ChatpublicPeer::DATABASE_NAME);
+
+            $criteria->add(ChatpublicPeer::IDUSER, $obj->getIduser());
+            $affectedRows += ChatpublicPeer::doDelete($criteria, $con);
 
             // delete related Departamentmember objects
             $criteria = new Criteria(DepartamentmemberPeer::DATABASE_NAME);
 
-            $criteria->add(DepartamentmemberPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(DepartamentmemberPeer::IDUSER, $obj->getIduser());
             $affectedRows += DepartamentmemberPeer::doDelete($criteria, $con);
 
             // delete related Loguser objects
             $criteria = new Criteria(LoguserPeer::DATABASE_NAME);
 
-            $criteria->add(LoguserPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(LoguserPeer::IDUSER, $obj->getIduser());
             $affectedRows += LoguserPeer::doDelete($criteria, $con);
 
             // delete related Mlquestion objects
             $criteria = new Criteria(MlquestionPeer::DATABASE_NAME);
 
-            $criteria->add(MlquestionPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(MlquestionPeer::IDUSER, $obj->getIduser());
             $affectedRows += MlquestionPeer::doDelete($criteria, $con);
+
+            // delete related OrderconflictComment objects
+            $criteria = new Criteria(OrderconflictCommentPeer::DATABASE_NAME);
+
+            $criteria->add(OrderconflictCommentPeer::IDUSER, $obj->getIduser());
+            $affectedRows += OrderconflictCommentPeer::doDelete($criteria, $con);
+
+            // delete related Productionordercomment objects
+            $criteria = new Criteria(ProductionordercommentPeer::DATABASE_NAME);
+
+            $criteria->add(ProductionordercommentPeer::IDUSER, $obj->getIduser());
+            $affectedRows += ProductionordercommentPeer::doDelete($criteria, $con);
 
             // delete related Productionuser objects
             $criteria = new Criteria(ProductionuserPeer::DATABASE_NAME);
 
-            $criteria->add(ProductionuserPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(ProductionuserPeer::IDUSER, $obj->getIduser());
             $affectedRows += ProductionuserPeer::doDelete($criteria, $con);
 
             // delete related Projectactivitypost objects
             $criteria = new Criteria(ProjectactivitypostPeer::DATABASE_NAME);
 
-            $criteria->add(ProjectactivitypostPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(ProjectactivitypostPeer::IDUSER, $obj->getIduser());
             $affectedRows += ProjectactivitypostPeer::doDelete($criteria, $con);
 
             // delete related Projectactivityuser objects
             $criteria = new Criteria(ProjectactivityuserPeer::DATABASE_NAME);
 
-            $criteria->add(ProjectactivityuserPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(ProjectactivityuserPeer::IDUSER, $obj->getIduser());
             $affectedRows += ProjectactivityuserPeer::doDelete($criteria, $con);
 
             // delete related Staff objects
             $criteria = new Criteria(StaffPeer::DATABASE_NAME);
 
-            $criteria->add(StaffPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(StaffPeer::IDUSER, $obj->getIduser());
             $affectedRows += StaffPeer::doDelete($criteria, $con);
 
             // delete related Token objects
             $criteria = new Criteria(TokenPeer::DATABASE_NAME);
 
-            $criteria->add(TokenPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(TokenPeer::IDUSER, $obj->getIduser());
             $affectedRows += TokenPeer::doDelete($criteria, $con);
 
             // delete related Useracl objects
             $criteria = new Criteria(UseraclPeer::DATABASE_NAME);
 
-            $criteria->add(UseraclPeer::IDUSER, $obj->getIdUser());
+            $criteria->add(UseraclPeer::IDUSER, $obj->getIduser());
             $affectedRows += UseraclPeer::doDelete($criteria, $con);
         }
 

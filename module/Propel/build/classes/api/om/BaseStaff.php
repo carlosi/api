@@ -288,7 +288,7 @@ abstract class BaseStaff extends BaseObject implements Persistent
             $this->modifiedColumns[] = StaffPeer::IDUSER;
         }
 
-        if ($this->aUser !== null && $this->aUser->getIdUser() !== $v) {
+        if ($this->aUser !== null && $this->aUser->getIduser() !== $v) {
             $this->aUser = null;
         }
 
@@ -550,7 +550,7 @@ abstract class BaseStaff extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIdUser()) {
+        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIduser()) {
             $this->aUser = null;
         }
     } // ensureConsistency
@@ -1312,7 +1312,7 @@ abstract class BaseStaff extends BaseObject implements Persistent
         if ($v === null) {
             $this->setIduser(NULL);
         } else {
-            $this->setIduser($v->getIdUser());
+            $this->setIduser($v->getIduser());
         }
 
         $this->aUser = $v;

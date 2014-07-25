@@ -38,25 +38,20 @@ abstract class BaseProductionorderitemPeer
     /** the column name for the idproductionteam field */
     const IDPRODUCTIONTEAM = 'productionorderitem.idproductionteam';
 
+    /** the column name for the idproductionline field */
+    const IDPRODUCTIONLINE = 'productionorderitem.idproductionline';
+
     /** the column name for the idorderitem field */
     const IDORDERITEM = 'productionorderitem.idorderitem';
+
+    /** the column name for the idproductionstatus field */
+    const IDPRODUCTIONSTATUS = 'productionorderitem.idproductionstatus';
 
     /** the column name for the productionorderitem_dateinit field */
     const PRODUCTIONORDERITEM_DATEINIT = 'productionorderitem.productionorderitem_dateinit';
 
     /** the column name for the productionorderitem_datedelivery field */
     const PRODUCTIONORDERITEM_DATEDELIVERY = 'productionorderitem.productionorderitem_datedelivery';
-
-    /** the column name for the productionorderitem_note field */
-    const PRODUCTIONORDERITEM_NOTE = 'productionorderitem.productionorderitem_note';
-
-    /** the column name for the productionorderitem_status field */
-    const PRODUCTIONORDERITEM_STATUS = 'productionorderitem.productionorderitem_status';
-
-    /** The enumerated values for the productionorderitem_status field */
-    const PRODUCTIONORDERITEM_STATUS_PENDING = 'pending';
-    const PRODUCTIONORDERITEM_STATUS_INITIALIZED = 'initialized';
-    const PRODUCTIONORDERITEM_STATUS_COMPLETED = 'completed';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -77,11 +72,11 @@ abstract class BaseProductionorderitemPeer
      * e.g. ProductionorderitemPeer::$fieldNames[ProductionorderitemPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductionorderitem', 'Idproductionteam', 'Idorderitem', 'ProductionorderitemDateinit', 'ProductionorderitemDatedelivery', 'ProductionorderitemNote', 'ProductionorderitemStatus', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductionorderitem', 'idproductionteam', 'idorderitem', 'productionorderitemDateinit', 'productionorderitemDatedelivery', 'productionorderitemNote', 'productionorderitemStatus', ),
-        BasePeer::TYPE_COLNAME => array (ProductionorderitemPeer::IDPRODUCTIONORDERITEM, ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionorderitemPeer::IDORDERITEM, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY, ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE, ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTIONORDERITEM', 'IDPRODUCTIONTEAM', 'IDORDERITEM', 'PRODUCTIONORDERITEM_DATEINIT', 'PRODUCTIONORDERITEM_DATEDELIVERY', 'PRODUCTIONORDERITEM_NOTE', 'PRODUCTIONORDERITEM_STATUS', ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductionorderitem', 'idproductionteam', 'idorderitem', 'productionorderitem_dateinit', 'productionorderitem_datedelivery', 'productionorderitem_note', 'productionorderitem_status', ),
+        BasePeer::TYPE_PHPNAME => array ('Idproductionorderitem', 'Idproductionteam', 'Idproductionline', 'Idorderitem', 'Idproductionstatus', 'ProductionorderitemDateinit', 'ProductionorderitemDatedelivery', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductionorderitem', 'idproductionteam', 'idproductionline', 'idorderitem', 'idproductionstatus', 'productionorderitemDateinit', 'productionorderitemDatedelivery', ),
+        BasePeer::TYPE_COLNAME => array (ProductionorderitemPeer::IDPRODUCTIONORDERITEM, ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionorderitemPeer::IDORDERITEM, ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTIONORDERITEM', 'IDPRODUCTIONTEAM', 'IDPRODUCTIONLINE', 'IDORDERITEM', 'IDPRODUCTIONSTATUS', 'PRODUCTIONORDERITEM_DATEINIT', 'PRODUCTIONORDERITEM_DATEDELIVERY', ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductionorderitem', 'idproductionteam', 'idproductionline', 'idorderitem', 'idproductionstatus', 'productionorderitem_dateinit', 'productionorderitem_datedelivery', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -92,21 +87,12 @@ abstract class BaseProductionorderitemPeer
      * e.g. ProductionorderitemPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductionorderitem' => 0, 'Idproductionteam' => 1, 'Idorderitem' => 2, 'ProductionorderitemDateinit' => 3, 'ProductionorderitemDatedelivery' => 4, 'ProductionorderitemNote' => 5, 'ProductionorderitemStatus' => 6, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductionorderitem' => 0, 'idproductionteam' => 1, 'idorderitem' => 2, 'productionorderitemDateinit' => 3, 'productionorderitemDatedelivery' => 4, 'productionorderitemNote' => 5, 'productionorderitemStatus' => 6, ),
-        BasePeer::TYPE_COLNAME => array (ProductionorderitemPeer::IDPRODUCTIONORDERITEM => 0, ProductionorderitemPeer::IDPRODUCTIONTEAM => 1, ProductionorderitemPeer::IDORDERITEM => 2, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT => 3, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY => 4, ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE => 5, ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS => 6, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTIONORDERITEM' => 0, 'IDPRODUCTIONTEAM' => 1, 'IDORDERITEM' => 2, 'PRODUCTIONORDERITEM_DATEINIT' => 3, 'PRODUCTIONORDERITEM_DATEDELIVERY' => 4, 'PRODUCTIONORDERITEM_NOTE' => 5, 'PRODUCTIONORDERITEM_STATUS' => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductionorderitem' => 0, 'idproductionteam' => 1, 'idorderitem' => 2, 'productionorderitem_dateinit' => 3, 'productionorderitem_datedelivery' => 4, 'productionorderitem_note' => 5, 'productionorderitem_status' => 6, ),
+        BasePeer::TYPE_PHPNAME => array ('Idproductionorderitem' => 0, 'Idproductionteam' => 1, 'Idproductionline' => 2, 'Idorderitem' => 3, 'Idproductionstatus' => 4, 'ProductionorderitemDateinit' => 5, 'ProductionorderitemDatedelivery' => 6, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductionorderitem' => 0, 'idproductionteam' => 1, 'idproductionline' => 2, 'idorderitem' => 3, 'idproductionstatus' => 4, 'productionorderitemDateinit' => 5, 'productionorderitemDatedelivery' => 6, ),
+        BasePeer::TYPE_COLNAME => array (ProductionorderitemPeer::IDPRODUCTIONORDERITEM => 0, ProductionorderitemPeer::IDPRODUCTIONTEAM => 1, ProductionorderitemPeer::IDPRODUCTIONLINE => 2, ProductionorderitemPeer::IDORDERITEM => 3, ProductionorderitemPeer::IDPRODUCTIONSTATUS => 4, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT => 5, ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY => 6, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTIONORDERITEM' => 0, 'IDPRODUCTIONTEAM' => 1, 'IDPRODUCTIONLINE' => 2, 'IDORDERITEM' => 3, 'IDPRODUCTIONSTATUS' => 4, 'PRODUCTIONORDERITEM_DATEINIT' => 5, 'PRODUCTIONORDERITEM_DATEDELIVERY' => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductionorderitem' => 0, 'idproductionteam' => 1, 'idproductionline' => 2, 'idorderitem' => 3, 'idproductionstatus' => 4, 'productionorderitem_dateinit' => 5, 'productionorderitem_datedelivery' => 6, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
-    );
-
-    /** The enumerated values for this table */
-    protected static $enumValueSets = array(
-        ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS => array(
-            ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS_PENDING,
-            ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS_INITIALIZED,
-            ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS_COMPLETED,
-        ),
     );
 
     /**
@@ -149,51 +135,6 @@ abstract class BaseProductionorderitemPeer
     }
 
     /**
-     * Gets the list of values for all ENUM columns
-     * @return array
-     */
-    public static function getValueSets()
-    {
-      return ProductionorderitemPeer::$enumValueSets;
-    }
-
-    /**
-     * Gets the list of values for an ENUM column
-     *
-     * @param string $colname The ENUM column name.
-     *
-     * @return array list of possible values for the column
-     */
-    public static function getValueSet($colname)
-    {
-        $valueSets = ProductionorderitemPeer::getValueSets();
-
-        if (!isset($valueSets[$colname])) {
-            throw new PropelException(sprintf('Column "%s" has no ValueSet.', $colname));
-        }
-
-        return $valueSets[$colname];
-    }
-
-    /**
-     * Gets the SQL value for the ENUM column value
-     *
-     * @param string $colname ENUM column name.
-     * @param string $enumVal ENUM value.
-     *
-     * @return int SQL value
-     */
-    public static function getSqlValueForEnum($colname, $enumVal)
-    {
-        $values = ProductionorderitemPeer::getValueSet($colname);
-        if (!in_array($enumVal, $values)) {
-            throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $colname));
-        }
-
-        return array_search($enumVal, $values);
-    }
-
-    /**
      * Convenience method which changes table.column to alias.column.
      *
      * Using this method you can maintain SQL abstraction while using column aliases.
@@ -227,19 +168,19 @@ abstract class BaseProductionorderitemPeer
         if (null === $alias) {
             $criteria->addSelectColumn(ProductionorderitemPeer::IDPRODUCTIONORDERITEM);
             $criteria->addSelectColumn(ProductionorderitemPeer::IDPRODUCTIONTEAM);
+            $criteria->addSelectColumn(ProductionorderitemPeer::IDPRODUCTIONLINE);
             $criteria->addSelectColumn(ProductionorderitemPeer::IDORDERITEM);
+            $criteria->addSelectColumn(ProductionorderitemPeer::IDPRODUCTIONSTATUS);
             $criteria->addSelectColumn(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT);
             $criteria->addSelectColumn(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY);
-            $criteria->addSelectColumn(ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE);
-            $criteria->addSelectColumn(ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS);
         } else {
             $criteria->addSelectColumn($alias . '.idproductionorderitem');
             $criteria->addSelectColumn($alias . '.idproductionteam');
+            $criteria->addSelectColumn($alias . '.idproductionline');
             $criteria->addSelectColumn($alias . '.idorderitem');
+            $criteria->addSelectColumn($alias . '.idproductionstatus');
             $criteria->addSelectColumn($alias . '.productionorderitem_dateinit');
             $criteria->addSelectColumn($alias . '.productionorderitem_datedelivery');
-            $criteria->addSelectColumn($alias . '.productionorderitem_note');
-            $criteria->addSelectColumn($alias . '.productionorderitem_status');
         }
     }
 
@@ -444,6 +385,9 @@ abstract class BaseProductionorderitemPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in ProductionordercommentPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ProductionordercommentPeer::clearInstancePool();
     }
 
     /**
@@ -644,6 +588,108 @@ abstract class BaseProductionorderitemPeer
 
 
     /**
+     * Returns the number of rows matching criteria, joining the related Productionline table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinProductionline(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ProductionorderitemPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ProductionorderitemPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ProductionorderitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related Productionstatus table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinProductionstatus(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ProductionorderitemPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ProductionorderitemPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ProductionorderitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
      * Selects a collection of Productionorderitem objects pre-filled with their Orderitem objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -778,6 +824,140 @@ abstract class BaseProductionorderitemPeer
 
 
     /**
+     * Selects a collection of Productionorderitem objects pre-filled with their Productionline objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Productionorderitem objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinProductionline(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+        }
+
+        ProductionorderitemPeer::addSelectColumns($criteria);
+        $startcol = ProductionorderitemPeer::NUM_HYDRATE_COLUMNS;
+        ProductionlinePeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ProductionorderitemPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ProductionorderitemPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ProductionorderitemPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ProductionorderitemPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = ProductionlinePeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = ProductionlinePeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = ProductionlinePeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    ProductionlinePeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Productionorderitem) to $obj2 (Productionline)
+                $obj2->addProductionorderitem($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Productionorderitem objects pre-filled with their Productionstatus objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Productionorderitem objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinProductionstatus(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+        }
+
+        ProductionorderitemPeer::addSelectColumns($criteria);
+        $startcol = ProductionorderitemPeer::NUM_HYDRATE_COLUMNS;
+        ProductionstatusPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ProductionorderitemPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ProductionorderitemPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ProductionorderitemPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ProductionorderitemPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = ProductionstatusPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = ProductionstatusPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = ProductionstatusPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    ProductionstatusPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Productionorderitem) to $obj2 (Productionstatus)
+                $obj2->addProductionorderitem($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
      * Returns the number of rows matching criteria, joining all related tables
      *
      * @param      Criteria $criteria
@@ -816,6 +996,10 @@ abstract class BaseProductionorderitemPeer
         $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
 
         $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -857,9 +1041,19 @@ abstract class BaseProductionorderitemPeer
         ProductionteamPeer::addSelectColumns($criteria);
         $startcol4 = $startcol3 + ProductionteamPeer::NUM_HYDRATE_COLUMNS;
 
+        ProductionlinePeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ProductionlinePeer::NUM_HYDRATE_COLUMNS;
+
+        ProductionstatusPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + ProductionstatusPeer::NUM_HYDRATE_COLUMNS;
+
         $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
 
         $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -914,6 +1108,42 @@ abstract class BaseProductionorderitemPeer
                 $obj3->addProductionorderitem($obj1);
             } // if joined row not null
 
+            // Add objects for joined Productionline rows
+
+            $key4 = ProductionlinePeer::getPrimaryKeyHashFromRow($row, $startcol4);
+            if ($key4 !== null) {
+                $obj4 = ProductionlinePeer::getInstanceFromPool($key4);
+                if (!$obj4) {
+
+                    $cls = ProductionlinePeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ProductionlinePeer::addInstanceToPool($obj4, $key4);
+                } // if obj4 loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj4 (Productionline)
+                $obj4->addProductionorderitem($obj1);
+            } // if joined row not null
+
+            // Add objects for joined Productionstatus rows
+
+            $key5 = ProductionstatusPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+            if ($key5 !== null) {
+                $obj5 = ProductionstatusPeer::getInstanceFromPool($key5);
+                if (!$obj5) {
+
+                    $cls = ProductionstatusPeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ProductionstatusPeer::addInstanceToPool($obj5, $key5);
+                } // if obj5 loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj5 (Productionstatus)
+                $obj5->addProductionorderitem($obj1);
+            } // if joined row not null
+
             $results[] = $obj1;
         }
         $stmt->closeCursor();
@@ -959,6 +1189,10 @@ abstract class BaseProductionorderitemPeer
         }
 
         $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -1011,6 +1245,120 @@ abstract class BaseProductionorderitemPeer
 
         $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
 
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related Productionline table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptProductionline(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ProductionorderitemPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ProductionorderitemPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ProductionorderitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related Productionstatus table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptProductionstatus(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ProductionorderitemPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ProductionorderitemPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ProductionorderitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
         $stmt = BasePeer::doCount($criteria, $con);
 
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1051,7 +1399,17 @@ abstract class BaseProductionorderitemPeer
         ProductionteamPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + ProductionteamPeer::NUM_HYDRATE_COLUMNS;
 
+        ProductionlinePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ProductionlinePeer::NUM_HYDRATE_COLUMNS;
+
+        ProductionstatusPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ProductionstatusPeer::NUM_HYDRATE_COLUMNS;
+
         $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);
@@ -1090,6 +1448,44 @@ abstract class BaseProductionorderitemPeer
 
             } // if joined row is not null
 
+                // Add objects for joined Productionline rows
+
+                $key3 = ProductionlinePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ProductionlinePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ProductionlinePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ProductionlinePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj3 (Productionline)
+                $obj3->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Productionstatus rows
+
+                $key4 = ProductionstatusPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ProductionstatusPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ProductionstatusPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ProductionstatusPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj4 (Productionstatus)
+                $obj4->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
             $results[] = $obj1;
         }
         $stmt->closeCursor();
@@ -1125,7 +1521,17 @@ abstract class BaseProductionorderitemPeer
         OrderitemPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + OrderitemPeer::NUM_HYDRATE_COLUMNS;
 
+        ProductionlinePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ProductionlinePeer::NUM_HYDRATE_COLUMNS;
+
+        ProductionstatusPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ProductionstatusPeer::NUM_HYDRATE_COLUMNS;
+
         $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);
@@ -1161,6 +1567,288 @@ abstract class BaseProductionorderitemPeer
 
                 // Add the $obj1 (Productionorderitem) to the collection in $obj2 (Orderitem)
                 $obj2->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Productionline rows
+
+                $key3 = ProductionlinePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ProductionlinePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ProductionlinePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ProductionlinePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj3 (Productionline)
+                $obj3->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Productionstatus rows
+
+                $key4 = ProductionstatusPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ProductionstatusPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ProductionstatusPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ProductionstatusPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj4 (Productionstatus)
+                $obj4->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Productionorderitem objects pre-filled with all related objects except Productionline.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Productionorderitem objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptProductionline(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+        }
+
+        ProductionorderitemPeer::addSelectColumns($criteria);
+        $startcol2 = ProductionorderitemPeer::NUM_HYDRATE_COLUMNS;
+
+        OrderitemPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + OrderitemPeer::NUM_HYDRATE_COLUMNS;
+
+        ProductionteamPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ProductionteamPeer::NUM_HYDRATE_COLUMNS;
+
+        ProductionstatusPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ProductionstatusPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONSTATUS, ProductionstatusPeer::IDPRODUCTIONSTATUS, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ProductionorderitemPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ProductionorderitemPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ProductionorderitemPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ProductionorderitemPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Orderitem rows
+
+                $key2 = OrderitemPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = OrderitemPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = OrderitemPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    OrderitemPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj2 (Orderitem)
+                $obj2->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Productionteam rows
+
+                $key3 = ProductionteamPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ProductionteamPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ProductionteamPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ProductionteamPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj3 (Productionteam)
+                $obj3->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Productionstatus rows
+
+                $key4 = ProductionstatusPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ProductionstatusPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ProductionstatusPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ProductionstatusPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj4 (Productionstatus)
+                $obj4->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Productionorderitem objects pre-filled with all related objects except Productionstatus.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Productionorderitem objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptProductionstatus(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ProductionorderitemPeer::DATABASE_NAME);
+        }
+
+        ProductionorderitemPeer::addSelectColumns($criteria);
+        $startcol2 = ProductionorderitemPeer::NUM_HYDRATE_COLUMNS;
+
+        OrderitemPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + OrderitemPeer::NUM_HYDRATE_COLUMNS;
+
+        ProductionteamPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ProductionteamPeer::NUM_HYDRATE_COLUMNS;
+
+        ProductionlinePeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ProductionlinePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ProductionorderitemPeer::IDORDERITEM, OrderitemPeer::IDORDERITEM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONTEAM, ProductionteamPeer::IDPRODUCTIONTEAM, $join_behavior);
+
+        $criteria->addJoin(ProductionorderitemPeer::IDPRODUCTIONLINE, ProductionlinePeer::IDPRODUCTIONLINE, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ProductionorderitemPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ProductionorderitemPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ProductionorderitemPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ProductionorderitemPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Orderitem rows
+
+                $key2 = OrderitemPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = OrderitemPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = OrderitemPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    OrderitemPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj2 (Orderitem)
+                $obj2->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Productionteam rows
+
+                $key3 = ProductionteamPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ProductionteamPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ProductionteamPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ProductionteamPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj3 (Productionteam)
+                $obj3->addProductionorderitem($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Productionline rows
+
+                $key4 = ProductionlinePeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ProductionlinePeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ProductionlinePeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ProductionlinePeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (Productionorderitem) to the collection in $obj4 (Productionline)
+                $obj4->addProductionorderitem($obj1);
 
             } // if joined row is not null
 
@@ -1304,6 +1992,7 @@ abstract class BaseProductionorderitemPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
+            $affectedRows += ProductionorderitemPeer::doOnDeleteCascade(new Criteria(ProductionorderitemPeer::DATABASE_NAME), $con);
             $affectedRows += BasePeer::doDeleteAll(ProductionorderitemPeer::TABLE_NAME, $con, ProductionorderitemPeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
@@ -1337,24 +2026,14 @@ abstract class BaseProductionorderitemPeer
         }
 
         if ($values instanceof Criteria) {
-            // invalidate the cache for all objects of this type, since we have no
-            // way of knowing (without running a query) what objects should be invalidated
-            // from the cache based on this Criteria.
-            ProductionorderitemPeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
         } elseif ($values instanceof Productionorderitem) { // it's a model object
-            // invalidate the cache for this single object
-            ProductionorderitemPeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(ProductionorderitemPeer::DATABASE_NAME);
             $criteria->add(ProductionorderitemPeer::IDPRODUCTIONORDERITEM, (array) $values, Criteria::IN);
-            // invalidate the cache for this object(s)
-            foreach ((array) $values as $singleval) {
-                ProductionorderitemPeer::removeInstanceFromPool($singleval);
-            }
         }
 
         // Set the correct dbName
@@ -1367,6 +2046,23 @@ abstract class BaseProductionorderitemPeer
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
 
+            // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+            $c = clone $criteria;
+            $affectedRows += ProductionorderitemPeer::doOnDeleteCascade($c, $con);
+
+            // Because this db requires some delete cascade/set null emulation, we have to
+            // clear the cached instance *after* the emulation has happened (since
+            // instances get re-added by the select statement contained therein).
+            if ($values instanceof Criteria) {
+                ProductionorderitemPeer::clearInstancePool();
+            } elseif ($values instanceof Productionorderitem) { // it's a model object
+                ProductionorderitemPeer::removeInstanceFromPool($values);
+            } else { // it's a primary key, or an array of pks
+                foreach ((array) $values as $singleval) {
+                    ProductionorderitemPeer::removeInstanceFromPool($singleval);
+                }
+            }
+
             $affectedRows += BasePeer::doDelete($criteria, $con);
             ProductionorderitemPeer::clearRelatedInstancePool();
             $con->commit();
@@ -1376,6 +2072,39 @@ abstract class BaseProductionorderitemPeer
             $con->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
+     * feature (like MySQL or SQLite).
+     *
+     * This method is not very speedy because it must perform a query first to get
+     * the implicated records and then perform the deletes by calling those Peer classes.
+     *
+     * This method should be used within a transaction if possible.
+     *
+     * @param      Criteria $criteria
+     * @param      PropelPDO $con
+     * @return int The number of affected rows (if supported by underlying database driver).
+     */
+    protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
+    {
+        // initialize var to track total num of affected rows
+        $affectedRows = 0;
+
+        // first find the objects that are implicated by the $criteria
+        $objects = ProductionorderitemPeer::doSelect($criteria, $con);
+        foreach ($objects as $obj) {
+
+
+            // delete related Productionordercomment objects
+            $criteria = new Criteria(ProductionordercommentPeer::DATABASE_NAME);
+
+            $criteria->add(ProductionordercommentPeer::IDPRODUCTIONORDERITEM, $obj->getIdproductionorderitem());
+            $affectedRows += ProductionordercommentPeer::doDelete($criteria, $con);
+        }
+
+        return $affectedRows;
     }
 
     /**

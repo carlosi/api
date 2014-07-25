@@ -24,13 +24,13 @@ abstract class BaseProductmainphotoPeer
     const TM_CLASS = 'ProductmainphotoTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 7;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /** the column name for the idproductmainphoto field */
     const IDPRODUCTMAINPHOTO = 'productmainphoto.idproductmainphoto';
@@ -50,11 +50,18 @@ abstract class BaseProductmainphotoPeer
     /** the column name for the productmainphoto_status field */
     const PRODUCTMAINPHOTO_STATUS = 'productmainphoto.productmainphoto_status';
 
+    /** the column name for the productmainphoto_type field */
+    const PRODUCTMAINPHOTO_TYPE = 'productmainphoto.productmainphoto_type';
+
     /** The enumerated values for the productmainphoto_status field */
     const PRODUCTMAINPHOTO_STATUS_PENDING = 'pending';
     const PRODUCTMAINPHOTO_STATUS_REJECTED = 'rejected';
     const PRODUCTMAINPHOTO_STATUS_ACTIVE = 'active';
     const PRODUCTMAINPHOTO_STATUS_REVISION = 'revision';
+
+    /** The enumerated values for the productmainphoto_type field */
+    const PRODUCTMAINPHOTO_TYPE_PRIVATE = 'private';
+    const PRODUCTMAINPHOTO_TYPE_PUBLIC = 'public';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -75,12 +82,12 @@ abstract class BaseProductmainphotoPeer
      * e.g. ProductmainphotoPeer::$fieldNames[ProductmainphotoPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductmainphoto', 'Idproductmain', 'ProductmainphotoUrl', 'ProductmainphotoWidth', 'ProductmainphotoHeight', 'ProductmainphotoStatus', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmainphoto', 'idproductmain', 'productmainphotoUrl', 'productmainphotoWidth', 'productmainphotoHeight', 'productmainphotoStatus', ),
-        BasePeer::TYPE_COLNAME => array (ProductmainphotoPeer::IDPRODUCTMAINPHOTO, ProductmainphotoPeer::IDPRODUCTMAIN, ProductmainphotoPeer::PRODUCTMAINPHOTO_URL, ProductmainphotoPeer::PRODUCTMAINPHOTO_WIDTH, ProductmainphotoPeer::PRODUCTMAINPHOTO_HEIGHT, ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAINPHOTO', 'IDPRODUCTMAIN', 'PRODUCTMAINPHOTO_URL', 'PRODUCTMAINPHOTO_WIDTH', 'PRODUCTMAINPHOTO_HEIGHT', 'PRODUCTMAINPHOTO_STATUS', ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductmainphoto', 'idproductmain', 'productmainphoto_url', 'productmainphoto_width', 'productmainphoto_height', 'productmainphoto_status', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Idproductmainphoto', 'Idproductmain', 'ProductmainphotoUrl', 'ProductmainphotoWidth', 'ProductmainphotoHeight', 'ProductmainphotoStatus', 'ProductmainphotoType', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmainphoto', 'idproductmain', 'productmainphotoUrl', 'productmainphotoWidth', 'productmainphotoHeight', 'productmainphotoStatus', 'productmainphotoType', ),
+        BasePeer::TYPE_COLNAME => array (ProductmainphotoPeer::IDPRODUCTMAINPHOTO, ProductmainphotoPeer::IDPRODUCTMAIN, ProductmainphotoPeer::PRODUCTMAINPHOTO_URL, ProductmainphotoPeer::PRODUCTMAINPHOTO_WIDTH, ProductmainphotoPeer::PRODUCTMAINPHOTO_HEIGHT, ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS, ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAINPHOTO', 'IDPRODUCTMAIN', 'PRODUCTMAINPHOTO_URL', 'PRODUCTMAINPHOTO_WIDTH', 'PRODUCTMAINPHOTO_HEIGHT', 'PRODUCTMAINPHOTO_STATUS', 'PRODUCTMAINPHOTO_TYPE', ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductmainphoto', 'idproductmain', 'productmainphoto_url', 'productmainphoto_width', 'productmainphoto_height', 'productmainphoto_status', 'productmainphoto_type', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -90,12 +97,12 @@ abstract class BaseProductmainphotoPeer
      * e.g. ProductmainphotoPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproductmainphoto' => 0, 'Idproductmain' => 1, 'ProductmainphotoUrl' => 2, 'ProductmainphotoWidth' => 3, 'ProductmainphotoHeight' => 4, 'ProductmainphotoStatus' => 5, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmainphoto' => 0, 'idproductmain' => 1, 'productmainphotoUrl' => 2, 'productmainphotoWidth' => 3, 'productmainphotoHeight' => 4, 'productmainphotoStatus' => 5, ),
-        BasePeer::TYPE_COLNAME => array (ProductmainphotoPeer::IDPRODUCTMAINPHOTO => 0, ProductmainphotoPeer::IDPRODUCTMAIN => 1, ProductmainphotoPeer::PRODUCTMAINPHOTO_URL => 2, ProductmainphotoPeer::PRODUCTMAINPHOTO_WIDTH => 3, ProductmainphotoPeer::PRODUCTMAINPHOTO_HEIGHT => 4, ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS => 5, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAINPHOTO' => 0, 'IDPRODUCTMAIN' => 1, 'PRODUCTMAINPHOTO_URL' => 2, 'PRODUCTMAINPHOTO_WIDTH' => 3, 'PRODUCTMAINPHOTO_HEIGHT' => 4, 'PRODUCTMAINPHOTO_STATUS' => 5, ),
-        BasePeer::TYPE_FIELDNAME => array ('idproductmainphoto' => 0, 'idproductmain' => 1, 'productmainphoto_url' => 2, 'productmainphoto_width' => 3, 'productmainphoto_height' => 4, 'productmainphoto_status' => 5, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Idproductmainphoto' => 0, 'Idproductmain' => 1, 'ProductmainphotoUrl' => 2, 'ProductmainphotoWidth' => 3, 'ProductmainphotoHeight' => 4, 'ProductmainphotoStatus' => 5, 'ProductmainphotoType' => 6, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproductmainphoto' => 0, 'idproductmain' => 1, 'productmainphotoUrl' => 2, 'productmainphotoWidth' => 3, 'productmainphotoHeight' => 4, 'productmainphotoStatus' => 5, 'productmainphotoType' => 6, ),
+        BasePeer::TYPE_COLNAME => array (ProductmainphotoPeer::IDPRODUCTMAINPHOTO => 0, ProductmainphotoPeer::IDPRODUCTMAIN => 1, ProductmainphotoPeer::PRODUCTMAINPHOTO_URL => 2, ProductmainphotoPeer::PRODUCTMAINPHOTO_WIDTH => 3, ProductmainphotoPeer::PRODUCTMAINPHOTO_HEIGHT => 4, ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS => 5, ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE => 6, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPRODUCTMAINPHOTO' => 0, 'IDPRODUCTMAIN' => 1, 'PRODUCTMAINPHOTO_URL' => 2, 'PRODUCTMAINPHOTO_WIDTH' => 3, 'PRODUCTMAINPHOTO_HEIGHT' => 4, 'PRODUCTMAINPHOTO_STATUS' => 5, 'PRODUCTMAINPHOTO_TYPE' => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('idproductmainphoto' => 0, 'idproductmain' => 1, 'productmainphoto_url' => 2, 'productmainphoto_width' => 3, 'productmainphoto_height' => 4, 'productmainphoto_status' => 5, 'productmainphoto_type' => 6, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /** The enumerated values for this table */
@@ -105,6 +112,10 @@ abstract class BaseProductmainphotoPeer
             ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS_REJECTED,
             ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS_ACTIVE,
             ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS_REVISION,
+        ),
+        ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE => array(
+            ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE_PRIVATE,
+            ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE_PUBLIC,
         ),
     );
 
@@ -230,6 +241,7 @@ abstract class BaseProductmainphotoPeer
             $criteria->addSelectColumn(ProductmainphotoPeer::PRODUCTMAINPHOTO_WIDTH);
             $criteria->addSelectColumn(ProductmainphotoPeer::PRODUCTMAINPHOTO_HEIGHT);
             $criteria->addSelectColumn(ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS);
+            $criteria->addSelectColumn(ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE);
         } else {
             $criteria->addSelectColumn($alias . '.idproductmainphoto');
             $criteria->addSelectColumn($alias . '.idproductmain');
@@ -237,6 +249,7 @@ abstract class BaseProductmainphotoPeer
             $criteria->addSelectColumn($alias . '.productmainphoto_width');
             $criteria->addSelectColumn($alias . '.productmainphoto_height');
             $criteria->addSelectColumn($alias . '.productmainphoto_status');
+            $criteria->addSelectColumn($alias . '.productmainphoto_type');
         }
     }
 

@@ -102,6 +102,18 @@ abstract class BaseCompany extends BaseObject implements Persistent
     protected $collClientsPartial;
 
     /**
+     * @var        PropelObjectCollection|Companyaddress[] Collection to store aggregation of Companyaddress objects.
+     */
+    protected $collCompanyaddresss;
+    protected $collCompanyaddresssPartial;
+
+    /**
+     * @var        PropelObjectCollection|Contactgroup[] Collection to store aggregation of Contactgroup objects.
+     */
+    protected $collContactgroups;
+    protected $collContactgroupsPartial;
+
+    /**
      * @var        PropelObjectCollection|Department[] Collection to store aggregation of Department objects.
      */
     protected $collDepartments;
@@ -118,6 +130,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
      */
     protected $collMxtaxinfos;
     protected $collMxtaxinfosPartial;
+
+    /**
+     * @var        PropelObjectCollection|Productionline[] Collection to store aggregation of Productionline objects.
+     */
+    protected $collProductionlines;
+    protected $collProductionlinesPartial;
 
     /**
      * @var        PropelObjectCollection|Productionteam[] Collection to store aggregation of Productionteam objects.
@@ -179,6 +197,18 @@ abstract class BaseCompany extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
+    protected $companyaddresssScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $contactgroupsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
     protected $departmentsScheduledForDeletion = null;
 
     /**
@@ -192,6 +222,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $mxtaxinfosScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $productionlinesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -617,11 +653,17 @@ abstract class BaseCompany extends BaseObject implements Persistent
 
             $this->collClients = null;
 
+            $this->collCompanyaddresss = null;
+
+            $this->collContactgroups = null;
+
             $this->collDepartments = null;
 
             $this->collExpensecategorys = null;
 
             $this->collMxtaxinfos = null;
+
+            $this->collProductionlines = null;
 
             $this->collProductionteams = null;
 
@@ -804,6 +846,40 @@ abstract class BaseCompany extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->companyaddresssScheduledForDeletion !== null) {
+                if (!$this->companyaddresssScheduledForDeletion->isEmpty()) {
+                    CompanyaddressQuery::create()
+                        ->filterByPrimaryKeys($this->companyaddresssScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->companyaddresssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collCompanyaddresss !== null) {
+                foreach ($this->collCompanyaddresss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->contactgroupsScheduledForDeletion !== null) {
+                if (!$this->contactgroupsScheduledForDeletion->isEmpty()) {
+                    ContactgroupQuery::create()
+                        ->filterByPrimaryKeys($this->contactgroupsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->contactgroupsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collContactgroups !== null) {
+                foreach ($this->collContactgroups as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             if ($this->departmentsScheduledForDeletion !== null) {
                 if (!$this->departmentsScheduledForDeletion->isEmpty()) {
                     DepartmentQuery::create()
@@ -849,6 +925,23 @@ abstract class BaseCompany extends BaseObject implements Persistent
 
             if ($this->collMxtaxinfos !== null) {
                 foreach ($this->collMxtaxinfos as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->productionlinesScheduledForDeletion !== null) {
+                if (!$this->productionlinesScheduledForDeletion->isEmpty()) {
+                    ProductionlineQuery::create()
+                        ->filterByPrimaryKeys($this->productionlinesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->productionlinesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collProductionlines !== null) {
+                foreach ($this->collProductionlines as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1120,6 +1213,22 @@ abstract class BaseCompany extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collCompanyaddresss !== null) {
+                    foreach ($this->collCompanyaddresss as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collContactgroups !== null) {
+                    foreach ($this->collContactgroups as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collDepartments !== null) {
                     foreach ($this->collDepartments as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1138,6 +1247,14 @@ abstract class BaseCompany extends BaseObject implements Persistent
 
                 if ($this->collMxtaxinfos !== null) {
                     foreach ($this->collMxtaxinfos as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collProductionlines !== null) {
+                    foreach ($this->collProductionlines as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1284,6 +1401,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
             if (null !== $this->collClients) {
                 $result['Clients'] = $this->collClients->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
+            if (null !== $this->collCompanyaddresss) {
+                $result['Companyaddresss'] = $this->collCompanyaddresss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collContactgroups) {
+                $result['Contactgroups'] = $this->collContactgroups->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collDepartments) {
                 $result['Departments'] = $this->collDepartments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1292,6 +1415,9 @@ abstract class BaseCompany extends BaseObject implements Persistent
             }
             if (null !== $this->collMxtaxinfos) {
                 $result['Mxtaxinfos'] = $this->collMxtaxinfos->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collProductionlines) {
+                $result['Productionlines'] = $this->collProductionlines->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collProductionteams) {
                 $result['Productionteams'] = $this->collProductionteams->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1513,6 +1639,18 @@ abstract class BaseCompany extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getCompanyaddresss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addCompanyaddress($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getContactgroups() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addContactgroup($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getDepartments() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDepartment($relObj->copy($deepCopy));
@@ -1528,6 +1666,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
             foreach ($this->getMxtaxinfos() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addMxtaxinfo($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getProductionlines() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addProductionline($relObj->copy($deepCopy));
                 }
             }
 
@@ -1619,6 +1763,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
         if ('Client' == $relationName) {
             $this->initClients();
         }
+        if ('Companyaddress' == $relationName) {
+            $this->initCompanyaddresss();
+        }
+        if ('Contactgroup' == $relationName) {
+            $this->initContactgroups();
+        }
         if ('Department' == $relationName) {
             $this->initDepartments();
         }
@@ -1627,6 +1777,9 @@ abstract class BaseCompany extends BaseObject implements Persistent
         }
         if ('Mxtaxinfo' == $relationName) {
             $this->initMxtaxinfos();
+        }
+        if ('Productionline' == $relationName) {
+            $this->initProductionlines();
         }
         if ('Productionteam' == $relationName) {
             $this->initProductionteams();
@@ -2309,6 +2462,456 @@ abstract class BaseCompany extends BaseObject implements Persistent
             }
             $this->clientsScheduledForDeletion[]= clone $client;
             $client->setCompany(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collCompanyaddresss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Company The current object (for fluent API support)
+     * @see        addCompanyaddresss()
+     */
+    public function clearCompanyaddresss()
+    {
+        $this->collCompanyaddresss = null; // important to set this to null since that means it is uninitialized
+        $this->collCompanyaddresssPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collCompanyaddresss collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialCompanyaddresss($v = true)
+    {
+        $this->collCompanyaddresssPartial = $v;
+    }
+
+    /**
+     * Initializes the collCompanyaddresss collection.
+     *
+     * By default this just sets the collCompanyaddresss collection to an empty array (like clearcollCompanyaddresss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initCompanyaddresss($overrideExisting = true)
+    {
+        if (null !== $this->collCompanyaddresss && !$overrideExisting) {
+            return;
+        }
+        $this->collCompanyaddresss = new PropelObjectCollection();
+        $this->collCompanyaddresss->setModel('Companyaddress');
+    }
+
+    /**
+     * Gets an array of Companyaddress objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Company is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Companyaddress[] List of Companyaddress objects
+     * @throws PropelException
+     */
+    public function getCompanyaddresss($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collCompanyaddresssPartial && !$this->isNew();
+        if (null === $this->collCompanyaddresss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collCompanyaddresss) {
+                // return empty collection
+                $this->initCompanyaddresss();
+            } else {
+                $collCompanyaddresss = CompanyaddressQuery::create(null, $criteria)
+                    ->filterByCompany($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collCompanyaddresssPartial && count($collCompanyaddresss)) {
+                      $this->initCompanyaddresss(false);
+
+                      foreach ($collCompanyaddresss as $obj) {
+                        if (false == $this->collCompanyaddresss->contains($obj)) {
+                          $this->collCompanyaddresss->append($obj);
+                        }
+                      }
+
+                      $this->collCompanyaddresssPartial = true;
+                    }
+
+                    $collCompanyaddresss->getInternalIterator()->rewind();
+
+                    return $collCompanyaddresss;
+                }
+
+                if ($partial && $this->collCompanyaddresss) {
+                    foreach ($this->collCompanyaddresss as $obj) {
+                        if ($obj->isNew()) {
+                            $collCompanyaddresss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collCompanyaddresss = $collCompanyaddresss;
+                $this->collCompanyaddresssPartial = false;
+            }
+        }
+
+        return $this->collCompanyaddresss;
+    }
+
+    /**
+     * Sets a collection of Companyaddress objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $companyaddresss A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Company The current object (for fluent API support)
+     */
+    public function setCompanyaddresss(PropelCollection $companyaddresss, PropelPDO $con = null)
+    {
+        $companyaddresssToDelete = $this->getCompanyaddresss(new Criteria(), $con)->diff($companyaddresss);
+
+
+        $this->companyaddresssScheduledForDeletion = $companyaddresssToDelete;
+
+        foreach ($companyaddresssToDelete as $companyaddressRemoved) {
+            $companyaddressRemoved->setCompany(null);
+        }
+
+        $this->collCompanyaddresss = null;
+        foreach ($companyaddresss as $companyaddress) {
+            $this->addCompanyaddress($companyaddress);
+        }
+
+        $this->collCompanyaddresss = $companyaddresss;
+        $this->collCompanyaddresssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Companyaddress objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Companyaddress objects.
+     * @throws PropelException
+     */
+    public function countCompanyaddresss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collCompanyaddresssPartial && !$this->isNew();
+        if (null === $this->collCompanyaddresss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collCompanyaddresss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getCompanyaddresss());
+            }
+            $query = CompanyaddressQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCompany($this)
+                ->count($con);
+        }
+
+        return count($this->collCompanyaddresss);
+    }
+
+    /**
+     * Method called to associate a Companyaddress object to this object
+     * through the Companyaddress foreign key attribute.
+     *
+     * @param    Companyaddress $l Companyaddress
+     * @return Company The current object (for fluent API support)
+     */
+    public function addCompanyaddress(Companyaddress $l)
+    {
+        if ($this->collCompanyaddresss === null) {
+            $this->initCompanyaddresss();
+            $this->collCompanyaddresssPartial = true;
+        }
+
+        if (!in_array($l, $this->collCompanyaddresss->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddCompanyaddress($l);
+
+            if ($this->companyaddresssScheduledForDeletion and $this->companyaddresssScheduledForDeletion->contains($l)) {
+                $this->companyaddresssScheduledForDeletion->remove($this->companyaddresssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Companyaddress $companyaddress The companyaddress object to add.
+     */
+    protected function doAddCompanyaddress($companyaddress)
+    {
+        $this->collCompanyaddresss[]= $companyaddress;
+        $companyaddress->setCompany($this);
+    }
+
+    /**
+     * @param	Companyaddress $companyaddress The companyaddress object to remove.
+     * @return Company The current object (for fluent API support)
+     */
+    public function removeCompanyaddress($companyaddress)
+    {
+        if ($this->getCompanyaddresss()->contains($companyaddress)) {
+            $this->collCompanyaddresss->remove($this->collCompanyaddresss->search($companyaddress));
+            if (null === $this->companyaddresssScheduledForDeletion) {
+                $this->companyaddresssScheduledForDeletion = clone $this->collCompanyaddresss;
+                $this->companyaddresssScheduledForDeletion->clear();
+            }
+            $this->companyaddresssScheduledForDeletion[]= clone $companyaddress;
+            $companyaddress->setCompany(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collContactgroups collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Company The current object (for fluent API support)
+     * @see        addContactgroups()
+     */
+    public function clearContactgroups()
+    {
+        $this->collContactgroups = null; // important to set this to null since that means it is uninitialized
+        $this->collContactgroupsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collContactgroups collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialContactgroups($v = true)
+    {
+        $this->collContactgroupsPartial = $v;
+    }
+
+    /**
+     * Initializes the collContactgroups collection.
+     *
+     * By default this just sets the collContactgroups collection to an empty array (like clearcollContactgroups());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initContactgroups($overrideExisting = true)
+    {
+        if (null !== $this->collContactgroups && !$overrideExisting) {
+            return;
+        }
+        $this->collContactgroups = new PropelObjectCollection();
+        $this->collContactgroups->setModel('Contactgroup');
+    }
+
+    /**
+     * Gets an array of Contactgroup objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Company is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Contactgroup[] List of Contactgroup objects
+     * @throws PropelException
+     */
+    public function getContactgroups($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collContactgroupsPartial && !$this->isNew();
+        if (null === $this->collContactgroups || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collContactgroups) {
+                // return empty collection
+                $this->initContactgroups();
+            } else {
+                $collContactgroups = ContactgroupQuery::create(null, $criteria)
+                    ->filterByCompany($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collContactgroupsPartial && count($collContactgroups)) {
+                      $this->initContactgroups(false);
+
+                      foreach ($collContactgroups as $obj) {
+                        if (false == $this->collContactgroups->contains($obj)) {
+                          $this->collContactgroups->append($obj);
+                        }
+                      }
+
+                      $this->collContactgroupsPartial = true;
+                    }
+
+                    $collContactgroups->getInternalIterator()->rewind();
+
+                    return $collContactgroups;
+                }
+
+                if ($partial && $this->collContactgroups) {
+                    foreach ($this->collContactgroups as $obj) {
+                        if ($obj->isNew()) {
+                            $collContactgroups[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collContactgroups = $collContactgroups;
+                $this->collContactgroupsPartial = false;
+            }
+        }
+
+        return $this->collContactgroups;
+    }
+
+    /**
+     * Sets a collection of Contactgroup objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $contactgroups A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Company The current object (for fluent API support)
+     */
+    public function setContactgroups(PropelCollection $contactgroups, PropelPDO $con = null)
+    {
+        $contactgroupsToDelete = $this->getContactgroups(new Criteria(), $con)->diff($contactgroups);
+
+
+        $this->contactgroupsScheduledForDeletion = $contactgroupsToDelete;
+
+        foreach ($contactgroupsToDelete as $contactgroupRemoved) {
+            $contactgroupRemoved->setCompany(null);
+        }
+
+        $this->collContactgroups = null;
+        foreach ($contactgroups as $contactgroup) {
+            $this->addContactgroup($contactgroup);
+        }
+
+        $this->collContactgroups = $contactgroups;
+        $this->collContactgroupsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Contactgroup objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Contactgroup objects.
+     * @throws PropelException
+     */
+    public function countContactgroups(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collContactgroupsPartial && !$this->isNew();
+        if (null === $this->collContactgroups || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collContactgroups) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getContactgroups());
+            }
+            $query = ContactgroupQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCompany($this)
+                ->count($con);
+        }
+
+        return count($this->collContactgroups);
+    }
+
+    /**
+     * Method called to associate a Contactgroup object to this object
+     * through the Contactgroup foreign key attribute.
+     *
+     * @param    Contactgroup $l Contactgroup
+     * @return Company The current object (for fluent API support)
+     */
+    public function addContactgroup(Contactgroup $l)
+    {
+        if ($this->collContactgroups === null) {
+            $this->initContactgroups();
+            $this->collContactgroupsPartial = true;
+        }
+
+        if (!in_array($l, $this->collContactgroups->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddContactgroup($l);
+
+            if ($this->contactgroupsScheduledForDeletion and $this->contactgroupsScheduledForDeletion->contains($l)) {
+                $this->contactgroupsScheduledForDeletion->remove($this->contactgroupsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Contactgroup $contactgroup The contactgroup object to add.
+     */
+    protected function doAddContactgroup($contactgroup)
+    {
+        $this->collContactgroups[]= $contactgroup;
+        $contactgroup->setCompany($this);
+    }
+
+    /**
+     * @param	Contactgroup $contactgroup The contactgroup object to remove.
+     * @return Company The current object (for fluent API support)
+     */
+    public function removeContactgroup($contactgroup)
+    {
+        if ($this->getContactgroups()->contains($contactgroup)) {
+            $this->collContactgroups->remove($this->collContactgroups->search($contactgroup));
+            if (null === $this->contactgroupsScheduledForDeletion) {
+                $this->contactgroupsScheduledForDeletion = clone $this->collContactgroups;
+                $this->contactgroupsScheduledForDeletion->clear();
+            }
+            $this->contactgroupsScheduledForDeletion[]= clone $contactgroup;
+            $contactgroup->setCompany(null);
         }
 
         return $this;
@@ -3009,6 +3612,231 @@ abstract class BaseCompany extends BaseObject implements Persistent
             }
             $this->mxtaxinfosScheduledForDeletion[]= clone $mxtaxinfo;
             $mxtaxinfo->setCompany(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collProductionlines collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Company The current object (for fluent API support)
+     * @see        addProductionlines()
+     */
+    public function clearProductionlines()
+    {
+        $this->collProductionlines = null; // important to set this to null since that means it is uninitialized
+        $this->collProductionlinesPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collProductionlines collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialProductionlines($v = true)
+    {
+        $this->collProductionlinesPartial = $v;
+    }
+
+    /**
+     * Initializes the collProductionlines collection.
+     *
+     * By default this just sets the collProductionlines collection to an empty array (like clearcollProductionlines());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initProductionlines($overrideExisting = true)
+    {
+        if (null !== $this->collProductionlines && !$overrideExisting) {
+            return;
+        }
+        $this->collProductionlines = new PropelObjectCollection();
+        $this->collProductionlines->setModel('Productionline');
+    }
+
+    /**
+     * Gets an array of Productionline objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Company is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Productionline[] List of Productionline objects
+     * @throws PropelException
+     */
+    public function getProductionlines($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collProductionlinesPartial && !$this->isNew();
+        if (null === $this->collProductionlines || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collProductionlines) {
+                // return empty collection
+                $this->initProductionlines();
+            } else {
+                $collProductionlines = ProductionlineQuery::create(null, $criteria)
+                    ->filterByCompany($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collProductionlinesPartial && count($collProductionlines)) {
+                      $this->initProductionlines(false);
+
+                      foreach ($collProductionlines as $obj) {
+                        if (false == $this->collProductionlines->contains($obj)) {
+                          $this->collProductionlines->append($obj);
+                        }
+                      }
+
+                      $this->collProductionlinesPartial = true;
+                    }
+
+                    $collProductionlines->getInternalIterator()->rewind();
+
+                    return $collProductionlines;
+                }
+
+                if ($partial && $this->collProductionlines) {
+                    foreach ($this->collProductionlines as $obj) {
+                        if ($obj->isNew()) {
+                            $collProductionlines[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collProductionlines = $collProductionlines;
+                $this->collProductionlinesPartial = false;
+            }
+        }
+
+        return $this->collProductionlines;
+    }
+
+    /**
+     * Sets a collection of Productionline objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $productionlines A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Company The current object (for fluent API support)
+     */
+    public function setProductionlines(PropelCollection $productionlines, PropelPDO $con = null)
+    {
+        $productionlinesToDelete = $this->getProductionlines(new Criteria(), $con)->diff($productionlines);
+
+
+        $this->productionlinesScheduledForDeletion = $productionlinesToDelete;
+
+        foreach ($productionlinesToDelete as $productionlineRemoved) {
+            $productionlineRemoved->setCompany(null);
+        }
+
+        $this->collProductionlines = null;
+        foreach ($productionlines as $productionline) {
+            $this->addProductionline($productionline);
+        }
+
+        $this->collProductionlines = $productionlines;
+        $this->collProductionlinesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Productionline objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Productionline objects.
+     * @throws PropelException
+     */
+    public function countProductionlines(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collProductionlinesPartial && !$this->isNew();
+        if (null === $this->collProductionlines || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collProductionlines) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getProductionlines());
+            }
+            $query = ProductionlineQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCompany($this)
+                ->count($con);
+        }
+
+        return count($this->collProductionlines);
+    }
+
+    /**
+     * Method called to associate a Productionline object to this object
+     * through the Productionline foreign key attribute.
+     *
+     * @param    Productionline $l Productionline
+     * @return Company The current object (for fluent API support)
+     */
+    public function addProductionline(Productionline $l)
+    {
+        if ($this->collProductionlines === null) {
+            $this->initProductionlines();
+            $this->collProductionlinesPartial = true;
+        }
+
+        if (!in_array($l, $this->collProductionlines->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddProductionline($l);
+
+            if ($this->productionlinesScheduledForDeletion and $this->productionlinesScheduledForDeletion->contains($l)) {
+                $this->productionlinesScheduledForDeletion->remove($this->productionlinesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Productionline $productionline The productionline object to add.
+     */
+    protected function doAddProductionline($productionline)
+    {
+        $this->collProductionlines[]= $productionline;
+        $productionline->setCompany($this);
+    }
+
+    /**
+     * @param	Productionline $productionline The productionline object to remove.
+     * @return Company The current object (for fluent API support)
+     */
+    public function removeProductionline($productionline)
+    {
+        if ($this->getProductionlines()->contains($productionline)) {
+            $this->collProductionlines->remove($this->collProductionlines->search($productionline));
+            if (null === $this->productionlinesScheduledForDeletion) {
+                $this->productionlinesScheduledForDeletion = clone $this->collProductionlines;
+                $this->productionlinesScheduledForDeletion->clear();
+            }
+            $this->productionlinesScheduledForDeletion[]= clone $productionline;
+            $productionline->setCompany(null);
         }
 
         return $this;
@@ -3765,6 +4593,16 @@ abstract class BaseCompany extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collCompanyaddresss) {
+                foreach ($this->collCompanyaddresss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collContactgroups) {
+                foreach ($this->collContactgroups as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collDepartments) {
                 foreach ($this->collDepartments as $o) {
                     $o->clearAllReferences($deep);
@@ -3777,6 +4615,11 @@ abstract class BaseCompany extends BaseObject implements Persistent
             }
             if ($this->collMxtaxinfos) {
                 foreach ($this->collMxtaxinfos as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collProductionlines) {
+                foreach ($this->collProductionlines as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -3811,6 +4654,14 @@ abstract class BaseCompany extends BaseObject implements Persistent
             $this->collClients->clearIterator();
         }
         $this->collClients = null;
+        if ($this->collCompanyaddresss instanceof PropelCollection) {
+            $this->collCompanyaddresss->clearIterator();
+        }
+        $this->collCompanyaddresss = null;
+        if ($this->collContactgroups instanceof PropelCollection) {
+            $this->collContactgroups->clearIterator();
+        }
+        $this->collContactgroups = null;
         if ($this->collDepartments instanceof PropelCollection) {
             $this->collDepartments->clearIterator();
         }
@@ -3823,6 +4674,10 @@ abstract class BaseCompany extends BaseObject implements Persistent
             $this->collMxtaxinfos->clearIterator();
         }
         $this->collMxtaxinfos = null;
+        if ($this->collProductionlines instanceof PropelCollection) {
+            $this->collProductionlines->clearIterator();
+        }
+        $this->collProductionlines = null;
         if ($this->collProductionteams instanceof PropelCollection) {
             $this->collProductionteams->clearIterator();
         }

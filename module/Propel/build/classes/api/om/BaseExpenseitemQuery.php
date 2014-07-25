@@ -10,13 +10,11 @@
  * @method ExpenseitemQuery orderByIdexpensecategory($order = Criteria::ASC) Order by the idexpensecategory column
  * @method ExpenseitemQuery orderByExpenseitemName($order = Criteria::ASC) Order by the expenseitem_name column
  * @method ExpenseitemQuery orderByExpenseitemDescription($order = Criteria::ASC) Order by the expenseitem_description column
- * @method ExpenseitemQuery orderByExpenseitemCause($order = Criteria::ASC) Order by the expenseitem_cause column
  *
  * @method ExpenseitemQuery groupByIdexpenseitem() Group by the idexpenseitem column
  * @method ExpenseitemQuery groupByIdexpensecategory() Group by the idexpensecategory column
  * @method ExpenseitemQuery groupByExpenseitemName() Group by the expenseitem_name column
  * @method ExpenseitemQuery groupByExpenseitemDescription() Group by the expenseitem_description column
- * @method ExpenseitemQuery groupByExpenseitemCause() Group by the expenseitem_cause column
  *
  * @method ExpenseitemQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method ExpenseitemQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -40,13 +38,11 @@
  * @method Expenseitem findOneByIdexpensecategory(int $idexpensecategory) Return the first Expenseitem filtered by the idexpensecategory column
  * @method Expenseitem findOneByExpenseitemName(string $expenseitem_name) Return the first Expenseitem filtered by the expenseitem_name column
  * @method Expenseitem findOneByExpenseitemDescription(string $expenseitem_description) Return the first Expenseitem filtered by the expenseitem_description column
- * @method Expenseitem findOneByExpenseitemCause(string $expenseitem_cause) Return the first Expenseitem filtered by the expenseitem_cause column
  *
  * @method array findByIdexpenseitem(int $idexpenseitem) Return Expenseitem objects filtered by the idexpenseitem column
  * @method array findByIdexpensecategory(int $idexpensecategory) Return Expenseitem objects filtered by the idexpensecategory column
  * @method array findByExpenseitemName(string $expenseitem_name) Return Expenseitem objects filtered by the expenseitem_name column
  * @method array findByExpenseitemDescription(string $expenseitem_description) Return Expenseitem objects filtered by the expenseitem_description column
- * @method array findByExpenseitemCause(string $expenseitem_cause) Return Expenseitem objects filtered by the expenseitem_cause column
  *
  * @package    propel.generator.api.om
  */
@@ -154,7 +150,7 @@ abstract class BaseExpenseitemQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idexpenseitem`, `idexpensecategory`, `expenseitem_name`, `expenseitem_description`, `expenseitem_cause` FROM `expenseitem` WHERE `idexpenseitem` = :p0';
+        $sql = 'SELECT `idexpenseitem`, `idexpensecategory`, `expenseitem_name`, `expenseitem_description` FROM `expenseitem` WHERE `idexpenseitem` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -385,35 +381,6 @@ abstract class BaseExpenseitemQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ExpenseitemPeer::EXPENSEITEM_DESCRIPTION, $expenseitemDescription, $comparison);
-    }
-
-    /**
-     * Filter the query on the expenseitem_cause column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByExpenseitemCause('fooValue');   // WHERE expenseitem_cause = 'fooValue'
-     * $query->filterByExpenseitemCause('%fooValue%'); // WHERE expenseitem_cause LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $expenseitemCause The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ExpenseitemQuery The current query, for fluid interface
-     */
-    public function filterByExpenseitemCause($expenseitemCause = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($expenseitemCause)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $expenseitemCause)) {
-                $expenseitemCause = str_replace('*', '%', $expenseitemCause);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ExpenseitemPeer::EXPENSEITEM_CAUSE, $expenseitemCause, $comparison);
     }
 
     /**

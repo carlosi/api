@@ -71,6 +71,7 @@ class ClientTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Company', 'Company', RelationMap::MANY_TO_ONE, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Chatpublic', 'Chatpublic', RelationMap::ONE_TO_MANY, array('idclient' => 'idclient', ), 'CASCADE', 'CASCADE', 'Chatpublics');
         $this->addRelation('Clientaddress', 'Clientaddress', RelationMap::ONE_TO_MANY, array('idclient' => 'idclient', ), 'CASCADE', 'CASCADE', 'Clientaddresss');
         $this->addRelation('Clientcomment', 'Clientcomment', RelationMap::ONE_TO_MANY, array('idclient' => 'idclient', ), 'CASCADE', 'CASCADE', 'Clientcomments');
         $this->addRelation('Clientfile', 'Clientfile', RelationMap::ONE_TO_MANY, array('idclient' => 'idclient', ), 'CASCADE', 'CASCADE', 'Clientfiles');

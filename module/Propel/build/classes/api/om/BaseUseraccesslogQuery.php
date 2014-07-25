@@ -402,14 +402,14 @@ abstract class BaseUseraccesslogQuery extends ModelCriteria
     {
         if ($user instanceof User) {
             return $this
-                ->addUsingAlias(UseraccesslogPeer::IDUSER, $user->getIdUser(), $comparison);
+                ->addUsingAlias(UseraccesslogPeer::IDUSER, $user->getIduser(), $comparison);
         } elseif ($user instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(UseraccesslogPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'IdUser'), $comparison);
+                ->addUsingAlias(UseraccesslogPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
         }

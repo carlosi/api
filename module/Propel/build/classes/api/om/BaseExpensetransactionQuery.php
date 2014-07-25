@@ -13,6 +13,7 @@
  * @method ExpensetransactionQuery orderByExpensetransactionQuantity($order = Criteria::ASC) Order by the expensetransaction_quantity column
  * @method ExpensetransactionQuery orderByExpensetransactionValue($order = Criteria::ASC) Order by the expensetransaction_value column
  * @method ExpensetransactionQuery orderByExpensetransactionDate($order = Criteria::ASC) Order by the expensetransaction_date column
+ * @method ExpensetransactionQuery orderByExpensetransactionReason($order = Criteria::ASC) Order by the expensetransaction_reason column
  *
  * @method ExpensetransactionQuery groupByIdexpensetransaction() Group by the idexpensetransaction column
  * @method ExpensetransactionQuery groupByIdexpenseitem() Group by the idexpenseitem column
@@ -21,6 +22,7 @@
  * @method ExpensetransactionQuery groupByExpensetransactionQuantity() Group by the expensetransaction_quantity column
  * @method ExpensetransactionQuery groupByExpensetransactionValue() Group by the expensetransaction_value column
  * @method ExpensetransactionQuery groupByExpensetransactionDate() Group by the expensetransaction_date column
+ * @method ExpensetransactionQuery groupByExpensetransactionReason() Group by the expensetransaction_reason column
  *
  * @method ExpensetransactionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method ExpensetransactionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -29,6 +31,10 @@
  * @method ExpensetransactionQuery leftJoinExpenseitem($relationAlias = null) Adds a LEFT JOIN clause to the query using the Expenseitem relation
  * @method ExpensetransactionQuery rightJoinExpenseitem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Expenseitem relation
  * @method ExpensetransactionQuery innerJoinExpenseitem($relationAlias = null) Adds a INNER JOIN clause to the query using the Expenseitem relation
+ *
+ * @method ExpensetransactionQuery leftJoinBankexpensetransaction($relationAlias = null) Adds a LEFT JOIN clause to the query using the Bankexpensetransaction relation
+ * @method ExpensetransactionQuery rightJoinBankexpensetransaction($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Bankexpensetransaction relation
+ * @method ExpensetransactionQuery innerJoinBankexpensetransaction($relationAlias = null) Adds a INNER JOIN clause to the query using the Bankexpensetransaction relation
  *
  * @method ExpensetransactionQuery leftJoinExpensetransactionfile($relationAlias = null) Adds a LEFT JOIN clause to the query using the Expensetransactionfile relation
  * @method ExpensetransactionQuery rightJoinExpensetransactionfile($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Expensetransactionfile relation
@@ -43,6 +49,7 @@
  * @method Expensetransaction findOneByExpensetransactionQuantity(string $expensetransaction_quantity) Return the first Expensetransaction filtered by the expensetransaction_quantity column
  * @method Expensetransaction findOneByExpensetransactionValue(string $expensetransaction_value) Return the first Expensetransaction filtered by the expensetransaction_value column
  * @method Expensetransaction findOneByExpensetransactionDate(string $expensetransaction_date) Return the first Expensetransaction filtered by the expensetransaction_date column
+ * @method Expensetransaction findOneByExpensetransactionReason(string $expensetransaction_reason) Return the first Expensetransaction filtered by the expensetransaction_reason column
  *
  * @method array findByIdexpensetransaction(int $idexpensetransaction) Return Expensetransaction objects filtered by the idexpensetransaction column
  * @method array findByIdexpenseitem(int $idexpenseitem) Return Expensetransaction objects filtered by the idexpenseitem column
@@ -51,6 +58,7 @@
  * @method array findByExpensetransactionQuantity(string $expensetransaction_quantity) Return Expensetransaction objects filtered by the expensetransaction_quantity column
  * @method array findByExpensetransactionValue(string $expensetransaction_value) Return Expensetransaction objects filtered by the expensetransaction_value column
  * @method array findByExpensetransactionDate(string $expensetransaction_date) Return Expensetransaction objects filtered by the expensetransaction_date column
+ * @method array findByExpensetransactionReason(string $expensetransaction_reason) Return Expensetransaction objects filtered by the expensetransaction_reason column
  *
  * @package    propel.generator.api.om
  */
@@ -158,7 +166,7 @@ abstract class BaseExpensetransactionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idexpensetransaction`, `idexpenseitem`, `expensetransaction_status`, `expensetransaction_comment`, `expensetransaction_quantity`, `expensetransaction_value`, `expensetransaction_date` FROM `expensetransaction` WHERE `idexpensetransaction` = :p0';
+        $sql = 'SELECT `idexpensetransaction`, `idexpenseitem`, `expensetransaction_status`, `expensetransaction_comment`, `expensetransaction_quantity`, `expensetransaction_value`, `expensetransaction_date`, `expensetransaction_reason` FROM `expensetransaction` WHERE `idexpensetransaction` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -519,6 +527,35 @@ abstract class BaseExpensetransactionQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the expensetransaction_reason column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByExpensetransactionReason('fooValue');   // WHERE expensetransaction_reason = 'fooValue'
+     * $query->filterByExpensetransactionReason('%fooValue%'); // WHERE expensetransaction_reason LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $expensetransactionReason The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ExpensetransactionQuery The current query, for fluid interface
+     */
+    public function filterByExpensetransactionReason($expensetransactionReason = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($expensetransactionReason)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $expensetransactionReason)) {
+                $expensetransactionReason = str_replace('*', '%', $expensetransactionReason);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ExpensetransactionPeer::EXPENSETRANSACTION_REASON, $expensetransactionReason, $comparison);
+    }
+
+    /**
      * Filter the query by a related Expenseitem object
      *
      * @param   Expenseitem|PropelObjectCollection $expenseitem The related object(s) to use as filter
@@ -592,6 +629,80 @@ abstract class BaseExpensetransactionQuery extends ModelCriteria
         return $this
             ->joinExpenseitem($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Expenseitem', 'ExpenseitemQuery');
+    }
+
+    /**
+     * Filter the query by a related Bankexpensetransaction object
+     *
+     * @param   Bankexpensetransaction|PropelObjectCollection $bankexpensetransaction  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ExpensetransactionQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByBankexpensetransaction($bankexpensetransaction, $comparison = null)
+    {
+        if ($bankexpensetransaction instanceof Bankexpensetransaction) {
+            return $this
+                ->addUsingAlias(ExpensetransactionPeer::IDEXPENSETRANSACTION, $bankexpensetransaction->getIdexpensetransaction(), $comparison);
+        } elseif ($bankexpensetransaction instanceof PropelObjectCollection) {
+            return $this
+                ->useBankexpensetransactionQuery()
+                ->filterByPrimaryKeys($bankexpensetransaction->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByBankexpensetransaction() only accepts arguments of type Bankexpensetransaction or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Bankexpensetransaction relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ExpensetransactionQuery The current query, for fluid interface
+     */
+    public function joinBankexpensetransaction($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Bankexpensetransaction');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Bankexpensetransaction');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Bankexpensetransaction relation Bankexpensetransaction object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   BankexpensetransactionQuery A secondary query class using the current class as primary query
+     */
+    public function useBankexpensetransactionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinBankexpensetransaction($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Bankexpensetransaction', 'BankexpensetransactionQuery');
     }
 
     /**

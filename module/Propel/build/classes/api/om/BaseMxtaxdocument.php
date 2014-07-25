@@ -85,14 +85,14 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     protected $mxtaxdocument_url_pdf;
 
     /**
-     * @var        Clienttax
-     */
-    protected $aClienttax;
-
-    /**
      * @var        Order
      */
     protected $aOrder;
+
+    /**
+     * @var        Clienttax
+     */
+    protected $aClienttax;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -553,8 +553,8 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aClienttax = null;
             $this->aOrder = null;
+            $this->aClienttax = null;
         } // if (deep)
     }
 
@@ -673,18 +673,18 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aClienttax !== null) {
-                if ($this->aClienttax->isModified() || $this->aClienttax->isNew()) {
-                    $affectedRows += $this->aClienttax->save($con);
-                }
-                $this->setClienttax($this->aClienttax);
-            }
-
             if ($this->aOrder !== null) {
                 if ($this->aOrder->isModified() || $this->aOrder->isNew()) {
                     $affectedRows += $this->aOrder->save($con);
                 }
                 $this->setOrder($this->aOrder);
+            }
+
+            if ($this->aClienttax !== null) {
+                if ($this->aClienttax->isModified() || $this->aClienttax->isNew()) {
+                    $affectedRows += $this->aClienttax->save($con);
+                }
+                $this->setClienttax($this->aClienttax);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -718,6 +718,10 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[] = MxtaxdocumentPeer::IDMXTAXDOCUMENT;
+        if (null !== $this->idmxtaxdocument) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . MxtaxdocumentPeer::IDMXTAXDOCUMENT . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(MxtaxdocumentPeer::IDMXTAXDOCUMENT)) {
@@ -792,6 +796,13 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', $e);
+        }
+        $this->setIdmxtaxdocument($pk);
 
         $this->setNew(false);
     }
@@ -877,15 +888,15 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aClienttax !== null) {
-                if (!$this->aClienttax->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aClienttax->getValidationFailures());
-                }
-            }
-
             if ($this->aOrder !== null) {
                 if (!$this->aOrder->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aOrder->getValidationFailures());
+                }
+            }
+
+            if ($this->aClienttax !== null) {
+                if (!$this->aClienttax->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aClienttax->getValidationFailures());
                 }
             }
 
@@ -1002,11 +1013,11 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aClienttax) {
-                $result['Clienttax'] = $this->aClienttax->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aOrder) {
                 $result['Order'] = $this->aOrder->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aClienttax) {
+                $result['Clienttax'] = $this->aClienttax->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1252,58 +1263,6 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Clienttax object.
-     *
-     * @param                  Clienttax $v
-     * @return Mxtaxdocument The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setClienttax(Clienttax $v = null)
-    {
-        if ($v === null) {
-            $this->setIdclienttax(NULL);
-        } else {
-            $this->setIdclienttax($v->getIdclienttax());
-        }
-
-        $this->aClienttax = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Clienttax object, it will not be re-added.
-        if ($v !== null) {
-            $v->addMxtaxdocument($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Clienttax object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Clienttax The associated Clienttax object.
-     * @throws PropelException
-     */
-    public function getClienttax(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aClienttax === null && ($this->idclienttax !== null) && $doQuery) {
-            $this->aClienttax = ClienttaxQuery::create()->findPk($this->idclienttax, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aClienttax->addMxtaxdocuments($this);
-             */
-        }
-
-        return $this->aClienttax;
-    }
-
-    /**
      * Declares an association between this object and a Order object.
      *
      * @param                  Order $v
@@ -1356,6 +1315,58 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Clienttax object.
+     *
+     * @param                  Clienttax $v
+     * @return Mxtaxdocument The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setClienttax(Clienttax $v = null)
+    {
+        if ($v === null) {
+            $this->setIdclienttax(NULL);
+        } else {
+            $this->setIdclienttax($v->getIdclienttax());
+        }
+
+        $this->aClienttax = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Clienttax object, it will not be re-added.
+        if ($v !== null) {
+            $v->addMxtaxdocument($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Clienttax object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Clienttax The associated Clienttax object.
+     * @throws PropelException
+     */
+    public function getClienttax(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aClienttax === null && ($this->idclienttax !== null) && $doQuery) {
+            $this->aClienttax = ClienttaxQuery::create()->findPk($this->idclienttax, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aClienttax->addMxtaxdocuments($this);
+             */
+        }
+
+        return $this->aClienttax;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1392,18 +1403,18 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aClienttax instanceof Persistent) {
-              $this->aClienttax->clearAllReferences($deep);
-            }
             if ($this->aOrder instanceof Persistent) {
               $this->aOrder->clearAllReferences($deep);
+            }
+            if ($this->aClienttax instanceof Persistent) {
+              $this->aClienttax->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aClienttax = null;
         $this->aOrder = null;
+        $this->aClienttax = null;
     }
 
     /**

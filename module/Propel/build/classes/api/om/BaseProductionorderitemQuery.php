@@ -8,19 +8,19 @@
  *
  * @method ProductionorderitemQuery orderByIdproductionorderitem($order = Criteria::ASC) Order by the idproductionorderitem column
  * @method ProductionorderitemQuery orderByIdproductionteam($order = Criteria::ASC) Order by the idproductionteam column
+ * @method ProductionorderitemQuery orderByIdproductionline($order = Criteria::ASC) Order by the idproductionline column
  * @method ProductionorderitemQuery orderByIdorderitem($order = Criteria::ASC) Order by the idorderitem column
+ * @method ProductionorderitemQuery orderByIdproductionstatus($order = Criteria::ASC) Order by the idproductionstatus column
  * @method ProductionorderitemQuery orderByProductionorderitemDateinit($order = Criteria::ASC) Order by the productionorderitem_dateinit column
  * @method ProductionorderitemQuery orderByProductionorderitemDatedelivery($order = Criteria::ASC) Order by the productionorderitem_datedelivery column
- * @method ProductionorderitemQuery orderByProductionorderitemNote($order = Criteria::ASC) Order by the productionorderitem_note column
- * @method ProductionorderitemQuery orderByProductionorderitemStatus($order = Criteria::ASC) Order by the productionorderitem_status column
  *
  * @method ProductionorderitemQuery groupByIdproductionorderitem() Group by the idproductionorderitem column
  * @method ProductionorderitemQuery groupByIdproductionteam() Group by the idproductionteam column
+ * @method ProductionorderitemQuery groupByIdproductionline() Group by the idproductionline column
  * @method ProductionorderitemQuery groupByIdorderitem() Group by the idorderitem column
+ * @method ProductionorderitemQuery groupByIdproductionstatus() Group by the idproductionstatus column
  * @method ProductionorderitemQuery groupByProductionorderitemDateinit() Group by the productionorderitem_dateinit column
  * @method ProductionorderitemQuery groupByProductionorderitemDatedelivery() Group by the productionorderitem_datedelivery column
- * @method ProductionorderitemQuery groupByProductionorderitemNote() Group by the productionorderitem_note column
- * @method ProductionorderitemQuery groupByProductionorderitemStatus() Group by the productionorderitem_status column
  *
  * @method ProductionorderitemQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method ProductionorderitemQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -34,23 +34,35 @@
  * @method ProductionorderitemQuery rightJoinProductionteam($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionteam relation
  * @method ProductionorderitemQuery innerJoinProductionteam($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionteam relation
  *
+ * @method ProductionorderitemQuery leftJoinProductionline($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionline relation
+ * @method ProductionorderitemQuery rightJoinProductionline($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionline relation
+ * @method ProductionorderitemQuery innerJoinProductionline($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionline relation
+ *
+ * @method ProductionorderitemQuery leftJoinProductionstatus($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionstatus relation
+ * @method ProductionorderitemQuery rightJoinProductionstatus($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionstatus relation
+ * @method ProductionorderitemQuery innerJoinProductionstatus($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionstatus relation
+ *
+ * @method ProductionorderitemQuery leftJoinProductionordercomment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionordercomment relation
+ * @method ProductionorderitemQuery rightJoinProductionordercomment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionordercomment relation
+ * @method ProductionorderitemQuery innerJoinProductionordercomment($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionordercomment relation
+ *
  * @method Productionorderitem findOne(PropelPDO $con = null) Return the first Productionorderitem matching the query
  * @method Productionorderitem findOneOrCreate(PropelPDO $con = null) Return the first Productionorderitem matching the query, or a new Productionorderitem object populated from the query conditions when no match is found
  *
  * @method Productionorderitem findOneByIdproductionteam(int $idproductionteam) Return the first Productionorderitem filtered by the idproductionteam column
+ * @method Productionorderitem findOneByIdproductionline(int $idproductionline) Return the first Productionorderitem filtered by the idproductionline column
  * @method Productionorderitem findOneByIdorderitem(int $idorderitem) Return the first Productionorderitem filtered by the idorderitem column
+ * @method Productionorderitem findOneByIdproductionstatus(int $idproductionstatus) Return the first Productionorderitem filtered by the idproductionstatus column
  * @method Productionorderitem findOneByProductionorderitemDateinit(string $productionorderitem_dateinit) Return the first Productionorderitem filtered by the productionorderitem_dateinit column
  * @method Productionorderitem findOneByProductionorderitemDatedelivery(string $productionorderitem_datedelivery) Return the first Productionorderitem filtered by the productionorderitem_datedelivery column
- * @method Productionorderitem findOneByProductionorderitemNote(string $productionorderitem_note) Return the first Productionorderitem filtered by the productionorderitem_note column
- * @method Productionorderitem findOneByProductionorderitemStatus(string $productionorderitem_status) Return the first Productionorderitem filtered by the productionorderitem_status column
  *
  * @method array findByIdproductionorderitem(int $idproductionorderitem) Return Productionorderitem objects filtered by the idproductionorderitem column
  * @method array findByIdproductionteam(int $idproductionteam) Return Productionorderitem objects filtered by the idproductionteam column
+ * @method array findByIdproductionline(int $idproductionline) Return Productionorderitem objects filtered by the idproductionline column
  * @method array findByIdorderitem(int $idorderitem) Return Productionorderitem objects filtered by the idorderitem column
+ * @method array findByIdproductionstatus(int $idproductionstatus) Return Productionorderitem objects filtered by the idproductionstatus column
  * @method array findByProductionorderitemDateinit(string $productionorderitem_dateinit) Return Productionorderitem objects filtered by the productionorderitem_dateinit column
  * @method array findByProductionorderitemDatedelivery(string $productionorderitem_datedelivery) Return Productionorderitem objects filtered by the productionorderitem_datedelivery column
- * @method array findByProductionorderitemNote(string $productionorderitem_note) Return Productionorderitem objects filtered by the productionorderitem_note column
- * @method array findByProductionorderitemStatus(string $productionorderitem_status) Return Productionorderitem objects filtered by the productionorderitem_status column
  *
  * @package    propel.generator.api.om
  */
@@ -158,7 +170,7 @@ abstract class BaseProductionorderitemQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idproductionorderitem`, `idproductionteam`, `idorderitem`, `productionorderitem_dateinit`, `productionorderitem_datedelivery`, `productionorderitem_note`, `productionorderitem_status` FROM `productionorderitem` WHERE `idproductionorderitem` = :p0';
+        $sql = 'SELECT `idproductionorderitem`, `idproductionteam`, `idproductionline`, `idorderitem`, `idproductionstatus`, `productionorderitem_dateinit`, `productionorderitem_datedelivery` FROM `productionorderitem` WHERE `idproductionorderitem` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -334,6 +346,50 @@ abstract class BaseProductionorderitemQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the idproductionline column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIdproductionline(1234); // WHERE idproductionline = 1234
+     * $query->filterByIdproductionline(array(12, 34)); // WHERE idproductionline IN (12, 34)
+     * $query->filterByIdproductionline(array('min' => 12)); // WHERE idproductionline >= 12
+     * $query->filterByIdproductionline(array('max' => 12)); // WHERE idproductionline <= 12
+     * </code>
+     *
+     * @see       filterByProductionline()
+     *
+     * @param     mixed $idproductionline The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ProductionorderitemQuery The current query, for fluid interface
+     */
+    public function filterByIdproductionline($idproductionline = null, $comparison = null)
+    {
+        if (is_array($idproductionline)) {
+            $useMinMax = false;
+            if (isset($idproductionline['min'])) {
+                $this->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONLINE, $idproductionline['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($idproductionline['max'])) {
+                $this->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONLINE, $idproductionline['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONLINE, $idproductionline, $comparison);
+    }
+
+    /**
      * Filter the query on the idorderitem column
      *
      * Example usage:
@@ -375,6 +431,50 @@ abstract class BaseProductionorderitemQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProductionorderitemPeer::IDORDERITEM, $idorderitem, $comparison);
+    }
+
+    /**
+     * Filter the query on the idproductionstatus column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIdproductionstatus(1234); // WHERE idproductionstatus = 1234
+     * $query->filterByIdproductionstatus(array(12, 34)); // WHERE idproductionstatus IN (12, 34)
+     * $query->filterByIdproductionstatus(array('min' => 12)); // WHERE idproductionstatus >= 12
+     * $query->filterByIdproductionstatus(array('max' => 12)); // WHERE idproductionstatus <= 12
+     * </code>
+     *
+     * @see       filterByProductionstatus()
+     *
+     * @param     mixed $idproductionstatus The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ProductionorderitemQuery The current query, for fluid interface
+     */
+    public function filterByIdproductionstatus($idproductionstatus = null, $comparison = null)
+    {
+        if (is_array($idproductionstatus)) {
+            $useMinMax = false;
+            if (isset($idproductionstatus['min'])) {
+                $this->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONSTATUS, $idproductionstatus['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($idproductionstatus['max'])) {
+                $this->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONSTATUS, $idproductionstatus['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONSTATUS, $idproductionstatus, $comparison);
     }
 
     /**
@@ -461,64 +561,6 @@ abstract class BaseProductionorderitemQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY, $productionorderitemDatedelivery, $comparison);
-    }
-
-    /**
-     * Filter the query on the productionorderitem_note column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByProductionorderitemNote('fooValue');   // WHERE productionorderitem_note = 'fooValue'
-     * $query->filterByProductionorderitemNote('%fooValue%'); // WHERE productionorderitem_note LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $productionorderitemNote The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ProductionorderitemQuery The current query, for fluid interface
-     */
-    public function filterByProductionorderitemNote($productionorderitemNote = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($productionorderitemNote)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $productionorderitemNote)) {
-                $productionorderitemNote = str_replace('*', '%', $productionorderitemNote);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE, $productionorderitemNote, $comparison);
-    }
-
-    /**
-     * Filter the query on the productionorderitem_status column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByProductionorderitemStatus('fooValue');   // WHERE productionorderitem_status = 'fooValue'
-     * $query->filterByProductionorderitemStatus('%fooValue%'); // WHERE productionorderitem_status LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $productionorderitemStatus The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ProductionorderitemQuery The current query, for fluid interface
-     */
-    public function filterByProductionorderitemStatus($productionorderitemStatus = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($productionorderitemStatus)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $productionorderitemStatus)) {
-                $productionorderitemStatus = str_replace('*', '%', $productionorderitemStatus);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS, $productionorderitemStatus, $comparison);
     }
 
     /**
@@ -671,6 +713,232 @@ abstract class BaseProductionorderitemQuery extends ModelCriteria
         return $this
             ->joinProductionteam($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Productionteam', 'ProductionteamQuery');
+    }
+
+    /**
+     * Filter the query by a related Productionline object
+     *
+     * @param   Productionline|PropelObjectCollection $productionline The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProductionorderitemQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductionline($productionline, $comparison = null)
+    {
+        if ($productionline instanceof Productionline) {
+            return $this
+                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONLINE, $productionline->getIdproductionline(), $comparison);
+        } elseif ($productionline instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONLINE, $productionline->toKeyValue('PrimaryKey', 'Idproductionline'), $comparison);
+        } else {
+            throw new PropelException('filterByProductionline() only accepts arguments of type Productionline or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productionline relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProductionorderitemQuery The current query, for fluid interface
+     */
+    public function joinProductionline($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productionline');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productionline');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productionline relation Productionline object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductionlineQuery A secondary query class using the current class as primary query
+     */
+    public function useProductionlineQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductionline($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productionline', 'ProductionlineQuery');
+    }
+
+    /**
+     * Filter the query by a related Productionstatus object
+     *
+     * @param   Productionstatus|PropelObjectCollection $productionstatus The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProductionorderitemQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductionstatus($productionstatus, $comparison = null)
+    {
+        if ($productionstatus instanceof Productionstatus) {
+            return $this
+                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONSTATUS, $productionstatus->getIdproductionstatus(), $comparison);
+        } elseif ($productionstatus instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONSTATUS, $productionstatus->toKeyValue('PrimaryKey', 'Idproductionstatus'), $comparison);
+        } else {
+            throw new PropelException('filterByProductionstatus() only accepts arguments of type Productionstatus or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productionstatus relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProductionorderitemQuery The current query, for fluid interface
+     */
+    public function joinProductionstatus($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productionstatus');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productionstatus');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productionstatus relation Productionstatus object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductionstatusQuery A secondary query class using the current class as primary query
+     */
+    public function useProductionstatusQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductionstatus($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productionstatus', 'ProductionstatusQuery');
+    }
+
+    /**
+     * Filter the query by a related Productionordercomment object
+     *
+     * @param   Productionordercomment|PropelObjectCollection $productionordercomment  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProductionorderitemQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductionordercomment($productionordercomment, $comparison = null)
+    {
+        if ($productionordercomment instanceof Productionordercomment) {
+            return $this
+                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONORDERITEM, $productionordercomment->getIdproductionorderitem(), $comparison);
+        } elseif ($productionordercomment instanceof PropelObjectCollection) {
+            return $this
+                ->useProductionordercommentQuery()
+                ->filterByPrimaryKeys($productionordercomment->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByProductionordercomment() only accepts arguments of type Productionordercomment or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productionordercomment relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProductionorderitemQuery The current query, for fluid interface
+     */
+    public function joinProductionordercomment($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productionordercomment');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productionordercomment');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productionordercomment relation Productionordercomment object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductionordercommentQuery A secondary query class using the current class as primary query
+     */
+    public function useProductionordercommentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductionordercomment($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productionordercomment', 'ProductionordercommentQuery');
     }
 
     /**

@@ -66,6 +66,13 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
     protected $productmainphoto_status;
 
     /**
+     * The value for the productmainphoto_type field.
+     * Note: this column has a database default value of: 'private'
+     * @var        string
+     */
+    protected $productmainphoto_type;
+
+    /**
      * @var        Productmain
      */
     protected $aProductmain;
@@ -89,6 +96,27 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see        __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->productmainphoto_type = 'private';
+    }
+
+    /**
+     * Initializes internal state of BaseProductmainphoto object.
+     * @see        applyDefaults()
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->applyDefaultValues();
+    }
 
     /**
      * Get the [idproductmainphoto] column value.
@@ -154,6 +182,17 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
     {
 
         return $this->productmainphoto_status;
+    }
+
+    /**
+     * Get the [productmainphoto_type] column value.
+     *
+     * @return string
+     */
+    public function getProductmainphotoType()
+    {
+
+        return $this->productmainphoto_type;
     }
 
     /**
@@ -287,6 +326,27 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
     } // setProductmainphotoStatus()
 
     /**
+     * Set the value of [productmainphoto_type] column.
+     *
+     * @param  string $v new value
+     * @return Productmainphoto The current object (for fluent API support)
+     */
+    public function setProductmainphotoType($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->productmainphoto_type !== $v) {
+            $this->productmainphoto_type = $v;
+            $this->modifiedColumns[] = ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE;
+        }
+
+
+        return $this;
+    } // setProductmainphotoType()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -296,6 +356,10 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->productmainphoto_type !== 'private') {
+                return false;
+            }
+
         // otherwise, everything was equal, so return true
         return true;
     } // hasOnlyDefaultValues()
@@ -324,6 +388,7 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
             $this->productmainphoto_width = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->productmainphoto_height = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->productmainphoto_status = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->productmainphoto_type = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -333,7 +398,7 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 6; // 6 = ProductmainphotoPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = ProductmainphotoPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Productmainphoto object", $e);
@@ -579,6 +644,9 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
         if ($this->isColumnModified(ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS)) {
             $modifiedColumns[':p' . $index++]  = '`productmainphoto_status`';
         }
+        if ($this->isColumnModified(ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE)) {
+            $modifiedColumns[':p' . $index++]  = '`productmainphoto_type`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `productmainphoto` (%s) VALUES (%s)',
@@ -607,6 +675,9 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
                         break;
                     case '`productmainphoto_status`':
                         $stmt->bindValue($identifier, $this->productmainphoto_status, PDO::PARAM_STR);
+                        break;
+                    case '`productmainphoto_type`':
+                        $stmt->bindValue($identifier, $this->productmainphoto_type, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -772,6 +843,9 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
             case 5:
                 return $this->getProductmainphotoStatus();
                 break;
+            case 6:
+                return $this->getProductmainphotoType();
+                break;
             default:
                 return null;
                 break;
@@ -807,6 +881,7 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
             $keys[3] => $this->getProductmainphotoWidth(),
             $keys[4] => $this->getProductmainphotoHeight(),
             $keys[5] => $this->getProductmainphotoStatus(),
+            $keys[6] => $this->getProductmainphotoType(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -869,6 +944,9 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
             case 5:
                 $this->setProductmainphotoStatus($value);
                 break;
+            case 6:
+                $this->setProductmainphotoType($value);
+                break;
         } // switch()
     }
 
@@ -899,6 +977,7 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
         if (array_key_exists($keys[3], $arr)) $this->setProductmainphotoWidth($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setProductmainphotoHeight($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setProductmainphotoStatus($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setProductmainphotoType($arr[$keys[6]]);
     }
 
     /**
@@ -916,6 +995,7 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
         if ($this->isColumnModified(ProductmainphotoPeer::PRODUCTMAINPHOTO_WIDTH)) $criteria->add(ProductmainphotoPeer::PRODUCTMAINPHOTO_WIDTH, $this->productmainphoto_width);
         if ($this->isColumnModified(ProductmainphotoPeer::PRODUCTMAINPHOTO_HEIGHT)) $criteria->add(ProductmainphotoPeer::PRODUCTMAINPHOTO_HEIGHT, $this->productmainphoto_height);
         if ($this->isColumnModified(ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS)) $criteria->add(ProductmainphotoPeer::PRODUCTMAINPHOTO_STATUS, $this->productmainphoto_status);
+        if ($this->isColumnModified(ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE)) $criteria->add(ProductmainphotoPeer::PRODUCTMAINPHOTO_TYPE, $this->productmainphoto_type);
 
         return $criteria;
     }
@@ -984,6 +1064,7 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
         $copyObj->setProductmainphotoWidth($this->getProductmainphotoWidth());
         $copyObj->setProductmainphotoHeight($this->getProductmainphotoHeight());
         $copyObj->setProductmainphotoStatus($this->getProductmainphotoStatus());
+        $copyObj->setProductmainphotoType($this->getProductmainphotoType());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1105,10 +1186,12 @@ abstract class BaseProductmainphoto extends BaseObject implements Persistent
         $this->productmainphoto_width = null;
         $this->productmainphoto_height = null;
         $this->productmainphoto_status = null;
+        $this->productmainphoto_type = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);

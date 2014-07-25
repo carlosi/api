@@ -36,7 +36,7 @@ class OrderrecordTableMap extends TableMap
         $this->setPhpName('Orderrecord');
         $this->setClassname('Orderrecord');
         $this->setPackage('api');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('idorderrecord', 'Idorderrecord', 'INTEGER', true, null, null);
         $this->addForeignKey('idorder', 'Idorder', 'INTEGER', 'order', 'idorder', true, null, null);

@@ -764,6 +764,10 @@ abstract class BaseOrderrecordPeer
             $criteria = $values->buildCriteria(); // build Criteria from Orderrecord object
         }
 
+        if ($criteria->containsKey(OrderrecordPeer::IDORDERRECORD) && $criteria->keyContainsValue(OrderrecordPeer::IDORDERRECORD) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.OrderrecordPeer::IDORDERRECORD.')');
+        }
+
 
         // Set the correct dbName
         $criteria->setDbName(OrderrecordPeer::DATABASE_NAME);

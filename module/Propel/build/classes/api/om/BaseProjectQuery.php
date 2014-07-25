@@ -20,13 +20,13 @@
  * @method ProjectQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method ProjectQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method ProjectQuery leftJoinProjectRelatedByProjectDependency($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectRelatedByProjectDependency relation
- * @method ProjectQuery rightJoinProjectRelatedByProjectDependency($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectRelatedByProjectDependency relation
- * @method ProjectQuery innerJoinProjectRelatedByProjectDependency($relationAlias = null) Adds a INNER JOIN clause to the query using the ProjectRelatedByProjectDependency relation
- *
  * @method ProjectQuery leftJoinDepartment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Department relation
  * @method ProjectQuery rightJoinDepartment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Department relation
  * @method ProjectQuery innerJoinDepartment($relationAlias = null) Adds a INNER JOIN clause to the query using the Department relation
+ *
+ * @method ProjectQuery leftJoinProjectRelatedByProjectDependency($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectRelatedByProjectDependency relation
+ * @method ProjectQuery rightJoinProjectRelatedByProjectDependency($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectRelatedByProjectDependency relation
+ * @method ProjectQuery innerJoinProjectRelatedByProjectDependency($relationAlias = null) Adds a INNER JOIN clause to the query using the ProjectRelatedByProjectDependency relation
  *
  * @method ProjectQuery leftJoinProjectRelatedByIdproject($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProjectRelatedByIdproject relation
  * @method ProjectQuery rightJoinProjectRelatedByIdproject($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProjectRelatedByIdproject relation
@@ -403,82 +403,6 @@ abstract class BaseProjectQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Project object
-     *
-     * @param   Project|PropelObjectCollection $project The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ProjectQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByProjectRelatedByProjectDependency($project, $comparison = null)
-    {
-        if ($project instanceof Project) {
-            return $this
-                ->addUsingAlias(ProjectPeer::PROJECT_DEPENDENCY, $project->getIdproject(), $comparison);
-        } elseif ($project instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(ProjectPeer::PROJECT_DEPENDENCY, $project->toKeyValue('PrimaryKey', 'Idproject'), $comparison);
-        } else {
-            throw new PropelException('filterByProjectRelatedByProjectDependency() only accepts arguments of type Project or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the ProjectRelatedByProjectDependency relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ProjectQuery The current query, for fluid interface
-     */
-    public function joinProjectRelatedByProjectDependency($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ProjectRelatedByProjectDependency');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'ProjectRelatedByProjectDependency');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the ProjectRelatedByProjectDependency relation Project object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   ProjectQuery A secondary query class using the current class as primary query
-     */
-    public function useProjectRelatedByProjectDependencyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinProjectRelatedByProjectDependency($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ProjectRelatedByProjectDependency', 'ProjectQuery');
-    }
-
-    /**
      * Filter the query by a related Department object
      *
      * @param   Department|PropelObjectCollection $department The related object(s) to use as filter
@@ -552,6 +476,82 @@ abstract class BaseProjectQuery extends ModelCriteria
         return $this
             ->joinDepartment($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Department', 'DepartmentQuery');
+    }
+
+    /**
+     * Filter the query by a related Project object
+     *
+     * @param   Project|PropelObjectCollection $project The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProjectQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProjectRelatedByProjectDependency($project, $comparison = null)
+    {
+        if ($project instanceof Project) {
+            return $this
+                ->addUsingAlias(ProjectPeer::PROJECT_DEPENDENCY, $project->getIdproject(), $comparison);
+        } elseif ($project instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ProjectPeer::PROJECT_DEPENDENCY, $project->toKeyValue('PrimaryKey', 'Idproject'), $comparison);
+        } else {
+            throw new PropelException('filterByProjectRelatedByProjectDependency() only accepts arguments of type Project or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ProjectRelatedByProjectDependency relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProjectQuery The current query, for fluid interface
+     */
+    public function joinProjectRelatedByProjectDependency($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ProjectRelatedByProjectDependency');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ProjectRelatedByProjectDependency');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ProjectRelatedByProjectDependency relation Project object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProjectQuery A secondary query class using the current class as primary query
+     */
+    public function useProjectRelatedByProjectDependencyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProjectRelatedByProjectDependency($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ProjectRelatedByProjectDependency', 'ProjectQuery');
     }
 
     /**

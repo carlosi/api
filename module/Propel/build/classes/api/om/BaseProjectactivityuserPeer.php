@@ -32,8 +32,8 @@ abstract class BaseProjectactivityuserPeer
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
     const NUM_HYDRATE_COLUMNS = 3;
 
-    /** the column name for the idprojectactivityemployee field */
-    const IDPROJECTACTIVITYEMPLOYEE = 'projectactivityuser.idprojectactivityemployee';
+    /** the column name for the idprojectactivityuser field */
+    const IDPROJECTACTIVITYUSER = 'projectactivityuser.idprojectactivityuser';
 
     /** the column name for the iduser field */
     const IDUSER = 'projectactivityuser.iduser';
@@ -60,11 +60,11 @@ abstract class BaseProjectactivityuserPeer
      * e.g. ProjectactivityuserPeer::$fieldNames[ProjectactivityuserPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idprojectactivityemployee', 'Iduser', 'Idprojectactivity', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idprojectactivityemployee', 'iduser', 'idprojectactivity', ),
-        BasePeer::TYPE_COLNAME => array (ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE, ProjectactivityuserPeer::IDUSER, ProjectactivityuserPeer::IDPROJECTACTIVITY, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECTACTIVITYEMPLOYEE', 'IDUSER', 'IDPROJECTACTIVITY', ),
-        BasePeer::TYPE_FIELDNAME => array ('idprojectactivityemployee', 'iduser', 'idprojectactivity', ),
+        BasePeer::TYPE_PHPNAME => array ('Idprojectactivityuser', 'Iduser', 'Idprojectactivity', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idprojectactivityuser', 'iduser', 'idprojectactivity', ),
+        BasePeer::TYPE_COLNAME => array (ProjectactivityuserPeer::IDPROJECTACTIVITYUSER, ProjectactivityuserPeer::IDUSER, ProjectactivityuserPeer::IDPROJECTACTIVITY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECTACTIVITYUSER', 'IDUSER', 'IDPROJECTACTIVITY', ),
+        BasePeer::TYPE_FIELDNAME => array ('idprojectactivityuser', 'iduser', 'idprojectactivity', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -75,11 +75,11 @@ abstract class BaseProjectactivityuserPeer
      * e.g. ProjectactivityuserPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idprojectactivityemployee' => 0, 'Iduser' => 1, 'Idprojectactivity' => 2, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idprojectactivityemployee' => 0, 'iduser' => 1, 'idprojectactivity' => 2, ),
-        BasePeer::TYPE_COLNAME => array (ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE => 0, ProjectactivityuserPeer::IDUSER => 1, ProjectactivityuserPeer::IDPROJECTACTIVITY => 2, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECTACTIVITYEMPLOYEE' => 0, 'IDUSER' => 1, 'IDPROJECTACTIVITY' => 2, ),
-        BasePeer::TYPE_FIELDNAME => array ('idprojectactivityemployee' => 0, 'iduser' => 1, 'idprojectactivity' => 2, ),
+        BasePeer::TYPE_PHPNAME => array ('Idprojectactivityuser' => 0, 'Iduser' => 1, 'Idprojectactivity' => 2, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idprojectactivityuser' => 0, 'iduser' => 1, 'idprojectactivity' => 2, ),
+        BasePeer::TYPE_COLNAME => array (ProjectactivityuserPeer::IDPROJECTACTIVITYUSER => 0, ProjectactivityuserPeer::IDUSER => 1, ProjectactivityuserPeer::IDPROJECTACTIVITY => 2, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECTACTIVITYUSER' => 0, 'IDUSER' => 1, 'IDPROJECTACTIVITY' => 2, ),
+        BasePeer::TYPE_FIELDNAME => array ('idprojectactivityuser' => 0, 'iduser' => 1, 'idprojectactivity' => 2, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -154,11 +154,11 @@ abstract class BaseProjectactivityuserPeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE);
+            $criteria->addSelectColumn(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER);
             $criteria->addSelectColumn(ProjectactivityuserPeer::IDUSER);
             $criteria->addSelectColumn(ProjectactivityuserPeer::IDPROJECTACTIVITY);
         } else {
-            $criteria->addSelectColumn($alias . '.idprojectactivityemployee');
+            $criteria->addSelectColumn($alias . '.idprojectactivityuser');
             $criteria->addSelectColumn($alias . '.iduser');
             $criteria->addSelectColumn($alias . '.idprojectactivity');
         }
@@ -287,7 +287,7 @@ abstract class BaseProjectactivityuserPeer
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = (string) $obj->getIdprojectactivityemployee();
+                $key = (string) $obj->getIdprojectactivityuser();
             } // if key === null
             ProjectactivityuserPeer::$instances[$key] = $obj;
         }
@@ -310,7 +310,7 @@ abstract class BaseProjectactivityuserPeer
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
             if (is_object($value) && $value instanceof Projectactivityuser) {
-                $key = (string) $value->getIdprojectactivityemployee();
+                $key = (string) $value->getIdprojectactivityuser();
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;
@@ -463,57 +463,6 @@ abstract class BaseProjectactivityuserPeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related Projectactivity table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinProjectactivity(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ProjectactivityuserPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ProjectactivityuserPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ProjectactivityuserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ProjectactivityuserPeer::IDPROJECTACTIVITY, ProjectactivityPeer::IDPROJECTACTIVITY, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
      * Returns the number of rows matching criteria, joining the related User table
      *
      * @param      Criteria $criteria
@@ -565,69 +514,53 @@ abstract class BaseProjectactivityuserPeer
 
 
     /**
-     * Selects a collection of Projectactivityuser objects pre-filled with their Projectactivity objects.
-     * @param      Criteria  $criteria
+     * Returns the number of rows matching criteria, joining the related Projectactivity table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Projectactivityuser objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     * @return int Number of matching rows.
      */
-    public static function doSelectJoinProjectactivity(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinProjectactivity(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
+        // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
 
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ProjectactivityuserPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
         }
 
-        ProjectactivityuserPeer::addSelectColumns($criteria);
-        $startcol = ProjectactivityuserPeer::NUM_HYDRATE_COLUMNS;
-        ProjectactivityPeer::addSelectColumns($criteria);
+        if (!$criteria->hasSelectClause()) {
+            ProjectactivityuserPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ProjectactivityuserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
 
         $criteria->addJoin(ProjectactivityuserPeer::IDPROJECTACTIVITY, ProjectactivityPeer::IDPROJECTACTIVITY, $join_behavior);
 
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
+        $stmt = BasePeer::doCount($criteria, $con);
 
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ProjectactivityuserPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ProjectactivityuserPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = ProjectactivityuserPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ProjectactivityuserPeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = ProjectactivityPeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = ProjectactivityPeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = ProjectactivityPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    ProjectactivityPeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (Projectactivityuser) to $obj2 (Projectactivity)
-                $obj2->addProjectactivityuser($obj1);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
         }
         $stmt->closeCursor();
 
-        return $results;
+        return $count;
     }
 
 
@@ -699,6 +632,73 @@ abstract class BaseProjectactivityuserPeer
 
 
     /**
+     * Selects a collection of Projectactivityuser objects pre-filled with their Projectactivity objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Projectactivityuser objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinProjectactivity(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
+        }
+
+        ProjectactivityuserPeer::addSelectColumns($criteria);
+        $startcol = ProjectactivityuserPeer::NUM_HYDRATE_COLUMNS;
+        ProjectactivityPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ProjectactivityuserPeer::IDPROJECTACTIVITY, ProjectactivityPeer::IDPROJECTACTIVITY, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ProjectactivityuserPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ProjectactivityuserPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ProjectactivityuserPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ProjectactivityuserPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = ProjectactivityPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = ProjectactivityPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = ProjectactivityPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    ProjectactivityPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Projectactivityuser) to $obj2 (Projectactivity)
+                $obj2->addProjectactivityuser($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
      * Returns the number of rows matching criteria, joining all related tables
      *
      * @param      Criteria $criteria
@@ -734,9 +734,9 @@ abstract class BaseProjectactivityuserPeer
             $con = Propel::getConnection(ProjectactivityuserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(ProjectactivityuserPeer::IDPROJECTACTIVITY, ProjectactivityPeer::IDPROJECTACTIVITY, $join_behavior);
-
         $criteria->addJoin(ProjectactivityuserPeer::IDUSER, UserPeer::IDUSER, $join_behavior);
+
+        $criteria->addJoin(ProjectactivityuserPeer::IDPROJECTACTIVITY, ProjectactivityPeer::IDPROJECTACTIVITY, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -772,15 +772,15 @@ abstract class BaseProjectactivityuserPeer
         ProjectactivityuserPeer::addSelectColumns($criteria);
         $startcol2 = ProjectactivityuserPeer::NUM_HYDRATE_COLUMNS;
 
-        ProjectactivityPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + ProjectactivityPeer::NUM_HYDRATE_COLUMNS;
-
         UserPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + UserPeer::NUM_HYDRATE_COLUMNS;
+        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(ProjectactivityuserPeer::IDPROJECTACTIVITY, ProjectactivityPeer::IDPROJECTACTIVITY, $join_behavior);
+        ProjectactivityPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ProjectactivityPeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(ProjectactivityuserPeer::IDUSER, UserPeer::IDUSER, $join_behavior);
+
+        $criteria->addJoin(ProjectactivityuserPeer::IDPROJECTACTIVITY, ProjectactivityPeer::IDPROJECTACTIVITY, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -799,39 +799,39 @@ abstract class BaseProjectactivityuserPeer
                 ProjectactivityuserPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-            // Add objects for joined Projectactivity rows
-
-            $key2 = ProjectactivityPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-            if ($key2 !== null) {
-                $obj2 = ProjectactivityPeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = ProjectactivityPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    ProjectactivityPeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 loaded
-
-                // Add the $obj1 (Projectactivityuser) to the collection in $obj2 (Projectactivity)
-                $obj2->addProjectactivityuser($obj1);
-            } // if joined row not null
-
             // Add objects for joined User rows
 
-            $key3 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-            if ($key3 !== null) {
-                $obj3 = UserPeer::getInstanceFromPool($key3);
-                if (!$obj3) {
+            $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            if ($key2 !== null) {
+                $obj2 = UserPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
 
                     $cls = UserPeer::getOMClass();
 
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    UserPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 loaded
+
+                // Add the $obj1 (Projectactivityuser) to the collection in $obj2 (User)
+                $obj2->addProjectactivityuser($obj1);
+            } // if joined row not null
+
+            // Add objects for joined Projectactivity rows
+
+            $key3 = ProjectactivityPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            if ($key3 !== null) {
+                $obj3 = ProjectactivityPeer::getInstanceFromPool($key3);
+                if (!$obj3) {
+
+                    $cls = ProjectactivityPeer::getOMClass();
+
                     $obj3 = new $cls();
                     $obj3->hydrate($row, $startcol3);
-                    UserPeer::addInstanceToPool($obj3, $key3);
+                    ProjectactivityPeer::addInstanceToPool($obj3, $key3);
                 } // if obj3 loaded
 
-                // Add the $obj1 (Projectactivityuser) to the collection in $obj3 (User)
+                // Add the $obj1 (Projectactivityuser) to the collection in $obj3 (Projectactivity)
                 $obj3->addProjectactivityuser($obj1);
             } // if joined row not null
 
@@ -840,57 +840,6 @@ abstract class BaseProjectactivityuserPeer
         $stmt->closeCursor();
 
         return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Projectactivity table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptProjectactivity(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ProjectactivityuserPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ProjectactivityuserPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ProjectactivityuserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ProjectactivityuserPeer::IDUSER, UserPeer::IDUSER, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
     }
 
 
@@ -946,76 +895,53 @@ abstract class BaseProjectactivityuserPeer
 
 
     /**
-     * Selects a collection of Projectactivityuser objects pre-filled with all related objects except Projectactivity.
+     * Returns the number of rows matching criteria, joining the related Projectactivity table
      *
-     * @param      Criteria  $criteria
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Projectactivityuser objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     * @return int Number of matching rows.
      */
-    public static function doSelectJoinAllExceptProjectactivity(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinAllExceptProjectactivity(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
+        // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
 
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ProjectactivityuserPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
         }
 
-        ProjectactivityuserPeer::addSelectColumns($criteria);
-        $startcol2 = ProjectactivityuserPeer::NUM_HYDRATE_COLUMNS;
+        if (!$criteria->hasSelectClause()) {
+            ProjectactivityuserPeer::addSelectColumns($criteria);
+        }
 
-        UserPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ProjectactivityuserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
 
         $criteria->addJoin(ProjectactivityuserPeer::IDUSER, UserPeer::IDUSER, $join_behavior);
 
+        $stmt = BasePeer::doCount($criteria, $con);
 
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ProjectactivityuserPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ProjectactivityuserPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ProjectactivityuserPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ProjectactivityuserPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined User rows
-
-                $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = UserPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = UserPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    UserPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Projectactivityuser) to the collection in $obj2 (User)
-                $obj2->addProjectactivityuser($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
         }
         $stmt->closeCursor();
 
-        return $results;
+        return $count;
     }
 
 
@@ -1092,6 +1018,80 @@ abstract class BaseProjectactivityuserPeer
         return $results;
     }
 
+
+    /**
+     * Selects a collection of Projectactivityuser objects pre-filled with all related objects except Projectactivity.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Projectactivityuser objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptProjectactivity(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ProjectactivityuserPeer::DATABASE_NAME);
+        }
+
+        ProjectactivityuserPeer::addSelectColumns($criteria);
+        $startcol2 = ProjectactivityuserPeer::NUM_HYDRATE_COLUMNS;
+
+        UserPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ProjectactivityuserPeer::IDUSER, UserPeer::IDUSER, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ProjectactivityuserPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ProjectactivityuserPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ProjectactivityuserPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ProjectactivityuserPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined User rows
+
+                $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = UserPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = UserPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    UserPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Projectactivityuser) to the collection in $obj2 (User)
+                $obj2->addProjectactivityuser($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
     /**
      * Returns the TableMap related to this peer.
      * This method is not needed for general use but a specific application could have a need.
@@ -1147,8 +1147,8 @@ abstract class BaseProjectactivityuserPeer
             $criteria = $values->buildCriteria(); // build Criteria from Projectactivityuser object
         }
 
-        if ($criteria->containsKey(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE) && $criteria->keyContainsValue(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE.')');
+        if ($criteria->containsKey(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER) && $criteria->keyContainsValue(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProjectactivityuserPeer::IDPROJECTACTIVITYUSER.')');
         }
 
 
@@ -1189,10 +1189,10 @@ abstract class BaseProjectactivityuserPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE);
-            $value = $criteria->remove(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE);
+            $comparison = $criteria->getComparison(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER);
+            $value = $criteria->remove(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER);
             if ($value) {
-                $selectCriteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE, $value, $comparison);
+                $selectCriteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER, $value, $comparison);
             } else {
                 $selectCriteria->setPrimaryTableName(ProjectactivityuserPeer::TABLE_NAME);
             }
@@ -1271,7 +1271,7 @@ abstract class BaseProjectactivityuserPeer
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(ProjectactivityuserPeer::DATABASE_NAME);
-            $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE, (array) $values, Criteria::IN);
+            $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER, (array) $values, Criteria::IN);
             // invalidate the cache for this object(s)
             foreach ((array) $values as $singleval) {
                 ProjectactivityuserPeer::removeInstanceFromPool($singleval);
@@ -1355,7 +1355,7 @@ abstract class BaseProjectactivityuserPeer
         }
 
         $criteria = new Criteria(ProjectactivityuserPeer::DATABASE_NAME);
-        $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE, $pk);
+        $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER, $pk);
 
         $v = ProjectactivityuserPeer::doSelect($criteria, $con);
 
@@ -1382,7 +1382,7 @@ abstract class BaseProjectactivityuserPeer
             $objs = array();
         } else {
             $criteria = new Criteria(ProjectactivityuserPeer::DATABASE_NAME);
-            $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE, $pks, Criteria::IN);
+            $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER, $pks, Criteria::IN);
             $objs = ProjectactivityuserPeer::doSelect($criteria, $con);
         }
 

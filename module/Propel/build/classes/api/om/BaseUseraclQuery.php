@@ -388,14 +388,14 @@ abstract class BaseUseraclQuery extends ModelCriteria
     {
         if ($user instanceof User) {
             return $this
-                ->addUsingAlias(UseraclPeer::IDUSER, $user->getIdUser(), $comparison);
+                ->addUsingAlias(UseraclPeer::IDUSER, $user->getIduser(), $comparison);
         } elseif ($user instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(UseraclPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'IdUser'), $comparison);
+                ->addUsingAlias(UseraclPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
         }

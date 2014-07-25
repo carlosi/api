@@ -58,9 +58,12 @@ class CompanyTableMap extends TableMap
         $this->addRelation('Bankaccount', 'Bankaccount', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Bankaccounts');
         $this->addRelation('Branch', 'Branch', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Branchs');
         $this->addRelation('Client', 'Client', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Clients');
+        $this->addRelation('Companyaddress', 'Companyaddress', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Companyaddresss');
+        $this->addRelation('Contactgroup', 'Contactgroup', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Contactgroups');
         $this->addRelation('Department', 'Department', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Departments');
         $this->addRelation('Expensecategory', 'Expensecategory', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Expensecategorys');
         $this->addRelation('Mxtaxinfo', 'Mxtaxinfo', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Mxtaxinfos');
+        $this->addRelation('Productionline', 'Productionline', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Productionlines');
         $this->addRelation('Productionteam', 'Productionteam', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Productionteams');
         $this->addRelation('Productmain', 'Productmain', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Productmains');
         $this->addRelation('User', 'User', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Users');

@@ -38,7 +38,7 @@ class ProjectactivityuserTableMap extends TableMap
         $this->setPackage('api');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('idprojectactivityemployee', 'Idprojectactivityemployee', 'INTEGER', true, null, null);
+        $this->addPrimaryKey('idprojectactivityuser', 'Idprojectactivityuser', 'INTEGER', true, null, null);
         $this->addForeignKey('iduser', 'Iduser', 'INTEGER', 'user', 'iduser', true, null, null);
         $this->addForeignKey('idprojectactivity', 'Idprojectactivity', 'INTEGER', 'projectactivity', 'idprojectactivity', true, null, null);
         // validators
@@ -49,8 +49,8 @@ class ProjectactivityuserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Projectactivity', 'Projectactivity', RelationMap::MANY_TO_ONE, array('idprojectactivity' => 'idprojectactivity', ), 'CASCADE', 'CASCADE');
         $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Projectactivity', 'Projectactivity', RelationMap::MANY_TO_ONE, array('idprojectactivity' => 'idprojectactivity', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // ProjectactivityuserTableMap

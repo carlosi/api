@@ -79,6 +79,18 @@ abstract class BaseUser extends BaseObject implements Persistent
     protected $collBranchUsersPartial;
 
     /**
+     * @var        PropelObjectCollection|Chatcorp[] Collection to store aggregation of Chatcorp objects.
+     */
+    protected $collChatcorps;
+    protected $collChatcorpsPartial;
+
+    /**
+     * @var        PropelObjectCollection|Chatpublic[] Collection to store aggregation of Chatpublic objects.
+     */
+    protected $collChatpublics;
+    protected $collChatpublicsPartial;
+
+    /**
      * @var        PropelObjectCollection|Departamentmember[] Collection to store aggregation of Departamentmember objects.
      */
     protected $collDepartamentmembers;
@@ -95,6 +107,18 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     protected $collMlquestions;
     protected $collMlquestionsPartial;
+
+    /**
+     * @var        PropelObjectCollection|OrderconflictComment[] Collection to store aggregation of OrderconflictComment objects.
+     */
+    protected $collOrderconflictComments;
+    protected $collOrderconflictCommentsPartial;
+
+    /**
+     * @var        PropelObjectCollection|Productionordercomment[] Collection to store aggregation of Productionordercomment objects.
+     */
+    protected $collProductionordercomments;
+    protected $collProductionordercommentsPartial;
 
     /**
      * @var        PropelObjectCollection|Productionuser[] Collection to store aggregation of Productionuser objects.
@@ -168,6 +192,18 @@ abstract class BaseUser extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
+    protected $chatcorpsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $chatpublicsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
     protected $departamentmembersScheduledForDeletion = null;
 
     /**
@@ -181,6 +217,18 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $mlquestionsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $orderconflictCommentsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $productionordercommentsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -251,7 +299,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getIdUser()
+    public function getIduser()
     {
 
         return $this->iduser;
@@ -262,7 +310,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getIdCompany()
+    public function getIdcompany()
     {
 
         return $this->idcompany;
@@ -318,7 +366,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @param  int $v new value
      * @return User The current object (for fluent API support)
      */
-    public function setIdUser($v)
+    public function setIduser($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -331,7 +379,7 @@ abstract class BaseUser extends BaseObject implements Persistent
 
 
         return $this;
-    } // setIdUser()
+    } // setIduser()
 
     /**
      * Set the value of [idcompany] column.
@@ -339,7 +387,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @param  int $v new value
      * @return User The current object (for fluent API support)
      */
-    public function setIdCompany($v)
+    public function setIdcompany($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -356,7 +404,7 @@ abstract class BaseUser extends BaseObject implements Persistent
 
 
         return $this;
-    } // setIdCompany()
+    } // setIdcompany()
 
     /**
      * Set the value of [user_nickname] column.
@@ -565,11 +613,19 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->aCompany = null;
             $this->collBranchUsers = null;
 
+            $this->collChatcorps = null;
+
+            $this->collChatpublics = null;
+
             $this->collDepartamentmembers = null;
 
             $this->collLogusers = null;
 
             $this->collMlquestions = null;
+
+            $this->collOrderconflictComments = null;
+
+            $this->collProductionordercomments = null;
 
             $this->collProductionusers = null;
 
@@ -738,6 +794,40 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->chatcorpsScheduledForDeletion !== null) {
+                if (!$this->chatcorpsScheduledForDeletion->isEmpty()) {
+                    ChatcorpQuery::create()
+                        ->filterByPrimaryKeys($this->chatcorpsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->chatcorpsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collChatcorps !== null) {
+                foreach ($this->collChatcorps as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->chatpublicsScheduledForDeletion !== null) {
+                if (!$this->chatpublicsScheduledForDeletion->isEmpty()) {
+                    ChatpublicQuery::create()
+                        ->filterByPrimaryKeys($this->chatpublicsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->chatpublicsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collChatpublics !== null) {
+                foreach ($this->collChatpublics as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             if ($this->departamentmembersScheduledForDeletion !== null) {
                 if (!$this->departamentmembersScheduledForDeletion->isEmpty()) {
                     DepartamentmemberQuery::create()
@@ -783,6 +873,40 @@ abstract class BaseUser extends BaseObject implements Persistent
 
             if ($this->collMlquestions !== null) {
                 foreach ($this->collMlquestions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->orderconflictCommentsScheduledForDeletion !== null) {
+                if (!$this->orderconflictCommentsScheduledForDeletion->isEmpty()) {
+                    OrderconflictCommentQuery::create()
+                        ->filterByPrimaryKeys($this->orderconflictCommentsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->orderconflictCommentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collOrderconflictComments !== null) {
+                foreach ($this->collOrderconflictComments as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->productionordercommentsScheduledForDeletion !== null) {
+                if (!$this->productionordercommentsScheduledForDeletion->isEmpty()) {
+                    ProductionordercommentQuery::create()
+                        ->filterByPrimaryKeys($this->productionordercommentsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->productionordercommentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collProductionordercomments !== null) {
+                foreach ($this->collProductionordercomments as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -994,7 +1118,7 @@ abstract class BaseUser extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setIdUser($pk);
+        $this->setIduser($pk);
 
         $this->setNew(false);
     }
@@ -1100,6 +1224,22 @@ abstract class BaseUser extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collChatcorps !== null) {
+                    foreach ($this->collChatcorps as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collChatpublics !== null) {
+                    foreach ($this->collChatpublics as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collDepartamentmembers !== null) {
                     foreach ($this->collDepartamentmembers as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1118,6 +1258,22 @@ abstract class BaseUser extends BaseObject implements Persistent
 
                 if ($this->collMlquestions !== null) {
                     foreach ($this->collMlquestions as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collOrderconflictComments !== null) {
+                    foreach ($this->collOrderconflictComments as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collProductionordercomments !== null) {
+                    foreach ($this->collProductionordercomments as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1216,10 +1372,10 @@ abstract class BaseUser extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getIdUser();
+                return $this->getIduser();
                 break;
             case 1:
-                return $this->getIdCompany();
+                return $this->getIdcompany();
                 break;
             case 2:
                 return $this->getUserNickname();
@@ -1262,8 +1418,8 @@ abstract class BaseUser extends BaseObject implements Persistent
         $alreadyDumpedObjects['User'][$this->getPrimaryKey()] = true;
         $keys = UserPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getIdUser(),
-            $keys[1] => $this->getIdCompany(),
+            $keys[0] => $this->getIduser(),
+            $keys[1] => $this->getIdcompany(),
             $keys[2] => $this->getUserNickname(),
             $keys[3] => $this->getUserPassword(),
             $keys[4] => $this->getUserType(),
@@ -1281,6 +1437,12 @@ abstract class BaseUser extends BaseObject implements Persistent
             if (null !== $this->collBranchUsers) {
                 $result['BranchUsers'] = $this->collBranchUsers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
+            if (null !== $this->collChatcorps) {
+                $result['Chatcorps'] = $this->collChatcorps->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collChatpublics) {
+                $result['Chatpublics'] = $this->collChatpublics->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collDepartamentmembers) {
                 $result['Departamentmembers'] = $this->collDepartamentmembers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1289,6 +1451,12 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
             if (null !== $this->collMlquestions) {
                 $result['Mlquestions'] = $this->collMlquestions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collOrderconflictComments) {
+                $result['OrderconflictComments'] = $this->collOrderconflictComments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collProductionordercomments) {
+                $result['Productionordercomments'] = $this->collProductionordercomments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collProductionusers) {
                 $result['Productionusers'] = $this->collProductionusers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1346,10 +1514,10 @@ abstract class BaseUser extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setIdUser($value);
+                $this->setIduser($value);
                 break;
             case 1:
-                $this->setIdCompany($value);
+                $this->setIdcompany($value);
                 break;
             case 2:
                 $this->setUserNickname($value);
@@ -1387,8 +1555,8 @@ abstract class BaseUser extends BaseObject implements Persistent
     {
         $keys = UserPeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setIdUser($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setIdCompany($arr[$keys[1]]);
+        if (array_key_exists($keys[0], $arr)) $this->setIduser($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setIdcompany($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setUserNickname($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setUserPassword($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setUserType($arr[$keys[4]]);
@@ -1436,7 +1604,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getIdUser();
+        return $this->getIduser();
     }
 
     /**
@@ -1447,7 +1615,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function setPrimaryKey($key)
     {
-        $this->setIdUser($key);
+        $this->setIduser($key);
     }
 
     /**
@@ -1457,7 +1625,7 @@ abstract class BaseUser extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getIdUser();
+        return null === $this->getIduser();
     }
 
     /**
@@ -1473,7 +1641,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setIdCompany($this->getIdCompany());
+        $copyObj->setIdcompany($this->getIdcompany());
         $copyObj->setUserNickname($this->getUserNickname());
         $copyObj->setUserPassword($this->getUserPassword());
         $copyObj->setUserType($this->getUserType());
@@ -1492,6 +1660,18 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getChatcorps() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addChatcorp($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getChatpublics() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addChatpublic($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getDepartamentmembers() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDepartamentmember($relObj->copy($deepCopy));
@@ -1507,6 +1687,18 @@ abstract class BaseUser extends BaseObject implements Persistent
             foreach ($this->getMlquestions() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addMlquestion($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getOrderconflictComments() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addOrderconflictComment($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getProductionordercomments() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addProductionordercomment($relObj->copy($deepCopy));
                 }
             }
 
@@ -1558,7 +1750,7 @@ abstract class BaseUser extends BaseObject implements Persistent
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setIdUser(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setIduser(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1612,9 +1804,9 @@ abstract class BaseUser extends BaseObject implements Persistent
     public function setCompany(Company $v = null)
     {
         if ($v === null) {
-            $this->setIdCompany(NULL);
+            $this->setIdcompany(NULL);
         } else {
-            $this->setIdCompany($v->getIdcompany());
+            $this->setIdcompany($v->getIdcompany());
         }
 
         $this->aCompany = $v;
@@ -1668,6 +1860,12 @@ abstract class BaseUser extends BaseObject implements Persistent
         if ('BranchUser' == $relationName) {
             $this->initBranchUsers();
         }
+        if ('Chatcorp' == $relationName) {
+            $this->initChatcorps();
+        }
+        if ('Chatpublic' == $relationName) {
+            $this->initChatpublics();
+        }
         if ('Departamentmember' == $relationName) {
             $this->initDepartamentmembers();
         }
@@ -1676,6 +1874,12 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
         if ('Mlquestion' == $relationName) {
             $this->initMlquestions();
+        }
+        if ('OrderconflictComment' == $relationName) {
+            $this->initOrderconflictComments();
+        }
+        if ('Productionordercomment' == $relationName) {
+            $this->initProductionordercomments();
         }
         if ('Productionuser' == $relationName) {
             $this->initProductionusers();
@@ -1948,6 +2152,481 @@ abstract class BaseUser extends BaseObject implements Persistent
         $query->joinWith('Branch', $join_behavior);
 
         return $this->getBranchUsers($query, $con);
+    }
+
+    /**
+     * Clears out the collChatcorps collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return User The current object (for fluent API support)
+     * @see        addChatcorps()
+     */
+    public function clearChatcorps()
+    {
+        $this->collChatcorps = null; // important to set this to null since that means it is uninitialized
+        $this->collChatcorpsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collChatcorps collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialChatcorps($v = true)
+    {
+        $this->collChatcorpsPartial = $v;
+    }
+
+    /**
+     * Initializes the collChatcorps collection.
+     *
+     * By default this just sets the collChatcorps collection to an empty array (like clearcollChatcorps());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initChatcorps($overrideExisting = true)
+    {
+        if (null !== $this->collChatcorps && !$overrideExisting) {
+            return;
+        }
+        $this->collChatcorps = new PropelObjectCollection();
+        $this->collChatcorps->setModel('Chatcorp');
+    }
+
+    /**
+     * Gets an array of Chatcorp objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this User is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Chatcorp[] List of Chatcorp objects
+     * @throws PropelException
+     */
+    public function getChatcorps($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collChatcorpsPartial && !$this->isNew();
+        if (null === $this->collChatcorps || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collChatcorps) {
+                // return empty collection
+                $this->initChatcorps();
+            } else {
+                $collChatcorps = ChatcorpQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collChatcorpsPartial && count($collChatcorps)) {
+                      $this->initChatcorps(false);
+
+                      foreach ($collChatcorps as $obj) {
+                        if (false == $this->collChatcorps->contains($obj)) {
+                          $this->collChatcorps->append($obj);
+                        }
+                      }
+
+                      $this->collChatcorpsPartial = true;
+                    }
+
+                    $collChatcorps->getInternalIterator()->rewind();
+
+                    return $collChatcorps;
+                }
+
+                if ($partial && $this->collChatcorps) {
+                    foreach ($this->collChatcorps as $obj) {
+                        if ($obj->isNew()) {
+                            $collChatcorps[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collChatcorps = $collChatcorps;
+                $this->collChatcorpsPartial = false;
+            }
+        }
+
+        return $this->collChatcorps;
+    }
+
+    /**
+     * Sets a collection of Chatcorp objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $chatcorps A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return User The current object (for fluent API support)
+     */
+    public function setChatcorps(PropelCollection $chatcorps, PropelPDO $con = null)
+    {
+        $chatcorpsToDelete = $this->getChatcorps(new Criteria(), $con)->diff($chatcorps);
+
+
+        $this->chatcorpsScheduledForDeletion = $chatcorpsToDelete;
+
+        foreach ($chatcorpsToDelete as $chatcorpRemoved) {
+            $chatcorpRemoved->setUser(null);
+        }
+
+        $this->collChatcorps = null;
+        foreach ($chatcorps as $chatcorp) {
+            $this->addChatcorp($chatcorp);
+        }
+
+        $this->collChatcorps = $chatcorps;
+        $this->collChatcorpsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Chatcorp objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Chatcorp objects.
+     * @throws PropelException
+     */
+    public function countChatcorps(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collChatcorpsPartial && !$this->isNew();
+        if (null === $this->collChatcorps || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collChatcorps) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getChatcorps());
+            }
+            $query = ChatcorpQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collChatcorps);
+    }
+
+    /**
+     * Method called to associate a Chatcorp object to this object
+     * through the Chatcorp foreign key attribute.
+     *
+     * @param    Chatcorp $l Chatcorp
+     * @return User The current object (for fluent API support)
+     */
+    public function addChatcorp(Chatcorp $l)
+    {
+        if ($this->collChatcorps === null) {
+            $this->initChatcorps();
+            $this->collChatcorpsPartial = true;
+        }
+
+        if (!in_array($l, $this->collChatcorps->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddChatcorp($l);
+
+            if ($this->chatcorpsScheduledForDeletion and $this->chatcorpsScheduledForDeletion->contains($l)) {
+                $this->chatcorpsScheduledForDeletion->remove($this->chatcorpsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Chatcorp $chatcorp The chatcorp object to add.
+     */
+    protected function doAddChatcorp($chatcorp)
+    {
+        $this->collChatcorps[]= $chatcorp;
+        $chatcorp->setUser($this);
+    }
+
+    /**
+     * @param	Chatcorp $chatcorp The chatcorp object to remove.
+     * @return User The current object (for fluent API support)
+     */
+    public function removeChatcorp($chatcorp)
+    {
+        if ($this->getChatcorps()->contains($chatcorp)) {
+            $this->collChatcorps->remove($this->collChatcorps->search($chatcorp));
+            if (null === $this->chatcorpsScheduledForDeletion) {
+                $this->chatcorpsScheduledForDeletion = clone $this->collChatcorps;
+                $this->chatcorpsScheduledForDeletion->clear();
+            }
+            $this->chatcorpsScheduledForDeletion[]= clone $chatcorp;
+            $chatcorp->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collChatpublics collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return User The current object (for fluent API support)
+     * @see        addChatpublics()
+     */
+    public function clearChatpublics()
+    {
+        $this->collChatpublics = null; // important to set this to null since that means it is uninitialized
+        $this->collChatpublicsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collChatpublics collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialChatpublics($v = true)
+    {
+        $this->collChatpublicsPartial = $v;
+    }
+
+    /**
+     * Initializes the collChatpublics collection.
+     *
+     * By default this just sets the collChatpublics collection to an empty array (like clearcollChatpublics());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initChatpublics($overrideExisting = true)
+    {
+        if (null !== $this->collChatpublics && !$overrideExisting) {
+            return;
+        }
+        $this->collChatpublics = new PropelObjectCollection();
+        $this->collChatpublics->setModel('Chatpublic');
+    }
+
+    /**
+     * Gets an array of Chatpublic objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this User is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Chatpublic[] List of Chatpublic objects
+     * @throws PropelException
+     */
+    public function getChatpublics($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collChatpublicsPartial && !$this->isNew();
+        if (null === $this->collChatpublics || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collChatpublics) {
+                // return empty collection
+                $this->initChatpublics();
+            } else {
+                $collChatpublics = ChatpublicQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collChatpublicsPartial && count($collChatpublics)) {
+                      $this->initChatpublics(false);
+
+                      foreach ($collChatpublics as $obj) {
+                        if (false == $this->collChatpublics->contains($obj)) {
+                          $this->collChatpublics->append($obj);
+                        }
+                      }
+
+                      $this->collChatpublicsPartial = true;
+                    }
+
+                    $collChatpublics->getInternalIterator()->rewind();
+
+                    return $collChatpublics;
+                }
+
+                if ($partial && $this->collChatpublics) {
+                    foreach ($this->collChatpublics as $obj) {
+                        if ($obj->isNew()) {
+                            $collChatpublics[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collChatpublics = $collChatpublics;
+                $this->collChatpublicsPartial = false;
+            }
+        }
+
+        return $this->collChatpublics;
+    }
+
+    /**
+     * Sets a collection of Chatpublic objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $chatpublics A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return User The current object (for fluent API support)
+     */
+    public function setChatpublics(PropelCollection $chatpublics, PropelPDO $con = null)
+    {
+        $chatpublicsToDelete = $this->getChatpublics(new Criteria(), $con)->diff($chatpublics);
+
+
+        $this->chatpublicsScheduledForDeletion = $chatpublicsToDelete;
+
+        foreach ($chatpublicsToDelete as $chatpublicRemoved) {
+            $chatpublicRemoved->setUser(null);
+        }
+
+        $this->collChatpublics = null;
+        foreach ($chatpublics as $chatpublic) {
+            $this->addChatpublic($chatpublic);
+        }
+
+        $this->collChatpublics = $chatpublics;
+        $this->collChatpublicsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Chatpublic objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Chatpublic objects.
+     * @throws PropelException
+     */
+    public function countChatpublics(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collChatpublicsPartial && !$this->isNew();
+        if (null === $this->collChatpublics || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collChatpublics) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getChatpublics());
+            }
+            $query = ChatpublicQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collChatpublics);
+    }
+
+    /**
+     * Method called to associate a Chatpublic object to this object
+     * through the Chatpublic foreign key attribute.
+     *
+     * @param    Chatpublic $l Chatpublic
+     * @return User The current object (for fluent API support)
+     */
+    public function addChatpublic(Chatpublic $l)
+    {
+        if ($this->collChatpublics === null) {
+            $this->initChatpublics();
+            $this->collChatpublicsPartial = true;
+        }
+
+        if (!in_array($l, $this->collChatpublics->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddChatpublic($l);
+
+            if ($this->chatpublicsScheduledForDeletion and $this->chatpublicsScheduledForDeletion->contains($l)) {
+                $this->chatpublicsScheduledForDeletion->remove($this->chatpublicsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Chatpublic $chatpublic The chatpublic object to add.
+     */
+    protected function doAddChatpublic($chatpublic)
+    {
+        $this->collChatpublics[]= $chatpublic;
+        $chatpublic->setUser($this);
+    }
+
+    /**
+     * @param	Chatpublic $chatpublic The chatpublic object to remove.
+     * @return User The current object (for fluent API support)
+     */
+    public function removeChatpublic($chatpublic)
+    {
+        if ($this->getChatpublics()->contains($chatpublic)) {
+            $this->collChatpublics->remove($this->collChatpublics->search($chatpublic));
+            if (null === $this->chatpublicsScheduledForDeletion) {
+                $this->chatpublicsScheduledForDeletion = clone $this->collChatpublics;
+                $this->chatpublicsScheduledForDeletion->clear();
+            }
+            $this->chatpublicsScheduledForDeletion[]= $chatpublic;
+            $chatpublic->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related Chatpublics from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Chatpublic[] List of Chatpublic objects
+     */
+    public function getChatpublicsJoinClient($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChatpublicQuery::create(null, $criteria);
+        $query->joinWith('Client', $join_behavior);
+
+        return $this->getChatpublics($query, $con);
     }
 
     /**
@@ -2673,6 +3352,506 @@ abstract class BaseUser extends BaseObject implements Persistent
         $query->joinWith('Mlitem', $join_behavior);
 
         return $this->getMlquestions($query, $con);
+    }
+
+    /**
+     * Clears out the collOrderconflictComments collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return User The current object (for fluent API support)
+     * @see        addOrderconflictComments()
+     */
+    public function clearOrderconflictComments()
+    {
+        $this->collOrderconflictComments = null; // important to set this to null since that means it is uninitialized
+        $this->collOrderconflictCommentsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collOrderconflictComments collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialOrderconflictComments($v = true)
+    {
+        $this->collOrderconflictCommentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collOrderconflictComments collection.
+     *
+     * By default this just sets the collOrderconflictComments collection to an empty array (like clearcollOrderconflictComments());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initOrderconflictComments($overrideExisting = true)
+    {
+        if (null !== $this->collOrderconflictComments && !$overrideExisting) {
+            return;
+        }
+        $this->collOrderconflictComments = new PropelObjectCollection();
+        $this->collOrderconflictComments->setModel('OrderconflictComment');
+    }
+
+    /**
+     * Gets an array of OrderconflictComment objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this User is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|OrderconflictComment[] List of OrderconflictComment objects
+     * @throws PropelException
+     */
+    public function getOrderconflictComments($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collOrderconflictCommentsPartial && !$this->isNew();
+        if (null === $this->collOrderconflictComments || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collOrderconflictComments) {
+                // return empty collection
+                $this->initOrderconflictComments();
+            } else {
+                $collOrderconflictComments = OrderconflictCommentQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collOrderconflictCommentsPartial && count($collOrderconflictComments)) {
+                      $this->initOrderconflictComments(false);
+
+                      foreach ($collOrderconflictComments as $obj) {
+                        if (false == $this->collOrderconflictComments->contains($obj)) {
+                          $this->collOrderconflictComments->append($obj);
+                        }
+                      }
+
+                      $this->collOrderconflictCommentsPartial = true;
+                    }
+
+                    $collOrderconflictComments->getInternalIterator()->rewind();
+
+                    return $collOrderconflictComments;
+                }
+
+                if ($partial && $this->collOrderconflictComments) {
+                    foreach ($this->collOrderconflictComments as $obj) {
+                        if ($obj->isNew()) {
+                            $collOrderconflictComments[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collOrderconflictComments = $collOrderconflictComments;
+                $this->collOrderconflictCommentsPartial = false;
+            }
+        }
+
+        return $this->collOrderconflictComments;
+    }
+
+    /**
+     * Sets a collection of OrderconflictComment objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $orderconflictComments A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return User The current object (for fluent API support)
+     */
+    public function setOrderconflictComments(PropelCollection $orderconflictComments, PropelPDO $con = null)
+    {
+        $orderconflictCommentsToDelete = $this->getOrderconflictComments(new Criteria(), $con)->diff($orderconflictComments);
+
+
+        $this->orderconflictCommentsScheduledForDeletion = $orderconflictCommentsToDelete;
+
+        foreach ($orderconflictCommentsToDelete as $orderconflictCommentRemoved) {
+            $orderconflictCommentRemoved->setUser(null);
+        }
+
+        $this->collOrderconflictComments = null;
+        foreach ($orderconflictComments as $orderconflictComment) {
+            $this->addOrderconflictComment($orderconflictComment);
+        }
+
+        $this->collOrderconflictComments = $orderconflictComments;
+        $this->collOrderconflictCommentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related OrderconflictComment objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related OrderconflictComment objects.
+     * @throws PropelException
+     */
+    public function countOrderconflictComments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collOrderconflictCommentsPartial && !$this->isNew();
+        if (null === $this->collOrderconflictComments || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collOrderconflictComments) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getOrderconflictComments());
+            }
+            $query = OrderconflictCommentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collOrderconflictComments);
+    }
+
+    /**
+     * Method called to associate a OrderconflictComment object to this object
+     * through the OrderconflictComment foreign key attribute.
+     *
+     * @param    OrderconflictComment $l OrderconflictComment
+     * @return User The current object (for fluent API support)
+     */
+    public function addOrderconflictComment(OrderconflictComment $l)
+    {
+        if ($this->collOrderconflictComments === null) {
+            $this->initOrderconflictComments();
+            $this->collOrderconflictCommentsPartial = true;
+        }
+
+        if (!in_array($l, $this->collOrderconflictComments->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddOrderconflictComment($l);
+
+            if ($this->orderconflictCommentsScheduledForDeletion and $this->orderconflictCommentsScheduledForDeletion->contains($l)) {
+                $this->orderconflictCommentsScheduledForDeletion->remove($this->orderconflictCommentsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	OrderconflictComment $orderconflictComment The orderconflictComment object to add.
+     */
+    protected function doAddOrderconflictComment($orderconflictComment)
+    {
+        $this->collOrderconflictComments[]= $orderconflictComment;
+        $orderconflictComment->setUser($this);
+    }
+
+    /**
+     * @param	OrderconflictComment $orderconflictComment The orderconflictComment object to remove.
+     * @return User The current object (for fluent API support)
+     */
+    public function removeOrderconflictComment($orderconflictComment)
+    {
+        if ($this->getOrderconflictComments()->contains($orderconflictComment)) {
+            $this->collOrderconflictComments->remove($this->collOrderconflictComments->search($orderconflictComment));
+            if (null === $this->orderconflictCommentsScheduledForDeletion) {
+                $this->orderconflictCommentsScheduledForDeletion = clone $this->collOrderconflictComments;
+                $this->orderconflictCommentsScheduledForDeletion->clear();
+            }
+            $this->orderconflictCommentsScheduledForDeletion[]= clone $orderconflictComment;
+            $orderconflictComment->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related OrderconflictComments from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|OrderconflictComment[] List of OrderconflictComment objects
+     */
+    public function getOrderconflictCommentsJoinOrderconflict($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = OrderconflictCommentQuery::create(null, $criteria);
+        $query->joinWith('Orderconflict', $join_behavior);
+
+        return $this->getOrderconflictComments($query, $con);
+    }
+
+    /**
+     * Clears out the collProductionordercomments collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return User The current object (for fluent API support)
+     * @see        addProductionordercomments()
+     */
+    public function clearProductionordercomments()
+    {
+        $this->collProductionordercomments = null; // important to set this to null since that means it is uninitialized
+        $this->collProductionordercommentsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collProductionordercomments collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialProductionordercomments($v = true)
+    {
+        $this->collProductionordercommentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collProductionordercomments collection.
+     *
+     * By default this just sets the collProductionordercomments collection to an empty array (like clearcollProductionordercomments());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initProductionordercomments($overrideExisting = true)
+    {
+        if (null !== $this->collProductionordercomments && !$overrideExisting) {
+            return;
+        }
+        $this->collProductionordercomments = new PropelObjectCollection();
+        $this->collProductionordercomments->setModel('Productionordercomment');
+    }
+
+    /**
+     * Gets an array of Productionordercomment objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this User is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Productionordercomment[] List of Productionordercomment objects
+     * @throws PropelException
+     */
+    public function getProductionordercomments($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collProductionordercommentsPartial && !$this->isNew();
+        if (null === $this->collProductionordercomments || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collProductionordercomments) {
+                // return empty collection
+                $this->initProductionordercomments();
+            } else {
+                $collProductionordercomments = ProductionordercommentQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collProductionordercommentsPartial && count($collProductionordercomments)) {
+                      $this->initProductionordercomments(false);
+
+                      foreach ($collProductionordercomments as $obj) {
+                        if (false == $this->collProductionordercomments->contains($obj)) {
+                          $this->collProductionordercomments->append($obj);
+                        }
+                      }
+
+                      $this->collProductionordercommentsPartial = true;
+                    }
+
+                    $collProductionordercomments->getInternalIterator()->rewind();
+
+                    return $collProductionordercomments;
+                }
+
+                if ($partial && $this->collProductionordercomments) {
+                    foreach ($this->collProductionordercomments as $obj) {
+                        if ($obj->isNew()) {
+                            $collProductionordercomments[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collProductionordercomments = $collProductionordercomments;
+                $this->collProductionordercommentsPartial = false;
+            }
+        }
+
+        return $this->collProductionordercomments;
+    }
+
+    /**
+     * Sets a collection of Productionordercomment objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $productionordercomments A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return User The current object (for fluent API support)
+     */
+    public function setProductionordercomments(PropelCollection $productionordercomments, PropelPDO $con = null)
+    {
+        $productionordercommentsToDelete = $this->getProductionordercomments(new Criteria(), $con)->diff($productionordercomments);
+
+
+        $this->productionordercommentsScheduledForDeletion = $productionordercommentsToDelete;
+
+        foreach ($productionordercommentsToDelete as $productionordercommentRemoved) {
+            $productionordercommentRemoved->setUser(null);
+        }
+
+        $this->collProductionordercomments = null;
+        foreach ($productionordercomments as $productionordercomment) {
+            $this->addProductionordercomment($productionordercomment);
+        }
+
+        $this->collProductionordercomments = $productionordercomments;
+        $this->collProductionordercommentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Productionordercomment objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Productionordercomment objects.
+     * @throws PropelException
+     */
+    public function countProductionordercomments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collProductionordercommentsPartial && !$this->isNew();
+        if (null === $this->collProductionordercomments || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collProductionordercomments) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getProductionordercomments());
+            }
+            $query = ProductionordercommentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collProductionordercomments);
+    }
+
+    /**
+     * Method called to associate a Productionordercomment object to this object
+     * through the Productionordercomment foreign key attribute.
+     *
+     * @param    Productionordercomment $l Productionordercomment
+     * @return User The current object (for fluent API support)
+     */
+    public function addProductionordercomment(Productionordercomment $l)
+    {
+        if ($this->collProductionordercomments === null) {
+            $this->initProductionordercomments();
+            $this->collProductionordercommentsPartial = true;
+        }
+
+        if (!in_array($l, $this->collProductionordercomments->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddProductionordercomment($l);
+
+            if ($this->productionordercommentsScheduledForDeletion and $this->productionordercommentsScheduledForDeletion->contains($l)) {
+                $this->productionordercommentsScheduledForDeletion->remove($this->productionordercommentsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Productionordercomment $productionordercomment The productionordercomment object to add.
+     */
+    protected function doAddProductionordercomment($productionordercomment)
+    {
+        $this->collProductionordercomments[]= $productionordercomment;
+        $productionordercomment->setUser($this);
+    }
+
+    /**
+     * @param	Productionordercomment $productionordercomment The productionordercomment object to remove.
+     * @return User The current object (for fluent API support)
+     */
+    public function removeProductionordercomment($productionordercomment)
+    {
+        if ($this->getProductionordercomments()->contains($productionordercomment)) {
+            $this->collProductionordercomments->remove($this->collProductionordercomments->search($productionordercomment));
+            if (null === $this->productionordercommentsScheduledForDeletion) {
+                $this->productionordercommentsScheduledForDeletion = clone $this->collProductionordercomments;
+                $this->productionordercommentsScheduledForDeletion->clear();
+            }
+            $this->productionordercommentsScheduledForDeletion[]= clone $productionordercomment;
+            $productionordercomment->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related Productionordercomments from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Productionordercomment[] List of Productionordercomment objects
+     */
+    public function getProductionordercommentsJoinProductionorderitem($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ProductionordercommentQuery::create(null, $criteria);
+        $query->joinWith('Productionorderitem', $join_behavior);
+
+        return $this->getProductionordercomments($query, $con);
     }
 
     /**
@@ -4364,6 +5543,16 @@ abstract class BaseUser extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collChatcorps) {
+                foreach ($this->collChatcorps as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collChatpublics) {
+                foreach ($this->collChatpublics as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collDepartamentmembers) {
                 foreach ($this->collDepartamentmembers as $o) {
                     $o->clearAllReferences($deep);
@@ -4376,6 +5565,16 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
             if ($this->collMlquestions) {
                 foreach ($this->collMlquestions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collOrderconflictComments) {
+                foreach ($this->collOrderconflictComments as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collProductionordercomments) {
+                foreach ($this->collProductionordercomments as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -4425,6 +5624,14 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->collBranchUsers->clearIterator();
         }
         $this->collBranchUsers = null;
+        if ($this->collChatcorps instanceof PropelCollection) {
+            $this->collChatcorps->clearIterator();
+        }
+        $this->collChatcorps = null;
+        if ($this->collChatpublics instanceof PropelCollection) {
+            $this->collChatpublics->clearIterator();
+        }
+        $this->collChatpublics = null;
         if ($this->collDepartamentmembers instanceof PropelCollection) {
             $this->collDepartamentmembers->clearIterator();
         }
@@ -4437,6 +5644,14 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->collMlquestions->clearIterator();
         }
         $this->collMlquestions = null;
+        if ($this->collOrderconflictComments instanceof PropelCollection) {
+            $this->collOrderconflictComments->clearIterator();
+        }
+        $this->collOrderconflictComments = null;
+        if ($this->collProductionordercomments instanceof PropelCollection) {
+            $this->collProductionordercomments->clearIterator();
+        }
+        $this->collProductionordercomments = null;
         if ($this->collProductionusers instanceof PropelCollection) {
             $this->collProductionusers->clearIterator();
         }

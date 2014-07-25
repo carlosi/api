@@ -450,14 +450,14 @@ abstract class BaseDepartamentmemberQuery extends ModelCriteria
     {
         if ($user instanceof User) {
             return $this
-                ->addUsingAlias(DepartamentmemberPeer::IDUSER, $user->getIdUser(), $comparison);
+                ->addUsingAlias(DepartamentmemberPeer::IDUSER, $user->getIduser(), $comparison);
         } elseif ($user instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(DepartamentmemberPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'IdUser'), $comparison);
+                ->addUsingAlias(DepartamentmemberPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
         }

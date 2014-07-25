@@ -24,13 +24,13 @@ abstract class BaseExpenseitemPeer
     const TM_CLASS = 'ExpenseitemTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 4;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /** the column name for the idexpenseitem field */
     const IDEXPENSEITEM = 'expenseitem.idexpenseitem';
@@ -43,14 +43,6 @@ abstract class BaseExpenseitemPeer
 
     /** the column name for the expenseitem_description field */
     const EXPENSEITEM_DESCRIPTION = 'expenseitem.expenseitem_description';
-
-    /** the column name for the expenseitem_cause field */
-    const EXPENSEITEM_CAUSE = 'expenseitem.expenseitem_cause';
-
-    /** The enumerated values for the expenseitem_cause field */
-    const EXPENSEITEM_CAUSE_OPERATION = 'operation';
-    const EXPENSEITEM_CAUSE_SALE = 'sale';
-    const EXPENSEITEM_CAUSE_PURCHASEDGOODS = 'purchasedgoods';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -71,12 +63,12 @@ abstract class BaseExpenseitemPeer
      * e.g. ExpenseitemPeer::$fieldNames[ExpenseitemPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idexpenseitem', 'Idexpensecategory', 'ExpenseitemName', 'ExpenseitemDescription', 'ExpenseitemCause', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpenseitem', 'idexpensecategory', 'expenseitemName', 'expenseitemDescription', 'expenseitemCause', ),
-        BasePeer::TYPE_COLNAME => array (ExpenseitemPeer::IDEXPENSEITEM, ExpenseitemPeer::IDEXPENSECATEGORY, ExpenseitemPeer::EXPENSEITEM_NAME, ExpenseitemPeer::EXPENSEITEM_DESCRIPTION, ExpenseitemPeer::EXPENSEITEM_CAUSE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSEITEM', 'IDEXPENSECATEGORY', 'EXPENSEITEM_NAME', 'EXPENSEITEM_DESCRIPTION', 'EXPENSEITEM_CAUSE', ),
-        BasePeer::TYPE_FIELDNAME => array ('idexpenseitem', 'idexpensecategory', 'expenseitem_name', 'expenseitem_description', 'expenseitem_cause', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('Idexpenseitem', 'Idexpensecategory', 'ExpenseitemName', 'ExpenseitemDescription', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpenseitem', 'idexpensecategory', 'expenseitemName', 'expenseitemDescription', ),
+        BasePeer::TYPE_COLNAME => array (ExpenseitemPeer::IDEXPENSEITEM, ExpenseitemPeer::IDEXPENSECATEGORY, ExpenseitemPeer::EXPENSEITEM_NAME, ExpenseitemPeer::EXPENSEITEM_DESCRIPTION, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSEITEM', 'IDEXPENSECATEGORY', 'EXPENSEITEM_NAME', 'EXPENSEITEM_DESCRIPTION', ),
+        BasePeer::TYPE_FIELDNAME => array ('idexpenseitem', 'idexpensecategory', 'expenseitem_name', 'expenseitem_description', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -86,21 +78,12 @@ abstract class BaseExpenseitemPeer
      * e.g. ExpenseitemPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idexpenseitem' => 0, 'Idexpensecategory' => 1, 'ExpenseitemName' => 2, 'ExpenseitemDescription' => 3, 'ExpenseitemCause' => 4, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpenseitem' => 0, 'idexpensecategory' => 1, 'expenseitemName' => 2, 'expenseitemDescription' => 3, 'expenseitemCause' => 4, ),
-        BasePeer::TYPE_COLNAME => array (ExpenseitemPeer::IDEXPENSEITEM => 0, ExpenseitemPeer::IDEXPENSECATEGORY => 1, ExpenseitemPeer::EXPENSEITEM_NAME => 2, ExpenseitemPeer::EXPENSEITEM_DESCRIPTION => 3, ExpenseitemPeer::EXPENSEITEM_CAUSE => 4, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSEITEM' => 0, 'IDEXPENSECATEGORY' => 1, 'EXPENSEITEM_NAME' => 2, 'EXPENSEITEM_DESCRIPTION' => 3, 'EXPENSEITEM_CAUSE' => 4, ),
-        BasePeer::TYPE_FIELDNAME => array ('idexpenseitem' => 0, 'idexpensecategory' => 1, 'expenseitem_name' => 2, 'expenseitem_description' => 3, 'expenseitem_cause' => 4, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
-    );
-
-    /** The enumerated values for this table */
-    protected static $enumValueSets = array(
-        ExpenseitemPeer::EXPENSEITEM_CAUSE => array(
-            ExpenseitemPeer::EXPENSEITEM_CAUSE_OPERATION,
-            ExpenseitemPeer::EXPENSEITEM_CAUSE_SALE,
-            ExpenseitemPeer::EXPENSEITEM_CAUSE_PURCHASEDGOODS,
-        ),
+        BasePeer::TYPE_PHPNAME => array ('Idexpenseitem' => 0, 'Idexpensecategory' => 1, 'ExpenseitemName' => 2, 'ExpenseitemDescription' => 3, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idexpenseitem' => 0, 'idexpensecategory' => 1, 'expenseitemName' => 2, 'expenseitemDescription' => 3, ),
+        BasePeer::TYPE_COLNAME => array (ExpenseitemPeer::IDEXPENSEITEM => 0, ExpenseitemPeer::IDEXPENSECATEGORY => 1, ExpenseitemPeer::EXPENSEITEM_NAME => 2, ExpenseitemPeer::EXPENSEITEM_DESCRIPTION => 3, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDEXPENSEITEM' => 0, 'IDEXPENSECATEGORY' => 1, 'EXPENSEITEM_NAME' => 2, 'EXPENSEITEM_DESCRIPTION' => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('idexpenseitem' => 0, 'idexpensecategory' => 1, 'expenseitem_name' => 2, 'expenseitem_description' => 3, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -143,51 +126,6 @@ abstract class BaseExpenseitemPeer
     }
 
     /**
-     * Gets the list of values for all ENUM columns
-     * @return array
-     */
-    public static function getValueSets()
-    {
-      return ExpenseitemPeer::$enumValueSets;
-    }
-
-    /**
-     * Gets the list of values for an ENUM column
-     *
-     * @param string $colname The ENUM column name.
-     *
-     * @return array list of possible values for the column
-     */
-    public static function getValueSet($colname)
-    {
-        $valueSets = ExpenseitemPeer::getValueSets();
-
-        if (!isset($valueSets[$colname])) {
-            throw new PropelException(sprintf('Column "%s" has no ValueSet.', $colname));
-        }
-
-        return $valueSets[$colname];
-    }
-
-    /**
-     * Gets the SQL value for the ENUM column value
-     *
-     * @param string $colname ENUM column name.
-     * @param string $enumVal ENUM value.
-     *
-     * @return int SQL value
-     */
-    public static function getSqlValueForEnum($colname, $enumVal)
-    {
-        $values = ExpenseitemPeer::getValueSet($colname);
-        if (!in_array($enumVal, $values)) {
-            throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $colname));
-        }
-
-        return array_search($enumVal, $values);
-    }
-
-    /**
      * Convenience method which changes table.column to alias.column.
      *
      * Using this method you can maintain SQL abstraction while using column aliases.
@@ -223,13 +161,11 @@ abstract class BaseExpenseitemPeer
             $criteria->addSelectColumn(ExpenseitemPeer::IDEXPENSECATEGORY);
             $criteria->addSelectColumn(ExpenseitemPeer::EXPENSEITEM_NAME);
             $criteria->addSelectColumn(ExpenseitemPeer::EXPENSEITEM_DESCRIPTION);
-            $criteria->addSelectColumn(ExpenseitemPeer::EXPENSEITEM_CAUSE);
         } else {
             $criteria->addSelectColumn($alias . '.idexpenseitem');
             $criteria->addSelectColumn($alias . '.idexpensecategory');
             $criteria->addSelectColumn($alias . '.expenseitem_name');
             $criteria->addSelectColumn($alias . '.expenseitem_description');
-            $criteria->addSelectColumn($alias . '.expenseitem_cause');
         }
     }
 

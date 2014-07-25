@@ -50,8 +50,8 @@ class ProjectTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ProjectRelatedByProjectDependency', 'Project', RelationMap::MANY_TO_ONE, array('project_dependency' => 'idproject', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Department', 'Department', RelationMap::MANY_TO_ONE, array('iddepartament' => 'iddepartment', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('ProjectRelatedByProjectDependency', 'Project', RelationMap::MANY_TO_ONE, array('project_dependency' => 'idproject', ), 'CASCADE', 'CASCADE');
         $this->addRelation('ProjectRelatedByIdproject', 'Project', RelationMap::ONE_TO_MANY, array('idproject' => 'project_dependency', ), 'CASCADE', 'CASCADE', 'ProjectsRelatedByIdproject');
         $this->addRelation('Projectactivity', 'Projectactivity', RelationMap::ONE_TO_MANY, array('idproject' => 'idproject', ), 'CASCADE', 'CASCADE', 'Projectactivitys');
     } // buildRelations()

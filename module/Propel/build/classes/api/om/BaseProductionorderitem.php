@@ -42,10 +42,22 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     protected $idproductionteam;
 
     /**
+     * The value for the idproductionline field.
+     * @var        int
+     */
+    protected $idproductionline;
+
+    /**
      * The value for the idorderitem field.
      * @var        int
      */
     protected $idorderitem;
+
+    /**
+     * The value for the idproductionstatus field.
+     * @var        int
+     */
+    protected $idproductionstatus;
 
     /**
      * The value for the productionorderitem_dateinit field.
@@ -60,18 +72,6 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     protected $productionorderitem_datedelivery;
 
     /**
-     * The value for the productionorderitem_note field.
-     * @var        string
-     */
-    protected $productionorderitem_note;
-
-    /**
-     * The value for the productionorderitem_status field.
-     * @var        string
-     */
-    protected $productionorderitem_status;
-
-    /**
      * @var        Orderitem
      */
     protected $aOrderitem;
@@ -80,6 +80,22 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
      * @var        Productionteam
      */
     protected $aProductionteam;
+
+    /**
+     * @var        Productionline
+     */
+    protected $aProductionline;
+
+    /**
+     * @var        Productionstatus
+     */
+    protected $aProductionstatus;
+
+    /**
+     * @var        PropelObjectCollection|Productionordercomment[] Collection to store aggregation of Productionordercomment objects.
+     */
+    protected $collProductionordercomments;
+    protected $collProductionordercommentsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -100,6 +116,12 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $productionordercommentsScheduledForDeletion = null;
 
     /**
      * Get the [idproductionorderitem] column value.
@@ -124,6 +146,17 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [idproductionline] column value.
+     *
+     * @return int
+     */
+    public function getIdproductionline()
+    {
+
+        return $this->idproductionline;
+    }
+
+    /**
      * Get the [idorderitem] column value.
      *
      * @return int
@@ -132,6 +165,17 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     {
 
         return $this->idorderitem;
+    }
+
+    /**
+     * Get the [idproductionstatus] column value.
+     *
+     * @return int
+     */
+    public function getIdproductionstatus()
+    {
+
+        return $this->idproductionstatus;
     }
 
     /**
@@ -215,28 +259,6 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [productionorderitem_note] column value.
-     *
-     * @return string
-     */
-    public function getProductionorderitemNote()
-    {
-
-        return $this->productionorderitem_note;
-    }
-
-    /**
-     * Get the [productionorderitem_status] column value.
-     *
-     * @return string
-     */
-    public function getProductionorderitemStatus()
-    {
-
-        return $this->productionorderitem_status;
-    }
-
-    /**
      * Set the value of [idproductionorderitem] column.
      *
      * @param  int $v new value
@@ -283,6 +305,31 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     } // setIdproductionteam()
 
     /**
+     * Set the value of [idproductionline] column.
+     *
+     * @param  int $v new value
+     * @return Productionorderitem The current object (for fluent API support)
+     */
+    public function setIdproductionline($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->idproductionline !== $v) {
+            $this->idproductionline = $v;
+            $this->modifiedColumns[] = ProductionorderitemPeer::IDPRODUCTIONLINE;
+        }
+
+        if ($this->aProductionline !== null && $this->aProductionline->getIdproductionline() !== $v) {
+            $this->aProductionline = null;
+        }
+
+
+        return $this;
+    } // setIdproductionline()
+
+    /**
      * Set the value of [idorderitem] column.
      *
      * @param  int $v new value
@@ -306,6 +353,31 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
 
         return $this;
     } // setIdorderitem()
+
+    /**
+     * Set the value of [idproductionstatus] column.
+     *
+     * @param  int $v new value
+     * @return Productionorderitem The current object (for fluent API support)
+     */
+    public function setIdproductionstatus($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->idproductionstatus !== $v) {
+            $this->idproductionstatus = $v;
+            $this->modifiedColumns[] = ProductionorderitemPeer::IDPRODUCTIONSTATUS;
+        }
+
+        if ($this->aProductionstatus !== null && $this->aProductionstatus->getIdproductionstatus() !== $v) {
+            $this->aProductionstatus = null;
+        }
+
+
+        return $this;
+    } // setIdproductionstatus()
 
     /**
      * Sets the value of [productionorderitem_dateinit] column to a normalized version of the date/time value specified.
@@ -354,48 +426,6 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     } // setProductionorderitemDatedelivery()
 
     /**
-     * Set the value of [productionorderitem_note] column.
-     *
-     * @param  string $v new value
-     * @return Productionorderitem The current object (for fluent API support)
-     */
-    public function setProductionorderitemNote($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->productionorderitem_note !== $v) {
-            $this->productionorderitem_note = $v;
-            $this->modifiedColumns[] = ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE;
-        }
-
-
-        return $this;
-    } // setProductionorderitemNote()
-
-    /**
-     * Set the value of [productionorderitem_status] column.
-     *
-     * @param  string $v new value
-     * @return Productionorderitem The current object (for fluent API support)
-     */
-    public function setProductionorderitemStatus($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->productionorderitem_status !== $v) {
-            $this->productionorderitem_status = $v;
-            $this->modifiedColumns[] = ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS;
-        }
-
-
-        return $this;
-    } // setProductionorderitemStatus()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -429,11 +459,11 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
 
             $this->idproductionorderitem = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->idproductionteam = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->idorderitem = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->productionorderitem_dateinit = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            $this->productionorderitem_datedelivery = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-            $this->productionorderitem_note = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-            $this->productionorderitem_status = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+            $this->idproductionline = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+            $this->idorderitem = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+            $this->idproductionstatus = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
+            $this->productionorderitem_dateinit = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->productionorderitem_datedelivery = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -469,8 +499,14 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
         if ($this->aProductionteam !== null && $this->idproductionteam !== $this->aProductionteam->getIdproductionteam()) {
             $this->aProductionteam = null;
         }
+        if ($this->aProductionline !== null && $this->idproductionline !== $this->aProductionline->getIdproductionline()) {
+            $this->aProductionline = null;
+        }
         if ($this->aOrderitem !== null && $this->idorderitem !== $this->aOrderitem->getIdorderitem()) {
             $this->aOrderitem = null;
+        }
+        if ($this->aProductionstatus !== null && $this->idproductionstatus !== $this->aProductionstatus->getIdproductionstatus()) {
+            $this->aProductionstatus = null;
         }
     } // ensureConsistency
 
@@ -513,6 +549,10 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
 
             $this->aOrderitem = null;
             $this->aProductionteam = null;
+            $this->aProductionline = null;
+            $this->aProductionstatus = null;
+            $this->collProductionordercomments = null;
+
         } // if (deep)
     }
 
@@ -645,6 +685,20 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                 $this->setProductionteam($this->aProductionteam);
             }
 
+            if ($this->aProductionline !== null) {
+                if ($this->aProductionline->isModified() || $this->aProductionline->isNew()) {
+                    $affectedRows += $this->aProductionline->save($con);
+                }
+                $this->setProductionline($this->aProductionline);
+            }
+
+            if ($this->aProductionstatus !== null) {
+                if ($this->aProductionstatus->isModified() || $this->aProductionstatus->isNew()) {
+                    $affectedRows += $this->aProductionstatus->save($con);
+                }
+                $this->setProductionstatus($this->aProductionstatus);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -654,6 +708,23 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->productionordercommentsScheduledForDeletion !== null) {
+                if (!$this->productionordercommentsScheduledForDeletion->isEmpty()) {
+                    ProductionordercommentQuery::create()
+                        ->filterByPrimaryKeys($this->productionordercommentsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->productionordercommentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collProductionordercomments !== null) {
+                foreach ($this->collProductionordercomments as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -688,20 +759,20 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
         if ($this->isColumnModified(ProductionorderitemPeer::IDPRODUCTIONTEAM)) {
             $modifiedColumns[':p' . $index++]  = '`idproductionteam`';
         }
+        if ($this->isColumnModified(ProductionorderitemPeer::IDPRODUCTIONLINE)) {
+            $modifiedColumns[':p' . $index++]  = '`idproductionline`';
+        }
         if ($this->isColumnModified(ProductionorderitemPeer::IDORDERITEM)) {
             $modifiedColumns[':p' . $index++]  = '`idorderitem`';
+        }
+        if ($this->isColumnModified(ProductionorderitemPeer::IDPRODUCTIONSTATUS)) {
+            $modifiedColumns[':p' . $index++]  = '`idproductionstatus`';
         }
         if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT)) {
             $modifiedColumns[':p' . $index++]  = '`productionorderitem_dateinit`';
         }
         if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY)) {
             $modifiedColumns[':p' . $index++]  = '`productionorderitem_datedelivery`';
-        }
-        if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE)) {
-            $modifiedColumns[':p' . $index++]  = '`productionorderitem_note`';
-        }
-        if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS)) {
-            $modifiedColumns[':p' . $index++]  = '`productionorderitem_status`';
         }
 
         $sql = sprintf(
@@ -720,20 +791,20 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                     case '`idproductionteam`':
                         $stmt->bindValue($identifier, $this->idproductionteam, PDO::PARAM_INT);
                         break;
+                    case '`idproductionline`':
+                        $stmt->bindValue($identifier, $this->idproductionline, PDO::PARAM_INT);
+                        break;
                     case '`idorderitem`':
                         $stmt->bindValue($identifier, $this->idorderitem, PDO::PARAM_INT);
+                        break;
+                    case '`idproductionstatus`':
+                        $stmt->bindValue($identifier, $this->idproductionstatus, PDO::PARAM_INT);
                         break;
                     case '`productionorderitem_dateinit`':
                         $stmt->bindValue($identifier, $this->productionorderitem_dateinit, PDO::PARAM_STR);
                         break;
                     case '`productionorderitem_datedelivery`':
                         $stmt->bindValue($identifier, $this->productionorderitem_datedelivery, PDO::PARAM_STR);
-                        break;
-                    case '`productionorderitem_note`':
-                        $stmt->bindValue($identifier, $this->productionorderitem_note, PDO::PARAM_STR);
-                        break;
-                    case '`productionorderitem_status`':
-                        $stmt->bindValue($identifier, $this->productionorderitem_status, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -846,11 +917,31 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aProductionline !== null) {
+                if (!$this->aProductionline->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aProductionline->getValidationFailures());
+                }
+            }
+
+            if ($this->aProductionstatus !== null) {
+                if (!$this->aProductionstatus->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aProductionstatus->getValidationFailures());
+                }
+            }
+
 
             if (($retval = ProductionorderitemPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
+
+                if ($this->collProductionordercomments !== null) {
+                    foreach ($this->collProductionordercomments as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
 
 
             $this->alreadyInValidation = false;
@@ -894,19 +985,19 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                 return $this->getIdproductionteam();
                 break;
             case 2:
-                return $this->getIdorderitem();
+                return $this->getIdproductionline();
                 break;
             case 3:
-                return $this->getProductionorderitemDateinit();
+                return $this->getIdorderitem();
                 break;
             case 4:
-                return $this->getProductionorderitemDatedelivery();
+                return $this->getIdproductionstatus();
                 break;
             case 5:
-                return $this->getProductionorderitemNote();
+                return $this->getProductionorderitemDateinit();
                 break;
             case 6:
-                return $this->getProductionorderitemStatus();
+                return $this->getProductionorderitemDatedelivery();
                 break;
             default:
                 return null;
@@ -939,11 +1030,11 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getIdproductionorderitem(),
             $keys[1] => $this->getIdproductionteam(),
-            $keys[2] => $this->getIdorderitem(),
-            $keys[3] => $this->getProductionorderitemDateinit(),
-            $keys[4] => $this->getProductionorderitemDatedelivery(),
-            $keys[5] => $this->getProductionorderitemNote(),
-            $keys[6] => $this->getProductionorderitemStatus(),
+            $keys[2] => $this->getIdproductionline(),
+            $keys[3] => $this->getIdorderitem(),
+            $keys[4] => $this->getIdproductionstatus(),
+            $keys[5] => $this->getProductionorderitemDateinit(),
+            $keys[6] => $this->getProductionorderitemDatedelivery(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -956,6 +1047,15 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
             }
             if (null !== $this->aProductionteam) {
                 $result['Productionteam'] = $this->aProductionteam->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aProductionline) {
+                $result['Productionline'] = $this->aProductionline->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aProductionstatus) {
+                $result['Productionstatus'] = $this->aProductionstatus->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collProductionordercomments) {
+                $result['Productionordercomments'] = $this->collProductionordercomments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -998,19 +1098,19 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                 $this->setIdproductionteam($value);
                 break;
             case 2:
-                $this->setIdorderitem($value);
+                $this->setIdproductionline($value);
                 break;
             case 3:
-                $this->setProductionorderitemDateinit($value);
+                $this->setIdorderitem($value);
                 break;
             case 4:
-                $this->setProductionorderitemDatedelivery($value);
+                $this->setIdproductionstatus($value);
                 break;
             case 5:
-                $this->setProductionorderitemNote($value);
+                $this->setProductionorderitemDateinit($value);
                 break;
             case 6:
-                $this->setProductionorderitemStatus($value);
+                $this->setProductionorderitemDatedelivery($value);
                 break;
         } // switch()
     }
@@ -1038,11 +1138,11 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setIdproductionorderitem($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setIdproductionteam($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setIdorderitem($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setProductionorderitemDateinit($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setProductionorderitemDatedelivery($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setProductionorderitemNote($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setProductionorderitemStatus($arr[$keys[6]]);
+        if (array_key_exists($keys[2], $arr)) $this->setIdproductionline($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setIdorderitem($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setIdproductionstatus($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setProductionorderitemDateinit($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setProductionorderitemDatedelivery($arr[$keys[6]]);
     }
 
     /**
@@ -1056,11 +1156,11 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ProductionorderitemPeer::IDPRODUCTIONORDERITEM)) $criteria->add(ProductionorderitemPeer::IDPRODUCTIONORDERITEM, $this->idproductionorderitem);
         if ($this->isColumnModified(ProductionorderitemPeer::IDPRODUCTIONTEAM)) $criteria->add(ProductionorderitemPeer::IDPRODUCTIONTEAM, $this->idproductionteam);
+        if ($this->isColumnModified(ProductionorderitemPeer::IDPRODUCTIONLINE)) $criteria->add(ProductionorderitemPeer::IDPRODUCTIONLINE, $this->idproductionline);
         if ($this->isColumnModified(ProductionorderitemPeer::IDORDERITEM)) $criteria->add(ProductionorderitemPeer::IDORDERITEM, $this->idorderitem);
+        if ($this->isColumnModified(ProductionorderitemPeer::IDPRODUCTIONSTATUS)) $criteria->add(ProductionorderitemPeer::IDPRODUCTIONSTATUS, $this->idproductionstatus);
         if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT)) $criteria->add(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEINIT, $this->productionorderitem_dateinit);
         if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY)) $criteria->add(ProductionorderitemPeer::PRODUCTIONORDERITEM_DATEDELIVERY, $this->productionorderitem_datedelivery);
-        if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE)) $criteria->add(ProductionorderitemPeer::PRODUCTIONORDERITEM_NOTE, $this->productionorderitem_note);
-        if ($this->isColumnModified(ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS)) $criteria->add(ProductionorderitemPeer::PRODUCTIONORDERITEM_STATUS, $this->productionorderitem_status);
 
         return $criteria;
     }
@@ -1125,11 +1225,11 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setIdproductionteam($this->getIdproductionteam());
+        $copyObj->setIdproductionline($this->getIdproductionline());
         $copyObj->setIdorderitem($this->getIdorderitem());
+        $copyObj->setIdproductionstatus($this->getIdproductionstatus());
         $copyObj->setProductionorderitemDateinit($this->getProductionorderitemDateinit());
         $copyObj->setProductionorderitemDatedelivery($this->getProductionorderitemDatedelivery());
-        $copyObj->setProductionorderitemNote($this->getProductionorderitemNote());
-        $copyObj->setProductionorderitemStatus($this->getProductionorderitemStatus());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1137,6 +1237,12 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
             $copyObj->setNew(false);
             // store object hash to prevent cycle
             $this->startCopy = true;
+
+            foreach ($this->getProductionordercomments() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addProductionordercomment($relObj->copy($deepCopy));
+                }
+            }
 
             //unflag object copy
             $this->startCopy = false;
@@ -1293,17 +1399,387 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Productionline object.
+     *
+     * @param                  Productionline $v
+     * @return Productionorderitem The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setProductionline(Productionline $v = null)
+    {
+        if ($v === null) {
+            $this->setIdproductionline(NULL);
+        } else {
+            $this->setIdproductionline($v->getIdproductionline());
+        }
+
+        $this->aProductionline = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Productionline object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProductionorderitem($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Productionline object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Productionline The associated Productionline object.
+     * @throws PropelException
+     */
+    public function getProductionline(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aProductionline === null && ($this->idproductionline !== null) && $doQuery) {
+            $this->aProductionline = ProductionlineQuery::create()->findPk($this->idproductionline, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aProductionline->addProductionorderitems($this);
+             */
+        }
+
+        return $this->aProductionline;
+    }
+
+    /**
+     * Declares an association between this object and a Productionstatus object.
+     *
+     * @param                  Productionstatus $v
+     * @return Productionorderitem The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setProductionstatus(Productionstatus $v = null)
+    {
+        if ($v === null) {
+            $this->setIdproductionstatus(NULL);
+        } else {
+            $this->setIdproductionstatus($v->getIdproductionstatus());
+        }
+
+        $this->aProductionstatus = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Productionstatus object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProductionorderitem($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Productionstatus object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Productionstatus The associated Productionstatus object.
+     * @throws PropelException
+     */
+    public function getProductionstatus(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aProductionstatus === null && ($this->idproductionstatus !== null) && $doQuery) {
+            $this->aProductionstatus = ProductionstatusQuery::create()->findPk($this->idproductionstatus, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aProductionstatus->addProductionorderitems($this);
+             */
+        }
+
+        return $this->aProductionstatus;
+    }
+
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Productionordercomment' == $relationName) {
+            $this->initProductionordercomments();
+        }
+    }
+
+    /**
+     * Clears out the collProductionordercomments collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Productionorderitem The current object (for fluent API support)
+     * @see        addProductionordercomments()
+     */
+    public function clearProductionordercomments()
+    {
+        $this->collProductionordercomments = null; // important to set this to null since that means it is uninitialized
+        $this->collProductionordercommentsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collProductionordercomments collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialProductionordercomments($v = true)
+    {
+        $this->collProductionordercommentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collProductionordercomments collection.
+     *
+     * By default this just sets the collProductionordercomments collection to an empty array (like clearcollProductionordercomments());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initProductionordercomments($overrideExisting = true)
+    {
+        if (null !== $this->collProductionordercomments && !$overrideExisting) {
+            return;
+        }
+        $this->collProductionordercomments = new PropelObjectCollection();
+        $this->collProductionordercomments->setModel('Productionordercomment');
+    }
+
+    /**
+     * Gets an array of Productionordercomment objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Productionorderitem is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Productionordercomment[] List of Productionordercomment objects
+     * @throws PropelException
+     */
+    public function getProductionordercomments($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collProductionordercommentsPartial && !$this->isNew();
+        if (null === $this->collProductionordercomments || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collProductionordercomments) {
+                // return empty collection
+                $this->initProductionordercomments();
+            } else {
+                $collProductionordercomments = ProductionordercommentQuery::create(null, $criteria)
+                    ->filterByProductionorderitem($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collProductionordercommentsPartial && count($collProductionordercomments)) {
+                      $this->initProductionordercomments(false);
+
+                      foreach ($collProductionordercomments as $obj) {
+                        if (false == $this->collProductionordercomments->contains($obj)) {
+                          $this->collProductionordercomments->append($obj);
+                        }
+                      }
+
+                      $this->collProductionordercommentsPartial = true;
+                    }
+
+                    $collProductionordercomments->getInternalIterator()->rewind();
+
+                    return $collProductionordercomments;
+                }
+
+                if ($partial && $this->collProductionordercomments) {
+                    foreach ($this->collProductionordercomments as $obj) {
+                        if ($obj->isNew()) {
+                            $collProductionordercomments[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collProductionordercomments = $collProductionordercomments;
+                $this->collProductionordercommentsPartial = false;
+            }
+        }
+
+        return $this->collProductionordercomments;
+    }
+
+    /**
+     * Sets a collection of Productionordercomment objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $productionordercomments A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Productionorderitem The current object (for fluent API support)
+     */
+    public function setProductionordercomments(PropelCollection $productionordercomments, PropelPDO $con = null)
+    {
+        $productionordercommentsToDelete = $this->getProductionordercomments(new Criteria(), $con)->diff($productionordercomments);
+
+
+        $this->productionordercommentsScheduledForDeletion = $productionordercommentsToDelete;
+
+        foreach ($productionordercommentsToDelete as $productionordercommentRemoved) {
+            $productionordercommentRemoved->setProductionorderitem(null);
+        }
+
+        $this->collProductionordercomments = null;
+        foreach ($productionordercomments as $productionordercomment) {
+            $this->addProductionordercomment($productionordercomment);
+        }
+
+        $this->collProductionordercomments = $productionordercomments;
+        $this->collProductionordercommentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Productionordercomment objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Productionordercomment objects.
+     * @throws PropelException
+     */
+    public function countProductionordercomments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collProductionordercommentsPartial && !$this->isNew();
+        if (null === $this->collProductionordercomments || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collProductionordercomments) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getProductionordercomments());
+            }
+            $query = ProductionordercommentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByProductionorderitem($this)
+                ->count($con);
+        }
+
+        return count($this->collProductionordercomments);
+    }
+
+    /**
+     * Method called to associate a Productionordercomment object to this object
+     * through the Productionordercomment foreign key attribute.
+     *
+     * @param    Productionordercomment $l Productionordercomment
+     * @return Productionorderitem The current object (for fluent API support)
+     */
+    public function addProductionordercomment(Productionordercomment $l)
+    {
+        if ($this->collProductionordercomments === null) {
+            $this->initProductionordercomments();
+            $this->collProductionordercommentsPartial = true;
+        }
+
+        if (!in_array($l, $this->collProductionordercomments->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddProductionordercomment($l);
+
+            if ($this->productionordercommentsScheduledForDeletion and $this->productionordercommentsScheduledForDeletion->contains($l)) {
+                $this->productionordercommentsScheduledForDeletion->remove($this->productionordercommentsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Productionordercomment $productionordercomment The productionordercomment object to add.
+     */
+    protected function doAddProductionordercomment($productionordercomment)
+    {
+        $this->collProductionordercomments[]= $productionordercomment;
+        $productionordercomment->setProductionorderitem($this);
+    }
+
+    /**
+     * @param	Productionordercomment $productionordercomment The productionordercomment object to remove.
+     * @return Productionorderitem The current object (for fluent API support)
+     */
+    public function removeProductionordercomment($productionordercomment)
+    {
+        if ($this->getProductionordercomments()->contains($productionordercomment)) {
+            $this->collProductionordercomments->remove($this->collProductionordercomments->search($productionordercomment));
+            if (null === $this->productionordercommentsScheduledForDeletion) {
+                $this->productionordercommentsScheduledForDeletion = clone $this->collProductionordercomments;
+                $this->productionordercommentsScheduledForDeletion->clear();
+            }
+            $this->productionordercommentsScheduledForDeletion[]= clone $productionordercomment;
+            $productionordercomment->setProductionorderitem(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Productionorderitem is new, it will return
+     * an empty collection; or if this Productionorderitem has previously
+     * been saved, it will retrieve related Productionordercomments from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Productionorderitem.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Productionordercomment[] List of Productionordercomment objects
+     */
+    public function getProductionordercommentsJoinUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ProductionordercommentQuery::create(null, $criteria);
+        $query->joinWith('User', $join_behavior);
+
+        return $this->getProductionordercomments($query, $con);
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
     {
         $this->idproductionorderitem = null;
         $this->idproductionteam = null;
+        $this->idproductionline = null;
         $this->idorderitem = null;
+        $this->idproductionstatus = null;
         $this->productionorderitem_dateinit = null;
         $this->productionorderitem_datedelivery = null;
-        $this->productionorderitem_note = null;
-        $this->productionorderitem_status = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1326,18 +1802,35 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collProductionordercomments) {
+                foreach ($this->collProductionordercomments as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->aOrderitem instanceof Persistent) {
               $this->aOrderitem->clearAllReferences($deep);
             }
             if ($this->aProductionteam instanceof Persistent) {
               $this->aProductionteam->clearAllReferences($deep);
             }
+            if ($this->aProductionline instanceof Persistent) {
+              $this->aProductionline->clearAllReferences($deep);
+            }
+            if ($this->aProductionstatus instanceof Persistent) {
+              $this->aProductionstatus->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collProductionordercomments instanceof PropelCollection) {
+            $this->collProductionordercomments->clearIterator();
+        }
+        $this->collProductionordercomments = null;
         $this->aOrderitem = null;
         $this->aProductionteam = null;
+        $this->aProductionline = null;
+        $this->aProductionstatus = null;
     }
 
     /**

@@ -36,7 +36,7 @@ class MxtaxinfoTableMap extends TableMap
         $this->setPhpName('Mxtaxinfo');
         $this->setClassname('Mxtaxinfo');
         $this->setPackage('api');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('idmxtaxinfo', 'Idmxtaxinfo', 'INTEGER', true, null, null);
         $this->addForeignKey('idcompany', 'Idcompany', 'INTEGER', 'company', 'idcompany', true, null, null);

@@ -30,10 +30,10 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     protected $startCopy = false;
 
     /**
-     * The value for the idprojectactivityemployee field.
+     * The value for the idprojectactivityuser field.
      * @var        int
      */
-    protected $idprojectactivityemployee;
+    protected $idprojectactivityuser;
 
     /**
      * The value for the iduser field.
@@ -48,14 +48,14 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     protected $idprojectactivity;
 
     /**
-     * @var        Projectactivity
-     */
-    protected $aProjectactivity;
-
-    /**
      * @var        User
      */
     protected $aUser;
+
+    /**
+     * @var        Projectactivity
+     */
+    protected $aProjectactivity;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -78,14 +78,14 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
-     * Get the [idprojectactivityemployee] column value.
+     * Get the [idprojectactivityuser] column value.
      *
      * @return int
      */
-    public function getIdprojectactivityemployee()
+    public function getIdprojectactivityuser()
     {
 
-        return $this->idprojectactivityemployee;
+        return $this->idprojectactivityuser;
     }
 
     /**
@@ -111,25 +111,25 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     }
 
     /**
-     * Set the value of [idprojectactivityemployee] column.
+     * Set the value of [idprojectactivityuser] column.
      *
      * @param  int $v new value
      * @return Projectactivityuser The current object (for fluent API support)
      */
-    public function setIdprojectactivityemployee($v)
+    public function setIdprojectactivityuser($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->idprojectactivityemployee !== $v) {
-            $this->idprojectactivityemployee = $v;
-            $this->modifiedColumns[] = ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE;
+        if ($this->idprojectactivityuser !== $v) {
+            $this->idprojectactivityuser = $v;
+            $this->modifiedColumns[] = ProjectactivityuserPeer::IDPROJECTACTIVITYUSER;
         }
 
 
         return $this;
-    } // setIdprojectactivityemployee()
+    } // setIdprojectactivityuser()
 
     /**
      * Set the value of [iduser] column.
@@ -148,7 +148,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
             $this->modifiedColumns[] = ProjectactivityuserPeer::IDUSER;
         }
 
-        if ($this->aUser !== null && $this->aUser->getIdUser() !== $v) {
+        if ($this->aUser !== null && $this->aUser->getIduser() !== $v) {
             $this->aUser = null;
         }
 
@@ -213,7 +213,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     {
         try {
 
-            $this->idprojectactivityemployee = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+            $this->idprojectactivityuser = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->iduser = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->idprojectactivity = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->resetModified();
@@ -248,7 +248,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIdUser()) {
+        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIduser()) {
             $this->aUser = null;
         }
         if ($this->aProjectactivity !== null && $this->idprojectactivity !== $this->aProjectactivity->getIdprojectactivity()) {
@@ -293,8 +293,8 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aProjectactivity = null;
             $this->aUser = null;
+            $this->aProjectactivity = null;
         } // if (deep)
     }
 
@@ -413,18 +413,18 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aProjectactivity !== null) {
-                if ($this->aProjectactivity->isModified() || $this->aProjectactivity->isNew()) {
-                    $affectedRows += $this->aProjectactivity->save($con);
-                }
-                $this->setProjectactivity($this->aProjectactivity);
-            }
-
             if ($this->aUser !== null) {
                 if ($this->aUser->isModified() || $this->aUser->isNew()) {
                     $affectedRows += $this->aUser->save($con);
                 }
                 $this->setUser($this->aUser);
+            }
+
+            if ($this->aProjectactivity !== null) {
+                if ($this->aProjectactivity->isModified() || $this->aProjectactivity->isNew()) {
+                    $affectedRows += $this->aProjectactivity->save($con);
+                }
+                $this->setProjectactivity($this->aProjectactivity);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -458,14 +458,14 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE;
-        if (null !== $this->idprojectactivityemployee) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE . ')');
+        $this->modifiedColumns[] = ProjectactivityuserPeer::IDPROJECTACTIVITYUSER;
+        if (null !== $this->idprojectactivityuser) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ProjectactivityuserPeer::IDPROJECTACTIVITYUSER . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE)) {
-            $modifiedColumns[':p' . $index++]  = '`idprojectactivityemployee`';
+        if ($this->isColumnModified(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER)) {
+            $modifiedColumns[':p' . $index++]  = '`idprojectactivityuser`';
         }
         if ($this->isColumnModified(ProjectactivityuserPeer::IDUSER)) {
             $modifiedColumns[':p' . $index++]  = '`iduser`';
@@ -484,8 +484,8 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case '`idprojectactivityemployee`':
-                        $stmt->bindValue($identifier, $this->idprojectactivityemployee, PDO::PARAM_INT);
+                    case '`idprojectactivityuser`':
+                        $stmt->bindValue($identifier, $this->idprojectactivityuser, PDO::PARAM_INT);
                         break;
                     case '`iduser`':
                         $stmt->bindValue($identifier, $this->iduser, PDO::PARAM_INT);
@@ -506,7 +506,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setIdprojectactivityemployee($pk);
+        $this->setIdprojectactivityuser($pk);
 
         $this->setNew(false);
     }
@@ -592,15 +592,15 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aProjectactivity !== null) {
-                if (!$this->aProjectactivity->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aProjectactivity->getValidationFailures());
-                }
-            }
-
             if ($this->aUser !== null) {
                 if (!$this->aUser->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
+                }
+            }
+
+            if ($this->aProjectactivity !== null) {
+                if (!$this->aProjectactivity->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aProjectactivity->getValidationFailures());
                 }
             }
 
@@ -646,7 +646,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getIdprojectactivityemployee();
+                return $this->getIdprojectactivityuser();
                 break;
             case 1:
                 return $this->getIduser();
@@ -683,7 +683,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
         $alreadyDumpedObjects['Projectactivityuser'][$this->getPrimaryKey()] = true;
         $keys = ProjectactivityuserPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getIdprojectactivityemployee(),
+            $keys[0] => $this->getIdprojectactivityuser(),
             $keys[1] => $this->getIduser(),
             $keys[2] => $this->getIdprojectactivity(),
         );
@@ -693,11 +693,11 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aProjectactivity) {
-                $result['Projectactivity'] = $this->aProjectactivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aUser) {
                 $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aProjectactivity) {
+                $result['Projectactivity'] = $this->aProjectactivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -734,7 +734,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setIdprojectactivityemployee($value);
+                $this->setIdprojectactivityuser($value);
                 break;
             case 1:
                 $this->setIduser($value);
@@ -766,7 +766,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     {
         $keys = ProjectactivityuserPeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setIdprojectactivityemployee($arr[$keys[0]]);
+        if (array_key_exists($keys[0], $arr)) $this->setIdprojectactivityuser($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setIduser($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setIdprojectactivity($arr[$keys[2]]);
     }
@@ -780,7 +780,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     {
         $criteria = new Criteria(ProjectactivityuserPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE)) $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE, $this->idprojectactivityemployee);
+        if ($this->isColumnModified(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER)) $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER, $this->idprojectactivityuser);
         if ($this->isColumnModified(ProjectactivityuserPeer::IDUSER)) $criteria->add(ProjectactivityuserPeer::IDUSER, $this->iduser);
         if ($this->isColumnModified(ProjectactivityuserPeer::IDPROJECTACTIVITY)) $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITY, $this->idprojectactivity);
 
@@ -798,7 +798,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     public function buildPkeyCriteria()
     {
         $criteria = new Criteria(ProjectactivityuserPeer::DATABASE_NAME);
-        $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYEMPLOYEE, $this->idprojectactivityemployee);
+        $criteria->add(ProjectactivityuserPeer::IDPROJECTACTIVITYUSER, $this->idprojectactivityuser);
 
         return $criteria;
     }
@@ -809,18 +809,18 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getIdprojectactivityemployee();
+        return $this->getIdprojectactivityuser();
     }
 
     /**
-     * Generic method to set the primary key (idprojectactivityemployee column).
+     * Generic method to set the primary key (idprojectactivityuser column).
      *
      * @param  int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setIdprojectactivityemployee($key);
+        $this->setIdprojectactivityuser($key);
     }
 
     /**
@@ -830,7 +830,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getIdprojectactivityemployee();
+        return null === $this->getIdprojectactivityuser();
     }
 
     /**
@@ -862,7 +862,7 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setIdprojectactivityemployee(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setIdprojectactivityuser(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -904,6 +904,58 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
         }
 
         return self::$peer;
+    }
+
+    /**
+     * Declares an association between this object and a User object.
+     *
+     * @param                  User $v
+     * @return Projectactivityuser The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setIduser(NULL);
+        } else {
+            $this->setIduser($v->getIduser());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProjectactivityuser($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
+            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addProjectactivityusers($this);
+             */
+        }
+
+        return $this->aUser;
     }
 
     /**
@@ -959,63 +1011,11 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param                  User $v
-     * @return Projectactivityuser The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setIduser(NULL);
-        } else {
-            $this->setIduser($v->getIdUser());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addProjectactivityuser($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addProjectactivityusers($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
     {
-        $this->idprojectactivityemployee = null;
+        $this->idprojectactivityuser = null;
         $this->iduser = null;
         $this->idprojectactivity = null;
         $this->alreadyInSave = false;
@@ -1040,18 +1040,18 @@ abstract class BaseProjectactivityuser extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aProjectactivity instanceof Persistent) {
-              $this->aProjectactivity->clearAllReferences($deep);
-            }
             if ($this->aUser instanceof Persistent) {
               $this->aUser->clearAllReferences($deep);
+            }
+            if ($this->aProjectactivity instanceof Persistent) {
+              $this->aProjectactivity->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aProjectactivity = null;
         $this->aUser = null;
+        $this->aProjectactivity = null;
     }
 
     /**
