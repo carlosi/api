@@ -3,7 +3,8 @@ namespace Company\ACL\Client\Form;
 
 use Company\ACL\Client\Form\ClientForm;
 
-class ClientFormPostPut{
+class ClientFormPostPut
+{
 
     public static function init($userLevel){
 
@@ -58,7 +59,7 @@ class ClientFormPostPut{
             }
         }
 
-        return $branchForm;
+        return $clientForm;
     }
 
 }

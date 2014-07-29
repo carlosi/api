@@ -40,14 +40,14 @@ class ClientCommentFilter implements InputFilterAwareInterface
                 'name'     => 'idclientcomment',
                 'required' => false,
                 'filters'  => array(
-                                array('name' => 'Int'),
+                        array('name' => 'Int'),
                 ),
             ));
 
             // idclient: DataType = INT, NN = true
             $inputFilter->add(array(
                 'name'     => 'idclient',
-                'required' => false,
+                'required' => true,
                 'filters'  => array(
                         array('name' => 'Int'),
                 ),
@@ -73,20 +73,8 @@ class ClientCommentFilter implements InputFilterAwareInterface
 
             // clientcomment_date: DataType = DATETIME, NN = true
             $inputFilter->add(array(
-                'name' => 'clientcomment_date',
+                'name'     => 'clientcomment_date',
                 'required' => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim')
-                ),
-                'validators' => array(
-                    array(
-                        'name' => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                        ),
-                    ),
-                ),
             ));
 
             $this->inputFilter = $inputFilter;

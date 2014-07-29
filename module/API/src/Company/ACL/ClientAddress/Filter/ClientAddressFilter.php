@@ -42,14 +42,14 @@ class ClientAddressFilter implements InputFilterAwareInterface
                 'name'     => 'idclientaddress',
                 'required' => false,
                 'filters'  => array(
-                                array('name' => 'Int'),
+                        array('name' => 'Int'),
                 ),
             ));
 
             // idclient: DataType = INT, NN = true
             $inputFilter->add(array(
                 'name'     => 'idclient',
-                'required' => false,
+                'required' => true,
                 'filters'  => array(
                         array('name' => 'Int'),
                 ),

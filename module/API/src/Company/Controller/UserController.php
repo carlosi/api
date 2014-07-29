@@ -55,6 +55,10 @@ class UserController extends AbstractRestfulController
     
     public function options()
     {
+<<<<<<< HEAD
+
+=======
+>>>>>>> 6c99727d48e19c9d4d0b281816344378f0a02e0d
         $response = $this->getResponse();
         $response->getHeaders()
                  ->addHeaderLine('Allow', implode(',', $this->_getOptions()));
@@ -500,6 +504,49 @@ class UserController extends AbstractRestfulController
                      $row['_embedded']['company'][$key] = $value;
                  }
                  array_push($userArray, $row);
+<<<<<<< HEAD
+               
+                 
+                 /*
+                 * ACL
+                 */
+                 
+               //Guardamos en un arreglo las columnas y los atributos a los que el usuario tiene permiso
+                $acl = array();
+                foreach ($userForm->getElements() as $element){
+                    if($element->getOption('value_options')!=null){
+                        $acl[$element->getAttribute('name')] = array('viewName' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                        //array_push($acl, array($element->getAttribute('name') => array('value_options' => $element->getOption('value_options'))));
+                    }else{
+                        $acl[$element->getAttribute('name')] = $element->getOption('label');
+                        //array_push($acl, $element->getAttribute('name'));
+                    }
+                }
+ 
+                //Eliminamos el id company Si es visible y lo agregamos como embbeded toda la informacion de company a la que tiene visible el usuario
+                if(key_exists('idcompany',$acl)){
+                    unset($acl['idcompany']);
+                    $companyColumns = array();
+                    foreach ($companyForm->getElements() as $element){
+                       $companyColumns[$element->getAttribute('name')] =  $element->getOption('label');
+                    }
+                    $acl['_embedded'] = array(
+                        'company' =>  $companyColumns,
+                    );
+                }
+            }
+
+            $response = array(
+                '_links' => $result['links'],
+                'resume' => $result['resume'],
+                '_embedded' => array('users'=> $userArray),
+            );
+            if(isset($acl)){
+                $response['ACL'] = $acl;
+            }
+
+             return new JsonModel($response);
+=======
             }
             
             $response = array(
@@ -510,6 +557,7 @@ class UserController extends AbstractRestfulController
             );
       
             return new JsonModel($response);
+>>>>>>> 6c99727d48e19c9d4d0b281816344378f0a02e0d
   
         }else{
             //Modifiamos el Header de nuestra respuesta
@@ -559,8 +607,8 @@ class UserController extends AbstractRestfulController
                     //Verificamos que user_nickname no exista ya en nuestra base de datos.
                     if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByUserNickname($data['user_nickname'])->find()->count()==0){
                         //Remplzamos los datos del usuario por lo que se van a modifica
-                        foreach ($data as $key => $value){
-                            $user->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+                        foreach ($data as $value){
+                            $user->setByName($value, BasePeer::TYPE_FIELDNAME);
                         }
                         
                         //Le ponemos los datos a nuestro formulario

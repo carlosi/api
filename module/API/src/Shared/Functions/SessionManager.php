@@ -41,52 +41,52 @@ class SessionManager {
 		}
 	}
 
-        public static function getUserLevels($iduser){
-            $array_levels = array();
-            $user = new Useracl();
-            if (is_int($iduser)){
-                $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
-                foreach($userLevel as $level){
-                    $array_levels[$level->getModuleName()] = $level->getUserAccesslevel();
-                }
-                return $array_levels;
-            }       
+    public static function getUserLevels($iduser){
+        $array_levels = array();
+        $user = new Useracl();
+        if (is_int($iduser)){
+            $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
+            foreach($userLevel as $level){
+                $array_levels[$level->getModuleName()] = $level->getUserAccesslevel();
+            }
+            return $array_levels;
+        }
 	}
         
-        public static function getUserLevelToCompany($iduser){
-            if (is_int($iduser)){
-                $userLevel = UseraclQuery::create()->findByIduser($iduser);
-                foreach($userLevel as $level){
-                    if($level->getModuleName() == "company"){
-                        return (int)$level->getUserAccesslevel();
-                    }
+    public static function getUserLevelToCompany($iduser){
+        if (is_int($iduser)){
+            $userLevel = UseraclQuery::create()->findByIduser($iduser);
+            foreach($userLevel as $level){
+                if($level->getModuleName() == "company"){
+                    return (int)$level->getUserAccesslevel();
                 }
-               return 0;
             }
+           return 0;
+        }
 	}
         
 	public static function getUserLevelToSales($iduser){
-            if (is_int($iduser)){
-                $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
-                foreach($userLevel as $level){
-                    if($level->getModuleName() == "sales"){
-                        return (int) $level->getUserAccesslevel();
-                    }
+        if (is_int($iduser)){
+            $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
+            foreach($userLevel as $level){
+                if($level->getModuleName() == "sales"){
+                    return (int) $level->getUserAccesslevel();
                 }
-                return false;
             }
+            return false;
+        }
 	}
         
 	public static function getUserLevelToContents($iduser){
-            if (is_int($iduser)){
-                $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
-                foreach($userLevel as $level){
-                    if($level->getModuleName() == "contents"){
-                        return (int) $level->getUserAccesslevel();
-                    }
+        if (is_int($iduser)){
+            $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
+            foreach($userLevel as $level){
+                if($level->getModuleName() == "contents"){
+                    return (int) $level->getUserAccesslevel();
                 }
-                return false;
             }
+            return false;
+        }
 	}
         
 	public static function getUserLevelToManufacture($iduser){

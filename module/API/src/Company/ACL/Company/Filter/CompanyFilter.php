@@ -40,7 +40,7 @@ class CompanyFilter implements InputFilterAwareInterface
                     'name'     => 'idcompany',
                     'required' => false,
                     'filters'  => array(
-                                    array('name' => 'Int'),
+                        array('name' => 'Int'),
                     ),
                 ));
 

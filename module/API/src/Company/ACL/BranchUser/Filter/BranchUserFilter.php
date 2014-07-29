@@ -46,7 +46,7 @@ class BranchUserFilter implements InputFilterAwareInterface
             // idbranch: DataType = INT, NN = true
             $inputFilter->add(array(
                 'name'     => 'idbranch',
-                'required' => false,
+                'required' => true,
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
@@ -55,7 +55,7 @@ class BranchUserFilter implements InputFilterAwareInterface
             // iduser: DataType = INT, NN = true
             $inputFilter->add(array(
                 'name'     => 'iduser',
-                'required' => false,
+                'required' => true,
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),

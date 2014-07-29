@@ -15,14 +15,24 @@ class BankAccountForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idbankaccount',
+            'options' => array(
+                'label' => 'Id Sucursal'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idcompany'
+            'name' => 'idcompany',
+            'options' => array(
+                'label' => 'Id Compañía'
+            ),
+
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'bankaccount_name',
+            'options' => array(
+                'label' => 'Cuenta bancaria'
+            ),
         ));
     }
 }

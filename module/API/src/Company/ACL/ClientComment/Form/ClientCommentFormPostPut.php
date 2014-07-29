@@ -1,9 +1,9 @@
 <?php
 namespace Company\ACL\ClientComment\Form;
 
-use Company\ACL\ClientCommentForm\Form\ClientCommentForm;
+use Company\ACL\ClientComment\Form\ClientCommentForm;
 
-class ClientAddressFormPostPut{
+class ClientCommentFormPostPut{
 
     public static function init($userLevel){
 

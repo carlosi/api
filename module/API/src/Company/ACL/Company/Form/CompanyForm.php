@@ -15,14 +15,14 @@ class CompanyForm extends Form
             'type' => 'Hidden',
             'name' => 'idcompany',
             'options' => array(
-                'label' => 'ID',
+                'label' => 'Id Compañía',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'company_name',
             'options' => array(
-                'label' => 'Compañia',
+                'label' => 'Nombre de compañia',
             ),
             
         ));
@@ -30,28 +30,28 @@ class CompanyForm extends Form
             'type' => 'Hidden',
             'name' => 'company_timezone',
             'options' => array(
-                'label' => 'Zona Horaria',
+                'label' => 'Zona horaria',
             ),
         ));
         $this->add(array(
             'type' => 'Select',
             'name' => 'company_iso_codecountry',
             'options' => array(
-                'label' => 'Codigo de pais',
+                'label' => 'País',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'company_address',
             'options' => array(
-                'label' => 'Direccion',
+                'label' => 'Dirección',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'company_address2',
             'options' => array(
-                'label' => 'Direccion 2',
+                'label' => 'Colonia',
             ),
         ));
         $this->add(array(
@@ -72,7 +72,7 @@ class CompanyForm extends Form
             'type' => 'Hidden',
             'name' => 'company_zipcode',
             'options' => array(
-                'label' => 'Codigo Postal',
+                'label' => 'Código postal',
             ),
         ));
     }

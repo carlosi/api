@@ -15,27 +15,31 @@ class UserForm extends Form
             'type' => 'Hidden',
             'name' => 'iduser',
             'options' => array(
-                'label' => 'ID',
+                'label' => 'Id Usuario',
             ),
 
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idcompany',
-
+            'options' => array(
+                'label' => 'Id Compañía'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'user_nickname',
             'options' => array(
-                'label' => 'Nombre de Usuario',
+                'label' => 'Nombre de usuario',
             ),
 
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'user_password',
-
+            'options' => array(
+                'label' => 'Contraseña'
+            ),
         ));
         $this->add(array(
             'type' => 'Select',

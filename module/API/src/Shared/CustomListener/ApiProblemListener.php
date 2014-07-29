@@ -74,7 +74,7 @@ class ApiProblemListener implements ListenerAggregateInterface
      */
     public static function onRender(MvcEvent $e)
     {
- 
+
         $request = $e->getRequest();
         $response = $e->getResponse();
         $requestHeaders = $request->getHeaders();

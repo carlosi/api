@@ -9,8 +9,6 @@ use Shared\Functions\SessionManager;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Response;
 
-
-
 class TokenListener implements ListenerAggregateInterface {
     
     
@@ -42,12 +40,49 @@ class TokenListener implements ListenerAggregateInterface {
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
         define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
-        if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
-            $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
+        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
+
+
+        // Utilizar en otro lisener
+        $routeLogin = $e->getRouteMatch()->getMatchedRouteName();
+
+        if($routeLogin == "login"){
+
+            $request = $e->getRequest();
+            $response = $e->getResponse();
+
+            if($request->getHeaders()->get('Content-Type') == null){
+
+                $method = $request->getMethod();
+
+                $response->setStatusCode(Response::STATUS_CODE_400);
+                $statusCode = $response->getStatusCode();
+                $body = array(
+                    'HTTP Status' => $statusCode,
+                    'Method' => $method,
+                    'Title' => 'The request method '.$method.' is not allowed' ,
+                    'Details' => 'The request method allow is POST',
+                    'More Info' => 'http://buybuy.com/api/docs'
+                );
+                $jsonModel = new JsonModel($body);
+                $jsonModel->setTerminal(true);
+                $e->setResult($jsonModel);
+                $e->setViewModel($jsonModel)->stopPropagation();
+            }
+        }
+        // Utilizar en otro lisener
+
+        $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
+        if(SessionManager::TokenIsValid($token)){
+
+        }else{
+            $response = $e->getResponse();
+            $response->setStatusCode(Response::STATUS_CODE_401);
+            $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
 
             if(SessionManager::TokenIsValid($token)){
-            
-            }else{        
+
+            }else{
                 $response = $e->getResponse();
                 $response->setStatusCode(Response::STATUS_CODE_401);
                 $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
@@ -65,9 +100,6 @@ class TokenListener implements ListenerAggregateInterface {
                  $e->setViewModel($jsonModel)->stopPropagation();
             }
         }
-        
-        
-        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
     }
 }
 ?>

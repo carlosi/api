@@ -14,10 +14,16 @@ class ProductForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idproduct',
+            'options' => array(
+                'label' => 'Id Producto'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idproductmain',
+            'options' => array(
+                'label' => 'Id Producto'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',

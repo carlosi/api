@@ -13,49 +13,66 @@ class BranchForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idbranch',
+            'options' => array(
+                'label' => 'Id Sucursal',
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idcompany'
+            'name' => 'idcompany',
+            'options' => array(
+                'label' => 'Id Compañía',
+            ),
+
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_name',
+            'options' => array(
+                'label' => 'Sucursal',
+            ),
         ));
         $this->add(array(
-            'type' => 'Select',
+            'type' => 'Hidden',
             'name' => 'branch_iso_codecountry',
             'options' => array(
-                'disable_inarray_validator' => true,
-                'value_options' => array(
-                    'MX' => 'MX',
-                    'US' => 'US',
-                    'ES' => 'ES'
-                ),
+                'label' => 'País',
             ),
-            'attributes' => array(
-                'MX' => 'MX' //set selected to 'MX'
-            )
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_address',
+            'options' => array(
+                'label' => 'Dirección',
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_address2',
+            'options' => array(
+                'label' => 'Colonia',
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_city',
+            'options' => array(
+                'label' => 'Ciudad',
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_state',
+            'options' => array(
+                'label' => 'Estado',
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_zipcode',
+            'options' => array(
+                'label' => 'Código postal',
+            ),
         ));
     }
 }

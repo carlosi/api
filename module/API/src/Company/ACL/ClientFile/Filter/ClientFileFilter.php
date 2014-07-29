@@ -47,7 +47,7 @@ class ClientFileFilter implements InputFilterAwareInterface
                 // idclient: DataType = INT, NN = true
                 $inputFilter->add(array(
                     'name'     => 'idclient',
-                    'required' => false,
+                    'required' => true,
                     'filters'  => array(
                             array('name' => 'Int'),
                     ),

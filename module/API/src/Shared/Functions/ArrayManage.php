@@ -29,24 +29,72 @@ class ArrayManage{
             return $array;
         }
     }
-    
-    public static function getHasCompanyId($query, $idcompany, $id){
+
+    public static function getIdCompanyForListId($query, $idcompany, $id)
+    {
+
+        // Si el $query es  del recurso Company
+        if($query->getModelName() == 'Company'){
+            $result = $query->create()->findPk($id);
+        }
+
         // Iniciamos el Join de 1er nivel
-        // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
-        $idForeingKeyJoin = key($query->getTablemap()->getForeignKeys());
 
-        // Eliminamos los 2 primeros caracteres (id) de nuestro string
-        $tableJoin = substr($idForeingKeyJoin, 2);
+        $foreingKey = array_keys($query->getTablemap()->getForeignKeys());
 
-        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
-        $useQuery = ucfirst($tableJoin);
+        $countForeingKey = count($foreingKey);
 
-        $result = $query->create('alias')->join('alias.'.$useQuery.' alias2')->useQuery('alias2')->filterByIdCompany($idcompany)->endUse()->findPk($id);
+        if($countForeingKey == 1){
 
+            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+            $idForeingKeyJoin = key($query->getTablemap()->getForeignKeys());
+
+            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+            $tableJoin = substr($idForeingKeyJoin, 2);
+
+            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+            $useQuery = ucfirst($tableJoin);
+
+            $result = $query->create('alias')
+                ->join('alias.'.$useQuery.' alias2')
+                ->useQuery('alias2')
+                    ->filterByIdCompany($idcompany)
+                ->endUse()
+                ->findPk($id);
+        }
+
+        if($countForeingKey == 2){
+
+            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+            $idsForeingKeyJoin = array_keys($query->getTablemap()->getForeignKeys());
+
+            $idForeingKeyJoin1 = $idsForeingKeyJoin[0];
+            $idForeingKeyJoin2 = $idsForeingKeyJoin[1];
+            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+            $tableJoin1 = substr($idForeingKeyJoin1, 2);
+            $tableJoin2 = substr($idForeingKeyJoin2, 2);
+
+            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+            $useQuery1 = ucfirst($tableJoin1);
+            $useQuery2 = ucfirst($tableJoin2);
+
+            $result = $query->create('alias')
+                ->join('alias.'.$useQuery1.' alias2')
+                ->useQuery('alias2')
+                    ->filterByIdCompany($idcompany)
+                ->endUse()
+                ->join('alias.'.$useQuery2.' alias2')
+                ->useQuery('alias2')
+                    ->filterByIdCompany($idcompany)
+                ->endUse()
+                ->findPk($id);
+
+        }
         return $result;
     }
 
-    public static function getHasCompany($query, $idcompany, $page, $limit){
+    public static function getIdCompanyForList($query, $idcompany, $page, $limit)
+    {
 
         // Guardamos y validamos si XXXQuery() contiene la columna "idcompany"
         $hasIdCompany = $query->getTableMap()->hasColumn('idcompany');
@@ -111,9 +159,76 @@ class ArrayManage{
                     ->paginate($page,$limit);
             }
         }else{
-            $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
+            // Si el $query es del recurso Company
+            if($query->getModelName() == 'Company'){
+                $result = $query->create()->paginate($page,$limit);
+            }else{
+                $result = $query->create()->filterByIdCompany($idcompany)->paginate($page,$limit);
+            }
+        }
+        return $result;
+    }
+
+    public static function getCompanyIdForDelete($query, $idcompany, $id){
+
+        // Si el $query es  del recurso Company
+        if($query->getModelName() == 'Company'){
+            $result = $query->create()->findPk($id);
         }
 
+        // Iniciamos el Join de 1er nivel
+        $foreingKey = array_keys($query->getTablemap()->getForeignKeys());
+
+        $countForeingKey = count($foreingKey);
+
+        if($countForeingKey == 1){
+
+            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+            $idForeingKeyJoin = key($query->getTablemap()->getForeignKeys());
+
+            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+            $tableJoin = substr($idForeingKeyJoin, 2);
+
+            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+            $useQuery = ucfirst($tableJoin);
+
+            $result = $query->create('alias')
+                ->join('alias.'.$useQuery.' alias2')
+                ->useQuery('alias2')
+                ->filterByIdCompany($idcompany)
+                ->endUse()
+                ->filterByPrimaryKey($id)
+                ->exists();
+        }
+
+        if($countForeingKey == 2){
+
+            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+            $idsForeingKeyJoin = array_keys($query->getTablemap()->getForeignKeys());
+
+            $idForeingKeyJoin1 = $idsForeingKeyJoin[0];
+            $idForeingKeyJoin2 = $idsForeingKeyJoin[1];
+            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+            $tableJoin1 = substr($idForeingKeyJoin1, 2);
+            $tableJoin2 = substr($idForeingKeyJoin2, 2);
+
+            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+            $useQuery1 = ucfirst($tableJoin1);
+            $useQuery2 = ucfirst($tableJoin2);
+
+            $result = $query->create('alias')
+                ->join('alias.'.$useQuery1.' alias2')
+                ->useQuery('alias2')
+                ->filterByIdCompany($idcompany)
+                ->endUse()
+                ->join('alias.'.$useQuery2.' alias2')
+                ->useQuery('alias2')
+                ->filterByIdCompany($idcompany)
+                ->endUse()
+                ->filterByPrimaryKey($id)
+                ->exists();
+
+        }
         return $result;
     }
 
@@ -124,6 +239,7 @@ class ArrayManage{
         
         //Los Filtros
         if($filters!=null){
+            echo "Entro";
             foreach ($filters as $filter){
                 //var_dump("attribute: ".$filter['attribute']);
                 $params = $query->getParams();
@@ -131,27 +247,19 @@ class ArrayManage{
                 if(isset($filter['in'])){
                     
                     if(!empty($params)){
-                        //var_dump($params);
-                        foreach($params as $param){  
-                            
+                        foreach($params as $param){
                             if($filter['attribute'] == $param['column']){
-                                $flag = true;                          
-                            }else{   
-                                $flag=false;                        
+                                $flag = true;
+                            }else{
+                                $flag=false;
                             }
                         }
                         if($flag){
-
-                            $query->addOr($table.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);                           
-                        }else{   
-
-
-                            $query->addAnd($table.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);                           
+                            $query->addOr($table.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                        }else{
+                            $query->addAnd($table.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }
-                        
                     }else{
-                        
-                        //var_dump("entro 3");
                         $query->filterBy(BasePeer::translateFieldname($table, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
                     }
                 }
@@ -188,7 +296,9 @@ class ArrayManage{
             $query->orderBy($order, $dir);
         }
 
-        $result = ArrayManage::getHasCompany($query, $idcompany, $page, $limit);
+        // Obtenemos el filtrado por medio del idcompany del recurso.
+        $result = ArrayManage::getIdCompanyForList($query, $idcompany, $page, $limit);
+
 
         $links = array(
            'self' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getPage()),

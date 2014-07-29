@@ -14,14 +14,23 @@ class DepartamentMemberForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iddepartamentmember',
+            'options' => array(
+                'label' => 'Id Miembro de Departamento'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'iddepartament'
+            'name' => 'iddepartament',
+            'options' => array(
+                'label' => 'Id Departamento'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iduser',
+            'options' => array(
+                'label' => 'Id Usuario'
+            ),
         ));
     }
 }

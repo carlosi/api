@@ -13,18 +13,30 @@ class ClientCommentForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idclientcomment',
+            'options' => array(
+                'label' => 'Id Comentario'
+            ),
         ));
         $this->add(array(
-            'type' => 'Select',
+            'type' => 'Hidden',
             'name' => 'idclient',
+            'options' => array(
+                'label' => 'Id Cliente'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'clientcomment_note',
+            'options' => array(
+                'label' => 'Nota'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'clientcomment_date',
+            'options' => array(
+                'label' => 'Fecha de creación'
+            )
         ));
     }
 }

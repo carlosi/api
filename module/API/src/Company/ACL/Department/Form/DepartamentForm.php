@@ -14,14 +14,23 @@ class DepartamentForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iddepartment',
+            'options' => array(
+                'label' => 'Id Departamento'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idcompany'
+            'name' => 'idcompany',
+            'options' => array(
+                'label' => 'Id Compañía'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'departament_name',
+            'options' => array(
+                'label' => 'Departamento'
+            ),
         ));
     }
 }

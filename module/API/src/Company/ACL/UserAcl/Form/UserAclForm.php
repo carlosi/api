@@ -14,6 +14,9 @@ class UserAclForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iduseracl',
+            'options' => array(
+                'label' => 'Id ACL Usuario'
+            ),
         ));
         $this->add(array(
             'type' => 'Hidden',
@@ -31,6 +34,7 @@ class UserAclForm extends Form
                     'manufacture' => 'manufacture',
                     'contents' => 'contents',
                 ),
+                'label' => 'id Usuario',
             ),
             'attributes' => array(
                 'basic' => 'basic' //set selected to 'basic'
@@ -48,6 +52,7 @@ class UserAclForm extends Form
                     '4' => '4',
                     '5' => '5',
                 ),
+                'label' => 'Nivel de acceso',
             ),
             'attributes' => array(
                 '1' => '1' //set selected to '1'

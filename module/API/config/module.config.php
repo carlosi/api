@@ -10,26 +10,24 @@
 return array(
     'router' => array(
         'routes' => array(
-            'user' => array(
+            //Login
+            'login' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/user[/:id][/:token][/]',
+                    'route'    => '/login[/]',
                     'defaults' => array(
-                        'controller' => 'Company\Controller\UserController',
-                    ),
-                    'constraints' => array(
-                        'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'controller' => 'Login\Controller\LoginController',
+                        'action'		=> 'login',
                     ),
                 ),
-        	),
-            'branch' => array(
-                'type' => 'Segment',
+            ),
+            // Module Routes Company
+            'bankaccount' => array(
+                'type' => 'segment',
                 'options' => array(
-                    'route'    => '/branch[/:id][/:token][/]',
+                    'route'    => '/bankaccount[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\Controller\BranchController',
+                        'controller' => 'Company\Controller\BankAccountController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
@@ -38,12 +36,12 @@ return array(
                     ),
                 ),
             ),
-            'useracl' => array(
+            'branch' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/useracl[/:id][/:token][/]',
+                    'route'    => '/branch[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\Controller\UserAclController',
+                        'controller' => 'Company\Controller\BranchController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
@@ -66,7 +64,20 @@ return array(
                     ),
                 ),
             ),
-
+            'client' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/client[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\ClientController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
             'clientaddress' => array(
                 'type' => 'Segment',
                 'options' => array(
@@ -81,17 +92,105 @@ return array(
                     ),
                 ),
             ),
-            'login' => array(
+            'clientcomment' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/login[/]',
+                    'route'    => '/clientcomment[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Login\Controller\LoginController',
-                        'action' => 'login',
+                        'controller' => 'Company\Controller\ClientCommentController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
                     ),
                 ),
             ),
-
+            'clientfile' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/clientfile[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\ClientFileController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'company' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/company[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\CompanyController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'user' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/user[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\UserController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'useracl' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/useracl[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\UserAclController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            // Module Routes SATMexico
+            'clienttax' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/clienttax[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'SATMexico\Controller\ClientTaxController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'expenserecurrency' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/expenserecurrency[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Expense\Controller\ExpenseRecurrencyController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
         	// Documentation
             'documentation' => array(
                 'type' => 'segment',
@@ -136,47 +235,34 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            //Propel Test
-            'Test\Controller\IndexController' => 'Test\Controller\IndexController',
 
-            'Company\Controller\UserController'                 => 'Company\Controller\UserController',
-            'Company\Controller\UserAclController'              => 'Company\Controller\UserAclController',
-            'Company\Controller\LoginController'			    => 'Company\Controller\LoginController',
-            'Company\Controller\CompanyController' 			    => 'Company\Controller\CompanyController',
-            'Company\Controller\BankAccountController' 	        => 'Company\Controller\BankAccountController',
-            'Company\Controller\BankOrderTransactionController' => 'Company\Controller\BankOrderTransactionController',
-            'Company\Controller\BranchController' 			    => 'Company\Controller\BranchController',
-            'Company\Controller\BranchUserController'           => 'Company\Controller\BranchUserController',
-            'Company\Controller\ClientController' 			    => 'Company\Controller\ClientController',
-            'Company\Controller\ClientTaxController'   	        => 'Company\Controller\ClientTaxController',
-            'Company\Controller\ClientCommentController' 		=> 'Company\Controller\ClientCommentController',
-            'Company\Controller\ClientAddressController' 		=> 'Company\Controller\ClientAddressController',
-            'Company\Controller\ClientFileController' 			=> 'Company\Controller\ClientFileController',
-            'Company\Controller\MxTaxDocumentController' 		=> 'Company\Controller\MxTaxDocumentController',
-            'Company\Controller\MxTaxInfoController' 			=> 'Company\Controller\MxTaxInfoController',
-            'Company\Controller\TestController' 			    => 'Company\Controller\TestController',
+            'Login\Controller\LoginController'              => 'Login\Controller\LoginController',
 
-            'Contents\Controller\ProductController' 			=> 'Contents\Controller\ProductController',
-            'Contents\Controller\ProductMainController' 		=> 'Contents\Controller\ProductMainController',
-            'Contents\Controller\ProductMainPhotoController'    => 'Contents\Controller\ProductMainPhotoController',
-            
-        	'Sales\Controller\OrderController' 			        => 'Sales\Controller\OrderController',
-        	'Sales\Controller\OrderFileController' 			    => 'Sales\Controller\OrderFileController',
-        	'Sales\Controller\OrderCommentController' 		    => 'Sales\Controller\OrderCommentController',
-        	'Sales\Controller\OrderItemController' 			    => 'Sales\Controller\OrderItemController',
-        	'Sales\Controller\OrderShippingController' 		    => 'Sales\Controller\OrderShippingController',
-            'Sales\Controller\ProductCategoryController' 		=> 'Sales\Controller\ProductCategoryController',
-            'Sales\Controller\ProductCategoryPropertyController' 	=> 'Sales\Controller\ProductCategoryPropertyController',
-            'Sales\Controller\ProductCategoryPropertyOptionController' 	=> 'Sales\Controller\ProductCategoryPropertyOptionController',
+            'Company\Controller\BankAccountController'      => 'Company\Controller\BankAccountController',
+            'Company\Controller\BranchController'           => 'Company\Controller\BranchController',
+            'Company\Controller\BranchUserController'       => 'Company\Controller\BranchUserController',
+            'Company\Controller\ClientController'          => 'Company\Controller\ClientController',
+            'Company\Controller\ClientAddressController'    => 'Company\Controller\ClientAddressController',
+            'Company\Controller\ClientCommentController'    => 'Company\Controller\ClientCommentController',
+            'Company\Controller\ClientFileController'       => 'Company\Controller\ClientFileController',
+            'Company\Controller\CompanyController'          => 'Company\Controller\CompanyController',
+            'Company\Controller\UserController'             => 'Company\Controller\UserController',
 
-            'Manufacture\Controller\ProductionUserController' 	        => 'Manufacture\Controller\ProductionUserController',
-            'Manufacture\Controller\ProductionTeamController' 	        => 'Manufacture\Controller\ProductionTeamController',
-            'Manufacture\Controller\ProductionOrderItemController' 	    => 'Manufacture\Controller\ProductionOrderItemController',
+            'Contents\Controller\ProductController'         => 'Contents\Controller\ProductController',
 
             'Documentation\Controller\IndexController'		=> 'Documentation\Controller\IndexController',
             'Documentation\Controller\ModulesController'	=> 'Documentation\Controller\ModulesController',
-            
-            'Login\Controller\LoginController' => 'Login\Controller\LoginController',
+
+            'Sales\Controller\OrderController' 			        => 'Sales\Controller\OrderController',
+
+
+            'Expense\Controller\ExpenseRecurrencyController' 	=> 'Expense\Controller\ExpenseRecurrencyController',
+            'Login\Controller\LoginController'                  => 'Login\Controller\LoginController',
+
+            'Sales\Controller\ProductCategoryPropertyOptionController' 	=> 'Sales\Controller\ProductCategoryPropertyOptionController',
+
+            'SATMexico\Controller\ClientTaxController'     => 'SATMexico\Controller\ClientTaxController',
+
             'Shared\Controller\AllowedPropertiesController' => 'Shared\Controller\AllowedPropertiesController',
             
             ),

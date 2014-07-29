@@ -13,7 +13,6 @@ class LoginController extends AbstractActionController
     public function loginAction(){
         
         
-        
         $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
 
             
