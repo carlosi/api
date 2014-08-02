@@ -11,8 +11,8 @@ namespace API;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-use Shared\CustomListener\TokenListener;
-use Shared\CustomListener\ApiProblemListener;
+use REST\v1\Shared\CustomListener\TokenListener;
+use REST\v1\Shared\CustomListener\ApiProblemListener;
 
 class Module
 {
@@ -46,19 +46,8 @@ class Module
             ),
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
-                	'Company' 	    => __DIR__ . '/src/' . 'Company',
-                	'Contents' 	    => __DIR__ . '/src/' . 'Contents',
-                	'Documentation' => __DIR__ . '/src/' . 'Documentation',
-                    'Login' 	    => __DIR__ . '/src/' . 'Login',
-                    'Expense'	    => __DIR__ . '/src/' . 'Expense',
-                    'MercadoLibre'  => __DIR__ . '/src/' . 'MercadoLibre',
-                    'Production'    => __DIR__ . '/src/' . 'Production',
-                    'Project'		=> __DIR__ . '/src/' . 'Project',
-                    'Sales'		    => __DIR__ . '/src/' . 'Sales',
-                    'SATMexico'		=> __DIR__ . '/src/' . 'SATMexico',
-                    'Shared'		=> __DIR__ . '/src/' . 'Shared',
-                    'Shipping'		=> __DIR__ . '/src/' . 'Shipping',
-
+                    'REST' 	    => __DIR__ . '/src/' . 'REST',
+                    'RPC' 	    => __DIR__ . '/src/' . 'RPC'
                 ),
             ),
             
