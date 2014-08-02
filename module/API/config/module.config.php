@@ -134,6 +134,34 @@ return array(
                     ),
                 ),
             ),
+            'companyaddress' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/companyaddress[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\CompanyAddressController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
+            'mxtaxdocument' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/mxtaxdocument[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'SATMexico\Controller\MxTaxDocumentController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
             'user' => array(
                 'type' => 'segment',
                 'options' => array(
@@ -202,6 +230,21 @@ return array(
                     ),
                 ),
             ),
+            // Expense
+            'bankexpensetransaction' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/bankexpensetransaction[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Expense\Controller\BankExpenseTransactionController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
         ),
     ),
 //    'input_filters' => array(
@@ -241,11 +284,12 @@ return array(
             'Company\Controller\BankAccountController'      => 'Company\Controller\BankAccountController',
             'Company\Controller\BranchController'           => 'Company\Controller\BranchController',
             'Company\Controller\BranchUserController'       => 'Company\Controller\BranchUserController',
-            'Company\Controller\ClientController'          => 'Company\Controller\ClientController',
+            'Company\Controller\ClientController'           => 'Company\Controller\ClientController',
             'Company\Controller\ClientAddressController'    => 'Company\Controller\ClientAddressController',
             'Company\Controller\ClientCommentController'    => 'Company\Controller\ClientCommentController',
             'Company\Controller\ClientFileController'       => 'Company\Controller\ClientFileController',
             'Company\Controller\CompanyController'          => 'Company\Controller\CompanyController',
+            'Company\Controller\CompanyAddressController'   => 'Company\Controller\CompanyAddressController',
             'Company\Controller\UserController'             => 'Company\Controller\UserController',
 
             'Contents\Controller\ProductController'         => 'Contents\Controller\ProductController',
@@ -253,15 +297,14 @@ return array(
             'Documentation\Controller\IndexController'		=> 'Documentation\Controller\IndexController',
             'Documentation\Controller\ModulesController'	=> 'Documentation\Controller\ModulesController',
 
-            'Sales\Controller\OrderController' 			        => 'Sales\Controller\OrderController',
-
-
+            'Expense\Controller\BankExpenseTransactionController' 	=> 'Expense\Controller\BankExpenseTransactionController',
             'Expense\Controller\ExpenseRecurrencyController' 	=> 'Expense\Controller\ExpenseRecurrencyController',
-            'Login\Controller\LoginController'                  => 'Login\Controller\LoginController',
 
+            'Sales\Controller\OrderController' 			        => 'Sales\Controller\OrderController',
             'Sales\Controller\ProductCategoryPropertyOptionController' 	=> 'Sales\Controller\ProductCategoryPropertyOptionController',
 
             'SATMexico\Controller\ClientTaxController'     => 'SATMexico\Controller\ClientTaxController',
+            'SATMexico\Controller\MxTaxDocumentController' => 'SATMexico\Controller\MxTaxDocumentController',
 
             'Shared\Controller\AllowedPropertiesController' => 'Shared\Controller\AllowedPropertiesController',
             
