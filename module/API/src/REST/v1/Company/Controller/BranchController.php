@@ -333,16 +333,17 @@ class BranchController extends AbstractRestfulController
                 );
             }
 
-            $result = BranchQuery::create()->filterByIdCompany($idCompany)->findOneByIdbranch($id);
+            $result = $this->getQuery()->create()->filterByIdCompany($idCompany)->findOneByIdbranch($id);
 
             //Si si existe el id solicitado y pertenece a la compañia
             if($result!=null){
-                $branch = BranchQuery::create()->filterByIdBranch($id)->findOne();
+                $branch = $this->getQuery()->create()->filterByIdBranch($id)->findOne();
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $branchArray = array(
                     "_links" => array(
                         'self' => WEBSITE_API . '/' . $this->table.'/'.$id,
                     ),
+                    "ACL" => $acl
                 );
                 foreach ($branchForm->getElements() as $key=>$value){
                     $branchArray[$key] = $result[$key];
@@ -415,7 +416,7 @@ class BranchController extends AbstractRestfulController
                     'Error' => array(
                         'HTTP Status' => 400 . ' Bad Request',
                         'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id branch',
+                        'Details' => 'Invalid idbranch',
                     ),
                 );
                 return new JsonModel($bodyResponse);
@@ -462,8 +463,8 @@ class BranchController extends AbstractRestfulController
             }
 
             /*
-                * ACL
-                */
+            * ACL
+            */
 
             //Guardamos en un arreglo las columnas y los atributos a los que el usuario tiene permiso
             $acl = array();
@@ -581,6 +582,7 @@ class BranchController extends AbstractRestfulController
 
             $response = array(
                 '_links' => $result['links'],
+                'ACL' => $acl,
                 'resume' => $result['resume'],
                 '_embedded' => array('sucursales'=> $branchArray),
             );

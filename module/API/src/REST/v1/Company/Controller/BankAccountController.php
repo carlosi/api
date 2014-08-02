@@ -299,6 +299,7 @@ class BankAccountController extends AbstractRestfulController
                     "_links" => array(
                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
                     ),
+                    "ACL" => $acl
                 );
                 foreach ($bankaccountForm->getElements() as $key=>$value){
                     $bankaccountArray[$key] = $result[$key];
@@ -466,6 +467,7 @@ class BankAccountController extends AbstractRestfulController
 
             $response = array(
                 '_links' => $result['links'],
+                'ACL' => $acl,
                 'resume' => $result['resume'],
                 '_embedded' => array('bankaccounts'=> $bankaccountArray),
             );

@@ -364,6 +364,7 @@ class BranchUserController extends AbstractRestfulController
                     "_links" => array(
                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
                     ),
+                    "ACL" => $acl,
                 );
                 foreach ($branchuserForm->getElements() as $key=>$value){
                     $branchuserArray[$key] = $result[$key];
@@ -571,6 +572,7 @@ class BranchUserController extends AbstractRestfulController
 
             $response = array(
                 '_links' => $result['links'],
+                'ACL' => $acl,
                 'resume' => $result['resume'],
                 '_embedded' => array('branchusers'=> $branchuserArray),
             );

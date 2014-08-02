@@ -360,6 +360,7 @@ class ClientAddressController extends AbstractRestfulController
                     "_links" => array(
                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
                     ),
+                    "ACL" => $acl,
                 );
                 foreach ($clientaddressForm->getElements() as $key=>$value){
                     $clientaddressArray[$key] = $result[$key];
@@ -584,6 +585,7 @@ class ClientAddressController extends AbstractRestfulController
 
             $response = array(
                 '_links' => $result['links'],
+                'ACL' => $acl,
                 'resume' => $result['resume'],
                 '_embedded' => array('clientaddress'=> $clientaddressArray),
             );

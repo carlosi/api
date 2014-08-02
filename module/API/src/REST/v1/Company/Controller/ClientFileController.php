@@ -339,6 +339,7 @@ class ClientFileController extends AbstractRestfulController
                     "_links" => array(
                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
                     ),
+                    "ACL" => $acl,
                 );
                 foreach ($clientfileForm->getElements() as $key=>$value){
                     $clientfileArray[$key] = $result[$key];
@@ -543,13 +544,10 @@ class ClientFileController extends AbstractRestfulController
 
             $response = array(
                 '_links' => $result['links'],
+                'ACL' => $acl,
                 'resume' => $result['resume'],
                 '_embedded' => array('clientfiles'=> $clientfileArray),
             );
-
-            if(isset($acl)){
-                $response['ACL'] = $acl;
-            }
 
             return new JsonModel($response);
 

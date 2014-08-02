@@ -337,6 +337,7 @@ class ClientCommentController extends AbstractRestfulController
                     "_links" => array(
                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
                     ),
+                    "ACL" => $acl,
                 );
                 foreach ($clientcommentForm->getElements() as $key=>$value){
                     $clientaddressArray[$key] = $result[$key];
@@ -531,6 +532,7 @@ class ClientCommentController extends AbstractRestfulController
 
             $response = array(
                 '_links' => $result['links'],
+                'ACL' => $acl,
                 'resume' => $result['resume'],
                 '_embedded' => array('clientcomments'=> $clientcommentArray),
             );
