@@ -5,7 +5,7 @@ namespace REST\v1\Shared\CustomListener;
 use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Shared\Functions\SessionManager;
+use REST\v1\Shared\Functions\SessionManager;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Response;
 
