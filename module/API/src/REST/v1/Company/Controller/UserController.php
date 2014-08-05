@@ -2,17 +2,16 @@
 
 namespace REST\v1\Company\Controller;
 
+use REST\v1\Company\ACL\UserAcl\Form\UserAclFormPostPut;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Http\Request;
 use Zend\View\Model\JsonModel;
 
 //==============FORMS================
-use REST\v1\Company\ACL\User\UserForm;
 use REST\v1\Company\ACL\User\Form\UserFormGET;
 use REST\v1\Company\ACL\User\Form\UserFormPostPut;
 use REST\v1\Company\ACL\Company\Form\CompanyFormGET;
 //==============FILTERS==============
-use REST\v1\Company\ACL\User\Filter\UserFilterGET;
 use REST\v1\Company\ACL\User\Filter\UserFilterPostPut;
 //=============PROPEL===============
 use User;
@@ -91,14 +90,26 @@ class UserController extends AbstractRestfulController
 
                     $request = $this->getRequest();
 
-                    //Cachamos los datos a insertar en un arreglo
-                    $userArray = array();
-                    $userArray['user_nickname'] = $this->getRequest()->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
-                    //$password = $this->getRequest()->getPost()->user_password;
-                    $userArray['user_password'] = $this->getRequest()->getPost()->user_password ? $this->getRequest()->getPost()->user_password : null;
-                    $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : null;
-                    $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : 'pending';
-
+                    if($data != null){
+                        //Cachamos los datos a insertar en un arreglo
+                        $userArray = array();
+                        $userArray['user_nickname'] = $request->getPost()->user_nickname ? $request->getPost()->user_nickname : null;
+                        $userArray['user_password'] = $request->getPost()->user_password ? $request->getPost()->user_password : null;
+                        $userArray['user_type'] = $request->getPost()->user_type ? $request->getPost()->user_type : null;
+                        $userArray['user_status'] = $request->getPost()->user_status ? $request->getPost()->user_status : 'pending';
+                    }else{
+                        //Modifiamos el Header de nuestra respuesta
+                        $response = $this->getResponse();
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        $bodyResponse = array(
+                            'Error' => array(
+                                'HTTP Status' => 400 . ' Bad Request',
+                                'Title' => 'The body is empty',
+                                'Details' => "The body can`t be empty'",
+                            ),
+                        );
+                        return new JsonModel($bodyResponse);
+                    }
                     break;
                 }
                 case 'application/json':{
@@ -106,14 +117,26 @@ class UserController extends AbstractRestfulController
                     $requestContent = $this->getRequest()->getContent();
                     $requestArray = json_decode($requestContent, true);
 
-                    //Cachamos los datos a insertar en un arreglo
-                    $userArray = array();
-                    $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
-                    //$password = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
-                    $userArray['user_password'] = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
-                    $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : null;
-                    $userArray['user_status'] = isset($requestArray['user_status']) ? $requestArray['user_status'] : 'pending';
-
+                    if($data != null){
+                        //Cachamos los datos a insertar en un arreglo
+                        $userArray = array();
+                        $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
+                        $userArray['user_password'] = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
+                        $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : null;
+                        $userArray['user_status'] = isset($requestArray['user_status']) ? $requestArray['user_status'] : 'pending';
+                    }else{
+                            //Modifiamos el Header de nuestra respuesta
+                            $response = $this->getResponse();
+                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                            $bodyResponse = array(
+                                'Error' => array(
+                                    'HTTP Status' => 400 . ' Bad Request',
+                                    'Title' => 'The body is empty',
+                                    'Details' => "The body can`t be empty'",
+                                ),
+                            );
+                            return new JsonModel($bodyResponse);
+                    }
                     break;
                 }
                 default :{
@@ -139,16 +162,15 @@ class UserController extends AbstractRestfulController
             $userFilter = new UserFilterPostPut();
             
             $userForm->setInputFilter($userFilter->getInputFilter($userLevel));
-            //var_dump($userForm->getInputFilter());
-            
+
             //Si los valores son validos
             if($userForm->isValid()){
                 //Encriptamos el password
                 $password = hash('sha256', $userArray['user_password']);
                 //Verificamos que user_nickname no exista ya en nuestra base de datos.
-                if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByUserNickname($userArray['user_nickname'])->find()->count()==0){
+                if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByUserNickname($userArray['user_nickname'])->find()->count()==0){
                     //Insertamos en nuestra base de datos
-                    $user = new \User();
+                    $user = new User();
                     $user->setIdCompany($idCompany)
                          ->setUserNickname($userArray['user_nickname'])
                          ->setUserPassword($password)
@@ -193,7 +215,7 @@ class UserController extends AbstractRestfulController
                          ),
                     );
 
-                    //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                    //Agregamos los datod de company a nuestro arreglo $row['_embedded']['company']
                    foreach ($companyArray as $key=>$value){
                          $bodyResponse ['_embedded']['company'][$key] = $value;
                    }
@@ -222,8 +244,7 @@ class UserController extends AbstractRestfulController
                 foreach ($userForm->getMessages() as $key => $value){
                     foreach($value as $val){
                         //Obtenemos el valor de la columna con error
-                        $columnError = $key;
-                        $message = $key.' '.$val; 
+                        $message = $key.' '.$val;
                         array_push($messageArray, $message);
                     }                
                 }
@@ -249,46 +270,6 @@ class UserController extends AbstractRestfulController
             );
             return new JsonModel($bodyResponse);       
         } 
-    }
-    
-    public function delete($id) {
-        
-        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
-        $token = $this->getToken();
-        
-        //Obtenemos el IdUser propietario del token
-        $idUser = SessionManager::getIDUser($token);
-        
-        //Obtenemos el IdCompany al que pertenece el usuario
-        $idCompany = SessionManager::getIDCompany($token);
-        
-        //Obtenemnos el nivel de acceso del usuario para el recurso
-        $userLevel = SessionManager::getUserLevelToCompany($idUser);
-        
-        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
-        if($userLevel!=0){
-            //Verificamos que el id que se desea eliminar exista y que pertenezca a la compañia
-            if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByIdUser($id)->exists()){
-                $user = \UserQuery::create()->findOneByIdUser($id);
-                $user->delete();
-                
-                //Modifiamos el Header de nuestra respuesta
-                $response = $this->getResponse();
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //NOT CONTENT
-            }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response = $this->getResponse();
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id User',
-                    ),
-                );
-                return new JsonModel($bodyResponse);
-            }
-        }
     }
 
     public function get($id) {
@@ -316,17 +297,49 @@ class UserController extends AbstractRestfulController
             foreach ($userForm->getElements() as $key=>$value){
                 array_push($allowedColumns, $key);
             }
-            
-            $result = UserQuery::create()->filterByIdCompany($idCompany)->findOneByIdUser($id);
+
+            /*
+             * ACL
+             */
+
+            //Guardamos en un arreglo las columnas y los atributos a los que el usuario tiene permiso
+            $acl = array();
+
+            foreach ($userForm->getElements() as $element){
+                if($element->getOption('value_options')!=null){
+                    $acl[$element->getAttribute('name')] = array('viewName' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                }else{
+                    $acl[$element->getAttribute('name')] = $element->getOption('label');
+                }
+            }
+
+            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+            $companyForm   = CompanyFormGET::init($userLevel);
+
+            //Eliminamos el idcompany si es visible y lo agregamos como embbeded toda la informacion de company a la que tiene visible el usuario
+            if(key_exists('idcompany',$acl)){
+                unset($acl['idcompany']);
+                $companyColumns = array();
+                foreach ($userForm->getElements() as $element){
+                    $companyColumns[$element->getAttribute('name')] =  $element->getOption('label');
+                }
+            }
+
+            $acl['_embedded'] = array(
+                'company' =>  $companyColumns,
+            );
+
+            $result = $this->getQuery()->create()->filterByIdCompany($idCompany)->findOneByIdUser($id);
             
             //Si si existe el id solicitado y pertenece a la compañia
             if($result!=null){
-                $user = UserQuery::create()->filterByIdUser($id)->findOne();
+                $user = $this->getQuery()->create()->filterByIdUser($id)->findOne();
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);           
                 $userArray = array(
                     "_links" => array(
-                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                         'self' => WEBSITE_API.'/'. $this->table.'/'.$user->getIduser(),
                      ),
+                    "ACL" => $acl,
                 );
                 foreach ($userForm->getElements() as $key=>$value){
                     $userArray[$key] = $result[$key];
@@ -461,7 +474,7 @@ class UserController extends AbstractRestfulController
             
             foreach ($result['data'] as $item){
                 
-                 $user = UserQuery::create()->filterByIdUser($item['iduser'])->findOne();
+                 $user = $this->getQuery()->create()->filterByIdUser($item['iduser'])->findOne();
                  $row = array(
                      "_links" => array(
                          'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['iduser']),
@@ -475,8 +488,6 @@ class UserController extends AbstractRestfulController
                  //unset($row['idcompany']);
                  //Agregamos el campo embedded a nuestro arreglo
                  $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
-
-                 
 
                  $companyArray = array();
 
@@ -521,80 +532,212 @@ class UserController extends AbstractRestfulController
         }      
     }
 
+
     public function update($id,$data) {
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
-        
+
         //Obtenemos el IdUser propietario del token
         $idUser = SessionManager::getIDUser($token);
-        
+
         //Obtenemos el IdCompany al que pertenece el usuario
         $idCompany = SessionManager::getIDCompany($token);
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = SessionManager::getUserLevelToCompany($idUser);
-        
+
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
-                
-            //Verificamos que el Id del usuario que se quiere modificar exista y que pretenece a la compañia
-            if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByIdUser($id)->exists()){
-                    
-                //Instanciamos nuestro user
-                $user = UserQuery::create()->findPk($id);
-                
-                //Si se quiere modificar el password
-                if(isset($data['user_password'])){
-                    $password = $data['user_password'];
-                    $data['user_password'] = hash('sha256', $data['user_password']);
-                }
-                
-                //Si se quiere modificar el user_nickanme
-                if(isset($data['user_nickname'])){
-                    //Verificamos que user_nickname no exista ya en nuestra base de datos.
-                    if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByUserNickname($data['user_nickname'])->find()->count()==0){
-                        //Remplzamos los datos del usuario por lo que se van a modifica
-                        foreach ($data as $value){
-                            $user->setByName($value, BasePeer::TYPE_FIELDNAME);
-                        }
-                        
-                        //Le ponemos los datos a nuestro formulario
-                        $userForm = UserFormPostPut::init($userLevel);
-                        $userForm->setData($user->toArray(BasePeer::TYPE_FIELDNAME));
-                        
 
-                        //Le ponemos el filtro a nuestro formulario
-                        $userFilter = new UserFilterPostPut();
-                        $userForm->setInputFilter($userFilter->getInputFilter($userLevel));
-      
-                        //Si los valores son validos
-                        if($userForm->isValid()){
-                            //Si hay valores por modificar
-                            if($user->isModified()){
+            $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
+
+            switch ($requestContentType){
+                case 'application/x-www-form-urlencoded':{
+
+                    if($data != null){
+                        //Cachamos los datos a insertar en un arreglo
+                        $userArray = array();
+                        $userArray['user_nickname'] = $this->getRequest()->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
+                        $userArray['user_password'] = $this->getRequest()->getPost()->user_password ? $this->getRequest()->getPost()->user_password : null;
+                        $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : null;
+                        $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : null;
+                    }else{
+                        //Modifiamos el Header de nuestra respuesta
+                        $response = $this->getResponse();
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        $bodyResponse = array(
+                            'Error' => array(
+                                'HTTP Status' => 400 . ' Bad Request',
+                                'Title' => 'The body is empty',
+                                'Details' => "The body can`t be empty'",
+                            ),
+                        );
+                        return new JsonModel($bodyResponse);
+                    }
+                    break;
+                }
+                case 'application/json':{
+
+                    $requestContent = $this->getRequest()->getContent();
+                    $requestArray = json_decode($requestContent, true);
+
+                    if($data != null){
+
+                        //Cachamos los datos a insertar en un arreglo
+                        $userArray = array();
+                        $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
+                        $userArray['user_password'] = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
+                        $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : null;
+                        $userArray['$userArray'] = isset($requestArray['$userArray']) ? $requestArray['$userArray'] : null;
+
+                    }else{
+                        //Modifiamos el Header de nuestra respuesta
+                        $response = $this->getResponse();
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        $bodyResponse = array(
+                            'Error' => array(
+                                'HTTP Status' => 400 . ' Bad Request',
+                                'Title' => 'The body is empty',
+                                'Details' => "The body can`t be empty'",
+                            ),
+                        );
+                        return new JsonModel($bodyResponse);
+                    }
+                    break;
+                }
+                default :{
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
+                $body = array(
+                    'HTTP Status' => '400' ,
+                    'Title' => 'Bad Request' ,
+                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
+                    'More Info' => WEBSITE_API_DOCS
+                );
+
+                return new JsonModel($body);
+
+                break;
+                }
+            }
+
+            //Verificamos que el Iduser que se quiere modificar exista y que pretenece a la compañia
+            if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByIduser($id)->exists()){
+
+                //Instanciamos nuestro client
+                $user = $this->getQuery()->create()->findPk($id);
+
+                //Si se quiere modificar el password
+                if(isset($userArray['user_password'])){
+                    $password = $userArray['user_password'];
+                    $userArray['user_password'] = hash('sha256', $userArray['user_password']);
+                }
+
+                //Remplzamos los datos de client por lo que se van a modificar
+                foreach ($data as $key => $value){
+                    $user->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+                }
+
+                //Le ponemos los datos a nuestro formulario
+                $userForm = UserFormPostPut::init($userLevel);
+                $userForm->setData($user->toArray(BasePeer::TYPE_FIELDNAME));
+
+                //Le ponemos el filtro a nuestro formulario
+                $userFilter = new UserFilterPostPut();
+                $userForm->setInputFilter($userFilter->getInputFilter($userLevel));
+                //Si los valores son validos
+                if($userForm->isValid()){
+                    //Si hay valores por modificar
+                    if($user->isModified()){
+
+                        //Verificamos que user_nickname no exista ya en nuestra base de datos.
+                        $hasUserNickname = $this->getQuery()->create()->filterByIdCompany($idCompany)->filterByUserNickname($userArray['user_nickname'])->find()->count()==0;
+                        if($hasUserNickname){
+                            $user->save();
+                            //Modifiamos el Header de nuestra respuesta
+                            $response = $this->getResponse();
+                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+
+                            //Le damos formato a nuestra respuesta
+                            $bodyResponse = array(
+                                "_links" => array(
+                                    'self' => WEBSITE_API.'/'. $this->table.'/'.$user->getIduser(),
+                                ),
+                            );
+
+                            foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                                $bodyResponse[$key] = $value;
+                            }
+
+                            //Si existe la variable password, esto quiere decir que el campo password fue modificamo y lo mostraos de lo contrario lo ocultamos
+                            if(isset($password)){
+                                $bodyResponse['user_password'] = $password;
+                            }else{
+                                unset($bodyResponse['user_password']);
+                            }
+
+                            //Eliminamos los campos que hacen referencia a otras tablas
+                            unset($bodyResponse['idcompany']);
+
+                            //Agregamos el campo embedded a nuestro arreglo
+                            $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                            $companyForm = CompanyFormGET::init($userLevel);
+
+                            $companyArray = array();
+                            foreach ($companyForm->getElements() as $key=>$value){
+                                $companyArray[$key] = $company[$key];
+                            }
+                            $bodyResponse ['_embedded'] = array(
+                                'company' => array(
+                                    '_links' => array(
+                                        'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                                    ),
+                                ),
+                            );
+
+                            //Agregamos los datos de company a nuestro arreglo $row['_embedded']['company']
+                            foreach ($companyArray as $key=>$value){
+                                $bodyResponse ['_embedded']['company'][$key] = $value;
+                            }
+
+                            return new JsonModel($bodyResponse);
+
+                        }else{
+
+                            $userQuery = $this->getQuery()->create()->filterByIdCompany($idCompany)->filterByIduser($id)->findOneByUserNickname($userArray['user_nickname']);
+
+                            $user_nickname = $userQuery ? $userQuery : null;
+
+                            $user_nickname = $user_nickname == null ? $user_nickname : $userQuery->getUserNickname();
+
+                            //Si user_nickname request es igual al user_nickname de nuestra base de datos.
+                            if($user_nickname == $userArray['user_nickname']){
+
                                 $user->save();
                                 //Modifiamos el Header de nuestra respuesta
                                 $response = $this->getResponse();
                                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
-                            
+
                                 //Le damos formato a nuestra respuesta
                                 $bodyResponse = array(
                                     "_links" => array(
-                                        'self' => 'http://dev.api.buybuy.com.mx/'. $this->table.'/'.$user->getIdUser(),
-                                    ),           
-                                );  
+                                        'self' => WEBSITE_API.'/'. $this->table.'/'.$user->getIduser(),
+                                    ),
+                                );
 
                                 foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
                                     $bodyResponse[$key] = $value;
                                 }
-                        
 
-                                //Si existe la variable password, esto quiere decir que el campo password fue modificamo y lo mostraos de lo contrario lo ocultamos
+                                //Si existe la variable password, esto quiere decir que el campo password fue modificamo y lo mostramos. de lo contrario lo ocultamos
                                 if(isset($password)){
                                     $bodyResponse['user_password'] = $password;
                                 }else{
                                     unset($bodyResponse['user_password']);
                                 }
-                        
+
                                 //Eliminamos los campos que hacen referencia a otras tablas
                                 unset($bodyResponse['idcompany']);
 
@@ -607,97 +750,140 @@ class UserController extends AbstractRestfulController
                                 $companyArray = array();
                                 foreach ($companyForm->getElements() as $key=>$value){
                                     $companyArray[$key] = $company[$key];
-                                }                 
+                                }
                                 $bodyResponse ['_embedded'] = array(
-                                     'company' => array(
-                                         '_links' => array(
-                                             'self' => array('href' => 'http://dev.api.buybuy.com.mx/company/'.$user->getIdCompany()),
-                                         ),
-                                     ),
+                                    'company' => array(
+                                        '_links' => array(
+                                            'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                                        ),
+                                    ),
                                 );
 
-                                //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
-                               foreach ($companyArray as $key=>$value){
-                                     $bodyResponse ['_embedded']['company'][$key] = $value;
-                               }
+                                //Agregamos los datos de company a nuestro arreglo $row['_embedded']['company']
+                                foreach ($companyArray as $key=>$value){
+                                    $bodyResponse ['_embedded']['company'][$key] = $value;
+                                }
 
-                               return new JsonModel($bodyResponse);
-                        }else{
-                            //Modifiamos el Header de nuestra respuesta
-                            $response = $this->getResponse();
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            $bodyResponse = array(
-                                'Error' => array(
-                                    'HTTP Status' => 400 . ' Bad Request',
-                                    'Title' => 'No changes were found',
-                                ),
-                            );
-                            return new JsonModel($bodyResponse);   
-                        }     
+                                return new JsonModel($bodyResponse);
 
+
+                            }else{
+
+                                //Modifiamos el Header de nuestra respuesta
+                                $response = $this->getResponse();
+                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                                $bodyResponse = array(
+                                    'Error' => array(
+                                        'HTTP Status' => 400 . ' Bad Request',
+                                        'Title' => 'Resource data pre-validation error',
+                                        'Details' => "user_nickname ". "'".$userArray['user_nickname']."'". " already exists",
+                                    ),
+                                );
+                                return new JsonModel($bodyResponse);
+                            }
+                        }
                     }else{
                         //Modifiamos el Header de nuestra respuesta
                         $response = $this->getResponse();
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
-                        $messageArray = array();
-                        foreach ($userForm->getMessages() as $key => $value){
-                            foreach($value as $val){
-                                //Obtenemos el valor de la columna con error
-                                $columnError = $key;
-                                $message = $key.' '.$val; 
-                                array_push($messageArray, $message);
-                            }                
-                        }
                         $bodyResponse = array(
                             'Error' => array(
                                 'HTTP Status' => 400 . ' Bad Request',
-                                'Title' => 'Resource data pre-validation error',
-                                'Details' => $messageArray,
+                                'Title' => 'No changes were found',
                             ),
                         );
                         return new JsonModel($bodyResponse);
                     }
                 }else{
-
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
+                    $messageArray = array();
+                    foreach ($userForm->getMessages() as $key => $value){
+                        foreach($value as $val){
+                            //Obtenemos el valor de la columna con error
+                            $message = $key.' '.$val;
+                            array_push($messageArray, $message);
+                        }
+                    }
                     $bodyResponse = array(
                         'Error' => array(
                             'HTTP Status' => 400 . ' Bad Request',
-                            'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid id User',
+                            'Title' => 'Resource data pre-validation error',
+                            'Details' => $messageArray,
                         ),
                     );
                     return new JsonModel($bodyResponse);
                 }
+
+
             }else{
+
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //ACCESS DENIED
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
                     'Error' => array(
-                        'HTTP Status' => 403 . ' Forbidden',
-                        'Title' => 'Access denied',
-                        'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                        'HTTP Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid iduser',
                     ),
                 );
                 return new JsonModel($bodyResponse);
             }
-         }                
         }else{
             //Modifiamos el Header de nuestra respuesta
             $response = $this->getResponse();
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //ACCESS DENIED
             $bodyResponse = array(
                 'Error' => array(
-                    'HTTP Status' => 400 . ' Bad Request',
-                    'Title' => 'Resource data pre-validation error',
-                    'Details' => "user_nickname ". "'".$data['user_nickname']."'". " already exists",
+                    'HTTP Status' => 403 . ' Forbidden',
+                    'Title' => 'Access denied',
+                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
                 ),
             );
             return new JsonModel($bodyResponse);
         }
-    }          
+    }
+
+    public function delete($id) {
+
+        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+        $token = $this->getToken();
+
+        //Obtenemos el IdUser propietario del token
+        $idUser = SessionManager::getIDUser($token);
+
+        //Obtenemos el IdCompany al que pertenece el usuario
+        $idCompany = SessionManager::getIDCompany($token);
+
+        //Obtenemnos el nivel de acceso del usuario para el recurso
+        $userLevel = SessionManager::getUserLevelToCompany($idUser);
+
+        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
+        if($userLevel!=0){
+            //Verificamos que el id que se desea eliminar exista y que pertenezca a la compañia
+            if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByIdUser($id)->exists()){
+                $user = $this->getQuery()->create()->findOneByIdUser($id);
+                $user->delete();
+
+                //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //NOT CONTENT
+            }else{
+                //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid id User',
+                    ),
+                );
+                return new JsonModel($bodyResponse);
+            }
+        }
+    }
 }

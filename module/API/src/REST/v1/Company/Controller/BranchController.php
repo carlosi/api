@@ -680,7 +680,7 @@ class BranchController extends AbstractRestfulController
                 }
             }
 
-            //Verificamos que el Id del usuario que se quiere modificar exista y que pretenece a la compañia
+            //Verificamos que el Id branch que se quiere modificar exista y que pretenece a la compañia
             if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByIdbranch($id)->exists()){
 
                 //Instanciamos nuestra branch

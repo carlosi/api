@@ -183,7 +183,7 @@ class ClientController extends AbstractRestfulController
                 $password = hash('sha256', $clientArray['client_password']);
 
                 //Verificamos que client_fullname no exista ya en nuestra base de datos.
-                if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByClientFullname($clientArray['client_fullname'])->find()->count()==0){
+                if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByClientFullname($clientArray['client_fullname'])->find()->count() == 0){
                     //Insertamos en nuestra base de datos
                     $client = new Client();
                     $client->setIdCompany($idCompany)
@@ -257,6 +257,7 @@ class ClientController extends AbstractRestfulController
                     return new JsonModel($bodyResponse);
                 }
             }else{
+
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
@@ -754,37 +755,100 @@ class ClientController extends AbstractRestfulController
                 }
             }
 
-            //Verificamos que el Id del usuario que se quiere modificar exista y que pretenece a la compañia
+            //Verificamos que el Iduser que se quiere modificar exista y que pretenece a la compañia
             if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByIdclient($id)->exists()){
 
                 //Instanciamos nuestro client
                 $client = $this->getQuery()->create()->findPk($id);
 
                 //Si se quiere modificar el password
-                if(isset($data['client_password'])){
-                    $password = $data['client_password'];
-                    $data['client_password'] = hash('sha256', $data['client_password']);
+                if(isset($clientArray['client_password'])){
+                    $password = $clientArray['client_password'];
+                    $clientArray['client_password'] = hash('sha256', $clientArray['client_password']);
                 }
-                //Si se quiere modificar el client_fullname
-                if(isset($data['client_fullname']) && $data['client_fullname'] != null){
-                    //Remplzamos los datos de client por lo que se van a modificar
-                    foreach ($data as $key => $value){
-                        $client->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
-                    }
 
-                    //Le ponemos los datos a nuestro formulario
-                    $clientForm = ClientFormPostPut::init($userLevel);
-                    $clientForm->setData($client->toArray(BasePeer::TYPE_FIELDNAME));
+                //Remplzamos los datos de client por lo que se van a modificar
+                foreach ($data as $key => $value){
+                    $client->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+                }
 
-                    //Le ponemos el filtro a nuestro formulario
-                    $clientFilter = new ClientFilterPostPut();
-                    $clientForm->setInputFilter($clientFilter->getInputFilter($userLevel));
-                    //Si los valores son validos
-                    if($clientForm->isValid()){
-                        //Si hay valores por modificar
-                        if($client->isModified()){
-                            //Verificamos que client_fullname no exista ya en nuestra base de datos.
-                            if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByClientFullname($data['client_fullname'])->find()->count()==0){
+                //Le ponemos los datos a nuestro formulario
+                $clientForm = ClientFormPostPut::init($userLevel);
+                $clientForm->setData($client->toArray(BasePeer::TYPE_FIELDNAME));
+
+                //Le ponemos el filtro a nuestro formulario
+                $clientFilter = new ClientFilterPostPut();
+                $clientForm->setInputFilter($clientFilter->getInputFilter($userLevel));
+                //Si los valores son validos
+                if($clientForm->isValid()){
+                    //Si hay valores por modificar
+                    if($client->isModified()){
+
+                        //Verificamos que client_fullname no exista ya en nuestra base de datos.
+                        $hasClientFullname = $this->getQuery()->create()->filterByIdCompany($idCompany)->filterByClientFullname($clientArray['client_fullname'])->find()->count()==0;
+                        if($hasClientFullname){
+                            $client->save();
+                            //Modifiamos el Header de nuestra respuesta
+                            $response = $this->getResponse();
+                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+
+                            //Le damos formato a nuestra respuesta
+                            $bodyResponse = array(
+                                "_links" => array(
+                                    'self' => WEBSITE_API.'/'. $this->table.'/'.$client->getIdclient(),
+                                ),
+                            );
+
+                            foreach ($client->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                                $bodyResponse[$key] = $value;
+                            }
+
+                            //Si existe la variable password, esto quiere decir que el campo password fue modificamo y lo mostraos de lo contrario lo ocultamos
+                            if(isset($password)){
+                                $bodyResponse['client_password'] = $password;
+                            }else{
+                                unset($bodyResponse['client_password']);
+                            }
+
+                            //Eliminamos los campos que hacen referencia a otras tablas
+                            unset($bodyResponse['idcompany']);
+
+                            //Agregamos el campo embedded a nuestro arreglo
+                            $company = $client->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                            $companyForm = CompanyFormGET::init($userLevel);
+
+                            $companyArray = array();
+                            foreach ($companyForm->getElements() as $key=>$value){
+                                $companyArray[$key] = $company[$key];
+                            }
+                            $bodyResponse ['_embedded'] = array(
+                                'company' => array(
+                                    '_links' => array(
+                                        'self' => array('href' => WEBSITE_API.'/company/'.$client->getIdCompany()),
+                                    ),
+                                ),
+                            );
+
+                            //Agregamos los datos de company a nuestro arreglo $row['_embedded']['company']
+                            foreach ($companyArray as $key=>$value){
+                                $bodyResponse ['_embedded']['company'][$key] = $value;
+                            }
+
+                            return new JsonModel($bodyResponse);
+
+                        }else{
+
+                            $clientQuery = $this->getQuery()->create()->filterByIdCompany($idCompany)->filterByIdclient($id)->findOneByClientFullname($clientArray['client_fullname']);
+
+                            $validClientFullname = $clientQuery ? $clientQuery : null;
+
+                            $client_fullname = $validClientFullname == null ? $validClientFullname : $clientQuery->getClientFullname();
+
+                            //Si user_nickname request es igual al user_nickname de nuestra base de datos.
+                            if($client_fullname == $clientArray['client_fullname']){
+
                                 $client->save();
                                 //Modifiamos el Header de nuestra respuesta
                                 $response = $this->getResponse();
@@ -799,6 +863,13 @@ class ClientController extends AbstractRestfulController
 
                                 foreach ($client->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
                                     $bodyResponse[$key] = $value;
+                                }
+
+                                //Si existe la variable password, esto quiere decir que el campo password fue modificamo y lo mostraos de lo contrario lo ocultamos
+                                if(isset($password)){
+                                    $bodyResponse['client_password'] = $password;
+                                }else{
+                                    unset($bodyResponse['client_password']);
                                 }
 
                                 //Eliminamos los campos que hacen referencia a otras tablas
@@ -830,6 +901,7 @@ class ClientController extends AbstractRestfulController
                                 return new JsonModel($bodyResponse);
 
                             }else{
+
                                 //Modifiamos el Header de nuestra respuesta
                                 $response = $this->getResponse();
                                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
@@ -842,37 +914,15 @@ class ClientController extends AbstractRestfulController
                                 );
                                 return new JsonModel($bodyResponse);
                             }
-                        }else{
-                            //Modifiamos el Header de nuestra respuesta
-                            $response = $this->getResponse();
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            $bodyResponse = array(
-                                'Error' => array(
-                                    'HTTP Status' => 400 . ' Bad Request',
-                                    'Title' => 'No changes were found',
-                                ),
-                            );
-                            return new JsonModel($bodyResponse);
                         }
                     }else{
                         //Modifiamos el Header de nuestra respuesta
                         $response = $this->getResponse();
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
-                        $messageArray = array();
-                        foreach ($clientForm->getMessages() as $key => $value){
-                            foreach($value as $val){
-                                //Obtenemos el valor de la columna con error
-                                $columnError = $key;
-                                $message = $key.' '.$val;
-                                array_push($messageArray, $message);
-                            }
-                        }
                         $bodyResponse = array(
                             'Error' => array(
                                 'HTTP Status' => 400 . ' Bad Request',
-                                'Title' => 'Resource data pre-validation error',
-                                'Details' => $messageArray,
+                                'Title' => 'No changes were found',
                             ),
                         );
                         return new JsonModel($bodyResponse);
@@ -881,14 +931,26 @@ class ClientController extends AbstractRestfulController
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
+                    $messageArray = array();
+                    foreach ($clientForm->getMessages() as $key => $value){
+                        foreach($value as $val){
+                            //Obtenemos el valor de la columna con error
+                            $message = $key.' '.$val;
+                            array_push($messageArray, $message);
+                        }
+                    }
                     $bodyResponse = array(
                         'Error' => array(
                             'HTTP Status' => 400 . ' Bad Request',
-                            'Title' => 'No changes were found',
+                            'Title' => 'Resource data pre-validation error',
+                            'Details' => $messageArray,
                         ),
                     );
                     return new JsonModel($bodyResponse);
                 }
+
+
             }else{
 
                 //Modifiamos el Header de nuestra respuesta
@@ -898,7 +960,7 @@ class ClientController extends AbstractRestfulController
                     'Error' => array(
                         'HTTP Status' => 400 . ' Bad Request',
                         'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id client',
+                        'Details' => 'Invalid idclient',
                     ),
                 );
                 return new JsonModel($bodyResponse);

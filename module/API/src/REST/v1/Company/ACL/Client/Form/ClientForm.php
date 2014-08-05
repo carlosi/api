@@ -44,6 +44,14 @@ class ClientForm extends Form
             ),
 		));
 
+        $this->add(array(
+            'type' => 'Hidden',
+            'name' => 'client_fullname',
+            'options' => array(
+                'label' => 'Email'
+            ),
+        ));
+
 		$this->add(array(
             'type' => 'Email',
             'name' => 'client_email',

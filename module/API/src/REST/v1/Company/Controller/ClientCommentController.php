@@ -335,7 +335,7 @@ class ClientCommentController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $clientcommentArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                        'self' => WEBSITE_API.'/'. $this->table.'/'.$clientcomment->getIdclientcomment(),
                     ),
                     "ACL" => $acl,
                 );
@@ -642,8 +642,8 @@ class ClientCommentController extends AbstractRestfulController
                 }
             }
 
-            $client = new ClientQuery();
-            $result = $client->create()->filterByIdcompany($idCompany)->filterByIdclient($clientcommentArray['idclient'])->find();
+            $clientQuery = new ClientQuery();
+            $result = $clientQuery->create()->filterByIdcompany($idCompany)->filterByIdclient($clientcommentArray['idclient'])->find();
 
             // Si el idclient existe y pertenece al idcompany del usuario
             if($result->count()==1){

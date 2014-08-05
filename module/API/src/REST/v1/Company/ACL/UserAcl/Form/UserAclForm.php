@@ -21,6 +21,9 @@ class UserAclForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iduser',
+            'options' => array(
+                'label' => 'Id Usuario'
+            )
         ));
         $this->add(array(
             'type' => 'Select',
@@ -34,7 +37,7 @@ class UserAclForm extends Form
                     'manufacture' => 'manufacture',
                     'contents' => 'contents',
                 ),
-                'label' => 'id Usuario',
+                'label' => 'Nombre del Módulo',
             ),
             'attributes' => array(
                 'basic' => 'basic' //set selected to 'basic'
