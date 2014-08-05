@@ -72,8 +72,7 @@ class UserController extends AbstractRestfulController
     }
 
     public function create($data) {
-
-
+        
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
         

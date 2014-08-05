@@ -86,10 +86,7 @@ class UserFilter implements InputFilterAwareInterface
                 ),
                 'validators' => array(
                     array(
-                        'name' => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                        ),
+                        'name' => 'Zend\Validator\PasswordStrength',
                     ),
                 ),
             ));
@@ -116,8 +113,8 @@ class UserFilter implements InputFilterAwareInterface
             )));
 
             // user_status: DataType = ENUM, NN = true
-            $inputFilter->add(array(
-                'name' => 'user_status',
+            $inputFilter->add($factory->createInput(array(
+                'name' => 'user_type',
                 'required' => true,
                 'filters' => array(
                     array('name' => 'StripTags'),
@@ -129,12 +126,12 @@ class UserFilter implements InputFilterAwareInterface
                         'options' => array(
                             'haystack' => array('pending','active','suspended','inactive'),
                             'messages' => array(
-                                'notInArray' => 'is not a valid input. Valid inputs: pending | active | suspended | inactive '
-                            ),
+                                'notInArray' => 'is not a valid input. Valid inputs: pending | active | suspended | inactive'
+                             ),
                         ),
                     ),
                 ),
-            ));
+            )));
 
             $this->inputFilter = $inputFilter;
         }

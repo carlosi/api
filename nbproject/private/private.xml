@@ -13,15 +13,15 @@
             <url>module/API/src/Company/Controller/UserController.php</url>
             <bookmark id="1">
                 <name/>
-                <line>387</line>
+                <line>385</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/Shared/Functions/ArrayManage.php</file>
-            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/Company/Controller/UserController.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/ACL/User/Filter/UserFilter.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/Controller/UserController.php</file>
         </group>
     </open-files>
 </project-private>

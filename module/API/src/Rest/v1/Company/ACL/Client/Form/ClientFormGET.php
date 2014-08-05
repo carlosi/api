@@ -12,7 +12,7 @@ class ClientFormGET{
         switch ($userLevel){
 
             case 5: {
-                
+                $clientForm->remove('client_password');
                 break;
             }
             

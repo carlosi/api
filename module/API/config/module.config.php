@@ -13,7 +13,7 @@ return array(
             'user' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/user[/:id][/:token][/]',
+                    'route'    => '/v1/user[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'Company\Controller\UserController',
                     ),
@@ -23,7 +23,21 @@ return array(
                         'order' => 'asc|desc',
                     ),
                 ),
-        	),
+            ),
+            'client' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v1/client[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'Company\Controller\ClientController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'limit' => '[0-9]+',
+                        'order' => 'asc|desc',
+                    ),
+                ),
+            ),
             'branch' => array(
                 'type' => 'Segment',
                 'options' => array(
@@ -84,7 +98,7 @@ return array(
             'login' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/login[/]',
+                    'route'    => '/v1/login[/]',
                     'defaults' => array(
                         'controller' => 'Login\Controller\LoginController',
                         'action' => 'login',
