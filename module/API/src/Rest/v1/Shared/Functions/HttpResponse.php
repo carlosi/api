@@ -1,8 +1,30 @@
 <?php
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * HttpResponse
+ *
+ * @author Daniel Castanedo <daniel.b@hostdime.com.mx>
+ * @version 1.0
+ * 
  */
+
+namespace Shared\Functions;
+
+use Zend\Http\Response;
+
+class HttpResponse {
+    
+    public function create($resource,array $halResource=null, array $halCollection=null){
+          
+        $body = array(
+            "_links" => array(
+                "self" => array(
+                    "href" =>URL_API.'/v'.API_VERSION.'/'.RESOURCE.'/'.$resource->getPrimaryKey()
+                ),
+            ),
+        );
+        
+    }   
+}
+
 

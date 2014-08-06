@@ -26,6 +26,7 @@ use BasePeer;
 use Zend\Http\Request;
 use Shared\Functions\ArrayManage;
 use Shared\Functions\SessionManager;
+use Zend\Http\Response;
 
 
 class UserController extends AbstractRestfulController
@@ -88,6 +89,7 @@ class UserController extends AbstractRestfulController
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
             
+            //Obtenemos el header de la peticion y en base al header cachamos nuestros datos
             $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
             
              switch($requestContentType){
@@ -97,32 +99,31 @@ class UserController extends AbstractRestfulController
 
                     //Cachamos los datos a insertar en un arreglo
                     $userArray = array();
-                    $userArray['user_nickname'] = $this->getRequest()->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
-                    //$password = $this->getRequest()->getPost()->user_password;
+                    $userArray['user_nickname'] = $request->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
                     $userArray['user_password'] = $this->getRequest()->getPost()->user_password ? $this->getRequest()->getPost()->user_password : null;
-                    $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : null;
+                    $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : 'human';
                     $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : 'pending';
-
                     break;
                 }
                 case 'application/json':{
-
+                    
+                    //Obtenemos el body de la peticion y lo convertimos a un arreglo
                     $requestContent = $this->getRequest()->getContent();
                     $requestArray = json_decode($requestContent, true);
 
                     //Cachamos los datos a insertar en un arreglo
                     $userArray = array();
                     $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
-                    //$password = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
                     $userArray['user_password'] = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
-                    $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : null;
+                    $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : 'human';
                     $userArray['user_status'] = isset($requestArray['user_status']) ? $requestArray['user_status'] : 'pending';
 
                     break;
                 }
+                //En caso que no nos envien un content type respondemos con error
                 default :{
                     $response = $this->getResponse();
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
+                    $response->setStatusCode(Response::STATUS_CODE_400);
                     $body = array(
                         'HTTP Status' => '400' ,
                         'Title' => 'Bad Request' ,
@@ -135,32 +136,42 @@ class UserController extends AbstractRestfulController
                 }
             }
             
-            //Le ponemos los datos a nuestro formulario
+            //Instanciamos nuestro formulario de acuerdo al nivel del usuario
             $userForm = UserFormPostPut::init($userLevel);
+         
+            //Le ponemos los datos a nuestro formulario
             $userForm->setData($userArray);
-            
-            //Le ponemos el filtro a nuestro formulario
+                    
+            //Instanciamos nuestro filtro y se lo ponemos a nuestro formulario
             $userFilter = new UserFilterPostPut();
             
             $userForm->setInputFilter($userFilter->getInputFilter($userLevel));
-            //var_dump($userForm->getInputFilter());
             
             //Si los valores son validos
             if($userForm->isValid()){
+                
+                //Instanciamos nuestro objeto User;
+                $user = new User();
+                
                 //Encriptamos el password
                 $password = hash('sha256', $userArray['user_password']);
+                
                 //Verificamos que user_nickname no exista ya en nuestra base de datos.
-                if(\UserQuery::create()->filterByIdCompany($idCompany)->filterByUserNickname($userArray['user_nickname'])->find()->count()==0){
-                    //Insertamos en nuestra base de datos
-                    $user = new \User();
+                if(!$user->UserNicknameExist($userArray['user_nickname'], $idCompany)){
+                    
+                    //Seteamos los datos a nuestro objeto
                     $user->setIdCompany($idCompany)
                          ->setUserNickname($userArray['user_nickname'])
                          ->setUserPassword($password)
                          ->setUserType($userArray['user_type'])
                          ->setUserStatus($userArray['user_status'])
-                         ->save();
+                         ->save(); //Insertamos en nuestra base de datos
                     
-                    //Modifiamos el Header de nuestra respuesta
+                    $response = new \Shared\Functions\HttpResponse();
+                    $response->create($user);
+                    exit();
+                   
+                    //Modificamos el Header de nuestra respuesta
                     $response = $this->getResponse();
                     $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/user/'.$user->getIdUser());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);

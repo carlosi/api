@@ -114,7 +114,7 @@ class UserFilter implements InputFilterAwareInterface
 
             // user_status: DataType = ENUM, NN = true
             $inputFilter->add($factory->createInput(array(
-                'name' => 'user_type',
+                'name' => 'user_status',
                 'required' => true,
                 'filters' => array(
                     array('name' => 'StripTags'),

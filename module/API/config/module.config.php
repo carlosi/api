@@ -13,14 +13,13 @@ return array(
             'user' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v1/user[/:id][/:token][/]',
+                    'route'    => '/v[:version]/user[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'Company\Controller\UserController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),

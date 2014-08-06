@@ -41,12 +41,14 @@ class TokenListener implements ListenerAggregateInterface {
     
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
-        define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
+        
         if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
             $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
-
             if(SessionManager::TokenIsValid($token)){
-            
+                define('RESOURCE',$e->getRouteMatch()->getMatchedRouteName());
+                define('API_VERSION', $e->getRouteMatch()->getParam('version'));
+                define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
+                define('URL_API', 'http://api.rest.buybuy.com.mx');
             }else{        
                 $response = $e->getResponse();
                 $response->setStatusCode(Response::STATUS_CODE_401);
@@ -67,7 +69,7 @@ class TokenListener implements ListenerAggregateInterface {
         }
         
         
-        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
+        
     }
 }
 ?>

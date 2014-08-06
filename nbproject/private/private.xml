@@ -20,8 +20,19 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/ACL/User/Form/UserFormGET.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/vendor/ZF2/library/Zend/Validator/StringLength.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/Module.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/vendor/ZF2/library/Zend/Validator/PasswordStrength.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/vendor/zendframework/zendframework/resources/languages/en/Zend_Validate.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/vendor/zendframework/zendframework/library/Zend/Validator/NotEmpty.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Shared/CustomListener/TokenListener.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/ACL/User/Form/UserFormPostPut.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/ACL/User/Filter/UserFilterPostPut.php</file>
             <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/ACL/User/Filter/UserFilter.php</file>
             <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/Controller/UserController.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/vendor/zendframework/zendframework/library/Zend/Validator/StringLength.php</file>
+            <file>file:/Users/hdmx-d1/servercentos65/dev/api/module/API/src/REST/v1/Company/ACL/User/Form/UserForm.php</file>
         </group>
     </open-files>
 </project-private>
