@@ -1,18 +1,28 @@
 <?php
 
-
-
 /**
- * Skeleton subclass for representing a row from the 'user' table.
+ * User
  *
- *
- *
- * You should add additional methods to this class to meet the
- * application requirements.  This class will only be generated as
- * long as it does not already exist in the output directory.
- *
- * @package    propel.generator.api
+ * @author Daniel Castanedo <daniel.b@hostdime.com.mx>
+ * @version 1.0
+ * 
  */
+
 class User extends BaseUser
 {
+    
+    /**
+     * check if an user_nickname exist for some especific company.
+     *
+     * @param  string $user_nickname
+     * @param  int $idCompany
+     * @return true if user_nickname exist or false if not
+     */
+    
+    public function UserNicknameExist($user_nickname, $idCompany){
+        
+        return UserQuery::create()->filterByUserNickname($user_nickname)->filterByIdcompany($idCompany)->exists();
+
+    }
+    
 }
