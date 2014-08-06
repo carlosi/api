@@ -722,11 +722,11 @@ class ArrayManage{
 
 
         $links = array(
-           'self' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getPage()),
-           'prev' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getPreviousPage()),
-           'next' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getNextPage()),
-           'first' => array('href' => WEBSITE_API.'/'.$table),
-           'last' => array('href' => WEBSITE_API.'/'.$table.'?page='.$result->getLastPage()),
+           'self' => array('href' => URL_API.'/'.$table.'?page='.$result->getPage()),
+           'prev' => array('href' => URL_API.'/'.$table.'?page='.$result->getPreviousPage()),
+           'next' => array('href' => URL_API.'/'.$table.'?page='.$result->getNextPage()),
+           'first' => array('href' => URL_API.'/'.$table),
+           'last' => array('href' => URL_API.'/'.$table.'?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){

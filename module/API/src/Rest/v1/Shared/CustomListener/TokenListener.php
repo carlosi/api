@@ -47,7 +47,7 @@ class TokenListener implements ListenerAggregateInterface {
             if(SessionManager::TokenIsValid($token)){
                 define('RESOURCE',$e->getRouteMatch()->getMatchedRouteName());
                 define('API_VERSION', $e->getRouteMatch()->getParam('version'));
-                define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
+                define('URL_API_DOCS', URL_API_DOCS);
                 define('URL_API', 'http://api.rest.buybuy.com.mx');
             }else{        
                 $response = $e->getResponse();
@@ -58,7 +58,7 @@ class TokenListener implements ListenerAggregateInterface {
                         'HTTP Status' => '401' ,
                         'Title' => 'Unauthorized' ,
                         'Details' => 'Invalid or expired token',
-                        'More Info' => WEBSITE_API_DOCS
+                        'More Info' => URL_API_DOCS
                 );
 
                  $jsonModel = new JsonModel($body);

@@ -11,6 +11,8 @@ use Shared\V1\REST\Functions\SessionManager;
 
 class TokenListener implements ListenerAggregateInterface {
 
+
+
     /*Primero registramos el listener y asignamos una proridad alta (1000 es la mas alta)
      * para que se ejecute lo antes posible dentro del stack de
      * listeners registrados en el evento.
@@ -37,13 +39,14 @@ class TokenListener implements ListenerAggregateInterface {
 
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
-        define('WEBSITE_API_DOCS', 'http://buybuy.com/api/docs');
-        define('WEBSITE_API', 'http://dev.api.buybuy.com.mx');
+
         if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
             $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
-
             if(SessionManager::TokenIsValid($token)){
-
+                define('RESOURCE',$e->getRouteMatch()->getMatchedRouteName());
+                define('API_VERSION', $e->getRouteMatch()->getParam('version'));
+                define('URL_API_DOCS', 'http://api.rest.buybuy.com.mx/docs');
+                define('URL_API', 'http://api.rest.buybuy.com.mx');
             }else{
                 $response = $e->getResponse();
                 $response->setStatusCode(Response::STATUS_CODE_401);
@@ -53,7 +56,7 @@ class TokenListener implements ListenerAggregateInterface {
                     'HTTP Status' => '401' ,
                     'Title' => 'Unauthorized' ,
                     'Details' => 'Invalid or expired token',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 $jsonModel = new JsonModel($body);
@@ -62,6 +65,9 @@ class TokenListener implements ListenerAggregateInterface {
                 $e->setViewModel($jsonModel)->stopPropagation();
             }
         }
+
+
+
     }
 }
 ?>

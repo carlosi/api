@@ -56,7 +56,7 @@ class CompanyController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/'.$this->table
+                'More Info' => URL_API_DOCS.'/'.$this->table
             ),
         );
         return new JsonModel($body);
@@ -150,7 +150,7 @@ class CompanyController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -192,13 +192,13 @@ class CompanyController extends AbstractRestfulController
 
                         //Modifiamos el Header de nuestra respuesta
                         $response = $this->getResponse();
-                        $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/'.$this->table.'/'.$company->getIdcompany());
+                        $response->getHeaders()->addHeaderLine('Location', URL_API.'/'.$this->table.'/'.$company->getIdcompany());
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
                         //Le damos formato a nuestra respuesta
                         $bodyResponse = array(
                             "_links" => array(
-                                'self' => WEBSITE_API.'/'.$this->table.'/'.$company->getIdcompany(),
+                                'self' => URL_API.'/'.$this->table.'/'.$company->getIdcompany(),
                             ),
                         );
                         foreach ($company->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -228,7 +228,7 @@ class CompanyController extends AbstractRestfulController
                             'HTTP Status' => 403 . ' Forbidden',
                             'Title' => 'Access denied',
                             'Details' => 'Sorry but you does not have permission over this resource.',
-                            'More Info' => WEBSITE_API_DOCS
+                            'More Info' => URL_API_DOCS
                         ),
                     );
                     return new JsonModel($bodyResponse);
@@ -321,7 +321,7 @@ class CompanyController extends AbstractRestfulController
                     $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                     $companyArray = array(
                         "_links" => array(
-                            'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                            'self' => URL_API.'/'. $this->table.'/'.$id,
                         ),
                     );
                     foreach ($companyForm->getElements() as $key=>$value){
@@ -391,7 +391,7 @@ class CompanyController extends AbstractRestfulController
                         'HTTP Status' => 403 . ' Forbidden',
                         'Title' => 'Access denied',
                         'Details' => 'Sorry but you does not have permission over this resource.',
-                        'More Info' => WEBSITE_API_DOCS
+                        'More Info' => URL_API_DOCS
                     ),
                 );
                 return new JsonModel($bodyResponse);
@@ -470,7 +470,7 @@ class CompanyController extends AbstractRestfulController
 
                     $row = array(
                         "_links" => array(
-                            'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idcompany']),
+                            'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idcompany']),
                         ),
                     );
                     foreach ($companyForm->getElements() as $key=>$value){
@@ -646,7 +646,7 @@ class CompanyController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -688,7 +688,7 @@ class CompanyController extends AbstractRestfulController
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
                                 "_links" => array(
-                                    'self' => WEBSITE_API.'/'. $this->table.'/'.$company->getIdcompany(),
+                                    'self' => URL_API.'/'. $this->table.'/'.$company->getIdcompany(),
                                 ),
                             );
 
@@ -756,7 +756,7 @@ class CompanyController extends AbstractRestfulController
                         'HTTP Status' => 403 . ' Forbidden',
                         'Title' => 'Access denied',
                         'Details' => 'Sorry but you does not have permission over this resource.',
-                        'More Info' => WEBSITE_API_DOCS
+                        'More Info' => URL_API_DOCS
                     ),
                 );
                 return new JsonModel($bodyResponse);
@@ -825,7 +825,7 @@ class CompanyController extends AbstractRestfulController
                         'HTTP Status' => 403 . ' Forbidden',
                         'Title' => 'Access denied',
                         'Details' => 'Sorry but you does not have permission over this resource.',
-                        'More Info' => WEBSITE_API_DOCS
+                        'More Info' => URL_API_DOCS
                     ),
                 );
                 return new JsonModel($bodyResponse);

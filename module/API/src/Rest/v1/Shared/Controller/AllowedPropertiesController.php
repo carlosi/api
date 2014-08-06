@@ -54,7 +54,7 @@ class AllowedPropertiesController extends AbstractRestfulController
                     'HTTP Status' => 404 . ' Not Found',
                     'Title' => 'Resource not found',
                     'Details' => $resource. 'Not found',
-                    'More Info' => 'http://buybuy.com/api/docs'
+                    'More Info' => URL_API_DOCS
                 ),
             );
             return new JsonModel($bodyResponse);

@@ -55,7 +55,7 @@ class ClientAddressController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/useracl'
+                'More Info' => URL_API_DOCS.'/useracl'
             ),
         );
         return new JsonModel($body);
@@ -105,7 +105,7 @@ class ClientAddressController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idclientaddress']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idclientaddress']),
                     ),
                 );
                 foreach ($clientaddressForm->getElements() as $key=>$value){
@@ -127,7 +127,7 @@ class ClientAddressController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'client' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/client/'.$clientaddress->getIdclient()),
+                            'self' => array('href' => URL_API.'/client/'.$clientaddress->getIdclient()),
                         ),
                     ),
                 );

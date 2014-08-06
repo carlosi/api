@@ -59,7 +59,7 @@ class UserAclController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/useracl'
+                'More Info' => URL_API_DOCS.'/useracl'
             ),
         );
         return new JsonModel($body);
@@ -143,7 +143,7 @@ class UserAclController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -180,13 +180,13 @@ class UserAclController extends AbstractRestfulController
 
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/'.$this->table.'/'.$useracl->getIduseracl());
+                    $response->getHeaders()->addHeaderLine('Location', URL_API.'/'.$this->table.'/'.$useracl->getIduseracl());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                            'self' => WEBSITE_API.'/'.$this->table.'/'.$useracl->getIduseracl(),
+                            'self' => URL_API.'/'.$this->table.'/'.$useracl->getIduseracl(),
                         ),
                     );
                     foreach ($useracl->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -210,7 +210,7 @@ class UserAclController extends AbstractRestfulController
                     $bodyResponse ['_embedded'] = array(
                         'user' => array(
                             '_links' => array(
-                                'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$useracl->getIduser()),
+                                'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$useracl->getIduser()),
                             ),
                         ),
                     );
@@ -335,7 +335,7 @@ class UserAclController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $useraclArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'. $this->table.'/'.$useracl->getIduseracl(),
+                        'self' => URL_API.'/'. $this->table.'/'.$useracl->getIduseracl(),
                     ),
                     "ACL" => $acl,
                 );
@@ -357,7 +357,7 @@ class UserAclController extends AbstractRestfulController
                 $useraclArray ['_embedded'] = array(
                     'user' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/client/'.$useracl->getIduser()),
+                            'self' => array('href' => URL_API.'/client/'.$useracl->getIduser()),
                         ),
                     ),
                 );
@@ -472,7 +472,7 @@ class UserAclController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['iduseracl']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['iduseracl']),
                     ),
                 );
                 foreach ($useraclForm->getElements() as $key=>$value){
@@ -495,7 +495,7 @@ class UserAclController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'user' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/user/'.$useracl->getIdUser()),
+                            'self' => array('href' => URL_API.'/user/'.$useracl->getIdUser()),
                         ),
                     ),
                 );
@@ -608,7 +608,7 @@ class UserAclController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -652,7 +652,7 @@ class UserAclController extends AbstractRestfulController
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
                                 "_links" => array(
-                                    'self' => WEBSITE_API.'/'. $this->table.'/'.$useracl->getIduseracl(),
+                                    'self' => URL_API.'/'. $this->table.'/'.$useracl->getIduseracl(),
                                 ),
                             );
 
@@ -677,7 +677,7 @@ class UserAclController extends AbstractRestfulController
                             $bodyResponse ['_embedded'] = array(
                                 'user' => array(
                                     '_links' => array(
-                                        'self' => array('href' => WEBSITE_API.'/user/'.$useracl->getIdUser()),
+                                        'self' => array('href' => URL_API.'/user/'.$useracl->getIdUser()),
                                     ),
                                 ),
                             );

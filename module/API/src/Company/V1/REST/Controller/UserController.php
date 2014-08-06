@@ -19,7 +19,7 @@ use BasePeer;
 //=============SHARED===============
 use Shared\V1\REST\Functions\ArrayManage;
 use Shared\V1\REST\Functions\SessionManager;
-
+use Shared\V1\REST\Functions\HttpResponse;
 
 class UserController extends AbstractRestfulController
 {
@@ -57,7 +57,7 @@ class UserController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/user'
+                'More Info' => URL_API_DOCS.'/user'
             ),
         );
         return new JsonModel($body);     
@@ -66,133 +66,119 @@ class UserController extends AbstractRestfulController
 
     public function create($data) {
 
-
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
-        
+
         //Obtenemos el IdUser propietario del token
         $idUser = SessionManager::getIDUser($token);
-        
+
         //Obtenemos el IdCompany al que pertenece el usuario
         $idCompany = SessionManager::getIDCompany($token);
-        
+
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = SessionManager::getUserLevelToCompany($idUser);
-        
+
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
-            
+
+            //Obtenemos el header de la peticion y en base al header cachamos nuestros datos
             $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
-            
-             switch($requestContentType){
+
+            switch($requestContentType){
                 case 'application/x-www-form-urlencoded':{
 
                     $request = $this->getRequest();
 
-                    if($data != null){
-                        //Cachamos los datos a insertar en un arreglo
-                        $userArray = array();
-                        $userArray['user_nickname'] = $request->getPost()->user_nickname ? $request->getPost()->user_nickname : null;
-                        $userArray['user_password'] = $request->getPost()->user_password ? $request->getPost()->user_password : null;
-                        $userArray['user_type'] = $request->getPost()->user_type ? $request->getPost()->user_type : null;
-                        $userArray['user_status'] = $request->getPost()->user_status ? $request->getPost()->user_status : 'pending';
-                    }else{
-                        //Modifiamos el Header de nuestra respuesta
-                        $response = $this->getResponse();
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP Status' => 400 . ' Bad Request',
-                                'Title' => 'The body is empty',
-                                'Details' => "The body can`t be empty'",
-                            ),
-                        );
-                        return new JsonModel($bodyResponse);
-                    }
+                    //Cachamos los datos a insertar en un arreglo
+                    $userArray = array();
+                    $userArray['user_nickname'] = $request->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
+                    $userArray['user_password'] = $this->getRequest()->getPost()->user_password ? $this->getRequest()->getPost()->user_password : null;
+                    $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : 'human';
+                    $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : 'pending';
                     break;
                 }
                 case 'application/json':{
 
+                    //Obtenemos el body de la peticion y lo convertimos a un arreglo
                     $requestContent = $this->getRequest()->getContent();
                     $requestArray = json_decode($requestContent, true);
 
-                    if($data != null){
-                        //Cachamos los datos a insertar en un arreglo
-                        $userArray = array();
-                        $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
-                        $userArray['user_password'] = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
-                        $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : null;
-                        $userArray['user_status'] = isset($requestArray['user_status']) ? $requestArray['user_status'] : 'pending';
-                    }else{
-                            //Modifiamos el Header de nuestra respuesta
-                            $response = $this->getResponse();
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            $bodyResponse = array(
-                                'Error' => array(
-                                    'HTTP Status' => 400 . ' Bad Request',
-                                    'Title' => 'The body is empty',
-                                    'Details' => "The body can`t be empty'",
-                                ),
-                            );
-                            return new JsonModel($bodyResponse);
-                    }
+                    //Cachamos los datos a insertar en un arreglo
+                    $userArray = array();
+                    $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
+                    $userArray['user_password'] = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
+                    $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : 'human';
+                    $userArray['user_status'] = isset($requestArray['user_status']) ? $requestArray['user_status'] : 'pending';
+
                     break;
                 }
+                //En caso que no nos envien un content type respondemos con error
                 default :{
-                    $response = $this->getResponse();
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
-                    $body = array(
-                        'HTTP Status' => '400' ,
-                        'Title' => 'Bad Request' ,
-                        'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                        'More Info' => WEBSITE_API_DOCS
-                    );
+                $response = $this->getResponse();
+                $response->setStatusCode(Response::STATUS_CODE_400);
+                $body = array(
+                    'HTTP Status' => '400' ,
+                    'Title' => 'Bad Request' ,
+                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
+                    'More Info' => URL_API_DOCS
+                );
 
-                    return new JsonModel($body);
-                    break;
+                return new JsonModel($body);
+                break;
                 }
             }
-            
-            //Le ponemos los datos a nuestro formulario
+
+            //Instanciamos nuestro formulario de acuerdo al nivel del usuario
             $userForm = UserFormPostPut::init($userLevel);
+
+            //Le ponemos los datos a nuestro formulario
             $userForm->setData($userArray);
-            
-            //Le ponemos el filtro a nuestro formulario
+
+            //Instanciamos nuestro filtro y se lo ponemos a nuestro formulario
             $userFilter = new UserFilterPostPut();
-            
+
             $userForm->setInputFilter($userFilter->getInputFilter($userLevel));
 
             //Si los valores son validos
             if($userForm->isValid()){
+
+                //Instanciamos nuestro objeto User;
+                $user = new User();
+
                 //Encriptamos el password
                 $password = hash('sha256', $userArray['user_password']);
+
                 //Verificamos que user_nickname no exista ya en nuestra base de datos.
-                if($this->getQuery()->create()->filterByIdCompany($idCompany)->filterByUserNickname($userArray['user_nickname'])->find()->count()==0){
-                    //Insertamos en nuestra base de datos
-                    $user = new User();
+                if(!$user->UserNicknameExist($userArray['user_nickname'], $idCompany)){
+
+                    //Seteamos los datos a nuestro objeto
                     $user->setIdCompany($idCompany)
-                         ->setUserNickname($userArray['user_nickname'])
-                         ->setUserPassword($password)
-                         ->setUserType($userArray['user_type'])
-                         ->setUserStatus($userArray['user_status'])
-                         ->save();
-                    
-                    //Modifiamos el Header de nuestra respuesta
+                        ->setUserNickname($userArray['user_nickname'])
+                        ->setUserPassword($password)
+                        ->setUserType($userArray['user_type'])
+                        ->setUserStatus($userArray['user_status'])
+                        ->save(); //Insertamos en nuestra base de datos
+
+                    $response = new HttpResponse();
+                    $response->create($user);
+                    exit();
+
+                    //Modificamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/user/'.$user->getIdUser());
+                    $response->getHeaders()->addHeaderLine('Location', URL_API.'/user/'.$user->getIdUser());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
-                    
+
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                             'self' => WEBSITE_API.'/'.$this->table.'/'.$user->getIdUser(),
-                         ),           
+                            'self' => URL_API.'/'.$this->table.'/'.$user->getIdUser(),
+                        ),
                     );
                     foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
                         $bodyResponse[$key] = $value;
-                    }                    
+                    }
                     $bodyResponse['user_password'] = $userArray['user_password']; // Remplazamos el password ya que de lo contrario no lo trairia encriptado
-                    
+
                     //Eliminamos los campos que hacen referencia a otras tablas
                     unset($bodyResponse['idcompany']);
 
@@ -205,21 +191,21 @@ class UserController extends AbstractRestfulController
                     $companyArray = array();
                     foreach ($companyForm->getElements() as $key=>$value){
                         $companyArray[$key] = $company[$key];
-                    }                 
+                    }
                     $bodyResponse ['_embedded'] = array(
-                         'company' => array(
-                             '_links' => array(
-                                 'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
-                             ),
-                         ),
+                        'company' => array(
+                            '_links' => array(
+                                'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
+                            ),
+                        ),
                     );
 
-                    //Agregamos los datod de company a nuestro arreglo $row['_embedded']['company']
-                   foreach ($companyArray as $key=>$value){
-                         $bodyResponse ['_embedded']['company'][$key] = $value;
-                   }
-                   
-                   return new JsonModel($bodyResponse);
+                    //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                    foreach ($companyArray as $key=>$value){
+                        $bodyResponse ['_embedded']['company'][$key] = $value;
+                    }
+
+                    return new JsonModel($bodyResponse);
 
                 }else{
                     //Modifiamos el Header de nuestra respuesta
@@ -233,7 +219,7 @@ class UserController extends AbstractRestfulController
                         ),
                     );
                     return new JsonModel($bodyResponse);
-                } 
+                }
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
@@ -243,9 +229,10 @@ class UserController extends AbstractRestfulController
                 foreach ($userForm->getMessages() as $key => $value){
                     foreach($value as $val){
                         //Obtenemos el valor de la columna con error
+                        $columnError = $key;
                         $message = $key.' '.$val;
                         array_push($messageArray, $message);
-                    }                
+                    }
                 }
                 $bodyResponse = array(
                     'Error' => array(
@@ -267,8 +254,8 @@ class UserController extends AbstractRestfulController
                     'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
                 ),
             );
-            return new JsonModel($bodyResponse);       
-        } 
+            return new JsonModel($bodyResponse);
+        }
     }
 
     public function get($id) {
@@ -336,7 +323,7 @@ class UserController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);           
                 $userArray = array(
                     "_links" => array(
-                         'self' => WEBSITE_API.'/'. $this->table.'/'.$user->getIduser(),
+                         'self' => URL_API.'/'. $this->table.'/'.$user->getIduser(),
                      ),
                     "ACL" => $acl,
                 );
@@ -360,7 +347,7 @@ class UserController extends AbstractRestfulController
                 $userArray ['_embedded'] = array(
                      'company' => array(
                          '_links' => array(
-                             'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                             'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
                          ),
                      ),
                 );
@@ -476,7 +463,7 @@ class UserController extends AbstractRestfulController
                  $user = $this->getQuery()->create()->filterByIdUser($item['iduser'])->findOne();
                  $row = array(
                      "_links" => array(
-                         'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['iduser']),
+                         'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['iduser']),
                      ),
                  );
                  foreach ($userForm->getElements() as $key=>$value){
@@ -496,7 +483,7 @@ class UserController extends AbstractRestfulController
                  $row['_embedded'] = array(
                      'company' => array(
                          '_links' => array(
-                             'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                             'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
                          ),
                      ),
                  );
@@ -611,7 +598,7 @@ class UserController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -660,7 +647,7 @@ class UserController extends AbstractRestfulController
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
                                 "_links" => array(
-                                    'self' => WEBSITE_API.'/'. $this->table.'/'.$user->getIduser(),
+                                    'self' => URL_API.'/'. $this->table.'/'.$user->getIduser(),
                                 ),
                             );
 
@@ -691,7 +678,7 @@ class UserController extends AbstractRestfulController
                             $bodyResponse ['_embedded'] = array(
                                 'company' => array(
                                     '_links' => array(
-                                        'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                                        'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
                                     ),
                                 ),
                             );
@@ -722,7 +709,7 @@ class UserController extends AbstractRestfulController
                                 //Le damos formato a nuestra respuesta
                                 $bodyResponse = array(
                                     "_links" => array(
-                                        'self' => WEBSITE_API.'/'. $this->table.'/'.$user->getIduser(),
+                                        'self' => URL_API.'/'. $this->table.'/'.$user->getIduser(),
                                     ),
                                 );
 
@@ -753,7 +740,7 @@ class UserController extends AbstractRestfulController
                                 $bodyResponse ['_embedded'] = array(
                                     'company' => array(
                                         '_links' => array(
-                                            'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                                            'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
                                         ),
                                     ),
                                 );

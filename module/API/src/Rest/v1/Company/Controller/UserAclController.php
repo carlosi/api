@@ -65,7 +65,7 @@ class UserAclController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/useracl'
+                'More Info' => URL_API_DOCS.'/useracl'
             ),
         );
         return new JsonModel($body);
@@ -115,7 +115,7 @@ class UserAclController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['iduseracl']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['iduseracl']),
                     ),
                 );
                 foreach ($useraclForm->getElements() as $key=>$value){
@@ -138,7 +138,7 @@ class UserAclController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'user' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/user/'.$useracl->getIdUser()),
+                            'self' => array('href' => URL_API.'/user/'.$useracl->getIdUser()),
                         ),
                     ),
                 );

@@ -57,7 +57,7 @@ class BranchUserController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/useracl'
+                'More Info' => URL_API_DOCS.'/useracl'
             ),
         );
         return new JsonModel($body);
@@ -107,7 +107,7 @@ class BranchUserController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idbranch_user']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idbranch_user']),
                     ),
                 );
                 foreach ($branchuserForm->getElements() as $key=>$value){
@@ -137,12 +137,12 @@ class BranchUserController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'user' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/user/'.$branchuser->getIdUser()),
+                            'self' => array('href' => URL_API.'/user/'.$branchuser->getIdUser()),
                         ),
                     ),
                     'branch' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/branch/'.$branchuser->getIdbranch()),
+                            'self' => array('href' => URL_API.'/branch/'.$branchuser->getIdbranch()),
                         ),
                     ),
                 );

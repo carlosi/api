@@ -55,7 +55,7 @@ class ExpenseRecurrencyController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/useracl'
+                'More Info' => URL_API_DOCS.'/useracl'
             ),
         );
         return new JsonModel($body);
@@ -105,7 +105,7 @@ class ExpenseRecurrencyController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idexpenserecurrency']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idexpenserecurrency']),
                     ),
                 );
                 foreach ($expenserecurrencyForm->getElements() as $key=>$value){
@@ -127,7 +127,7 @@ class ExpenseRecurrencyController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'expenseitem' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/expenseitem/'.$expenserecurrency->getIdexpenseitem()),
+                            'self' => array('href' => URL_API.'/expenseitem/'.$expenserecurrency->getIdexpenseitem()),
                         ),
                     ),
                 );

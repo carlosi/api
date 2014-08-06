@@ -58,7 +58,7 @@ class ClientCommentController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/'.$this->table
+                'More Info' => URL_API_DOCS.'/'.$this->table
             ),
         );
         return new JsonModel($body);
@@ -140,7 +140,7 @@ class ClientCommentController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -180,13 +180,13 @@ class ClientCommentController extends AbstractRestfulController
 
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/'.$this->table.'/'.$clientcomment->getIdclientcomment());
+                    $response->getHeaders()->addHeaderLine('Location', URL_API.'/'.$this->table.'/'.$clientcomment->getIdclientcomment());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                            'self' => WEBSITE_API.'/'.$this->table.'/'.$clientcomment->getIdclientcomment(),
+                            'self' => URL_API.'/'.$this->table.'/'.$clientcomment->getIdclientcomment(),
                         ),
                     );
                     foreach ($clientcomment->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -210,7 +210,7 @@ class ClientCommentController extends AbstractRestfulController
                     $bodyResponse ['_embedded'] = array(
                         'client' => array(
                             '_links' => array(
-                                'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$clientcomment->getIdclient()),
+                                'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$clientcomment->getIdclient()),
                             ),
                         ),
                     );
@@ -335,7 +335,7 @@ class ClientCommentController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $clientcommentArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'. $this->table.'/'.$clientcomment->getIdclientcomment(),
+                        'self' => URL_API.'/'. $this->table.'/'.$clientcomment->getIdclientcomment(),
                     ),
                     "ACL" => $acl,
                 );
@@ -357,7 +357,7 @@ class ClientCommentController extends AbstractRestfulController
                 $clientcommentArray ['_embedded'] = array(
                     'client' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/client/'.$clientcomment->getIdclient()),
+                            'self' => array('href' => URL_API.'/client/'.$clientcomment->getIdclient()),
                         ),
                     ),
                 );
@@ -484,7 +484,7 @@ class ClientCommentController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idclientcomment']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idclientcomment']),
                     ),
                 );
                 foreach ($clientcommentForm->getElements() as $key=>$value){
@@ -504,7 +504,7 @@ class ClientCommentController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'client' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/client/'.$clientcomment->getIdclient()),
+                            'self' => array('href' => URL_API.'/client/'.$clientcomment->getIdclient()),
                         ),
                     ),
                 );
@@ -633,7 +633,7 @@ class ClientCommentController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -677,7 +677,7 @@ class ClientCommentController extends AbstractRestfulController
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
                                 "_links" => array(
-                                    'self' => WEBSITE_API.'/'. $this->table.'/'.$clientcomment->getIdclientcomment(),
+                                    'self' => URL_API.'/'. $this->table.'/'.$clientcomment->getIdclientcomment(),
                                 ),
                             );
 
@@ -702,7 +702,7 @@ class ClientCommentController extends AbstractRestfulController
                             $bodyResponse ['_embedded'] = array(
                                 'client' => array(
                                     '_links' => array(
-                                        'self' => array('href' => WEBSITE_API.'/client/'.$clientcomment->getIdClient()),
+                                        'self' => array('href' => URL_API.'/client/'.$clientcomment->getIdClient()),
                                     ),
                                 ),
                             );

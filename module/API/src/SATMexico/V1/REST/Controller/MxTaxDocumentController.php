@@ -62,7 +62,7 @@ class MxTaxDocumentController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/'.$this->table
+                'More Info' => URL_API_DOCS.'/'.$this->table
             ),
         );
         return new JsonModel($body);
@@ -156,7 +156,7 @@ class MxTaxDocumentController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -209,13 +209,13 @@ class MxTaxDocumentController extends AbstractRestfulController
 
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/'.$this->table.'/'.$mxtaxdocument->getIdclienttax());
+                    $response->getHeaders()->addHeaderLine('Location', URL_API.'/'.$this->table.'/'.$mxtaxdocument->getIdclienttax());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                            'self' => WEBSITE_API.'/'.$this->table.'/'.$mxtaxdocument->getIdclienttax(),
+                            'self' => URL_API.'/'.$this->table.'/'.$mxtaxdocument->getIdclienttax(),
                         ),
                     );
                     foreach ($mxtaxdocument->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -247,12 +247,12 @@ class MxTaxDocumentController extends AbstractRestfulController
                     $bodyResponse ['_embedded'] = array(
                         'clienttax' => array(
                             '_links' => array(
-                                'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$mxtaxdocument->getIdclienttax()),
+                                'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$mxtaxdocument->getIdclienttax()),
                             ),
                         ),
                         'order' => array(
                             '_links' => array(
-                                'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$mxtaxdocument->getIdorder()),
+                                'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$mxtaxdocument->getIdorder()),
                             ),
                         ),
                     );
@@ -349,7 +349,7 @@ class MxTaxDocumentController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $mxtaxdocumentArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                        'self' => URL_API.'/'. $this->table.'/'.$id,
                     ),
                 );
                 foreach ($mxtaxdocumentForm->getElements() as $key=>$value){
@@ -382,12 +382,12 @@ class MxTaxDocumentController extends AbstractRestfulController
                 $mxtaxdocumentArray ['_embedded'] = array(
                     'clienttax' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/clienttax/'.$mxtaxdocument->getIdclienttax()),
+                            'self' => array('href' => URL_API.'/clienttax/'.$mxtaxdocument->getIdclienttax()),
                         ),
                     ),
                     'order' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/order/'.$mxtaxdocument->getIdorder()),
+                            'self' => array('href' => URL_API.'/order/'.$mxtaxdocument->getIdorder()),
                         ),
                     ),
                 );
@@ -525,7 +525,7 @@ class MxTaxDocumentController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idmxtaxdocument']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idmxtaxdocument']),
                     ),
                 );
                 foreach ($mxtaxdocumentForm->getElements() as $key=>$value){
@@ -557,12 +557,12 @@ class MxTaxDocumentController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'clienttax' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/clienttax/'.$mxtaxdocument->getIdclienttax()),
+                            'self' => array('href' => URL_API.'/clienttax/'.$mxtaxdocument->getIdclienttax()),
                         ),
                     ),
                     'order' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/order/'.$mxtaxdocument->getIdorder()),
+                            'self' => array('href' => URL_API.'/order/'.$mxtaxdocument->getIdorder()),
                         ),
                     ),
                 );
@@ -739,7 +739,7 @@ class MxTaxDocumentController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -794,7 +794,7 @@ class MxTaxDocumentController extends AbstractRestfulController
                                 //Le damos formato a nuestra respuesta
                                 $bodyResponse = array(
                                     "_links" => array(
-                                        'self' => WEBSITE_API.'/'. $this->table.'/'.$mxtaxdocument->getIdMxtaxdocument(),
+                                        'self' => URL_API.'/'. $this->table.'/'.$mxtaxdocument->getIdMxtaxdocument(),
                                     ),
                                 );
 
@@ -826,12 +826,12 @@ class MxTaxDocumentController extends AbstractRestfulController
                                 $bodyResponse ['_embedded'] = array(
                                     'clienttax' => array(
                                         '_links' => array(
-                                            'self' => array('href' => WEBSITE_API.'/clienttax/'.$mxtaxdocument->getIdClienttax()),
+                                            'self' => array('href' => URL_API.'/clienttax/'.$mxtaxdocument->getIdClienttax()),
                                         ),
                                     ),
                                     'order' => array(
                                         '_links' => array(
-                                            'self' => array('href' => WEBSITE_API.'/order/'.$mxtaxdocument->getIdOrder()),
+                                            'self' => array('href' => URL_API.'/order/'.$mxtaxdocument->getIdOrder()),
                                         ),
                                     ),
                                 );

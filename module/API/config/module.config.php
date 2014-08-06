@@ -25,11 +25,7 @@ return array(
             'bankaccount' => array(
                 'type' => 'segment',
                 'options' => array(
-<<<<<<< HEAD
-                    'route'    => '/v1/bankaccount[/:id][/:token][/]',
-=======
                     'route'    => '/v[:version]/user[/:id][/:token][/]',
->>>>>>> 6c98efc386aca8916eeea7b8543dfea935bb1511
                     'defaults' => array(
                         'controller' => 'Company\V1\REST\Controller\BankAccountController',
                     ),
@@ -126,11 +122,7 @@ return array(
             'clientfile' => array(
                 'type' => 'Segment',
                 'options' => array(
-<<<<<<< HEAD
                     'route'    => '/v1/clientfile[/:id][/:token][/]',
-=======
-                    'route'    => '/v1/login[/]',
->>>>>>> 6c98efc386aca8916eeea7b8543dfea935bb1511
                     'defaults' => array(
                         'controller' => 'Company\V1\REST\Controller\ClientFileController',
                     ),
@@ -186,14 +178,13 @@ return array(
             'user' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v1/user[/:id][/:token][/]',
+                    'route'    => '/v[:version]/user[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'Company\V1\REST\Controller\UserController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),

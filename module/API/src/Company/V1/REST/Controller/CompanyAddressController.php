@@ -58,7 +58,7 @@ class CompanyAddressController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/'.$this->table
+                'More Info' => URL_API_DOCS.'/'.$this->table
             ),
         );
         return new JsonModel($body);
@@ -156,7 +156,7 @@ class CompanyAddressController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -195,13 +195,13 @@ class CompanyAddressController extends AbstractRestfulController
 
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
-                $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/'.$this->table.'/'.$companyaddress->getIdcompanyaddress());
+                $response->getHeaders()->addHeaderLine('Location', URL_API.'/'.$this->table.'/'.$companyaddress->getIdcompanyaddress());
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
                 //Le damos formato a nuestra respuesta
                 $bodyResponse = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'.$this->table.'/'.$companyaddress->getIdcompanyaddress(),
+                        'self' => URL_API.'/'.$this->table.'/'.$companyaddress->getIdcompanyaddress(),
                     ),
                 );
                 foreach ($companyaddress->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -225,7 +225,7 @@ class CompanyAddressController extends AbstractRestfulController
                 $bodyResponse ['_embedded'] = array(
                     'company' => array(
                         '_links' => array(
-                            'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$companyaddress->getIdcompany()),
+                            'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$companyaddress->getIdcompany()),
                         ),
                     ),
                 );
@@ -338,7 +338,7 @@ class CompanyAddressController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $companyaddressArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API . '/' . $this->table.'/'.$id,
+                        'self' => URL_API . '/' . $this->table.'/'.$id,
                     ),
                     "ACL" => $acl
                 );
@@ -359,7 +359,7 @@ class CompanyAddressController extends AbstractRestfulController
                 $companyaddressArray['_embedded'] = array(
                     'company' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API . '/company/' . $companyaddress->getIdCompany()),
+                            'self' => array('href' => URL_API . '/company/' . $companyaddress->getIdCompany()),
                         ),
                     ),
                 );
@@ -529,7 +529,7 @@ class CompanyAddressController extends AbstractRestfulController
                 $companyaddress = $this->getQuery()->create()->filterByIdcompanyaddress($item['idcompanyaddress'])->findOne();
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idcompanyaddress']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idcompanyaddress']),
                     ),
                 );
                 foreach ($companyaddressForm->getElements() as $key=>$value){
@@ -552,7 +552,7 @@ class CompanyAddressController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'company' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API . '/company/' . $companyaddress->getIdcompany()),
+                            'self' => array('href' => URL_API . '/company/' . $companyaddress->getIdcompany()),
                         ),
                     ),
                 );
@@ -732,7 +732,7 @@ class CompanyAddressController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -775,7 +775,7 @@ class CompanyAddressController extends AbstractRestfulController
                         //Le damos formato a nuestra respuesta
                         $bodyResponse = array(
                             "_links" => array(
-                                'self' => WEBSITE_API.'/'. $this->table.'/'.$companyaddress->getIdcompanyaddress(),
+                                'self' => URL_API.'/'. $this->table.'/'.$companyaddress->getIdcompanyaddress(),
                             ),
                         );
 
@@ -799,7 +799,7 @@ class CompanyAddressController extends AbstractRestfulController
                         $bodyResponse ['_embedded'] = array(
                             'company' => array(
                                 '_links' => array(
-                                    'self' => array('href' => WEBSITE_API.'/company/'.$companyaddress->getIdCompany()),
+                                    'self' => array('href' => URL_API.'/company/'.$companyaddress->getIdCompany()),
                                 ),
                             ),
                         );

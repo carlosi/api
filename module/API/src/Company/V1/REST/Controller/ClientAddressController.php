@@ -58,7 +58,7 @@ class ClientAddressController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/'.$this->table
+                'More Info' => URL_API_DOCS.'/'.$this->table
             ),
         );
         return new JsonModel($body);
@@ -159,7 +159,7 @@ class ClientAddressController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -203,13 +203,13 @@ class ClientAddressController extends AbstractRestfulController
 
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/'.$this->table.'/'.$clientaddress->getIdclientaddress());
+                    $response->getHeaders()->addHeaderLine('Location', URL_API.'/'.$this->table.'/'.$clientaddress->getIdclientaddress());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                            'self' => WEBSITE_API.'/'.$this->table.'/'.$clientaddress->getIdclientaddress(),
+                            'self' => URL_API.'/'.$this->table.'/'.$clientaddress->getIdclientaddress(),
                         ),
                     );
                     foreach ($clientaddress->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -233,7 +233,7 @@ class ClientAddressController extends AbstractRestfulController
                     $bodyResponse ['_embedded'] = array(
                         'client' => array(
                             '_links' => array(
-                                'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$clientaddress->getIdclient()),
+                                'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$clientaddress->getIdclient()),
                             ),
                         ),
                     );
@@ -358,7 +358,7 @@ class ClientAddressController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $clientaddressArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                        'self' => URL_API.'/'. $this->table.'/'.$id,
                     ),
                     "ACL" => $acl,
                 );
@@ -380,7 +380,7 @@ class ClientAddressController extends AbstractRestfulController
                 $clientaddressArray ['_embedded'] = array(
                     'client' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/client/'.$clientaddress->getIdclient()),
+                            'self' => array('href' => URL_API.'/client/'.$clientaddress->getIdclient()),
                         ),
                     ),
                 );
@@ -522,7 +522,7 @@ class ClientAddressController extends AbstractRestfulController
 
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idclientaddress']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idclientaddress']),
                     ),
                 );
                 foreach ($clientaddressForm->getElements() as $key=>$value){
@@ -542,7 +542,7 @@ class ClientAddressController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'client' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/client/'.$clientaddress->getIdclient()),
+                            'self' => array('href' => URL_API.'/client/'.$clientaddress->getIdclient()),
                         ),
                     ),
                 );
@@ -705,7 +705,7 @@ class ClientAddressController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -748,7 +748,7 @@ class ClientAddressController extends AbstractRestfulController
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
                                 "_links" => array(
-                                    'self' => WEBSITE_API.'/'. $this->table.'/'.$clientaddress->getIdClientaddress(),
+                                    'self' => URL_API.'/'. $this->table.'/'.$clientaddress->getIdClientaddress(),
                                 ),
                             );
 
@@ -773,7 +773,7 @@ class ClientAddressController extends AbstractRestfulController
                             $bodyResponse ['_embedded'] = array(
                                 'client' => array(
                                     '_links' => array(
-                                        'self' => array('href' => WEBSITE_API.'/client/'.$clientaddress->getIdClient()),
+                                        'self' => array('href' => URL_API.'/client/'.$clientaddress->getIdClient()),
                                     ),
                                 ),
                             );

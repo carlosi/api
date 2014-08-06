@@ -65,7 +65,7 @@ class UserController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/user'
+                'More Info' => URL_API_DOCS.'/user'
             ),
         );
         return new JsonModel($body);     
@@ -128,7 +128,7 @@ class UserController extends AbstractRestfulController
                         'HTTP Status' => '400' ,
                         'Title' => 'Bad Request' ,
                         'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                        'More Info' => WEBSITE_API_DOCS
+                        'More Info' => URL_API_DOCS
                     );
 
                     return new JsonModel($body);
@@ -173,13 +173,13 @@ class UserController extends AbstractRestfulController
                    
                     //Modificamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/user/'.$user->getIdUser());
+                    $response->getHeaders()->addHeaderLine('Location', URL_API.'/user/'.$user->getIdUser());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
                     
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                             'self' => WEBSITE_API.'/'.$this->table.'/'.$user->getIdUser(),
+                             'self' => URL_API.'/'.$this->table.'/'.$user->getIdUser(),
                          ),           
                     );
                     foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -203,7 +203,7 @@ class UserController extends AbstractRestfulController
                     $bodyResponse ['_embedded'] = array(
                          'company' => array(
                              '_links' => array(
-                                 'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                                 'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
                              ),
                          ),
                     );
@@ -340,7 +340,7 @@ class UserController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);           
                 $userArray = array(
                     "_links" => array(
-                         'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                         'self' => URL_API.'/'. $this->table.'/'.$id,
                      ),
                 );
                 foreach ($userForm->getElements() as $key=>$value){
@@ -363,7 +363,7 @@ class UserController extends AbstractRestfulController
                 $userArray ['_embedded'] = array(
                      'company' => array(
                          '_links' => array(
-                             'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                             'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
                          ),
                      ),
                 );
@@ -479,7 +479,7 @@ class UserController extends AbstractRestfulController
                  $user = UserQuery::create()->filterByIdUser($item['iduser'])->findOne();
                  $row = array(
                      "_links" => array(
-                         'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['iduser']),
+                         'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['iduser']),
                      ),
                  );
                  foreach ($userForm->getElements() as $key=>$value){
@@ -501,7 +501,7 @@ class UserController extends AbstractRestfulController
                  $row['_embedded'] = array(
                      'company' => array(
                          '_links' => array(
-                             'self' => array('href' => WEBSITE_API.'/company/'.$user->getIdCompany()),
+                             'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
                          ),
                      ),
                  );

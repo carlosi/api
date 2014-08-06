@@ -56,7 +56,7 @@ class BankExpenseTransactionController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/'.$this->table
+                'More Info' => URL_API_DOCS.'/'.$this->table
             ),
         );
         return new JsonModel($body);
@@ -95,7 +95,7 @@ class BankExpenseTransactionController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $bankexpensetransactionArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                        'self' => URL_API.'/'. $this->table.'/'.$id,
                     ),
                 );
                 foreach ($bankexpensetransactionForm->getElements() as $key=>$value){
@@ -128,12 +128,12 @@ class BankExpenseTransactionController extends AbstractRestfulController
                 $bankexpensetransactionArray ['_embedded'] = array(
                     'bankaccount' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/bankaccount/'.$bankexpensetransaction->getIdbankaccount()),
+                            'self' => array('href' => URL_API.'/bankaccount/'.$bankexpensetransaction->getIdbankaccount()),
                         ),
                     ),
                     'expensetransaction' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/expensetransaction/'.$bankexpensetransaction->getIdbankexpensetransaction()),
+                            'self' => array('href' => URL_API.'/expensetransaction/'.$bankexpensetransaction->getIdbankexpensetransaction()),
                         ),
                     ),
                 );

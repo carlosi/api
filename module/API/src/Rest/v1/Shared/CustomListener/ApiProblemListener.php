@@ -96,7 +96,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                     'Method' => 'PUT' ,
                     'Title' => 'The request id is null' ,
                     'Details' => 'The request id can´t be null',
-                    'More Info' => 'http://buybuy.com/api/docs'
+                    'More Info' => URL_API_DOCS
                 );
                 $jsonModel = new JsonModel($body);
                 $jsonModel->setTerminal(true);
@@ -121,7 +121,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                     'Method' => 'DELETE' ,
                     'Title' => 'The request id is null' ,
                     'Details' => 'The request id can´t be null',
-                    'More Info' => 'http://buybuy.com/api/docs'
+                    'More Info' => URL_API_DOCS
                 );
                 $jsonModel = new JsonModel($body);
                 $jsonModel->setTerminal(true);
@@ -163,7 +163,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                         'HTTP Status' => $statusCode,
                         'Title' => 'Not Found' ,
                         'Details' => 'Resource not found',
-                        'More Info' => 'http://buybuy.com/api/docs'
+                        'More Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -179,7 +179,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                     $body = array(
                         'HTTP Status' => $statusCode ,
                         'Title' => 'Internal Server Error' ,
-                        'More Info' => 'http://buybuy.com/api/docs'
+                        'More Info' => URL_API_DOCS
                     );
 
                     if($requestHeaders->get('Content-Type') == null){
@@ -200,7 +200,7 @@ class ApiProblemListener implements ListenerAggregateInterface
                                 'HTTP Status' => $statusCode,
                                 'Title' => 'Bad Request' ,
                                 'Details' => 'JSON Sintax Error',
-                                'More Info' => 'http://buybuy.com/api/docs'
+                                'More Info' => URL_API_DOCS
                             );
                         }
                     }

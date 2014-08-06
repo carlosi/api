@@ -59,7 +59,7 @@ class BranchUserController extends AbstractRestfulController
             'Success' => array(
                 'HTTP Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => WEBSITE_API_DOCS.'/'.$this->table
+                'More Info' => URL_API_DOCS.'/'.$this->table
             ),
         );
         return new JsonModel($body);
@@ -141,7 +141,7 @@ class BranchUserController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -178,13 +178,13 @@ class BranchUserController extends AbstractRestfulController
 
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
-                    $response->getHeaders()->addHeaderLine('Location', WEBSITE_API.'/'.$this->table.'/'.$branchuser->getIdbranchUser());
+                    $response->getHeaders()->addHeaderLine('Location', URL_API.'/'.$this->table.'/'.$branchuser->getIdbranchUser());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
                         "_links" => array(
-                            'self' => WEBSITE_API.'/'.$this->table.'/'.$branchuser->getIdbranchUser(),
+                            'self' => URL_API.'/'.$this->table.'/'.$branchuser->getIdbranchUser(),
                         ),
                     );
                     foreach ($branchuser->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
@@ -214,12 +214,12 @@ class BranchUserController extends AbstractRestfulController
                     $bodyResponse ['_embedded'] = array(
                         'branch' => array(
                             '_links' => array(
-                                'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$branchuser->getIdbranch()),
+                                'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$branchuser->getIdbranch()),
                             ),
                         ),
                         'user' => array(
                             '_links' => array(
-                                'self' => array('href' =>  WEBSITE_API.'/'.$this->table.'/'.$branchuser->getIduser()),
+                                'self' => array('href' =>  URL_API.'/'.$this->table.'/'.$branchuser->getIduser()),
                             ),
                         ),
                     );
@@ -362,7 +362,7 @@ class BranchUserController extends AbstractRestfulController
                 $result = $result->toArray(BasePeer::TYPE_FIELDNAME);
                 $branchuserArray = array(
                     "_links" => array(
-                        'self' => WEBSITE_API.'/'. $this->table.'/'.$id,
+                        'self' => URL_API.'/'. $this->table.'/'.$id,
                     ),
                     "ACL" => $acl,
                 );
@@ -389,12 +389,12 @@ class BranchUserController extends AbstractRestfulController
                 $branchuserArray ['_embedded'] = array(
                     'branch' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/branch/'.$branchuser->getIdbranch()),
+                            'self' => array('href' => URL_API.'/branch/'.$branchuser->getIdbranch()),
                         ),
                     ),
                     'user' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/user/'.$branchuser->getIduser()),
+                            'self' => array('href' => URL_API.'/user/'.$branchuser->getIduser()),
                         ),
                     ),
                 );
@@ -524,7 +524,7 @@ class BranchUserController extends AbstractRestfulController
                 $branchuser = $this->getQuery()->create()->filterByIdbranchUser($item['idbranch_user'])->findOne();
                 $row = array(
                     "_links" => array(
-                        'self' => array('href' => WEBSITE_API.'/'.$this->table.'/'.$item['idbranch_user']),
+                        'self' => array('href' => URL_API.'/'.$this->table.'/'.$item['idbranch_user']),
                     ),
                 );
                 foreach ($branchuserForm->getElements() as $key=>$value){
@@ -551,12 +551,12 @@ class BranchUserController extends AbstractRestfulController
                 $row['_embedded'] = array(
                     'branch' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/branch/'.$branchuser->getIdbranch()),
+                            'self' => array('href' => URL_API.'/branch/'.$branchuser->getIdbranch()),
                         ),
                     ),
                     'user' => array(
                         '_links' => array(
-                            'self' => array('href' => WEBSITE_API.'/user/'.$branchuser->getIduser()),
+                            'self' => array('href' => URL_API.'/user/'.$branchuser->getIduser()),
                         ),
                     ),
                 );
@@ -668,7 +668,7 @@ class BranchUserController extends AbstractRestfulController
                     'HTTP Status' => '400' ,
                     'Title' => 'Bad Request' ,
                     'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => WEBSITE_API_DOCS
+                    'More Info' => URL_API_DOCS
                 );
 
                 return new JsonModel($body);
@@ -716,7 +716,7 @@ class BranchUserController extends AbstractRestfulController
                                 //Le damos formato a nuestra respuesta
                                 $bodyResponse = array(
                                     "_links" => array(
-                                        'self' => WEBSITE_API.'/'. $this->table.'/'.$branchuser->getIdbranch(),
+                                        'self' => URL_API.'/'. $this->table.'/'.$branchuser->getIdbranch(),
                                     ),
                                 );
 
@@ -748,12 +748,12 @@ class BranchUserController extends AbstractRestfulController
                                 $bodyResponse ['_embedded'] = array(
                                     'branch' => array(
                                         '_links' => array(
-                                            'self' => array('href' => WEBSITE_API.'/company/'.$branchuser->getIdBranch()),
+                                            'self' => array('href' => URL_API.'/company/'.$branchuser->getIdBranch()),
                                         ),
                                     ),
                                     'user' => array(
                                         '_links' => array(
-                                            'self' => array('href' => WEBSITE_API.'/company/'.$branchuser->getIduser()),
+                                            'self' => array('href' => URL_API.'/company/'.$branchuser->getIduser()),
                                         ),
                                     ),
                                 );
