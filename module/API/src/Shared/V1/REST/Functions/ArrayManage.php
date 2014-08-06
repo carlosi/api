@@ -233,7 +233,6 @@ class ArrayManage{
         }
         return $result;
     }
-
     public static function getIdCompanyForList($query, $idcompany, $page, $limit){
 
         // Guardamos y validamos si XXXQuery() contiene la columna "idcompany"
@@ -433,13 +432,13 @@ class ArrayManage{
                     }
                 }
             }
-            return $result;
         }else{
+
             // Si el $query es del recurso Company
             if($query->getModelName() == 'Company'){
-                $result = $query->create()->paginate($page,$limit);
+                $result = $query->paginate($page,$limit);
             }else{
-                $result = $query->create()->filterByIdCompany($idcompany)->paginate($page,$limit);
+                $result = $query->filterByIdCompany($idcompany)->paginate($page,$limit);
             }
         }
         return $result;
@@ -662,7 +661,6 @@ class ArrayManage{
         
         //Los Filtros
         if($filters!=null){
-            echo "Entro";
             foreach ($filters as $filter){
                 //var_dump("attribute: ".$filter['attribute']);
                 $params = $query->getParams();

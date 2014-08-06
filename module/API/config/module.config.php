@@ -284,7 +284,7 @@ return array(
             'Company\V1\REST\Controller\BankAccountController'                  => 'Company\V1\REST\Controller\BankAccountController',
             'Company\V1\REST\Controller\BranchController'                       => 'Company\V1\REST\Controller\BranchController',
             'Company\V1\REST\Controller\BranchUserController'                   => 'Company\V1\REST\Controller\BranchUserController',
-            'Company\Controller\ClientController'                               => 'Company\V1\REST\Controller\ClientController',
+            'Company\V1\REST\Controller\ClientController'                       => 'Company\V1\REST\Controller\ClientController',
             'Company\V1\REST\Controller\ClientAddressController'                => 'Company\V1\REST\Controller\ClientAddressController',
             'Company\V1\REST\Controller\ClientCommentController'                => 'Company\V1\REST\Controller\ClientCommentController',
             'Company\V1\REST\Controller\ClientFileController'                   => 'Company\V1\REST\Controller\ClientFileController',
