@@ -166,10 +166,7 @@ class ClientFilter implements InputFilterAwareInterface
                 ),
                 'validators' => array(
                     array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                        ),
+                        'name'    => 'Zend\Validator\PasswordStrength',
                     ),
                 ),
             ));

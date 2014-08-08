@@ -48,7 +48,7 @@ class ClientForm extends Form
             'type' => 'Hidden',
             'name' => 'client_fullname',
             'options' => array(
-                'label' => 'Email'
+                'label' => 'Nombre'
             ),
         ));
 

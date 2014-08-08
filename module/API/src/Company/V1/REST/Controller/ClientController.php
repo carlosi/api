@@ -632,7 +632,7 @@ class ClientController extends AbstractRestfulController
                 '_links' => $result['links'],
                 'ACL' => $acl,
                 'resume' => $result['resume'],
-                '_embedded' => array('clientes'=> $clientArray),
+                '_embedded' => array('clients'=> $clientArray),
             );
 
             return new JsonModel($response);

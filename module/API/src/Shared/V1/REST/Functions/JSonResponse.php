@@ -6,22 +6,42 @@ use Zend\View\Model\JsonModel;
 
 class JSonResponse {
 	
-	public function getResponse($code=null,array $data=null){
+	public static function getResponseBody($code=null, array $messageArray= null){
             
-		$codeDetails = $this->getCode($code);
-		
-		$response = array(
-				"status"		=>	$codeDetails["status"],
-				"code"			=>	$codeDetails["code"],
-				"description"           =>	$codeDetails["description"],
-		);
-		
-		if($data!=null){
-                    $response["data"] = $data;
-		}
-		$responseJson = new JsonModel($response);
-		$responseJson->setTerminal(true);
-		return $responseJson;
+            switch ($code){
+                
+                case 403:{
+                    $responseBody = array(
+                        'Error' => array(
+                            'HTTP Status' => 403 . ' Forbidden',
+                            'Title' => 'Access denied',
+                            'Details' => 'Sorry but you does not have permission over this resource',
+                        ),
+                    );
+                }
+                
+                case 400:{
+                    //Resource data pre-validation error
+                    if($messageArray!=null){
+                        $responseBody = array(
+                            'Error' => array(
+                                'HTTP Status' => 400 . ' Bad Request',
+                                'Title' => 'Resource data pre-validation error',
+                                'Details' => $messageArray,
+                            ),
+                        );
+                    }
+                }
+
+                default:{
+                        $status			= "error";
+                        $description            = "Code Unknown";
+                        break;
+                }
+            }
+            
+            return $responseBody;
+
 	}
 	
 	public function getCode($code=null){

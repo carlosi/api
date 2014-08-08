@@ -5,7 +5,7 @@ namespace Company\V1\REST\Controller;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Http\Request;
 use Zend\View\Model\JsonModel;
-
+use Zend\Http\Response;
 //==============FORMS================
 use Company\V1\REST\ACL\User\Form\UserFormGET;
 use Company\V1\REST\ACL\User\Form\UserFormPostPut;
@@ -20,6 +20,7 @@ use BasePeer;
 use Shared\V1\REST\Functions\ArrayManage;
 use Shared\V1\REST\Functions\SessionManager;
 use Shared\V1\REST\Functions\HttpResponse;
+use Shared\V1\REST\Functions\JSonResponse;
 
 class UserController extends AbstractRestfulController
 {
@@ -40,6 +41,25 @@ class UserController extends AbstractRestfulController
     
     public function getQuery(){
         return new UserQuery;
+    }
+    
+    public function getArrayData($data){
+        $user = new User();
+        $userArray = $user->toArray(BasePeer::TYPE_FIELDNAME);
+
+        if($data != null){
+
+            foreach($data as $key => $value){
+                if(array_key_exists($key,$userArray)){
+                    $userArray[$key] = $value;
+                }
+            }
+
+            return $userArray;
+
+        }else{
+            return false;
+        }
     }
     
     public function getToken(){
@@ -77,57 +97,15 @@ class UserController extends AbstractRestfulController
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = SessionManager::getUserLevelToCompany($idUser);
-
+        
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
-
+            
             //Obtenemos el header de la peticion y en base al header cachamos nuestros datos
             $requestContentType = $this->getRequest()->getHeaders('ContentType')->getMediaType();
-
-            switch($requestContentType){
-                case 'application/x-www-form-urlencoded':{
-
-                    $request = $this->getRequest();
-
-                    //Cachamos los datos a insertar en un arreglo
-                    $userArray = array();
-                    $userArray['user_nickname'] = $request->getPost()->user_nickname ? $this->getRequest()->getPost()->user_nickname : null;
-                    $userArray['user_password'] = $this->getRequest()->getPost()->user_password ? $this->getRequest()->getPost()->user_password : null;
-                    $userArray['user_type'] = $this->getRequest()->getPost()->user_type ? $this->getRequest()->getPost()->user_type : 'human';
-                    $userArray['user_status'] = $this->getRequest()->getPost()->user_status ? $this->getRequest()->getPost()->user_status : 'pending';
-                    break;
-                }
-                case 'application/json':{
-
-                    //Obtenemos el body de la peticion y lo convertimos a un arreglo
-                    $requestContent = $this->getRequest()->getContent();
-                    $requestArray = json_decode($requestContent, true);
-
-                    //Cachamos los datos a insertar en un arreglo
-                    $userArray = array();
-                    $userArray['user_nickname'] = isset($requestArray['user_nickname']) ? $requestArray['user_nickname'] : null;
-                    $userArray['user_password'] = isset($requestArray['user_password']) ? $requestArray['user_password'] : null;
-                    $userArray['user_type'] = isset($requestArray['user_type']) ? $requestArray['user_type'] : 'human';
-                    $userArray['user_status'] = isset($requestArray['user_status']) ? $requestArray['user_status'] : 'pending';
-
-                    break;
-                }
-                //En caso que no nos envien un content type respondemos con error
-                default :{
-                $response = $this->getResponse();
-                $response->setStatusCode(Response::STATUS_CODE_400);
-                $body = array(
-                    'HTTP Status' => '400' ,
-                    'Title' => 'Bad Request' ,
-                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                    'More Info' => URL_API_DOCS
-                );
-
-                return new JsonModel($body);
-                break;
-                }
-            }
-
+            
+            $userArray = $this->getArrayData($data);
+            
             //Instanciamos nuestro formulario de acuerdo al nivel del usuario
             $userForm = UserFormPostPut::init($userLevel);
 
@@ -141,85 +119,52 @@ class UserController extends AbstractRestfulController
 
             //Si los valores son validos
             if($userForm->isValid()){
-
+                
                 //Instanciamos nuestro objeto User;
                 $user = new User();
 
-                //Encriptamos el password
-                $password = hash('sha256', $userArray['user_password']);
-
                 //Verificamos que user_nickname no exista ya en nuestra base de datos.
-                if(!$user->UserNicknameExist($userArray['user_nickname'], $idCompany)){
-
+                $userNickNameExist = $user->UserNicknameExist($userArray['user_nickname'], $idCompany);
+                if(!$userNickNameExist){
+                    
                     //Seteamos los datos a nuestro objeto
                     $user->setIdCompany($idCompany)
                         ->setUserNickname($userArray['user_nickname'])
-                        ->setUserPassword($password)
+                        ->setUserPassword($userArray['user_password'])
                         ->setUserType($userArray['user_type'])
                         ->setUserStatus($userArray['user_status'])
-                        ->save(); //Insertamos en nuestra base de datos
+                        ->save();
 
-                    $response = new HttpResponse();
-                    $response->create($user);
-                    exit();
+                       
+                    //Instanciamos nuestros foreign keys, en este caso company
+                    $company = $user->getCompany();
+                             
+                    //Mnadamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros 
+                    //1. El objeto user
+                    //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
+                    //3. el objeto company que va ir como __embebed
+                    $bodyResponse = HttpResponse::createBodyResonse($user,array('idcompany'),array($company));         
+                    
+                    //Encriptamos y seteamos nuestra contraseña encriptada
+                    $encryptPassword = hash('sha256', $userArray['user_password']);
+                    $user->setUserPassword($encryptPassword);
+                    $user->save();
 
                     //Modificamos el Header de nuestra respuesta
                     $response = $this->getResponse();
                     $response->getHeaders()->addHeaderLine('Location', URL_API.'/user/'.$user->getIdUser());
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_201);
 
-                    //Le damos formato a nuestra respuesta
-                    $bodyResponse = array(
-                        "_links" => array(
-                            'self' => URL_API.'/'.$this->table.'/'.$user->getIdUser(),
-                        ),
-                    );
-                    foreach ($user->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
-                        $bodyResponse[$key] = $value;
-                    }
-                    $bodyResponse['user_password'] = $userArray['user_password']; // Remplazamos el password ya que de lo contrario no lo trairia encriptado
-
-                    //Eliminamos los campos que hacen referencia a otras tablas
-                    unset($bodyResponse['idcompany']);
-
-                    //Agregamos el campo embedded a nuestro arreglo
-                    $company = $user->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
-
-                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                    $companyForm = CompanyFormGET::init($userLevel);
-
-                    $companyArray = array();
-                    foreach ($companyForm->getElements() as $key=>$value){
-                        $companyArray[$key] = $company[$key];
-                    }
-                    $bodyResponse ['_embedded'] = array(
-                        'company' => array(
-                            '_links' => array(
-                                'self' => array('href' => URL_API.'/company/'.$user->getIdCompany()),
-                            ),
-                        ),
-                    );
-
-                    //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
-                    foreach ($companyArray as $key=>$value){
-                        $bodyResponse ['_embedded']['company'][$key] = $value;
-                    }
-
                     return new JsonModel($bodyResponse);
-
+                //Si el user_nickaname ya existe
                 }else{
+                    
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP Status' => 400 . ' Bad Request',
-                            'Title' => 'Resource data pre-validation error',
-                            'Details' => "user_nickname ". "'".$userArray['user_nickname']."'". " already exists",
-                        ),
-                    );
-                    return new JsonModel($bodyResponse);
+                    return new JsonModel($userNickNameExist);
                 }
+            //Si el formulario no fue valido
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
@@ -234,27 +179,14 @@ class UserController extends AbstractRestfulController
                         array_push($messageArray, $message);
                     }
                 }
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP Status' => 400 . ' Bad Request',
-                        'Title' => 'Resource data pre-validation error',
-                        'Details' => $messageArray,
-                    ),
-                );
-                return new JsonModel($bodyResponse);
+                return new JsonModel(JSonResponse::getResponseBody(400, $messageArray));
             }
         }else{
             //Modifiamos el Header de nuestra respuesta
             $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Acces Denied
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP Status' => 403 . ' Forbidden',
-                    'Title' => 'Access denied',
-                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
-                ),
-            );
-            return new JsonModel($bodyResponse);
+            //Retornamos un error forbidden
+            return new JsonModel(JSonResponse::getResponseBody(403));
         }
     }
 
@@ -275,18 +207,42 @@ class UserController extends AbstractRestfulController
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
             
-            //Instanciamos nuestro formulario de acuerdo al nivel del usuario que realiza la peticion.
-            $userForm = UserFormGET::init($userLevel);
+            //Verificamos si el id que quiere obtener existe y pertenece a la compañia
             
-            //Guardamos en un arrglo los campos a los que el usuario va poder tener acceso de acuerdo a su nivel?
-            $allowedColumns = array();
-            foreach ($userForm->getElements() as $key=>$value){
-                array_push($allowedColumns, $key);
+            if($user->IdUserExist($id, $idCompany)){
+                
+                //O
+                $user = new User();
+                
+                //Instanciamos nuestro formulario de acuerdo al nivel del usuario que realiza la peticion.
+                $userForm = UserFormGET::init($userLevel);
+                
+                //Guardamos en un arrglo los campos a los que el usuario va poder tener acceso de acuerdo a su nivel?
+                $allowedColumns = array();
+                foreach ($userForm->getElements() as $key=>$value){
+                    array_push($allowedColumns, $key);
+                }
+                
+                //Los formulaarios de nuestros foreign keys
+                $companyForm = null;
+                
+                //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
+                if(isset($allowedColumns['idcompany'])){
+                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                    $companyForm   = CompanyFormGET::init($userLevel);
+                }
+               
+               
+                
             }
-
-            /*
-             * ACL
-             */
+            
+            
+            
+            
+            
+            
+            
+            
 
             //Guardamos en un arreglo las columnas y los atributos a los que el usuario tiene permiso
             $acl = array();
@@ -298,9 +254,8 @@ class UserController extends AbstractRestfulController
                     $acl[$element->getAttribute('name')] = $element->getOption('label');
                 }
             }
-
-            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-            $companyForm   = CompanyFormGET::init($userLevel);
+            
+            
 
             //Eliminamos el idcompany si es visible y lo agregamos como embbeded toda la informacion de company a la que tiene visible el usuario
             if(key_exists('idcompany',$acl)){
@@ -371,19 +326,13 @@ class UserController extends AbstractRestfulController
                     ),
                 );
                 return new JsonModel($bodyResponse);
-            }                    
+            }                       
         }else{
             //Modifiamos el Header de nuestra respuesta
             $response = $this->getResponse();
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //ACCESS DENIED
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP Status' => 403 . ' Forbidden',
-                    'Title' => 'Access denied',
-                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
-                ),
-            );
-            return new JsonModel($bodyResponse);
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Acces Denied
+            //Retornamos un error forbidden
+            return new JsonModel(JSonResponse::getResponseBody(403));
         }
     }
 
@@ -506,15 +455,9 @@ class UserController extends AbstractRestfulController
         }else{
             //Modifiamos el Header de nuestra respuesta
             $response = $this->getResponse();
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP Status' => 403 . ' Forbidden',
-                    'Title' => 'Access denied',
-                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
-                ),
-            );
-            return new JsonModel($bodyResponse);
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Acces Denied
+            //Retornamos un error forbidden
+            return new JsonModel(JSonResponse::getResponseBody(403));
         }      
     }
 

@@ -13,6 +13,7 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Shared\V1\REST\CustomListener\TokenListener;
 use Shared\V1\REST\CustomListener\ApiProblemListener;
+use Shared\V1\REST\CustomListener\ContentTypeListener;
 
 class Module
 {
@@ -27,10 +28,14 @@ class Module
         //ApiProblemListener
         $apiProblemListener = new ApiProblemListener();
         $apiProblemListener->attach($eventManager);
-        
+
         $tokenListener = new TokenListener();
         $tokenListener->attach($eventManager);
-        
+
+        //ContentTypeListener
+        $contentTypeListener = new ContentTypeListener();
+        $contentTypeListener->attach($eventManager);
+
     }
     
     public function getConfig()
@@ -46,18 +51,18 @@ class Module
             ),
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
-                    'Company' 	    => __DIR__ . '/src/' . 'Company/',
-                    'Contents' 	    => __DIR__ . '/src/' . 'Contents/',
+                    'Company'         => __DIR__ . '/src/' . 'Company/',
+                    'Contents'         => __DIR__ . '/src/' . 'Contents/',
                     'Documentation' => __DIR__ . '/src/' . 'Documentation/',
-                    'Expense'	    => __DIR__ . '/src/' . 'Expense/',
-                    'Login' 	    => __DIR__ . '/src/' . 'Login/',
+                    'Expense'        => __DIR__ . '/src/' . 'Expense/',
+                    'Login'         => __DIR__ . '/src/' . 'Login/',
                     'MercadoLibre'  => __DIR__ . '/src/' . 'MercadoLibre/',
                     'Production'    => __DIR__ . '/src/' . 'Production/',
-                    'Project'		=> __DIR__ . '/src/' . 'Project/',
-                    'Sales'		    => __DIR__ . '/src/' . 'Sales/',
-                    'SATMexico'		=> __DIR__ . '/src/' . 'SATMexico/',
-                    'Shared'		=> __DIR__ . '/src/' . 'Shared/',
-                    'Shipping'		=> __DIR__ . '/src/' . 'Shipping/',
+                    'Project'        => __DIR__ . '/src/' . 'Project/',
+                    'Sales'            => __DIR__ . '/src/' . 'Sales/',
+                    'SATMexico'        => __DIR__ . '/src/' . 'SATMexico/',
+                    'Shared'        => __DIR__ . '/src/' . 'Shared/',
+                    'Shipping'        => __DIR__ . '/src/' . 'Shipping/',
 
                 ),
             ),
