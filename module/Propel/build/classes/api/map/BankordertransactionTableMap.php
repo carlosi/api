@@ -62,8 +62,8 @@ class BankordertransactionTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Order', 'Order', RelationMap::MANY_TO_ONE, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Bankaccount', 'Bankaccount', RelationMap::MANY_TO_ONE, array('idbankaccount' => 'idbankaccount', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Order', 'Order', RelationMap::MANY_TO_ONE, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // BankordertransactionTableMap

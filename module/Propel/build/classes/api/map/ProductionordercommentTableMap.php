@@ -51,8 +51,8 @@ class ProductionordercommentTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Productionorderitem', 'Productionorderitem', RelationMap::MANY_TO_ONE, array('idproductionorderitem' => 'idproductionorderitem', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // ProductionordercommentTableMap

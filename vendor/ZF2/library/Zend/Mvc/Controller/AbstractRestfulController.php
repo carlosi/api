@@ -16,7 +16,7 @@ use Zend\Stdlib\RequestInterface as Request;
 use Zend\Stdlib\ResponseInterface as Response;
 
 /**
- * Abstract RESTful controller
+ * Abstract Restful controller
  */
 abstract class AbstractRestfulController extends AbstractController
 {
@@ -294,7 +294,7 @@ abstract class AbstractRestfulController extends AbstractController
             return $return;
         }
 
-        // RESTful methods
+        // Restful methods
         $method = strtolower($request->getMethod());
         switch ($method) {
             // Custom HTTP methods (or custom overrides for standard methods)

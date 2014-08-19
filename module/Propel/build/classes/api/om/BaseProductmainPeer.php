@@ -51,27 +51,27 @@ abstract class BaseProductmainPeer
     const PRODUCTMAIN_TYPE = 'productmain.productmain_type';
 
     /** The enumerated values for the productmain_unit field */
-    const PRODUCTMAIN_UNIT_KILO = 'kilo';
-    const PRODUCTMAIN_UNIT_METRO_CUADRADO = 'metro cuadrado';
-    const PRODUCTMAIN_UNIT_CABEZA = 'cabeza';
-    const PRODUCTMAIN_UNIT_KILOWATT = 'kilowatt';
-    const PRODUCTMAIN_UNIT_KILOWATT_HORA = 'kilowatt-hora';
-    const PRODUCTMAIN_UNIT_GRAMO_NETO = 'gramo neto';
-    const PRODUCTMAIN_UNIT_DOCENAS = 'docenas';
-    const PRODUCTMAIN_UNIT_GRAMO = 'gramo';
-    const PRODUCTMAIN_UNIT_METRO_CúBICO = 'metro cúbico';
-    const PRODUCTMAIN_UNIT_LITRO = 'litro';
-    const PRODUCTMAIN_UNIT_MILLAR = 'millar';
-    const PRODUCTMAIN_UNIT_TONELADA = 'tonelada';
-    const PRODUCTMAIN_UNIT_DECENAS = 'decenas';
-    const PRODUCTMAIN_UNIT_CAJA = 'caja';
-    const PRODUCTMAIN_UNIT_METRO_LINEAL = 'metro lineal';
-    const PRODUCTMAIN_UNIT_PIEZA = 'pieza';
-    const PRODUCTMAIN_UNIT_PAR = 'par';
-    const PRODUCTMAIN_UNIT_JUEGO = 'juego';
-    const PRODUCTMAIN_UNIT_BARRIL = 'barril';
-    const PRODUCTMAIN_UNIT_CIENTOS = 'cientos';
-    const PRODUCTMAIN_UNIT_BOTELLA = 'botella';
+    const PRODUCTMAIN_UNIT_KILO = 'KILO';
+    const PRODUCTMAIN_UNIT_METRO_CUADRADO = 'METRO CUADRADO';
+    const PRODUCTMAIN_UNIT_CABEZA = 'CABEZA';
+    const PRODUCTMAIN_UNIT_KILOWATT = 'KILOWATT';
+    const PRODUCTMAIN_UNIT_KILOWATT_HORA = 'KILOWATT-HORA';
+    const PRODUCTMAIN_UNIT_GRAMO_NETO = 'GRAMO NETO';
+    const PRODUCTMAIN_UNIT_DOCENAS = 'DOCENAS';
+    const PRODUCTMAIN_UNIT_GRAMO = 'GRAMO';
+    const PRODUCTMAIN_UNIT_METRO_CÚBICO = 'METRO CÚBICO';
+    const PRODUCTMAIN_UNIT_LITRO = 'LITRO';
+    const PRODUCTMAIN_UNIT_MILLAR = 'MILLAR';
+    const PRODUCTMAIN_UNIT_TONELADA = 'TONELADA';
+    const PRODUCTMAIN_UNIT_DECENAS = 'DECENAS';
+    const PRODUCTMAIN_UNIT_CAJA = 'CAJA';
+    const PRODUCTMAIN_UNIT_METRO_LINEAL = 'METRO LINEAL';
+    const PRODUCTMAIN_UNIT_PIEZA = 'PIEZA';
+    const PRODUCTMAIN_UNIT_PAR = 'PAR';
+    const PRODUCTMAIN_UNIT_JUEGO = 'JUEGO';
+    const PRODUCTMAIN_UNIT_BARRIL = 'BARRIL';
+    const PRODUCTMAIN_UNIT_CIENTOS = 'CIENTOS';
+    const PRODUCTMAIN_UNIT_BOTELLA = 'BOTELLA';
 
     /** The enumerated values for the productmain_type field */
     const PRODUCTMAIN_TYPE_COMPLEMENT = 'COMPLEMENT';
@@ -130,7 +130,7 @@ abstract class BaseProductmainPeer
             ProductmainPeer::PRODUCTMAIN_UNIT_GRAMO_NETO,
             ProductmainPeer::PRODUCTMAIN_UNIT_DOCENAS,
             ProductmainPeer::PRODUCTMAIN_UNIT_GRAMO,
-            ProductmainPeer::PRODUCTMAIN_UNIT_METRO_CúBICO,
+            ProductmainPeer::PRODUCTMAIN_UNIT_METRO_CÚBICO,
             ProductmainPeer::PRODUCTMAIN_UNIT_LITRO,
             ProductmainPeer::PRODUCTMAIN_UNIT_MILLAR,
             ProductmainPeer::PRODUCTMAIN_UNIT_TONELADA,

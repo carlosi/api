@@ -45,11 +45,11 @@
     <column name="bankordertransaction_date" phpName="BankordertransactionDate" type="TIMESTAMP" required="false"/>
     <column name="bankordertransaction_paymentmethod" phpName="BankordertransactionPaymentmethod" type="CHAR" sqlType="enum('No identificado','transferencia electrónica','efectivo','Tarjeta de crédito','Tarjeta de débito','Cheque nomitativo','monedero electrónico')" required="true" defaultValue="No identificado"/>
     <column name="bankordertransaction_last4of_account" phpName="BankordertransactionLast4ofAccount" type="VARCHAR" size="4" required="true" defaultValue="0000"/>
-    <foreign-key foreignTable="order" name="idorder_bankordertransaction" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="idorder" foreign="idorder"/>
-    </foreign-key>
     <foreign-key foreignTable="bankaccount" name="idbankaccount_bankordertransaction" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idbankaccount" foreign="idbankaccount"/>
+    </foreign-key>
+    <foreign-key foreignTable="order" name="idorder_bankordertransaction" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idorder" foreign="idorder"/>
     </foreign-key>
     <index name="idorder">
       <index-column name="idorder"/>
@@ -136,11 +136,11 @@
     <column name="idclient" phpName="Idclient" type="INTEGER" required="false"/>
     <column name="chatpublic_message" phpName="ChatpublicMessage" type="LONGVARCHAR" required="false"/>
     <column name="chatpublic_date" phpName="ChatpublicDate" type="TIMESTAMP" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_chatpublic" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="client" name="idclient_chatpublic" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idclient" foreign="idclient"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_chatpublic" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="iduser">
       <index-column name="iduser"/>
@@ -178,8 +178,8 @@
     <column name="client_cellular" phpName="ClientCellular" type="VARCHAR" size="16" required="false"/>
     <column name="client_phone" phpName="ClientPhone" type="VARCHAR" size="16" required="false"/>
     <column name="client_language" phpName="ClientLanguage" type="VARCHAR" size="6" required="false"/>
-    <column name="client_status" phpName="ClientStatus" type="CHAR" sqlType="enum('pending','active','suspended','fraud')" required="true"/>
-    <column name="client_type" phpName="ClientType" type="CHAR" sqlType="enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER')" required="false" defaultValue="NORMAL"/>
+    <column name="client_status" phpName="ClientStatus" type="CHAR" sqlType="enum('pending','active','suspended','fraud')" required="true" defaultValue="pending"/>
+    <column name="client_type" phpName="ClientType" type="CHAR" sqlType="enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER')" required="true" defaultValue="NORMAL"/>
     <foreign-key foreignTable="company" name="idcompany_client" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idcompany" foreign="idcompany"/>
     </foreign-key>
@@ -571,11 +571,11 @@
     <column name="mxtaxdocument_status" phpName="MxtaxdocumentStatus" type="CHAR" sqlType="enum('CREATED','CANCELLED')" required="true" defaultValue="CREATED"/>
     <column name="mxtaxdocument_url_xml" phpName="MxtaxdocumentUrlXml" type="LONGVARCHAR" required="false"/>
     <column name="mxtaxdocument_url_pdf" phpName="MxtaxdocumentUrlPdf" type="LONGVARCHAR" required="false"/>
-    <foreign-key foreignTable="order" name="idordermx_mxtaxdocument" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="idorder" foreign="idorder"/>
-    </foreign-key>
     <foreign-key foreignTable="clienttax" name="idclienttax_mxtaxdocument" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idclienttax" foreign="idclienttax"/>
+    </foreign-key>
+    <foreign-key foreignTable="order" name="idordermx_mxtaxdocument" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idorder" foreign="idorder"/>
     </foreign-key>
     <index name="idorder">
       <index-column name="idorder"/>
@@ -817,11 +817,11 @@
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="productionordercomment_comment" phpName="ProductionordercommentComment" type="LONGVARCHAR" required="true"/>
     <column name="productionordercomment_date" phpName="ProductionordercommentDate" type="TIMESTAMP" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_productionordercomment" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="productionorderitem" name="idproductionorderitem_productionordercomment" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idproductionorderitem" foreign="idproductionorderitem"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_productionordercomment" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="idproductionorderitem">
       <index-column name="idproductionorderitem"/>
@@ -844,14 +844,14 @@
     <foreign-key foreignTable="orderitem" name="idorderitem_productionorderitem" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idorderitem" foreign="idorderitem"/>
     </foreign-key>
-    <foreign-key foreignTable="productionteam" name="idproductionteam_productionorderitem" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="idproductionteam" foreign="idproductionteam"/>
-    </foreign-key>
     <foreign-key foreignTable="productionline" name="idproductionline_productionorderitem" onDelete="RESTRICT" onUpdate="RESTRICT">
       <reference local="idproductionline" foreign="idproductionline"/>
     </foreign-key>
     <foreign-key foreignTable="productionstatus" name="idproductionstatus_productionorderitem" onDelete="RESTRICT" onUpdate="RESTRICT">
       <reference local="idproductionstatus" foreign="idproductionstatus"/>
+    </foreign-key>
+    <foreign-key foreignTable="productionteam" name="idproductionteam_productionorderitem" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idproductionteam" foreign="idproductionteam"/>
     </foreign-key>
     <index name="idorderitem">
       <index-column name="idorderitem"/>
@@ -922,7 +922,7 @@
     <column name="idcompany" phpName="Idcompany" type="INTEGER" required="true"/>
     <column name="idproductcategory" phpName="Idproductcategory" type="INTEGER" required="true"/>
     <column name="productmain_name" phpName="ProductmainName" type="VARCHAR" size="255" required="true"/>
-    <column name="productmain_unit" phpName="ProductmainUnit" type="CHAR" sqlType="ENUM('kilo','metro cuadrado','cabeza','kilowatt','kilowatt-hora','gramo neto','docenas','gramo','metro cúbico','litro','millar','tonelada','decenas','caja','metro lineal','pieza','par','juego','barril','cientos','botella')" required="true"/>
+    <column name="productmain_unit" phpName="ProductmainUnit" type="CHAR" sqlType="enum('KILO','METRO CUADRADO','CABEZA','KILOWATT','KILOWATT-HORA','GRAMO NETO','DOCENAS','GRAMO','METRO CÚBICO','LITRO','MILLAR','TONELADA','DECENAS','CAJA','METRO LINEAL','PIEZA','PAR','JUEGO','BARRIL','CIENTOS','BOTELLA')" required="true"/>
     <column name="productmain_type" phpName="ProductmainType" type="CHAR" sqlType="enum('COMPLEMENT','PRODUCT')" required="false" defaultValue="PRODUCT"/>
     <foreign-key foreignTable="company" name="idcompany_productmain" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idcompany" foreign="idcompany"/>
@@ -979,11 +979,11 @@
     <column name="idproduct" phpName="Idproduct" type="INTEGER" required="true"/>
     <column name="idproductmainproperty" phpName="Idproductmainproperty" type="INTEGER" required="true"/>
     <column name="productproperty_value" phpName="ProductpropertyValue" type="LONGVARCHAR" required="false"/>
-    <foreign-key foreignTable="product" name="idproduct_productproperty" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="idproduct" foreign="idproduct"/>
-    </foreign-key>
     <foreign-key foreignTable="productmainproperty" name="idproductmainproperty_productproperty" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idproductmainproperty" foreign="idproductmainproperty"/>
+    </foreign-key>
+    <foreign-key foreignTable="product" name="idproduct_productproperty" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idproduct" foreign="idproduct"/>
     </foreign-key>
     <index name="idproduct">
       <index-column name="idproduct"/>
@@ -1000,11 +1000,11 @@
     <column name="iddepartament" phpName="Iddepartament" type="INTEGER" required="true"/>
     <column name="project_dependency" phpName="ProjectDependency" type="INTEGER" required="true"/>
     <column name="project_name" phpName="ProjectName" type="VARCHAR" size="245" required="false"/>
-    <foreign-key foreignTable="department" name="project_iddepartament" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iddepartament" foreign="iddepartment"/>
-    </foreign-key>
     <foreign-key foreignTable="project" name="project_dependency" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="project_dependency" foreign="idproject"/>
+    </foreign-key>
+    <foreign-key foreignTable="department" name="project_iddepartament" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iddepartament" foreign="iddepartment"/>
     </foreign-key>
     <index name="iddepartament">
       <index-column name="iddepartament"/>
@@ -1039,11 +1039,11 @@
     <column name="idprojectactivity" phpName="Idprojectactivity" type="INTEGER" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="projectactivitypost_text" phpName="ProjectactivitypostText" type="LONGVARCHAR" required="false"/>
-    <foreign-key foreignTable="user" name="iduser_projectactivitypost" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="projectactivity" name="idprojectactivity_projectactivitypost" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idprojectactivity" foreign="idprojectactivity"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_projectactivitypost" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="idprojectactivity">
       <index-column name="idprojectactivity"/>
@@ -1059,11 +1059,11 @@
     <column name="idprojectactivityuser" phpName="Idprojectactivityuser" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="idprojectactivity" phpName="Idprojectactivity" type="INTEGER" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_projectactivityuser" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="projectactivity" name="idprojectactivity_projectactivityuser" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idprojectactivity" foreign="idprojectactivity"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_projectactivityuser" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="iduser">
       <index-column name="iduser"/>

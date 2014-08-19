@@ -30,10 +30,6 @@
  * @method ProductionorderitemQuery rightJoinOrderitem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Orderitem relation
  * @method ProductionorderitemQuery innerJoinOrderitem($relationAlias = null) Adds a INNER JOIN clause to the query using the Orderitem relation
  *
- * @method ProductionorderitemQuery leftJoinProductionteam($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionteam relation
- * @method ProductionorderitemQuery rightJoinProductionteam($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionteam relation
- * @method ProductionorderitemQuery innerJoinProductionteam($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionteam relation
- *
  * @method ProductionorderitemQuery leftJoinProductionline($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionline relation
  * @method ProductionorderitemQuery rightJoinProductionline($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionline relation
  * @method ProductionorderitemQuery innerJoinProductionline($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionline relation
@@ -41,6 +37,10 @@
  * @method ProductionorderitemQuery leftJoinProductionstatus($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionstatus relation
  * @method ProductionorderitemQuery rightJoinProductionstatus($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionstatus relation
  * @method ProductionorderitemQuery innerJoinProductionstatus($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionstatus relation
+ *
+ * @method ProductionorderitemQuery leftJoinProductionteam($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionteam relation
+ * @method ProductionorderitemQuery rightJoinProductionteam($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionteam relation
+ * @method ProductionorderitemQuery innerJoinProductionteam($relationAlias = null) Adds a INNER JOIN clause to the query using the Productionteam relation
  *
  * @method ProductionorderitemQuery leftJoinProductionordercomment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionordercomment relation
  * @method ProductionorderitemQuery rightJoinProductionordercomment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionordercomment relation
@@ -640,82 +640,6 @@ abstract class BaseProductionorderitemQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Productionteam object
-     *
-     * @param   Productionteam|PropelObjectCollection $productionteam The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ProductionorderitemQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByProductionteam($productionteam, $comparison = null)
-    {
-        if ($productionteam instanceof Productionteam) {
-            return $this
-                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONTEAM, $productionteam->getIdproductionteam(), $comparison);
-        } elseif ($productionteam instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONTEAM, $productionteam->toKeyValue('PrimaryKey', 'Idproductionteam'), $comparison);
-        } else {
-            throw new PropelException('filterByProductionteam() only accepts arguments of type Productionteam or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Productionteam relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ProductionorderitemQuery The current query, for fluid interface
-     */
-    public function joinProductionteam($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Productionteam');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Productionteam');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Productionteam relation Productionteam object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   ProductionteamQuery A secondary query class using the current class as primary query
-     */
-    public function useProductionteamQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinProductionteam($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Productionteam', 'ProductionteamQuery');
-    }
-
-    /**
      * Filter the query by a related Productionline object
      *
      * @param   Productionline|PropelObjectCollection $productionline The related object(s) to use as filter
@@ -865,6 +789,82 @@ abstract class BaseProductionorderitemQuery extends ModelCriteria
         return $this
             ->joinProductionstatus($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Productionstatus', 'ProductionstatusQuery');
+    }
+
+    /**
+     * Filter the query by a related Productionteam object
+     *
+     * @param   Productionteam|PropelObjectCollection $productionteam The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProductionorderitemQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductionteam($productionteam, $comparison = null)
+    {
+        if ($productionteam instanceof Productionteam) {
+            return $this
+                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONTEAM, $productionteam->getIdproductionteam(), $comparison);
+        } elseif ($productionteam instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ProductionorderitemPeer::IDPRODUCTIONTEAM, $productionteam->toKeyValue('PrimaryKey', 'Idproductionteam'), $comparison);
+        } else {
+            throw new PropelException('filterByProductionteam() only accepts arguments of type Productionteam or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productionteam relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProductionorderitemQuery The current query, for fluid interface
+     */
+    public function joinProductionteam($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productionteam');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productionteam');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productionteam relation Productionteam object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductionteamQuery A secondary query class using the current class as primary query
+     */
+    public function useProductionteamQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductionteam($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productionteam', 'ProductionteamQuery');
     }
 
     /**

@@ -69,14 +69,14 @@ CREATE TABLE `bankordertransaction`
     PRIMARY KEY (`idbankordertransaction`),
     INDEX `idorder` (`idorder`),
     INDEX `idbankaccount` (`idbankaccount`),
-    CONSTRAINT `idorder_bankordertransaction`
-        FOREIGN KEY (`idorder`)
-        REFERENCES `order` (`idorder`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idbankaccount_bankordertransaction`
         FOREIGN KEY (`idbankaccount`)
         REFERENCES `bankaccount` (`idbankaccount`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `idorder_bankordertransaction`
+        FOREIGN KEY (`idorder`)
+        REFERENCES `order` (`idorder`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -190,14 +190,14 @@ CREATE TABLE `chatpublic`
     PRIMARY KEY (`idchatpublic`),
     INDEX `iduser` (`iduser`),
     INDEX `idclient` (`idclient`),
-    CONSTRAINT `iduser_chatpublic`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idclient_chatpublic`
         FOREIGN KEY (`idclient`)
         REFERENCES `client` (`idclient`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_chatpublic`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -241,8 +241,8 @@ CREATE TABLE `client`
     `client_cellular` VARCHAR(16),
     `client_phone` VARCHAR(16),
     `client_language` VARCHAR(6),
-    `client_status` enum('pending','active','suspended','fraud') NOT NULL,
-    `client_type` enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER') DEFAULT 'NORMAL',
+    `client_status` enum('pending','active','suspended','fraud') DEFAULT 'pending' NOT NULL,
+    `client_type` enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER') DEFAULT 'NORMAL' NOT NULL,
     PRIMARY KEY (`idclient`),
     INDEX `idcompany` (`idcompany`),
     CONSTRAINT `idcompany_client`
@@ -755,14 +755,14 @@ CREATE TABLE `mxtaxdocument`
     PRIMARY KEY (`idmxtaxdocument`),
     INDEX `idorder` (`idorder`),
     INDEX `idclienttax` (`idclienttax`),
-    CONSTRAINT `idordermx_mxtaxdocument`
-        FOREIGN KEY (`idorder`)
-        REFERENCES `order` (`idorder`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idclienttax_mxtaxdocument`
         FOREIGN KEY (`idclienttax`)
         REFERENCES `clienttax` (`idclienttax`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `idordermx_mxtaxdocument`
+        FOREIGN KEY (`idorder`)
+        REFERENCES `order` (`idorder`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -1085,14 +1085,14 @@ CREATE TABLE `productionordercomment`
     PRIMARY KEY (`idproductionordercomment`),
     INDEX `idproductionorderitem` (`idproductionorderitem`),
     INDEX `iduser` (`iduser`),
-    CONSTRAINT `iduser_productionordercomment`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idproductionorderitem_productionordercomment`
         FOREIGN KEY (`idproductionorderitem`)
         REFERENCES `productionorderitem` (`idproductionorderitem`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_productionordercomment`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -1122,17 +1122,17 @@ CREATE TABLE `productionorderitem`
         REFERENCES `orderitem` (`idorderitem`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT `idproductionteam_productionorderitem`
-        FOREIGN KEY (`idproductionteam`)
-        REFERENCES `productionteam` (`idproductionteam`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idproductionline_productionorderitem`
         FOREIGN KEY (`idproductionline`)
         REFERENCES `productionline` (`idproductionline`),
     CONSTRAINT `idproductionstatus_productionorderitem`
         FOREIGN KEY (`idproductionstatus`)
-        REFERENCES `productionstatus` (`idproductionstatus`)
+        REFERENCES `productionstatus` (`idproductionstatus`),
+    CONSTRAINT `idproductionteam_productionorderitem`
+        FOREIGN KEY (`idproductionteam`)
+        REFERENCES `productionteam` (`idproductionteam`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -1213,7 +1213,7 @@ CREATE TABLE `productmain`
     `idcompany` INTEGER NOT NULL,
     `idproductcategory` INTEGER NOT NULL,
     `productmain_name` VARCHAR(255) NOT NULL,
-    `productmain_unit` ENUM('kilo','metro cuadrado','cabeza','kilowatt','kilowatt-hora','gramo neto','docenas','gramo','metro cúbico','litro','millar','tonelada','decenas','caja','metro lineal','pieza','par','juego','barril','cientos','botella') NOT NULL,
+    `productmain_unit` enum('KILO','METRO CUADRADO','CABEZA','KILOWATT','KILOWATT-HORA','GRAMO NETO','DOCENAS','GRAMO','METRO CÚBICO','LITRO','MILLAR','TONELADA','DECENAS','CAJA','METRO LINEAL','PIEZA','PAR','JUEGO','BARRIL','CIENTOS','BOTELLA') NOT NULL,
     `productmain_type` enum('COMPLEMENT','PRODUCT') DEFAULT 'PRODUCT',
     PRIMARY KEY (`idproductmain`),
     INDEX `idproductcategory` (`idproductcategory`),
@@ -1291,14 +1291,14 @@ CREATE TABLE `productproperty`
     PRIMARY KEY (`idproductproperty`),
     INDEX `idproduct` (`idproduct`),
     INDEX `idproductmainproperty` (`idproductmainproperty`),
-    CONSTRAINT `idproduct_productproperty`
-        FOREIGN KEY (`idproduct`)
-        REFERENCES `product` (`idproduct`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idproductmainproperty_productproperty`
         FOREIGN KEY (`idproductmainproperty`)
         REFERENCES `productmainproperty` (`idproductmainproperty`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `idproduct_productproperty`
+        FOREIGN KEY (`idproduct`)
+        REFERENCES `product` (`idproduct`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -1318,14 +1318,14 @@ CREATE TABLE `project`
     PRIMARY KEY (`idproject`),
     INDEX `iddepartament` (`iddepartament`),
     INDEX `project_dependency` (`project_dependency`),
-    CONSTRAINT `project_iddepartament`
-        FOREIGN KEY (`iddepartament`)
-        REFERENCES `department` (`iddepartment`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `project_dependency`
         FOREIGN KEY (`project_dependency`)
         REFERENCES `project` (`idproject`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `project_iddepartament`
+        FOREIGN KEY (`iddepartament`)
+        REFERENCES `department` (`iddepartment`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -1369,14 +1369,14 @@ CREATE TABLE `projectactivitypost`
     PRIMARY KEY (`idprojectactivitypost`),
     INDEX `idprojectactivity` (`idprojectactivity`),
     INDEX `iduser` (`iduser`),
-    CONSTRAINT `iduser_projectactivitypost`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idprojectactivity_projectactivitypost`
         FOREIGN KEY (`idprojectactivity`)
         REFERENCES `projectactivity` (`idprojectactivity`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_projectactivitypost`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -1395,14 +1395,14 @@ CREATE TABLE `projectactivityuser`
     PRIMARY KEY (`idprojectactivityuser`),
     INDEX `iduser` (`iduser`),
     INDEX `idprojectactivity` (`idprojectactivity`),
-    CONSTRAINT `iduser_projectactivityuser`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idprojectactivity_projectactivityuser`
         FOREIGN KEY (`idprojectactivity`)
         REFERENCES `projectactivity` (`idprojectactivity`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_projectactivityuser`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;

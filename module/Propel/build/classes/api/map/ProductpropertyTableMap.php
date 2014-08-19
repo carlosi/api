@@ -50,8 +50,8 @@ class ProductpropertyTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Product', 'Product', RelationMap::MANY_TO_ONE, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Productmainproperty', 'Productmainproperty', RelationMap::MANY_TO_ONE, array('idproductmainproperty' => 'idproductmainproperty', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Product', 'Product', RelationMap::MANY_TO_ONE, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // ProductpropertyTableMap

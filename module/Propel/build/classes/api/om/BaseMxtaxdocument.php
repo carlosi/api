@@ -85,14 +85,14 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     protected $mxtaxdocument_url_pdf;
 
     /**
-     * @var        Order
-     */
-    protected $aOrder;
-
-    /**
      * @var        Clienttax
      */
     protected $aClienttax;
+
+    /**
+     * @var        Order
+     */
+    protected $aOrder;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -553,8 +553,8 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aOrder = null;
             $this->aClienttax = null;
+            $this->aOrder = null;
         } // if (deep)
     }
 
@@ -673,18 +673,18 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aOrder !== null) {
-                if ($this->aOrder->isModified() || $this->aOrder->isNew()) {
-                    $affectedRows += $this->aOrder->save($con);
-                }
-                $this->setOrder($this->aOrder);
-            }
-
             if ($this->aClienttax !== null) {
                 if ($this->aClienttax->isModified() || $this->aClienttax->isNew()) {
                     $affectedRows += $this->aClienttax->save($con);
                 }
                 $this->setClienttax($this->aClienttax);
+            }
+
+            if ($this->aOrder !== null) {
+                if ($this->aOrder->isModified() || $this->aOrder->isNew()) {
+                    $affectedRows += $this->aOrder->save($con);
+                }
+                $this->setOrder($this->aOrder);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -888,15 +888,15 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aOrder !== null) {
-                if (!$this->aOrder->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aOrder->getValidationFailures());
-                }
-            }
-
             if ($this->aClienttax !== null) {
                 if (!$this->aClienttax->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aClienttax->getValidationFailures());
+                }
+            }
+
+            if ($this->aOrder !== null) {
+                if (!$this->aOrder->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aOrder->getValidationFailures());
                 }
             }
 
@@ -1013,11 +1013,11 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aOrder) {
-                $result['Order'] = $this->aOrder->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aClienttax) {
                 $result['Clienttax'] = $this->aClienttax->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aOrder) {
+                $result['Order'] = $this->aOrder->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1263,58 +1263,6 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Order object.
-     *
-     * @param                  Order $v
-     * @return Mxtaxdocument The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setOrder(Order $v = null)
-    {
-        if ($v === null) {
-            $this->setIdorder(NULL);
-        } else {
-            $this->setIdorder($v->getIdorder());
-        }
-
-        $this->aOrder = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Order object, it will not be re-added.
-        if ($v !== null) {
-            $v->addMxtaxdocument($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Order object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Order The associated Order object.
-     * @throws PropelException
-     */
-    public function getOrder(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aOrder === null && ($this->idorder !== null) && $doQuery) {
-            $this->aOrder = OrderQuery::create()->findPk($this->idorder, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aOrder->addMxtaxdocuments($this);
-             */
-        }
-
-        return $this->aOrder;
-    }
-
-    /**
      * Declares an association between this object and a Clienttax object.
      *
      * @param                  Clienttax $v
@@ -1367,6 +1315,58 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Order object.
+     *
+     * @param                  Order $v
+     * @return Mxtaxdocument The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setOrder(Order $v = null)
+    {
+        if ($v === null) {
+            $this->setIdorder(NULL);
+        } else {
+            $this->setIdorder($v->getIdorder());
+        }
+
+        $this->aOrder = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Order object, it will not be re-added.
+        if ($v !== null) {
+            $v->addMxtaxdocument($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Order object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Order The associated Order object.
+     * @throws PropelException
+     */
+    public function getOrder(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aOrder === null && ($this->idorder !== null) && $doQuery) {
+            $this->aOrder = OrderQuery::create()->findPk($this->idorder, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aOrder->addMxtaxdocuments($this);
+             */
+        }
+
+        return $this->aOrder;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1403,18 +1403,18 @@ abstract class BaseMxtaxdocument extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aOrder instanceof Persistent) {
-              $this->aOrder->clearAllReferences($deep);
-            }
             if ($this->aClienttax instanceof Persistent) {
               $this->aClienttax->clearAllReferences($deep);
+            }
+            if ($this->aOrder instanceof Persistent) {
+              $this->aOrder->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aOrder = null;
         $this->aClienttax = null;
+        $this->aOrder = null;
     }
 
     /**

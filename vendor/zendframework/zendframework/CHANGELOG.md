@@ -1447,7 +1447,7 @@ translator instance into your validators.
   (https://github.com/zendframework/zf2/issues/3662)
 - 3663: Remove useless shared in ServiceManager
   (https://github.com/zendframework/zf2/issues/3663)
-- 3671: Hotfix/restful head identifier
+- 3671: Hotfix/Restful head identifier
   (https://github.com/zendframework/zf2/issues/3671)
 - 3673: Add translations for Zend\Validator\File\UploadFile
   (https://github.com/zendframework/zf2/issues/3673)
@@ -1973,7 +1973,7 @@ For those affected, the following courses of action are possible:
   (https://github.com/zendframework/zf2/issues/2995)
 - 3017: Fixing the problem with order and \Zend\Db\Sql\Expression
   (https://github.com/zendframework/zf2/issues/3017)
-- 3028: Added Json support for POST and PUT operations in restful controller.
+- 3028: Added Json support for POST and PUT operations in Restful controller.
   (https://github.com/zendframework/zf2/issues/3028)
 - 3056: Add pattern & storage cache factory
   (https://github.com/zendframework/zf2/issues/3056)

@@ -60,14 +60,14 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
     protected $chatpublic_date;
 
     /**
-     * @var        User
-     */
-    protected $aUser;
-
-    /**
      * @var        Client
      */
     protected $aClient;
+
+    /**
+     * @var        User
+     */
+    protected $aUser;
 
     /**
      * @var        PropelObjectCollection|ChatpublicpAttachedfile[] Collection to store aggregation of ChatpublicpAttachedfile objects.
@@ -414,8 +414,8 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
             $this->aClient = null;
+            $this->aUser = null;
             $this->collChatpublicpAttachedfiles = null;
 
         } // if (deep)
@@ -536,18 +536,18 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
             if ($this->aClient !== null) {
                 if ($this->aClient->isModified() || $this->aClient->isNew()) {
                     $affectedRows += $this->aClient->save($con);
                 }
                 $this->setClient($this->aClient);
+            }
+
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
+                }
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -744,15 +744,15 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if (!$this->aUser->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
-                }
-            }
-
             if ($this->aClient !== null) {
                 if (!$this->aClient->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aClient->getValidationFailures());
+                }
+            }
+
+            if ($this->aUser !== null) {
+                if (!$this->aUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
                 }
             }
 
@@ -861,11 +861,11 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aClient) {
                 $result['Client'] = $this->aClient->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aUser) {
+                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collChatpublicpAttachedfiles) {
                 $result['ChatpublicpAttachedfiles'] = $this->collChatpublicpAttachedfiles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1096,58 +1096,6 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param                  User $v
-     * @return Chatpublic The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setIduser(NULL);
-        } else {
-            $this->setIduser($v->getIduser());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addChatpublic($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addChatpublics($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
      * Declares an association between this object and a Client object.
      *
      * @param                  Client $v
@@ -1197,6 +1145,58 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
         }
 
         return $this->aClient;
+    }
+
+    /**
+     * Declares an association between this object and a User object.
+     *
+     * @param                  User $v
+     * @return Chatpublic The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setIduser(NULL);
+        } else {
+            $this->setIduser($v->getIduser());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addChatpublic($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
+            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addChatpublics($this);
+             */
+        }
+
+        return $this->aUser;
     }
 
 
@@ -1477,11 +1477,11 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->aUser instanceof Persistent) {
-              $this->aUser->clearAllReferences($deep);
-            }
             if ($this->aClient instanceof Persistent) {
               $this->aClient->clearAllReferences($deep);
+            }
+            if ($this->aUser instanceof Persistent) {
+              $this->aUser->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
@@ -1491,8 +1491,8 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
             $this->collChatpublicpAttachedfiles->clearIterator();
         }
         $this->collChatpublicpAttachedfiles = null;
-        $this->aUser = null;
         $this->aClient = null;
+        $this->aUser = null;
     }
 
     /**

@@ -54,9 +54,9 @@ class ProductionorderitemTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Orderitem', 'Orderitem', RelationMap::MANY_TO_ONE, array('idorderitem' => 'idorderitem', ), 'CASCADE', 'CASCADE');
-        $this->addRelation('Productionteam', 'Productionteam', RelationMap::MANY_TO_ONE, array('idproductionteam' => 'idproductionteam', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Productionline', 'Productionline', RelationMap::MANY_TO_ONE, array('idproductionline' => 'idproductionline', ), null, null);
         $this->addRelation('Productionstatus', 'Productionstatus', RelationMap::MANY_TO_ONE, array('idproductionstatus' => 'idproductionstatus', ), null, null);
+        $this->addRelation('Productionteam', 'Productionteam', RelationMap::MANY_TO_ONE, array('idproductionteam' => 'idproductionteam', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Productionordercomment', 'Productionordercomment', RelationMap::ONE_TO_MANY, array('idproductionorderitem' => 'idproductionorderitem', ), 'CASCADE', 'CASCADE', 'Productionordercomments');
     } // buildRelations()
 

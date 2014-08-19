@@ -54,14 +54,14 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
     protected $projectactivitypost_text;
 
     /**
-     * @var        User
-     */
-    protected $aUser;
-
-    /**
      * @var        Projectactivity
      */
     protected $aProjectactivity;
+
+    /**
+     * @var        User
+     */
+    protected $aUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -332,8 +332,8 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
             $this->aProjectactivity = null;
+            $this->aUser = null;
         } // if (deep)
     }
 
@@ -452,18 +452,18 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
             if ($this->aProjectactivity !== null) {
                 if ($this->aProjectactivity->isModified() || $this->aProjectactivity->isNew()) {
                     $affectedRows += $this->aProjectactivity->save($con);
                 }
                 $this->setProjectactivity($this->aProjectactivity);
+            }
+
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
+                }
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -637,15 +637,15 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if (!$this->aUser->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
-                }
-            }
-
             if ($this->aProjectactivity !== null) {
                 if (!$this->aProjectactivity->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aProjectactivity->getValidationFailures());
+                }
+            }
+
+            if ($this->aUser !== null) {
+                if (!$this->aUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
                 }
             }
 
@@ -742,11 +742,11 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aProjectactivity) {
                 $result['Projectactivity'] = $this->aProjectactivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aUser) {
+                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -962,58 +962,6 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param                  User $v
-     * @return Projectactivitypost The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setIduser(NULL);
-        } else {
-            $this->setIduser($v->getIduser());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addProjectactivitypost($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addProjectactivityposts($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
      * Declares an association between this object and a Projectactivity object.
      *
      * @param                  Projectactivity $v
@@ -1066,6 +1014,58 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a User object.
+     *
+     * @param                  User $v
+     * @return Projectactivitypost The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setIduser(NULL);
+        } else {
+            $this->setIduser($v->getIduser());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProjectactivitypost($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
+            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addProjectactivityposts($this);
+             */
+        }
+
+        return $this->aUser;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1096,18 +1096,18 @@ abstract class BaseProjectactivitypost extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aUser instanceof Persistent) {
-              $this->aUser->clearAllReferences($deep);
-            }
             if ($this->aProjectactivity instanceof Persistent) {
               $this->aProjectactivity->clearAllReferences($deep);
+            }
+            if ($this->aUser instanceof Persistent) {
+              $this->aUser->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aUser = null;
         $this->aProjectactivity = null;
+        $this->aUser = null;
     }
 
     /**

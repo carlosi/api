@@ -1311,10 +1311,10 @@ abstract class BaseProductionline extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|Productionorderitem[] List of Productionorderitem objects
      */
-    public function getProductionorderitemsJoinProductionteam($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public function getProductionorderitemsJoinProductionstatus($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = ProductionorderitemQuery::create(null, $criteria);
-        $query->joinWith('Productionteam', $join_behavior);
+        $query->joinWith('Productionstatus', $join_behavior);
 
         return $this->getProductionorderitems($query, $con);
     }
@@ -1336,10 +1336,10 @@ abstract class BaseProductionline extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|Productionorderitem[] List of Productionorderitem objects
      */
-    public function getProductionorderitemsJoinProductionstatus($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public function getProductionorderitemsJoinProductionteam($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = ProductionorderitemQuery::create(null, $criteria);
-        $query->joinWith('Productionstatus', $join_behavior);
+        $query->joinWith('Productionteam', $join_behavior);
 
         return $this->getProductionorderitems($query, $con);
     }

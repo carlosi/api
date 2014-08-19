@@ -51,8 +51,8 @@ class ChatpublicTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Client', 'Client', RelationMap::MANY_TO_ONE, array('idclient' => 'idclient', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
         $this->addRelation('ChatpublicpAttachedfile', 'ChatpublicpAttachedfile', RelationMap::ONE_TO_MANY, array('idchatpublic' => 'idchatpublic', ), 'CASCADE', 'CASCADE', 'ChatpublicpAttachedfiles');
     } // buildRelations()
 

@@ -63,8 +63,8 @@ class MxtaxdocumentTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Order', 'Order', RelationMap::MANY_TO_ONE, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Clienttax', 'Clienttax', RelationMap::MANY_TO_ONE, array('idclienttax' => 'idclienttax', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Order', 'Order', RelationMap::MANY_TO_ONE, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // MxtaxdocumentTableMap

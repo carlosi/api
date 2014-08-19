@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * HttpRequest.php
+ * BuyBuy
+ *
+ * Created by Carlos Esparza on 12/08/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
+namespace API\REST\V1\Shared\Functions;
+
+// - ZF2 - //
+use Zend\Http\Response;
+use Zend\View\Model\JsonModel;
+
+/**
+ * Class HttpRequest
+ * @package API\REST\V1\Shared\Functions
+ */
+class HttpRequest
+{
+    /**
+     * @param $data
+     * @param $request
+     * @param $response
+     * @param $resource
+     * @return array|JsonModel
+     */
+    public static function resourceData($data, $request, $response, $resource){
+
+        // Instanciamos el Formulario "resourceForm"
+        $resourceForm = ResourceManager::getResourceForm($resource);
+
+        // Obtenemos los elementos del Formulario "resourceForm"
+        $elementsForm = $resourceForm->getElements();
+
+        // Obtenemos el Content-Type del request
+        $requestContentType = $request->getHeaders('ContentType')->getMediaType();
+
+        switch ($requestContentType){
+            case 'application/x-www-form-urlencoded':{
+
+                if($data != null){
+                    $dataArray = array();
+                    foreach($elementsForm as $key=>$value){
+                        $dataArray[$key] = $request->getPost()->$key ? $request->getPost()->$key : null;
+                    }
+                    return $dataArray;
+
+                }else{
+                    //Modifiamos el Header de nuestra respuesta
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP Status' => 400 . ' Bad Request',
+                            'Title' => 'The body is empty',
+                            'Details' => "The body can`t be empty'",
+                        ),
+                    );
+                    return new JsonModel($bodyResponse);
+                }
+                break;
+            }
+            case 'application/json':{
+
+                $requestContent = $request->getContent();
+                $requestArray = json_decode($requestContent, true);
+
+                if($data != null){
+
+                    $dataArray = array();
+                    foreach($elementsForm as $key=>$value){
+                        $dataArray[$key] = isset($requestArray[$key]) ? $requestArray[$key] : null;
+                    }
+                    return $dataArray;
+                }else{
+                    //Modifiamos el Header de nuestra respuesta
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP Status' => 400 . ' Bad Request',
+                            'Title' => 'The body is empty',
+                            'Details' => "The body can`t be empty'",
+                        ),
+                    );
+                    return new JsonModel($bodyResponse);
+                }
+                break;
+            }
+        }
+    }
+}

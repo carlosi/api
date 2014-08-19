@@ -1,11 +1,12 @@
  <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
+
+ /**
+  * module.config.php
+  * BuyBuy
+  *
+  * Created by Carlos Esparza on 12/08/2014.
+  * Copyright (c) 2014 Buybuy. All rightreserved.
+  */
 
 return array(
     'router' => array(
@@ -14,10 +15,10 @@ return array(
             'login' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v1/login[/]',
+                    'route'    => '/login[/]',
                     'defaults' => array(
-                        'controller' => 'Login\V1\REST\Controller\LoginController',
-                        'action'		=> 'login',
+                        'controller' => 'API\REST\V1\Login\Controller\LoginController',
+                        'action'     => 'login',
                     ),
                 ),
             ),
@@ -25,9 +26,9 @@ return array(
             'bankaccount' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v[:version]/user[/:id][/:token][/]',
+                    'route'    => '/v[:version]/bankaccount[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\BankAccountController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
@@ -38,140 +39,117 @@ return array(
             'client' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v1/client[/:id][/:token][/]',
+                    'route'    => '/v[:version]/client[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\Controller\ClientController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'branch' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/branch[/:id][/:token][/]',
+                    'route'    => '/v[:version]/branch[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\BranchController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'branchuser' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/branchuser[/:id][/:token][/]',
+                    'route'    => '/v[:version]/branchuser[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\BranchUserController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
-                    ),
-                ),
-            ),
-            'client' => array(
-                'type' => 'Segment',
-                'options' => array(
-                    'route'    => '/v1/client[/:id][/:token][/]',
-                    'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\ClientController',
-                    ),
-                    'constraints' => array(
-                        'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'clientaddress' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/clientaddress[/:id][/:token][/]',
+                    'route'    => '/v[:version]/clientaddress[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\ClientAddressController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'clientcomment' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/clientcomment[/:id][/:token][/]',
+                    'route'    => '/v[:version]/clientcomment[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\ClientCommentController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'clientfile' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/clientfile[/:id][/:token][/]',
+                    'route'    => '/v[:version]/clientfile[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\ClientFileController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'companyaddress' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/companyaddress[/:id][/:token][/]',
+                    'route'    => '/v[:version]/companyaddress[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\CompanyAddressController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'company' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/company[/:id][/:token][/]',
+                    'route'    => '/v[:version]/company[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\CompanyController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'useracl' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/useracl[/:id][/:token][/]',
+                    'route'    => '/v[:version]/useracl[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\UserAclController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
@@ -180,7 +158,7 @@ return array(
                 'options' => array(
                     'route'    => '/v[:version]/user[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Company\V1\REST\Controller\UserController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
@@ -192,28 +170,53 @@ return array(
             'bankexpensetransaction' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v1/bankexpensetransaction[/:id][/:token][/]',
+                    'route'    => '/v[:version]/bankexpensetransaction[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Expense\V1\REST\Controller\BankExpenseTransactionController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'expenserecurrency' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/expenserecurrency[/:id][/:token][/]',
+                    'route'    => '/v[:version]/expenserecurrency[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'Expense\V1\REST\Controller\ExpenseRecurrencyController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
+                    ),
+                ),
+            ),
+            'expensetransactionfile' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version]/expensetransactionfile[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'version' => '1',
+                    ),
+                ),
+            ),
+            // Module Routes Sales
+            'order' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version]/order[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'version' => '1',
                     ),
                 ),
             ),
@@ -221,39 +224,41 @@ return array(
             'clienttax' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v1/clienttax[/:id][/:token][/]',
+                    'route'    => '/v[:version]/clienttax[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'SATMexico\V1\REST\Controller\ClientTaxController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
             'mxtaxdocument' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v1/mxtaxdocument[/:id][/:token][/]',
+                    'route'    => '/v[:version]/mxtaxdocument[/:id][/:token][/]',
                     'defaults' => array(
-                        'controller' => 'SATMexico\V1\REST\Controller\MxTaxDocumentController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
-                        'limit' => '[0-9]+',
-                        'order' => 'asc|desc',
+                        'version' => '1',
                     ),
                 ),
             ),
-        	// Module Routes Documentation
+            // Module Routes Documentation
             'documentation' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v1/documentation[/]',
+                    'route'    => '/v[:version]/documentation[/]',
                     'defaults' => array(
-                        'controller' => 'Documentation\V1\REST\Controller\IndexController',
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
                         'action'		=> 'index',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'version' => '1',
                     ),
                 ),
             ),
@@ -291,33 +296,9 @@ return array(
     'controllers' => array(
         'invokables' => array(
 
-            'Login\V1\REST\Controller\LoginController'                                  => 'Login\V1\REST\Controller\LoginController',
+            'API\REST\V1\Login\Controller\LoginController'    => 'API\REST\V1\Login\Controller\LoginController',
+            'API\REST\V1\Controller\ResourceController'       => 'API\REST\V1\Controller\ResourceController',
 
-            'Company\V1\REST\Controller\BankAccountController'                  => 'Company\V1\REST\Controller\BankAccountController',
-            'Company\V1\REST\Controller\BranchController'                       => 'Company\V1\REST\Controller\BranchController',
-            'Company\V1\REST\Controller\BranchUserController'                   => 'Company\V1\REST\Controller\BranchUserController',
-            'Company\V1\REST\Controller\ClientController'                       => 'Company\V1\REST\Controller\ClientController',
-            'Company\V1\REST\Controller\ClientAddressController'                => 'Company\V1\REST\Controller\ClientAddressController',
-            'Company\V1\REST\Controller\ClientCommentController'                => 'Company\V1\REST\Controller\ClientCommentController',
-            'Company\V1\REST\Controller\ClientFileController'                   => 'Company\V1\REST\Controller\ClientFileController',
-            'Company\V1\REST\Controller\CompanyController'                      => 'Company\V1\REST\Controller\CompanyController',
-            'Company\V1\REST\Controller\CompanyAddressController'               => 'Company\V1\REST\Controller\CompanyAddressController',
-            'Company\V1\REST\Controller\UserAclController'                      => 'Company\V1\REST\Controller\UserAclController',
-            'Company\V1\REST\Controller\UserController'                         => 'Company\V1\REST\Controller\UserController',
-
-            'Contents\V1\REST\Controller\ProductController'                     => 'Contents\V1\REST\Controller\ProductController',
-
-            'Documentation\V1\REST\Controller\IndexController'		            => 'Documentation\V1\REST\Controller\IndexController',
-            'Documentation\V1\REST\Controller\ModulesController'	            => 'Documentation\V1\REST\Controller\ModulesController',
-
-            'Expense\V1\REST\Controller\BankExpenseTransactionController' 	    => 'Expense\V1\REST\Controller\BankExpenseTransactionController',
-            'Expense\V1\REST\Controller\ExpenseRecurrencyController' 	        => 'Expense\V1\REST\Controller\ExpenseRecurrencyController',
-
-            'SATMexico\V1\REST\Controller\ClientTaxController'                  => 'SATMexico\V1\REST\Controller\ClientTaxController',
-            'SATMexico\V1\REST\Controller\MxTaxDocumentController'              => 'SATMexico\V1\REST\Controller\MxTaxDocumentController',
-
-            'Shared\V1\REST\Controller\AllowedPropertiesController'             => 'Shared\V1\REST\Controller\AllowedPropertiesController',
-            
             ),
     ),
     'view_manager' => array(

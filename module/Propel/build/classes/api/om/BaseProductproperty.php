@@ -54,14 +54,14 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
     protected $productproperty_value;
 
     /**
-     * @var        Product
-     */
-    protected $aProduct;
-
-    /**
      * @var        Productmainproperty
      */
     protected $aProductmainproperty;
+
+    /**
+     * @var        Product
+     */
+    protected $aProduct;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -332,8 +332,8 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aProduct = null;
             $this->aProductmainproperty = null;
+            $this->aProduct = null;
         } // if (deep)
     }
 
@@ -452,18 +452,18 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aProduct !== null) {
-                if ($this->aProduct->isModified() || $this->aProduct->isNew()) {
-                    $affectedRows += $this->aProduct->save($con);
-                }
-                $this->setProduct($this->aProduct);
-            }
-
             if ($this->aProductmainproperty !== null) {
                 if ($this->aProductmainproperty->isModified() || $this->aProductmainproperty->isNew()) {
                     $affectedRows += $this->aProductmainproperty->save($con);
                 }
                 $this->setProductmainproperty($this->aProductmainproperty);
+            }
+
+            if ($this->aProduct !== null) {
+                if ($this->aProduct->isModified() || $this->aProduct->isNew()) {
+                    $affectedRows += $this->aProduct->save($con);
+                }
+                $this->setProduct($this->aProduct);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -626,15 +626,15 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aProduct !== null) {
-                if (!$this->aProduct->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aProduct->getValidationFailures());
-                }
-            }
-
             if ($this->aProductmainproperty !== null) {
                 if (!$this->aProductmainproperty->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aProductmainproperty->getValidationFailures());
+                }
+            }
+
+            if ($this->aProduct !== null) {
+                if (!$this->aProduct->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aProduct->getValidationFailures());
                 }
             }
 
@@ -731,11 +731,11 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aProduct) {
-                $result['Product'] = $this->aProduct->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aProductmainproperty) {
                 $result['Productmainproperty'] = $this->aProductmainproperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aProduct) {
+                $result['Product'] = $this->aProduct->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -951,58 +951,6 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Product object.
-     *
-     * @param                  Product $v
-     * @return Productproperty The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setProduct(Product $v = null)
-    {
-        if ($v === null) {
-            $this->setIdproduct(NULL);
-        } else {
-            $this->setIdproduct($v->getIdproduct());
-        }
-
-        $this->aProduct = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Product object, it will not be re-added.
-        if ($v !== null) {
-            $v->addProductproperty($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Product object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Product The associated Product object.
-     * @throws PropelException
-     */
-    public function getProduct(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aProduct === null && ($this->idproduct !== null) && $doQuery) {
-            $this->aProduct = ProductQuery::create()->findPk($this->idproduct, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aProduct->addProductpropertys($this);
-             */
-        }
-
-        return $this->aProduct;
-    }
-
-    /**
      * Declares an association between this object and a Productmainproperty object.
      *
      * @param                  Productmainproperty $v
@@ -1055,6 +1003,58 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Product object.
+     *
+     * @param                  Product $v
+     * @return Productproperty The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setProduct(Product $v = null)
+    {
+        if ($v === null) {
+            $this->setIdproduct(NULL);
+        } else {
+            $this->setIdproduct($v->getIdproduct());
+        }
+
+        $this->aProduct = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Product object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProductproperty($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Product object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Product The associated Product object.
+     * @throws PropelException
+     */
+    public function getProduct(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aProduct === null && ($this->idproduct !== null) && $doQuery) {
+            $this->aProduct = ProductQuery::create()->findPk($this->idproduct, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aProduct->addProductpropertys($this);
+             */
+        }
+
+        return $this->aProduct;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1085,18 +1085,18 @@ abstract class BaseProductproperty extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aProduct instanceof Persistent) {
-              $this->aProduct->clearAllReferences($deep);
-            }
             if ($this->aProductmainproperty instanceof Persistent) {
               $this->aProductmainproperty->clearAllReferences($deep);
+            }
+            if ($this->aProduct instanceof Persistent) {
+              $this->aProduct->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aProduct = null;
         $this->aProductmainproperty = null;
+        $this->aProduct = null;
     }
 
     /**

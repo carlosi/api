@@ -77,11 +77,6 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     protected $aOrderitem;
 
     /**
-     * @var        Productionteam
-     */
-    protected $aProductionteam;
-
-    /**
      * @var        Productionline
      */
     protected $aProductionline;
@@ -90,6 +85,11 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
      * @var        Productionstatus
      */
     protected $aProductionstatus;
+
+    /**
+     * @var        Productionteam
+     */
+    protected $aProductionteam;
 
     /**
      * @var        PropelObjectCollection|Productionordercomment[] Collection to store aggregation of Productionordercomment objects.
@@ -548,9 +548,9 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aOrderitem = null;
-            $this->aProductionteam = null;
             $this->aProductionline = null;
             $this->aProductionstatus = null;
+            $this->aProductionteam = null;
             $this->collProductionordercomments = null;
 
         } // if (deep)
@@ -678,13 +678,6 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                 $this->setOrderitem($this->aOrderitem);
             }
 
-            if ($this->aProductionteam !== null) {
-                if ($this->aProductionteam->isModified() || $this->aProductionteam->isNew()) {
-                    $affectedRows += $this->aProductionteam->save($con);
-                }
-                $this->setProductionteam($this->aProductionteam);
-            }
-
             if ($this->aProductionline !== null) {
                 if ($this->aProductionline->isModified() || $this->aProductionline->isNew()) {
                     $affectedRows += $this->aProductionline->save($con);
@@ -697,6 +690,13 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                     $affectedRows += $this->aProductionstatus->save($con);
                 }
                 $this->setProductionstatus($this->aProductionstatus);
+            }
+
+            if ($this->aProductionteam !== null) {
+                if ($this->aProductionteam->isModified() || $this->aProductionteam->isNew()) {
+                    $affectedRows += $this->aProductionteam->save($con);
+                }
+                $this->setProductionteam($this->aProductionteam);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -911,12 +911,6 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
                 }
             }
 
-            if ($this->aProductionteam !== null) {
-                if (!$this->aProductionteam->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aProductionteam->getValidationFailures());
-                }
-            }
-
             if ($this->aProductionline !== null) {
                 if (!$this->aProductionline->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aProductionline->getValidationFailures());
@@ -926,6 +920,12 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
             if ($this->aProductionstatus !== null) {
                 if (!$this->aProductionstatus->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aProductionstatus->getValidationFailures());
+                }
+            }
+
+            if ($this->aProductionteam !== null) {
+                if (!$this->aProductionteam->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aProductionteam->getValidationFailures());
                 }
             }
 
@@ -1045,14 +1045,14 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
             if (null !== $this->aOrderitem) {
                 $result['Orderitem'] = $this->aOrderitem->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aProductionteam) {
-                $result['Productionteam'] = $this->aProductionteam->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aProductionline) {
                 $result['Productionline'] = $this->aProductionline->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->aProductionstatus) {
                 $result['Productionstatus'] = $this->aProductionstatus->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aProductionteam) {
+                $result['Productionteam'] = $this->aProductionteam->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collProductionordercomments) {
                 $result['Productionordercomments'] = $this->collProductionordercomments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1347,58 +1347,6 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Productionteam object.
-     *
-     * @param                  Productionteam $v
-     * @return Productionorderitem The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setProductionteam(Productionteam $v = null)
-    {
-        if ($v === null) {
-            $this->setIdproductionteam(NULL);
-        } else {
-            $this->setIdproductionteam($v->getIdproductionteam());
-        }
-
-        $this->aProductionteam = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Productionteam object, it will not be re-added.
-        if ($v !== null) {
-            $v->addProductionorderitem($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Productionteam object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Productionteam The associated Productionteam object.
-     * @throws PropelException
-     */
-    public function getProductionteam(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aProductionteam === null && ($this->idproductionteam !== null) && $doQuery) {
-            $this->aProductionteam = ProductionteamQuery::create()->findPk($this->idproductionteam, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aProductionteam->addProductionorderitems($this);
-             */
-        }
-
-        return $this->aProductionteam;
-    }
-
-    /**
      * Declares an association between this object and a Productionline object.
      *
      * @param                  Productionline $v
@@ -1500,6 +1448,58 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
         }
 
         return $this->aProductionstatus;
+    }
+
+    /**
+     * Declares an association between this object and a Productionteam object.
+     *
+     * @param                  Productionteam $v
+     * @return Productionorderitem The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setProductionteam(Productionteam $v = null)
+    {
+        if ($v === null) {
+            $this->setIdproductionteam(NULL);
+        } else {
+            $this->setIdproductionteam($v->getIdproductionteam());
+        }
+
+        $this->aProductionteam = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Productionteam object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProductionorderitem($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Productionteam object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Productionteam The associated Productionteam object.
+     * @throws PropelException
+     */
+    public function getProductionteam(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aProductionteam === null && ($this->idproductionteam !== null) && $doQuery) {
+            $this->aProductionteam = ProductionteamQuery::create()->findPk($this->idproductionteam, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aProductionteam->addProductionorderitems($this);
+             */
+        }
+
+        return $this->aProductionteam;
     }
 
 
@@ -1810,14 +1810,14 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
             if ($this->aOrderitem instanceof Persistent) {
               $this->aOrderitem->clearAllReferences($deep);
             }
-            if ($this->aProductionteam instanceof Persistent) {
-              $this->aProductionteam->clearAllReferences($deep);
-            }
             if ($this->aProductionline instanceof Persistent) {
               $this->aProductionline->clearAllReferences($deep);
             }
             if ($this->aProductionstatus instanceof Persistent) {
               $this->aProductionstatus->clearAllReferences($deep);
+            }
+            if ($this->aProductionteam instanceof Persistent) {
+              $this->aProductionteam->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
@@ -1828,9 +1828,9 @@ abstract class BaseProductionorderitem extends BaseObject implements Persistent
         }
         $this->collProductionordercomments = null;
         $this->aOrderitem = null;
-        $this->aProductionteam = null;
         $this->aProductionline = null;
         $this->aProductionstatus = null;
+        $this->aProductionteam = null;
     }
 
     /**

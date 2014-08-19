@@ -49,14 +49,14 @@ class ClientTableMap extends TableMap
         $this->addColumn('client_cellular', 'ClientCellular', 'VARCHAR', false, 16, null);
         $this->addColumn('client_phone', 'ClientPhone', 'VARCHAR', false, 16, null);
         $this->addColumn('client_language', 'ClientLanguage', 'VARCHAR', false, 6, null);
-        $this->addColumn('client_status', 'ClientStatus', 'CHAR', true, null, null);
+        $this->addColumn('client_status', 'ClientStatus', 'CHAR', true, null, 'pending');
         $this->getColumn('client_status', false)->setValueSet(array (
   0 => 'pending',
   1 => 'active',
   2 => 'suspended',
   3 => 'fraud',
 ));
-        $this->addColumn('client_type', 'ClientType', 'CHAR', false, null, 'NORMAL');
+        $this->addColumn('client_type', 'ClientType', 'CHAR', true, null, 'NORMAL');
         $this->getColumn('client_type', false)->setValueSet(array (
   0 => 'NORMAL',
   1 => 'GENERALPUBLIC',
