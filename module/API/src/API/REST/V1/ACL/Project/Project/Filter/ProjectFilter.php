@@ -67,9 +67,9 @@ class ProjectFilter implements InputFilterAwareInterface
                     ),
                 ));
 
-                // iddepartament: DataType = INT, NN = true
+                // idDepartment: DataType = INT, NN = true
                 $inputFilter->add(array(
-                    'name'     => 'iddepartament',
+                    'name'     => 'idDepartment',
                     'required' => false,
                     'filters'  => array(
                         array('name' => 'Int'),
@@ -85,7 +85,7 @@ class ProjectFilter implements InputFilterAwareInterface
                     ),
                 ));
 
-                // iddepartament: DataType = VARCHAR(245), NN = false
+                // idDepartment: DataType = VARCHAR(245), NN = false
                 $inputFilter->add(array(
                     'name' => 'project_name',
                     'required' => false,

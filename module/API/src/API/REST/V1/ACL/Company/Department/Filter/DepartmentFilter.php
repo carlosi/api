@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DepartamentFilter.php
+ * DepartmentFilter.php
  * BuyBuy
  *
  * Created by Carlos Esparza on 12/08/2014.
@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\Company\Departament\Filter;
+namespace API\REST\V1\ACL\Company\Department\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -29,10 +29,10 @@ use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\InputFilterAwareInterface;
 
 /**
- * Class DepartamentFilter
- * @package API\REST\V1\ACL\Company\Departament\Filter
+ * Class DepartmentFilter
+ * @package API\REST\V1\ACL\Company\Department\Filter
  */
-class DepartamentFilter implements InputFilterAwareInterface
+class DepartmentFilter implements InputFilterAwareInterface
 {
 
     /**
@@ -77,9 +77,9 @@ class DepartamentFilter implements InputFilterAwareInterface
                 ),
             ));
 
-            // departament_name: DataType = VARCHAR(245), NN = true
+            // Department_name: DataType = VARCHAR(245), NN = true
             $inputFilter->add(array(
-                'name' => 'departament_name',
+                'name' => 'department_name',
                 'required' => true,
                 'filters' => array(
                     array('name' => 'StripTags'),

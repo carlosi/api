@@ -1,30 +1,30 @@
 <?php
 
 /**
- * DepartamentFormGET.php
+ * DepartmentFormGET.php
  * BuyBuy
  *
  * Created by Carlos Esparza on 12/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\Company\Departament\Form;
+namespace API\REST\V1\ACL\Company\Department\Form;
 
 // - ACL - //
-use API\REST\V1\ACL\Company\Departament\Form\DepartamentForm;
+use API\REST\V1\ACL\Company\Department\Form\DepartmentForm;
 
 /**
- * Class DepartamentFormGET
- * @package API\REST\V1\ACL\Company\Departament\Form
+ * Class DepartmentFormGET
+ * @package API\REST\V1\ACL\Company\Department\Form
  */
-class DepartamentFormGET
+class DepartmentFormGET
 {
     /**
      * @param $userlevel
-     * @return DepartamentForm
+     * @return DepartmentForm
      */
     public static function init($userlevel){
-        $departamentForm = new DepartamentForm();
+        $DepartmentForm = new DepartmentForm();
 
         switch($userlevel){
             case 5: {
@@ -36,7 +36,7 @@ class DepartamentFormGET
                 break;
             }
             case 3: {
-                $departamentForm->remove('departament_name');
+                $DepartmentForm->remove('Department_name');
                 break;
             }
             case 2: {
@@ -48,6 +48,6 @@ class DepartamentFormGET
                 break;
             }
         }
-        return $departamentForm;
+        return $DepartmentForm;
     }
 }

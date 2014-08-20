@@ -36,10 +36,10 @@ abstract class BaseProject extends BaseObject implements Persistent
     protected $idproject;
 
     /**
-     * The value for the iddepartament field.
+     * The value for the iddepartment field.
      * @var        int
      */
-    protected $iddepartament;
+    protected $iddepartment;
 
     /**
      * The value for the project_dependency field.
@@ -54,14 +54,14 @@ abstract class BaseProject extends BaseObject implements Persistent
     protected $project_name;
 
     /**
-     * @var        Project
-     */
-    protected $aProjectRelatedByProjectDependency;
-
-    /**
      * @var        Department
      */
     protected $aDepartment;
+
+    /**
+     * @var        Project
+     */
+    protected $aProjectRelatedByProjectDependency;
 
     /**
      * @var        PropelObjectCollection|Project[] Collection to store aggregation of Project objects.
@@ -119,14 +119,14 @@ abstract class BaseProject extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [iddepartament] column value.
+     * Get the [iddepartment] column value.
      *
      * @return int
      */
-    public function getIddepartament()
+    public function getIddepartment()
     {
 
-        return $this->iddepartament;
+        return $this->iddepartment;
     }
 
     /**
@@ -173,20 +173,20 @@ abstract class BaseProject extends BaseObject implements Persistent
     } // setIdproject()
 
     /**
-     * Set the value of [iddepartament] column.
+     * Set the value of [iddepartment] column.
      *
      * @param  int $v new value
      * @return Project The current object (for fluent API support)
      */
-    public function setIddepartament($v)
+    public function setIddepartment($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->iddepartament !== $v) {
-            $this->iddepartament = $v;
-            $this->modifiedColumns[] = ProjectPeer::IDDEPARTAMENT;
+        if ($this->iddepartment !== $v) {
+            $this->iddepartment = $v;
+            $this->modifiedColumns[] = ProjectPeer::IDDEPARTMENT;
         }
 
         if ($this->aDepartment !== null && $this->aDepartment->getIddepartment() !== $v) {
@@ -195,7 +195,7 @@ abstract class BaseProject extends BaseObject implements Persistent
 
 
         return $this;
-    } // setIddepartament()
+    } // setIddepartment()
 
     /**
      * Set the value of [project_dependency] column.
@@ -276,7 +276,7 @@ abstract class BaseProject extends BaseObject implements Persistent
         try {
 
             $this->idproject = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->iddepartament = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->iddepartment = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->project_dependency = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->project_name = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->resetModified();
@@ -311,7 +311,7 @@ abstract class BaseProject extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aDepartment !== null && $this->iddepartament !== $this->aDepartment->getIddepartment()) {
+        if ($this->aDepartment !== null && $this->iddepartment !== $this->aDepartment->getIddepartment()) {
             $this->aDepartment = null;
         }
         if ($this->aProjectRelatedByProjectDependency !== null && $this->project_dependency !== $this->aProjectRelatedByProjectDependency->getIdproject()) {
@@ -356,8 +356,8 @@ abstract class BaseProject extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aProjectRelatedByProjectDependency = null;
             $this->aDepartment = null;
+            $this->aProjectRelatedByProjectDependency = null;
             $this->collProjectsRelatedByIdproject = null;
 
             $this->collProjectactivitys = null;
@@ -480,18 +480,18 @@ abstract class BaseProject extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aProjectRelatedByProjectDependency !== null) {
-                if ($this->aProjectRelatedByProjectDependency->isModified() || $this->aProjectRelatedByProjectDependency->isNew()) {
-                    $affectedRows += $this->aProjectRelatedByProjectDependency->save($con);
-                }
-                $this->setProjectRelatedByProjectDependency($this->aProjectRelatedByProjectDependency);
-            }
-
             if ($this->aDepartment !== null) {
                 if ($this->aDepartment->isModified() || $this->aDepartment->isNew()) {
                     $affectedRows += $this->aDepartment->save($con);
                 }
                 $this->setDepartment($this->aDepartment);
+            }
+
+            if ($this->aProjectRelatedByProjectDependency !== null) {
+                if ($this->aProjectRelatedByProjectDependency->isModified() || $this->aProjectRelatedByProjectDependency->isNew()) {
+                    $affectedRows += $this->aProjectRelatedByProjectDependency->save($con);
+                }
+                $this->setProjectRelatedByProjectDependency($this->aProjectRelatedByProjectDependency);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -568,8 +568,8 @@ abstract class BaseProject extends BaseObject implements Persistent
         if ($this->isColumnModified(ProjectPeer::IDPROJECT)) {
             $modifiedColumns[':p' . $index++]  = '`idproject`';
         }
-        if ($this->isColumnModified(ProjectPeer::IDDEPARTAMENT)) {
-            $modifiedColumns[':p' . $index++]  = '`iddepartament`';
+        if ($this->isColumnModified(ProjectPeer::IDDEPARTMENT)) {
+            $modifiedColumns[':p' . $index++]  = '`iddepartment`';
         }
         if ($this->isColumnModified(ProjectPeer::PROJECT_DEPENDENCY)) {
             $modifiedColumns[':p' . $index++]  = '`project_dependency`';
@@ -591,8 +591,8 @@ abstract class BaseProject extends BaseObject implements Persistent
                     case '`idproject`':
                         $stmt->bindValue($identifier, $this->idproject, PDO::PARAM_INT);
                         break;
-                    case '`iddepartament`':
-                        $stmt->bindValue($identifier, $this->iddepartament, PDO::PARAM_INT);
+                    case '`iddepartment`':
+                        $stmt->bindValue($identifier, $this->iddepartment, PDO::PARAM_INT);
                         break;
                     case '`project_dependency`':
                         $stmt->bindValue($identifier, $this->project_dependency, PDO::PARAM_INT);
@@ -699,15 +699,15 @@ abstract class BaseProject extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aProjectRelatedByProjectDependency !== null) {
-                if (!$this->aProjectRelatedByProjectDependency->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aProjectRelatedByProjectDependency->getValidationFailures());
-                }
-            }
-
             if ($this->aDepartment !== null) {
                 if (!$this->aDepartment->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aDepartment->getValidationFailures());
+                }
+            }
+
+            if ($this->aProjectRelatedByProjectDependency !== null) {
+                if (!$this->aProjectRelatedByProjectDependency->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aProjectRelatedByProjectDependency->getValidationFailures());
                 }
             }
 
@@ -772,7 +772,7 @@ abstract class BaseProject extends BaseObject implements Persistent
                 return $this->getIdproject();
                 break;
             case 1:
-                return $this->getIddepartament();
+                return $this->getIddepartment();
                 break;
             case 2:
                 return $this->getProjectDependency();
@@ -810,7 +810,7 @@ abstract class BaseProject extends BaseObject implements Persistent
         $keys = ProjectPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getIdproject(),
-            $keys[1] => $this->getIddepartament(),
+            $keys[1] => $this->getIddepartment(),
             $keys[2] => $this->getProjectDependency(),
             $keys[3] => $this->getProjectName(),
         );
@@ -820,11 +820,11 @@ abstract class BaseProject extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aProjectRelatedByProjectDependency) {
-                $result['ProjectRelatedByProjectDependency'] = $this->aProjectRelatedByProjectDependency->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aDepartment) {
                 $result['Department'] = $this->aDepartment->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aProjectRelatedByProjectDependency) {
+                $result['ProjectRelatedByProjectDependency'] = $this->aProjectRelatedByProjectDependency->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collProjectsRelatedByIdproject) {
                 $result['ProjectsRelatedByIdproject'] = $this->collProjectsRelatedByIdproject->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -870,7 +870,7 @@ abstract class BaseProject extends BaseObject implements Persistent
                 $this->setIdproject($value);
                 break;
             case 1:
-                $this->setIddepartament($value);
+                $this->setIddepartment($value);
                 break;
             case 2:
                 $this->setProjectDependency($value);
@@ -903,7 +903,7 @@ abstract class BaseProject extends BaseObject implements Persistent
         $keys = ProjectPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setIdproject($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setIddepartament($arr[$keys[1]]);
+        if (array_key_exists($keys[1], $arr)) $this->setIddepartment($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setProjectDependency($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setProjectName($arr[$keys[3]]);
     }
@@ -918,7 +918,7 @@ abstract class BaseProject extends BaseObject implements Persistent
         $criteria = new Criteria(ProjectPeer::DATABASE_NAME);
 
         if ($this->isColumnModified(ProjectPeer::IDPROJECT)) $criteria->add(ProjectPeer::IDPROJECT, $this->idproject);
-        if ($this->isColumnModified(ProjectPeer::IDDEPARTAMENT)) $criteria->add(ProjectPeer::IDDEPARTAMENT, $this->iddepartament);
+        if ($this->isColumnModified(ProjectPeer::IDDEPARTMENT)) $criteria->add(ProjectPeer::IDDEPARTMENT, $this->iddepartment);
         if ($this->isColumnModified(ProjectPeer::PROJECT_DEPENDENCY)) $criteria->add(ProjectPeer::PROJECT_DEPENDENCY, $this->project_dependency);
         if ($this->isColumnModified(ProjectPeer::PROJECT_NAME)) $criteria->add(ProjectPeer::PROJECT_NAME, $this->project_name);
 
@@ -984,7 +984,7 @@ abstract class BaseProject extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setIddepartament($this->getIddepartament());
+        $copyObj->setIddepartment($this->getIddepartment());
         $copyObj->setProjectDependency($this->getProjectDependency());
         $copyObj->setProjectName($this->getProjectName());
 
@@ -1058,6 +1058,58 @@ abstract class BaseProject extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Department object.
+     *
+     * @param                  Department $v
+     * @return Project The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setDepartment(Department $v = null)
+    {
+        if ($v === null) {
+            $this->setIddepartment(NULL);
+        } else {
+            $this->setIddepartment($v->getIddepartment());
+        }
+
+        $this->aDepartment = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Department object, it will not be re-added.
+        if ($v !== null) {
+            $v->addProject($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Department object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Department The associated Department object.
+     * @throws PropelException
+     */
+    public function getDepartment(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aDepartment === null && ($this->iddepartment !== null) && $doQuery) {
+            $this->aDepartment = DepartmentQuery::create()->findPk($this->iddepartment, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aDepartment->addProjects($this);
+             */
+        }
+
+        return $this->aDepartment;
+    }
+
+    /**
      * Declares an association between this object and a Project object.
      *
      * @param                  Project $v
@@ -1107,58 +1159,6 @@ abstract class BaseProject extends BaseObject implements Persistent
         }
 
         return $this->aProjectRelatedByProjectDependency;
-    }
-
-    /**
-     * Declares an association between this object and a Department object.
-     *
-     * @param                  Department $v
-     * @return Project The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setDepartment(Department $v = null)
-    {
-        if ($v === null) {
-            $this->setIddepartament(NULL);
-        } else {
-            $this->setIddepartament($v->getIddepartment());
-        }
-
-        $this->aDepartment = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Department object, it will not be re-added.
-        if ($v !== null) {
-            $v->addProject($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Department object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Department The associated Department object.
-     * @throws PropelException
-     */
-    public function getDepartment(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aDepartment === null && ($this->iddepartament !== null) && $doQuery) {
-            $this->aDepartment = DepartmentQuery::create()->findPk($this->iddepartament, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aDepartment->addProjects($this);
-             */
-        }
-
-        return $this->aDepartment;
     }
 
 
@@ -1661,7 +1661,7 @@ abstract class BaseProject extends BaseObject implements Persistent
     public function clear()
     {
         $this->idproject = null;
-        $this->iddepartament = null;
+        $this->iddepartment = null;
         $this->project_dependency = null;
         $this->project_name = null;
         $this->alreadyInSave = false;
@@ -1696,11 +1696,11 @@ abstract class BaseProject extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->aProjectRelatedByProjectDependency instanceof Persistent) {
-              $this->aProjectRelatedByProjectDependency->clearAllReferences($deep);
-            }
             if ($this->aDepartment instanceof Persistent) {
               $this->aDepartment->clearAllReferences($deep);
+            }
+            if ($this->aProjectRelatedByProjectDependency instanceof Persistent) {
+              $this->aProjectRelatedByProjectDependency->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
@@ -1714,8 +1714,8 @@ abstract class BaseProject extends BaseObject implements Persistent
             $this->collProjectactivitys->clearIterator();
         }
         $this->collProjectactivitys = null;
-        $this->aProjectRelatedByProjectDependency = null;
         $this->aDepartment = null;
+        $this->aProjectRelatedByProjectDependency = null;
     }
 
     /**

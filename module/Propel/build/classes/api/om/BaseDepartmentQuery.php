@@ -8,11 +8,11 @@
  *
  * @method DepartmentQuery orderByIddepartment($order = Criteria::ASC) Order by the iddepartment column
  * @method DepartmentQuery orderByIdcompany($order = Criteria::ASC) Order by the idcompany column
- * @method DepartmentQuery orderByDepartamentName($order = Criteria::ASC) Order by the departament_name column
+ * @method DepartmentQuery orderByDepartmentName($order = Criteria::ASC) Order by the department_name column
  *
  * @method DepartmentQuery groupByIddepartment() Group by the iddepartment column
  * @method DepartmentQuery groupByIdcompany() Group by the idcompany column
- * @method DepartmentQuery groupByDepartamentName() Group by the departament_name column
+ * @method DepartmentQuery groupByDepartmentName() Group by the department_name column
  *
  * @method DepartmentQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method DepartmentQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -22,10 +22,6 @@
  * @method DepartmentQuery rightJoinCompany($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Company relation
  * @method DepartmentQuery innerJoinCompany($relationAlias = null) Adds a INNER JOIN clause to the query using the Company relation
  *
- * @method DepartmentQuery leftJoinDepartamentmember($relationAlias = null) Adds a LEFT JOIN clause to the query using the Departamentmember relation
- * @method DepartmentQuery rightJoinDepartamentmember($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Departamentmember relation
- * @method DepartmentQuery innerJoinDepartamentmember($relationAlias = null) Adds a INNER JOIN clause to the query using the Departamentmember relation
- *
  * @method DepartmentQuery leftJoinProject($relationAlias = null) Adds a LEFT JOIN clause to the query using the Project relation
  * @method DepartmentQuery rightJoinProject($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Project relation
  * @method DepartmentQuery innerJoinProject($relationAlias = null) Adds a INNER JOIN clause to the query using the Project relation
@@ -34,11 +30,11 @@
  * @method Department findOneOrCreate(PropelPDO $con = null) Return the first Department matching the query, or a new Department object populated from the query conditions when no match is found
  *
  * @method Department findOneByIdcompany(int $idcompany) Return the first Department filtered by the idcompany column
- * @method Department findOneByDepartamentName(string $departament_name) Return the first Department filtered by the departament_name column
+ * @method Department findOneByDepartmentName(string $department_name) Return the first Department filtered by the department_name column
  *
  * @method array findByIddepartment(int $iddepartment) Return Department objects filtered by the iddepartment column
  * @method array findByIdcompany(int $idcompany) Return Department objects filtered by the idcompany column
- * @method array findByDepartamentName(string $departament_name) Return Department objects filtered by the departament_name column
+ * @method array findByDepartmentName(string $department_name) Return Department objects filtered by the department_name column
  *
  * @package    propel.generator.api.om
  */
@@ -146,7 +142,7 @@ abstract class BaseDepartmentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `iddepartment`, `idcompany`, `departament_name` FROM `department` WHERE `iddepartment` = :p0';
+        $sql = 'SELECT `iddepartment`, `idcompany`, `department_name` FROM `department` WHERE `iddepartment` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -322,32 +318,32 @@ abstract class BaseDepartmentQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the departament_name column
+     * Filter the query on the department_name column
      *
      * Example usage:
      * <code>
-     * $query->filterByDepartamentName('fooValue');   // WHERE departament_name = 'fooValue'
-     * $query->filterByDepartamentName('%fooValue%'); // WHERE departament_name LIKE '%fooValue%'
+     * $query->filterByDepartmentName('fooValue');   // WHERE department_name = 'fooValue'
+     * $query->filterByDepartmentName('%fooValue%'); // WHERE department_name LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $departamentName The value to use as filter.
+     * @param     string $departmentName The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return DepartmentQuery The current query, for fluid interface
      */
-    public function filterByDepartamentName($departamentName = null, $comparison = null)
+    public function filterByDepartmentName($departmentName = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($departamentName)) {
+            if (is_array($departmentName)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $departamentName)) {
-                $departamentName = str_replace('*', '%', $departamentName);
+            } elseif (preg_match('/[\%\*]/', $departmentName)) {
+                $departmentName = str_replace('*', '%', $departmentName);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(DepartmentPeer::DEPARTAMENT_NAME, $departamentName, $comparison);
+        return $this->addUsingAlias(DepartmentPeer::DEPARTMENT_NAME, $departmentName, $comparison);
     }
 
     /**
@@ -427,80 +423,6 @@ abstract class BaseDepartmentQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Departamentmember object
-     *
-     * @param   Departamentmember|PropelObjectCollection $departamentmember  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 DepartmentQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByDepartamentmember($departamentmember, $comparison = null)
-    {
-        if ($departamentmember instanceof Departamentmember) {
-            return $this
-                ->addUsingAlias(DepartmentPeer::IDDEPARTMENT, $departamentmember->getIddepartament(), $comparison);
-        } elseif ($departamentmember instanceof PropelObjectCollection) {
-            return $this
-                ->useDepartamentmemberQuery()
-                ->filterByPrimaryKeys($departamentmember->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByDepartamentmember() only accepts arguments of type Departamentmember or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Departamentmember relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return DepartmentQuery The current query, for fluid interface
-     */
-    public function joinDepartamentmember($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Departamentmember');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Departamentmember');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Departamentmember relation Departamentmember object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   DepartamentmemberQuery A secondary query class using the current class as primary query
-     */
-    public function useDepartamentmemberQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinDepartamentmember($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Departamentmember', 'DepartamentmemberQuery');
-    }
-
-    /**
      * Filter the query by a related Project object
      *
      * @param   Project|PropelObjectCollection $project  the related object to use as filter
@@ -513,7 +435,7 @@ abstract class BaseDepartmentQuery extends ModelCriteria
     {
         if ($project instanceof Project) {
             return $this
-                ->addUsingAlias(DepartmentPeer::IDDEPARTMENT, $project->getIddepartament(), $comparison);
+                ->addUsingAlias(DepartmentPeer::IDDEPARTMENT, $project->getIddepartment(), $comparison);
         } elseif ($project instanceof PropelObjectCollection) {
             return $this
                 ->useProjectQuery()

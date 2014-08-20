@@ -1,23 +1,23 @@
 <?php
 
 /**
- * DepartamentFilterPostPut.php
+ * DepartmentFilterPostPut.php
  * BuyBuy
  *
  * Created by Carlos Esparza on 12/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\Company\Departament\Filter;
+namespace API\REST\V1\ACL\Company\Department\Filter;
 
 // - ACL - //
-use API\REST\V1\ACL\Company\Departament\Filter\DepartamentFilter;
+use API\REST\V1\ACL\Company\Department\Filter\DepartmentFilter;
 
 /**
- * Class DepartamentFilterPostPut
- * @package API\REST\V1\ACL\Company\Departament\Filter
+ * Class DepartmentFilterPostPut
+ * @package API\REST\V1\ACL\Company\Department\Filter
  */
-class DepartamentFilterPostPut
+class DepartmentFilterPostPut
 {
     /**
      * @param $userLevel
@@ -25,8 +25,8 @@ class DepartamentFilterPostPut
      */
     public function getInputFilter($userLevel)
     {
-        $departamentFilter = new DepartamentFilter();
-        $inputFilter = $departamentFilter->getInputFilter();
+        $DepartmentFilter = new DepartmentFilter();
+        $inputFilter = $DepartmentFilter->getInputFilter();
            
         switch ($userLevel){
 

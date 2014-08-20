@@ -66,7 +66,6 @@ class UserTableMap extends TableMap
         $this->addRelation('BranchUser', 'BranchUser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'BranchUsers');
         $this->addRelation('Chatcorp', 'Chatcorp', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Chatcorps');
         $this->addRelation('Chatpublic', 'Chatpublic', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Chatpublics');
-        $this->addRelation('Departamentmember', 'Departamentmember', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Departamentmembers');
         $this->addRelation('Loguser', 'Loguser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Logusers');
         $this->addRelation('Mlquestion', 'Mlquestion', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Mlquestions');
         $this->addRelation('OrderconflictComment', 'OrderconflictComment', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'OrderconflictComments');

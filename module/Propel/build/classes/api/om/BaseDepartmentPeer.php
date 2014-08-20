@@ -38,8 +38,8 @@ abstract class BaseDepartmentPeer
     /** the column name for the idcompany field */
     const IDCOMPANY = 'department.idcompany';
 
-    /** the column name for the departament_name field */
-    const DEPARTAMENT_NAME = 'department.departament_name';
+    /** the column name for the department_name field */
+    const DEPARTMENT_NAME = 'department.department_name';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -60,11 +60,11 @@ abstract class BaseDepartmentPeer
      * e.g. DepartmentPeer::$fieldNames[DepartmentPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Iddepartment', 'Idcompany', 'DepartamentName', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment', 'idcompany', 'departamentName', ),
-        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDCOMPANY, DepartmentPeer::DEPARTAMENT_NAME, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT', 'IDCOMPANY', 'DEPARTAMENT_NAME', ),
-        BasePeer::TYPE_FIELDNAME => array ('iddepartment', 'idcompany', 'departament_name', ),
+        BasePeer::TYPE_PHPNAME => array ('Iddepartment', 'Idcompany', 'DepartmentName', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment', 'idcompany', 'departmentName', ),
+        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDCOMPANY, DepartmentPeer::DEPARTMENT_NAME, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT', 'IDCOMPANY', 'DEPARTMENT_NAME', ),
+        BasePeer::TYPE_FIELDNAME => array ('iddepartment', 'idcompany', 'department_name', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -75,11 +75,11 @@ abstract class BaseDepartmentPeer
      * e.g. DepartmentPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Iddepartment' => 0, 'Idcompany' => 1, 'DepartamentName' => 2, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment' => 0, 'idcompany' => 1, 'departamentName' => 2, ),
-        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT => 0, DepartmentPeer::IDCOMPANY => 1, DepartmentPeer::DEPARTAMENT_NAME => 2, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT' => 0, 'IDCOMPANY' => 1, 'DEPARTAMENT_NAME' => 2, ),
-        BasePeer::TYPE_FIELDNAME => array ('iddepartment' => 0, 'idcompany' => 1, 'departament_name' => 2, ),
+        BasePeer::TYPE_PHPNAME => array ('Iddepartment' => 0, 'Idcompany' => 1, 'DepartmentName' => 2, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment' => 0, 'idcompany' => 1, 'departmentName' => 2, ),
+        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT => 0, DepartmentPeer::IDCOMPANY => 1, DepartmentPeer::DEPARTMENT_NAME => 2, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT' => 0, 'IDCOMPANY' => 1, 'DEPARTMENT_NAME' => 2, ),
+        BasePeer::TYPE_FIELDNAME => array ('iddepartment' => 0, 'idcompany' => 1, 'department_name' => 2, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -156,11 +156,11 @@ abstract class BaseDepartmentPeer
         if (null === $alias) {
             $criteria->addSelectColumn(DepartmentPeer::IDDEPARTMENT);
             $criteria->addSelectColumn(DepartmentPeer::IDCOMPANY);
-            $criteria->addSelectColumn(DepartmentPeer::DEPARTAMENT_NAME);
+            $criteria->addSelectColumn(DepartmentPeer::DEPARTMENT_NAME);
         } else {
             $criteria->addSelectColumn($alias . '.iddepartment');
             $criteria->addSelectColumn($alias . '.idcompany');
-            $criteria->addSelectColumn($alias . '.departament_name');
+            $criteria->addSelectColumn($alias . '.department_name');
         }
     }
 
@@ -365,9 +365,6 @@ abstract class BaseDepartmentPeer
      */
     public static function clearRelatedInstancePool()
     {
-        // Invalidate objects in DepartamentmemberPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        DepartamentmemberPeer::clearInstancePool();
         // Invalidate objects in ProjectPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProjectPeer::clearInstancePool();
@@ -943,16 +940,10 @@ abstract class BaseDepartmentPeer
         foreach ($objects as $obj) {
 
 
-            // delete related Departamentmember objects
-            $criteria = new Criteria(DepartamentmemberPeer::DATABASE_NAME);
-
-            $criteria->add(DepartamentmemberPeer::IDDEPARTAMENT, $obj->getIddepartment());
-            $affectedRows += DepartamentmemberPeer::doDelete($criteria, $con);
-
             // delete related Project objects
             $criteria = new Criteria(ProjectPeer::DATABASE_NAME);
 
-            $criteria->add(ProjectPeer::IDDEPARTAMENT, $obj->getIddepartment());
+            $criteria->add(ProjectPeer::IDDEPARTMENT, $obj->getIddepartment());
             $affectedRows += ProjectPeer::doDelete($criteria, $con);
         }
 

@@ -458,9 +458,6 @@ abstract class BaseUserPeer
         // Invalidate objects in ChatpublicPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ChatpublicPeer::clearInstancePool();
-        // Invalidate objects in DepartamentmemberPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        DepartamentmemberPeer::clearInstancePool();
         // Invalidate objects in LoguserPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         LoguserPeer::clearInstancePool();
@@ -1080,12 +1077,6 @@ abstract class BaseUserPeer
 
             $criteria->add(ChatpublicPeer::IDUSER, $obj->getIduser());
             $affectedRows += ChatpublicPeer::doDelete($criteria, $con);
-
-            // delete related Departamentmember objects
-            $criteria = new Criteria(DepartamentmemberPeer::DATABASE_NAME);
-
-            $criteria->add(DepartamentmemberPeer::IDUSER, $obj->getIduser());
-            $affectedRows += DepartamentmemberPeer::doDelete($criteria, $con);
 
             // delete related Loguser objects
             $criteria = new Criteria(LoguserPeer::DATABASE_NAME);

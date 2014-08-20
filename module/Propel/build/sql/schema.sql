@@ -241,8 +241,8 @@ CREATE TABLE `client`
     `client_cellular` VARCHAR(16),
     `client_phone` VARCHAR(16),
     `client_language` VARCHAR(6),
-    `client_status` enum('pending','active','suspended','fraud') DEFAULT 'pending' NOT NULL,
-    `client_type` enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER') DEFAULT 'NORMAL' NOT NULL,
+    `client_status` enum('pending','active','suspended','fraud') NOT NULL,
+    `client_type` enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER') DEFAULT 'NORMAL',
     PRIMARY KEY (`idclient`),
     INDEX `idcompany` (`idcompany`),
     CONSTRAINT `idcompany_client`
@@ -485,32 +485,6 @@ CREATE TABLE `contactparticular`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- departamentmember
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `departamentmember`;
-
-CREATE TABLE `departamentmember`
-(
-    `iddepartamentmember` INTEGER NOT NULL AUTO_INCREMENT,
-    `iddepartament` INTEGER NOT NULL,
-    `iduser` INTEGER NOT NULL,
-    PRIMARY KEY (`iddepartamentmember`),
-    INDEX `iddepartament` (`iddepartament`),
-    INDEX `iduser` (`iduser`),
-    CONSTRAINT `iddepartament_departamentmember`
-        FOREIGN KEY (`iddepartament`)
-        REFERENCES `department` (`iddepartment`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT `iduser_departamentmember`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
 -- department
 -- ---------------------------------------------------------------------
 
@@ -520,7 +494,7 @@ CREATE TABLE `department`
 (
     `iddepartment` INTEGER NOT NULL AUTO_INCREMENT,
     `idcompany` INTEGER NOT NULL,
-    `departament_name` VARCHAR(245) NOT NULL,
+    `department_name` VARCHAR(245) NOT NULL,
     PRIMARY KEY (`iddepartment`),
     INDEX `idcompany` (`idcompany`),
     CONSTRAINT `departament_idcompany`
@@ -528,6 +502,22 @@ CREATE TABLE `department`
         REFERENCES `company` (`idcompany`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- departmentmember
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `departmentmember`;
+
+CREATE TABLE `departmentmember`
+(
+    `iddepartmentmember` INTEGER NOT NULL AUTO_INCREMENT,
+    `iddepartment` INTEGER NOT NULL,
+    `iduser` INTEGER NOT NULL,
+    PRIMARY KEY (`iddepartmentmember`),
+    INDEX `iddepartament` (`iddepartment`),
+    INDEX `iduser` (`iduser`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -1312,20 +1302,20 @@ DROP TABLE IF EXISTS `project`;
 CREATE TABLE `project`
 (
     `idproject` INTEGER NOT NULL AUTO_INCREMENT,
-    `iddepartament` INTEGER NOT NULL,
+    `iddepartment` INTEGER NOT NULL,
     `project_dependency` INTEGER NOT NULL,
     `project_name` VARCHAR(245),
     PRIMARY KEY (`idproject`),
-    INDEX `iddepartament` (`iddepartament`),
+    INDEX `iddepartament` (`iddepartment`),
     INDEX `project_dependency` (`project_dependency`),
+    CONSTRAINT `project_iddepartament`
+        FOREIGN KEY (`iddepartment`)
+        REFERENCES `department` (`iddepartment`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT `project_dependency`
         FOREIGN KEY (`project_dependency`)
         REFERENCES `project` (`idproject`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT `project_iddepartament`
-        FOREIGN KEY (`iddepartament`)
-        REFERENCES `department` (`iddepartment`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -1568,7 +1558,7 @@ CREATE TABLE `useracl`
 (
     `iduseracl` INTEGER NOT NULL AUTO_INCREMENT,
     `iduser` INTEGER NOT NULL,
-    `module_name` enum('basic','sales','company','manufacture','contents') DEFAULT 'basic' NOT NULL,
+    `module_name` enum('basic','sales','company','manufacture','contents','project') DEFAULT 'basic' NOT NULL,
     `user_accesslevel` enum('1','2','3','4','5') DEFAULT '1' NOT NULL,
     PRIMARY KEY (`iduseracl`),
     INDEX `iduser` (`iduser`),

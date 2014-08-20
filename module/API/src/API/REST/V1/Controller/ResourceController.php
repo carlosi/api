@@ -262,6 +262,9 @@ class ResourceController extends AbstractRestfulController
         //Obtenemos el IdCompany al que pertenece el usuario
         $idCompany = ResourceManager::getIDCompany($token);
 
+        // Instanciamos el objeto Response, el cual utilizamos en las respuestas
+        $response = $this->getResponse();
+
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resource = ucfirst(RESOURCE);
 
@@ -298,13 +301,43 @@ class ResourceController extends AbstractRestfulController
 
             $result = ArrayManage::executeQuery($resourceQuery, RESOURCE, $idCompany, $page, $limit, $filters, $order, $dir);
 
-            $Response = ArrayManage::getResourceResult($resourceFormGET, $resourceQuery, $result, $userLevel);
-
-            return new JsonModel($Response);
-
+            if(!empty($result['data'])){
+                // Si el recurso que solicitan es Company
+                if(RESOURCE == 'company'){
+                    // Solamente el idcompany == 1 podrá listar todas la Compañias existentes
+                    if($idCompany == 1){
+                        return new JsonModel($result);
+                    }else{
+                        //Modifiamos el Header de nuestra respuesta
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
+                        $bodyResponse = array(
+                            'Error' => array(
+                                'HTTP Status' => 403 . ' Forbidden',
+                                'Title' => 'Access denied',
+                                'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                            ),
+                        );
+                        return new JsonModel($bodyResponse);
+                    }
+                }else{
+                    
+                    $Response = ArrayManage::getResourceResult($resourceFormGET, $resourceQuery, $result, $userLevel);
+                    return new JsonModel($Response);
+                }
+            }else{
+                //Modifiamos el Header de nuestra respuesta
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //No Content
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP Status' => 400 . ' Bad Request',
+                        'Title' => 'No Content',
+                        'Details' => 'The server successfully processed the request, but is not returning any content.',
+                    ),
+                );
+                return new JsonModel($bodyResponse);
+            }
         }else{
             //Modifiamos el Header de nuestra respuesta
-            $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
             $bodyResponse = array(
                 'Error' => array(

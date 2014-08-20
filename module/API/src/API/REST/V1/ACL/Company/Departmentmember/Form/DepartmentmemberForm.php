@@ -1,41 +1,41 @@
 <?php
 
 /**
- * DepartamentmemberForm.php
+ * DepartmentmemberForm.php
  * BuyBuy
  *
  * Created by Carlos Esparza on 12/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\Company\Departamentmember\Form;
+namespace API\REST\V1\ACL\Company\Departmentmember\Form;
 
 // - ZF2 - //
 use Zend\Form\Form;
 
 /**
- * Class DepartamentmemberForm
- * @package API\REST\V1\ACL\Company\Departamentmember\Form
+ * Class DepartmentmemberForm
+ * @package API\REST\V1\ACL\Company\Departmentmember\Form
  */
-class DepartamentmemberForm extends Form
+class DepartmentmemberForm extends Form
 {
     public function __construct(){
-        parent::__construct('DepartamentmemberForm');
+        parent::__construct('DepartmentmemberForm');
 
         $this->setAttribute('method', 'post');
 
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'iddepartamentmember',
+            'name' => 'idDepartmentmember',
             'options' => array(
-                'label' => 'Id Miembro de Departamento'
+                'label' => 'Id Miembro de Departmento'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'iddepartament',
+            'name' => 'idDepartment',
             'options' => array(
-                'label' => 'Id Departamento'
+                'label' => 'Id Departmento'
             ),
         ));
         $this->add(array(

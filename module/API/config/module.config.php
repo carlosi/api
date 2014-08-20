@@ -22,6 +22,21 @@ return array(
                     ),
                 ),
             ),
+            // Module Routes Documentation
+            'documentation' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version]/documentation[/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Documentation\Controller\DocumentationController',
+                        'action'		=> 'index',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'version' => '1',
+                    ),
+                ),
+            ),
             // Module Routes Company
             'bankaccount' => array(
                 'type' => 'segment',
@@ -114,10 +129,10 @@ return array(
                     ),
                 ),
             ),
-            'companyaddress' => array(
-                'type' => 'Segment',
+            'company' => array(
+                'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v[:version]/companyaddress[/:id][/:token][/]',
+                    'route'    => '/v[:version]/company[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
@@ -127,10 +142,10 @@ return array(
                     ),
                 ),
             ),
-            'company' => array(
+            'companyaddress' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v[:version]/company[/:id][/:token][/]',
+                    'route'    => '/v[:version]/companyaddress[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
@@ -180,6 +195,19 @@ return array(
                     ),
                 ),
             ),
+            'expensecategory' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version]/expensecategory[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'version' => '1',
+                    ),
+                ),
+            ),
             'expenserecurrency' => array(
                 'type' => 'Segment',
                 'options' => array(
@@ -197,6 +225,20 @@ return array(
                 'type' => 'segment',
                 'options' => array(
                     'route'    => '/v[:version]/expensetransactionfile[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'version' => '1',
+                    ),
+                ),
+            ),
+            // Project
+            'project' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version]/project[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
@@ -240,21 +282,6 @@ return array(
                     'route'    => '/v[:version]/mxtaxdocument[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'API\REST\V1\Controller\ResourceController',
-                    ),
-                    'constraints' => array(
-                        'id' => '[0-9]+',
-                        'version' => '1',
-                    ),
-                ),
-            ),
-            // Module Routes Documentation
-            'documentation' => array(
-                'type' => 'segment',
-                'options' => array(
-                    'route'    => '/v[:version]/documentation[/]',
-                    'defaults' => array(
-                        'controller' => 'API\REST\V1\Controller\ResourceController',
-                        'action'		=> 'index',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',

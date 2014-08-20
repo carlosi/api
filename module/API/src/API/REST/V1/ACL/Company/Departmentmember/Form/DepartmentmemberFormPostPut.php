@@ -1,31 +1,31 @@
 <?php
 
 /**
- * DepartamentmemberFormPostPut.php
+ * DepartmentmemberFormPostPut.php
  * BuyBuy
  *
  * Created by Carlos Esparza on 12/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\Company\Departamentmember\Form;
+namespace API\REST\V1\ACL\Company\Departmentmember\Form;
 
 // - ACL - //
-use API\REST\V1\ACL\Company\Departamentmember\Form\DepartamentmemberForm;
+use API\REST\V1\ACL\Company\Departmentmember\Form\DepartmentmemberForm;
 
 /**
- * Class DepartamentmemberFormPostPut
- * @package API\REST\V1\ACL\Company\Departamentmember\Form
+ * Class DepartmentmemberFormPostPut
+ * @package API\REST\V1\ACL\Company\Departmentmember\Form
  */
-class DepartamentmemberFormPostPut{
+class DepartmentmemberFormPostPut{
 
     /**
      * @param $userLevel
-     * @return DepartamentmemberForm
+     * @return DepartmentmemberForm
      */
     public static function init($userLevel){
 
-        $DepartamentmemberForm = new DepartamentmemberForm();
+        $DepartmentmemberForm = new DepartmentmemberForm();
 
         switch ($userLevel){
 
@@ -55,7 +55,7 @@ class DepartamentmemberFormPostPut{
             }
         }
 
-        return $DepartamentmemberForm;
+        return $DepartmentmemberForm;
     }
 
 }

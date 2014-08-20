@@ -3,7 +3,7 @@
 
 
 /**
- * This class defines the structure of the 'department' table.
+ * This class defines the structure of the 'departmentmember' table.
  *
  *
  *
@@ -14,13 +14,13 @@
  *
  * @package    propel.generator.api.map
  */
-class DepartmentTableMap extends TableMap
+class DepartmentmemberTableMap extends TableMap
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'api.map.DepartmentTableMap';
+    const CLASS_NAME = 'api.map.DepartmentmemberTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -32,15 +32,15 @@ class DepartmentTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('department');
-        $this->setPhpName('Department');
-        $this->setClassname('Department');
+        $this->setName('departmentmember');
+        $this->setPhpName('Departmentmember');
+        $this->setClassname('Departmentmember');
         $this->setPackage('api');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('iddepartment', 'Iddepartment', 'INTEGER', true, null, null);
-        $this->addForeignKey('idcompany', 'Idcompany', 'INTEGER', 'company', 'idcompany', true, null, null);
-        $this->addColumn('department_name', 'DepartmentName', 'VARCHAR', true, 245, null);
+        $this->addPrimaryKey('iddepartmentmember', 'Iddepartmentmember', 'INTEGER', true, null, null);
+        $this->addColumn('iddepartment', 'Iddepartment', 'INTEGER', true, null, null);
+        $this->addColumn('iduser', 'Iduser', 'INTEGER', true, null, null);
         // validators
     } // initialize()
 
@@ -49,8 +49,6 @@ class DepartmentTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Company', 'Company', RelationMap::MANY_TO_ONE, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE');
-        $this->addRelation('Project', 'Project', RelationMap::ONE_TO_MANY, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE', 'Projects');
     } // buildRelations()
 
-} // DepartmentTableMap
+} // DepartmentmemberTableMap

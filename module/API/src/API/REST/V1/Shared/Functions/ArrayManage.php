@@ -30,21 +30,55 @@ class ArrayManage
 
         // Contamos los ForeingKey que tiene el recurso
         $countForeingKeys = count($foreingKeys);
-
         if($countForeingKeys == 1){
-            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
-            $idForeingKey = key($resourceQuery->getTablemap()->getForeignKeys());
-            return $idForeingKey;
+            if($countForeingKeys == 1){
+
+                // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+                $idForeingKey = key($resourceQuery->getTablemap()->getForeignKeys());
+
+                return $idForeingKey;
+            }
+            if($countForeingKeys == 2){
+                // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+                $idsForeingKey = array_keys($resourceQuery->getTablemap()->getForeignKeys());
+
+                return $idsForeingKey;
+            }
         }
         if($countForeingKeys == 2){
-            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
-            $idForeingKey = array();
-            $idsForeingKey = array_keys($resourceQuery->getTablemap()->getForeignKeys());
-            foreach($idsForeingKey as $key => $value){
-                $idForeingKey[$value] = $value;
-            }
+            // Si el ForeingKey en la posición 1 del array tiene el string "id"
+            $hasId = stripos('id', $foreingKeys[1]);
+            if($hasId){
 
-            return $idsForeingKey;
+                if($countForeingKeys == 1){
+                    // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+                    $idForeingKey = key($resourceQuery->getTablemap()->getForeignKeys());
+                    return $idForeingKey;
+                }
+                if($countForeingKeys == 2){
+                    // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+                    $idsForeingKey = array_keys($resourceQuery->getTablemap()->getForeignKeys());
+
+                    return $idsForeingKey;
+                }
+            }else{
+
+                // Contamos los ForeingKey que tiene el recurso
+                $countForeingKeys = count($foreingKeys);
+
+                if($countForeingKeys == 2){
+                    // Obtenemos un string del primer id de la llave foranea de nuestro XXXQuery()
+                    $idsForeingKey = array_keys($resourceQuery->getTablemap()->getForeignKeys());
+
+                    // Eliminamos el ForeingKey que no tiene objeto, que no cuenta con un recurso
+                    unset($idsForeingKey[1]);
+
+                    // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+                    $idForeingKey = key($resourceQuery->getTablemap()->getForeignKeys());
+
+                    return $idForeingKey;
+                }
+            }
         }
     }
 
@@ -56,8 +90,10 @@ class ArrayManage
      * @return array
      */
     public static function getResourceResult($resourceFormGET, $resourceQuery, $result, $userLevel){
-        $resourceArray = array();
 
+        $idForeingKey = ArrayManage::getForeingKeys($resourceQuery);
+
+        $resourceArray = array();
         foreach ($result['data'] as $item){
 
             $resourceQueryPK = $resourceQuery::create()->filterByPrimaryKey($item['id'.RESOURCE])->findOne();
@@ -71,8 +107,6 @@ class ArrayManage
 
                 $row[$key] = $item[$key];
             }
-
-            $idForeingKey = ArrayManage::getForeingKeys($resourceQuery);
 
             if(is_array($idForeingKey)){
 
@@ -182,7 +216,6 @@ class ArrayManage
                 }
                 array_push($resourceArray, $row);
             }
-
         }
 
         // Start ACL //
@@ -242,7 +275,6 @@ class ArrayManage
         );
 
         return $response;
-
     }
 
     public static function getResourceResultId($id, $resourceFormGET, $resourceQuery, $result, $userLevel){
@@ -874,173 +906,210 @@ class ArrayManage
                 // Obtenemos un array de los ids de los ForeingKeys de nuestro recurso
                 $idsFkLevel1 = array_keys($query->getTablemap()->getForeignKeys());
 
-                // Obtenemos el valor (ids) en string de cada ForeingKey de nuestro recurso
-                $idFk1Level1 = $idsFkLevel1[0];
-                $idFk2Level1 = $idsFkLevel1[1];
+                // Si el ForeingKey en la posición 1 del array tiene el string "id"
+                $hasId = stripos('id', $idsFkLevel1[1]);
+                if($hasId){
+                    // Obtenemos el valor (ids) en string de cada ForeingKey de nuestro recurso
+                    $idFk1Level1 = $idsFkLevel1[0];
+                    $idFk2Level1 = $idsFkLevel1[1];
 
-                // Eliminamos los 2 primeros caracteres (id) de nuestro string
-                $resourceJoin1Level1 = substr($idFk1Level1, 2);
-                $resourceJoin2Level1 = substr($idFk2Level1, 2);
+                    // Eliminamos los 2 primeros caracteres (id) de nuestro string
+                    $resourceJoin1Level1 = substr($idFk1Level1, 2);
+                    $resourceJoin2Level1 = substr($idFk2Level1, 2);
 
-                // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, Branch, etc..)
-                $useQueryFk1Level1 = ucfirst($resourceJoin1Level1);
-                $useQueryFk2Level1 = ucfirst($resourceJoin2Level1);
+                    // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, Branch, etc..)
+                    $useQueryFk1Level1 = ucfirst($resourceJoin1Level1);
+                    $useQueryFk2Level1 = ucfirst($resourceJoin2Level1);
 
-                // En este paso ya tenemos UserQuery, ClientQuery, etc..)
-                $queryFkJoin1Level1 = $useQueryFk1Level1."Query";
-                $queryFkJoin2Level1 = $useQueryFk2Level1."Query";
+                    // En este paso ya tenemos UserQuery, ClientQuery, etc..)
+                    $queryFkJoin1Level1 = $useQueryFk1Level1."Query";
+                    $queryFkJoin2Level1 = $useQueryFk2Level1."Query";
 
-                //Creamos el objeto de Query de los 2 recursos para validar si tienen idcompany como columna
-                $getQueryFk1Level1 = new $queryFkJoin1Level1;
-                $getQueryFk2Level1 = new $queryFkJoin2Level1;
+                    //Creamos el objeto de Query de los 2 recursos para validar si tienen idcompany como columna
+                    $getQueryFk1Level1 = new $queryFkJoin1Level1;
+                    $getQueryFk2Level1 = new $queryFkJoin2Level1;
 
-                // Comprobamos si existe idcompany en el Objeto y lo almacenamos en una variable booleana
-                $hasIdCompanyQueryFk1Level1 = $getQueryFk1Level1->create()->getTableMap()->hasColumn('idcompany');
-                $hasIdCompanyQueryFk2Level1 = $getQueryFk2Level1->create()->getTableMap()->hasColumn('idcompany');
+                    // Comprobamos si existe idcompany en el Objeto y lo almacenamos en una variable booleana
+                    $hasIdCompanyQueryFk1Level1 = $getQueryFk1Level1->create()->getTableMap()->hasColumn('idcompany');
+                    $hasIdCompanyQueryFk2Level1 = $getQueryFk2Level1->create()->getTableMap()->hasColumn('idcompany');
 
-                // Si uno de los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
-                if($hasIdCompanyQueryFk1Level1 == true || $hasIdCompanyQueryFk2Level1 == true){
+                    // Si uno de los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
+                    if($hasIdCompanyQueryFk1Level1 == true || $hasIdCompanyQueryFk2Level1 == true){
 
-                    if($hasIdCompanyQueryFk1Level1 == true){
-                        $result = $query->create('alias')
-                            ->join('alias.'.$useQueryFk1Level1.' alias2')
-                            ->useQuery('alias2')
-                            ->filterByIdCompany($idcompany)
-                            ->endUse()
-                            ->paginate($page, $limit);
-                    }
-                    if($hasIdCompanyQueryFk2Level1 == true){
-                        $result = $query->create('alias')
-                            ->join('alias.'.$useQueryFk2Level1.' alias2')
-                            ->useQuery('alias2')
-                            ->filterByIdCompany($idcompany)
-                            ->endUse()
-                            ->paginate($page, $limit);
-                    }
-
-                    // Si los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
-                    if($hasIdCompanyQueryFk1Level1 == true && $hasIdCompanyQueryFk2Level1 == true){
-
-                        $result = $query->create('alias')
-                            ->join('alias.'.$useQueryFk1Level1.' alias2')
-                            ->useQuery('alias2')
-                            ->filterByIdCompany($idcompany)
-                            ->endUse()
-                            ->_and()
-                            ->join('alias.'.$useQueryFk2Level1.' alias3')
-                            ->useQuery('alias3')
-                            ->filterByIdCompany($idcompany)
-                            ->endUse()
-                            ->paginate($page, $limit);
-                    }
-
-                }else{
-
-                    // Obtenemos el (los) ForeingKey (s) que tiene (n) el recurso (tabla)
-                    $idsFk1Level2 = array_keys($getQueryFk1Level1->getTablemap()->getForeignKeys());
-                    //$idsFk2Level2 = array_keys($getQueryFk2Level1->getTablemap()->getForeignKeys());
-
-                    // Contamos los ForeingKey que tiene el recurso
-                    $countFkLevel2 = count($idsFk1Level2);
-
-                    // Si el recurso solamente cuenta con 1 ForeingKey
-                    if($countFkLevel2 == 1){
-
-                        // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
-                        $idFkLevel2 = key($getQueryFk1Level1->getTablemap()->getForeignKeys());
-
-                        // Eliminamos los 2 primeros caracteres (id) de nuestro string
-                        $resourceJoinLevel2 = substr($idFkLevel2, 2);
-
-                        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
-                        $useQueryFkLevel2 = ucfirst($resourceJoinLevel2);
-
-                        // En este paso ya tenemos UserQuery, ClientQuery, etc..)
-                        $queryFkJoinLevel2 = $useQueryFkLevel2."Query";
-
-                        //Creamos el objeto de Query del recurso para validar si tiene idcompany como columna
-                        $getQueryFkLevel2 = new $queryFkJoinLevel2;
-
-                        // Comprobamos si existe idcompany en el Objeto y lo almacenamos en una variable booleana
-                        $hasIdCompanyQueryFkLevel2 = $getQueryFkLevel2->create()->getTableMap()->hasColumn('idcompany');
-
-                        // Si el recursos (tambien llamado Objeto o Tabla) tienen la columna idcompany
-                        if($hasIdCompanyQueryFkLevel2 == true){
+                        if($hasIdCompanyQueryFk1Level1 == true){
                             $result = $query->create('alias')
                                 ->join('alias.'.$useQueryFk1Level1.' alias2')
                                 ->useQuery('alias2')
-                                ->join('alias2.'.$useQueryFkLevel2.' alias3')
+                                ->filterByIdCompany($idcompany)
+                                ->endUse()
+                                ->paginate($page, $limit);
+                        }
+                        if($hasIdCompanyQueryFk2Level1 == true){
+                            $result = $query->create('alias')
+                                ->join('alias.'.$useQueryFk2Level1.' alias2')
+                                ->useQuery('alias2')
+                                ->filterByIdCompany($idcompany)
+                                ->endUse()
+                                ->paginate($page, $limit);
+                        }
+
+                        // Si los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
+                        if($hasIdCompanyQueryFk1Level1 == true && $hasIdCompanyQueryFk2Level1 == true){
+
+                            $result = $query->create('alias')
+                                ->join('alias.'.$useQueryFk1Level1.' alias2')
+                                ->useQuery('alias2')
+                                ->filterByIdCompany($idcompany)
+                                ->endUse()
+                                ->_and()
+                                ->join('alias.'.$useQueryFk2Level1.' alias3')
                                 ->useQuery('alias3')
                                 ->filterByIdCompany($idcompany)
                                 ->endUse()
-                                ->endUse()
                                 ->paginate($page, $limit);
-                        }else{
+                        }
 
-                            //Pendiente
-                            //...
+                    }else{
+
+                        // Obtenemos el (los) ForeingKey (s) que tiene (n) el recurso (tabla)
+                        $idsFk1Level2 = array_keys($getQueryFk1Level1->getTablemap()->getForeignKeys());
+                        //$idsFk2Level2 = array_keys($getQueryFk2Level1->getTablemap()->getForeignKeys());
+
+                        // Contamos los ForeingKey que tiene el recurso
+                        $countFkLevel2 = count($idsFk1Level2);
+
+                        // Si el recurso solamente cuenta con 1 ForeingKey
+                        if($countFkLevel2 == 1){
+
+                            // Obtenemos un string del id de la llave foranea de nuestro XXXQuery()
+                            $idFkLevel2 = key($getQueryFk1Level1->getTablemap()->getForeignKeys());
+
+                            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+                            $resourceJoinLevel2 = substr($idFkLevel2, 2);
+
+                            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+                            $useQueryFkLevel2 = ucfirst($resourceJoinLevel2);
+
+                            // En este paso ya tenemos UserQuery, ClientQuery, etc..)
+                            $queryFkJoinLevel2 = $useQueryFkLevel2."Query";
+
+                            //Creamos el objeto de Query del recurso para validar si tiene idcompany como columna
+                            $getQueryFkLevel2 = new $queryFkJoinLevel2;
+
+                            // Comprobamos si existe idcompany en el Objeto y lo almacenamos en una variable booleana
+                            $hasIdCompanyQueryFkLevel2 = $getQueryFkLevel2->create()->getTableMap()->hasColumn('idcompany');
+
+                            // Si el recursos (tambien llamado Objeto o Tabla) tienen la columna idcompany
+                            if($hasIdCompanyQueryFkLevel2 == true){
+                                $result = $query->create('alias')
+                                    ->join('alias.'.$useQueryFk1Level1.' alias2')
+                                    ->useQuery('alias2')
+                                    ->join('alias2.'.$useQueryFkLevel2.' alias3')
+                                    ->useQuery('alias3')
+                                    ->filterByIdCompany($idcompany)
+                                    ->endUse()
+                                    ->endUse()
+                                    ->paginate($page, $limit);
+                            }else{
+
+                                //Pendiente
+                                //...
+                            }
+                        }
+
+                        if($countFkLevel2 == 2){
+
+                            // Obtenemos un array de los ids de los ForeingKeys de nuestro recurso
+                            $idsForeingKeyJoinQ1 = array_keys($query->getTablemap()->getForeignKeys());
+
+                            // Obtenemos el valor (ids) en string de cada ForeingKey de nuestro recurso
+                            $idForeingKeyJoin1 = $idsForeingKeyJoinQ1[0];
+                            $idForeingKeyJoin2 = $idsForeingKeyJoinQ1[1];
+
+                            // Eliminamos los 2 primeros caracteres (id) de nuestro string
+                            $resourceJoin1 = substr($idForeingKeyJoin1, 2);
+                            $resourceJoin2 = substr($idForeingKeyJoin2, 2);
+
+                            // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+                            $useQuery1 = ucfirst($resourceJoin1);
+                            $useQuery2 = ucfirst($resourceJoin2);
+
+                            // En este paso ya tenemos UserQuery, ClientQuery, etc..)
+                            $queryForeingKeyJoin1 = $useQuery1."Query";
+                            $queryForeingKeyJoin2 = $useQuery2."Query";
+
+                            //Creamos el objeto de Query de los 2 recursos para validar si tienen idcompany como columna
+                            $getQuery1 = new $queryForeingKeyJoin1;
+                            $getQuery2 = new $queryForeingKeyJoin2;
+
+                            // Comprobamos si existe idcompany en el Objeto y lo almacenamos en una variable booleana
+                            $hasIdCompanyQ1 = $getQuery1->create()->getTableMap()->hasColumn('idcompany');
+                            $hasIdCompanyQ2 = $getQuery2->create()->getTableMap()->hasColumn('idcompany');
+
+                            // Si uno de los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
+                            if($hasIdCompanyQ1 == true || $hasIdCompanyQ2 == true){
+                                if($hasIdCompanyQ1 == true){
+                                    $result = $query->create('alias')
+                                        ->join('alias.'.$useQuery1.' alias2')
+                                        ->useQuery('alias2')
+                                        ->filterByIdCompany($idcompany)
+                                        ->endUse()
+                                        ->paginate($page, $limit);
+                                }
+                                if($hasIdCompanyQ2 == true){
+                                    $result = $query->create('alias')
+                                        ->join('alias.'.$useQuery2.' alias2')
+                                        ->useQuery('alias2')
+                                        ->filterByIdCompany($idcompany)
+                                        ->endUse()
+                                        ->paginate($page, $limit);
+                                }
+                            }else{
+
+                                //Pendiente
+                                //...
+
+                            }
+
                         }
                     }
+                }else{
 
-                    if($countFkLevel2 == 2){
+                    // Recursos con ForeingKey que no son Objetos
+                    // Obtenemos el valor (ids) en string de cada ForeingKey de nuestro recurso
+                    $idFk1Level1 = $idsFkLevel1[0];
 
-                        // Obtenemos un array de los ids de los ForeingKeys de nuestro recurso
-                        $idsForeingKeyJoinQ1 = array_keys($query->getTablemap()->getForeignKeys());
+                    // Eliminamos los 2 primeros caracteres (id) de nuestro string
+                    $resourceJoin1Level1 = substr($idFk1Level1, 2);
 
-                        // Obtenemos el valor (ids) en string de cada ForeingKey de nuestro recurso
-                        $idForeingKeyJoin1 = $idsForeingKeyJoinQ1[0];
-                        $idForeingKeyJoin2 = $idsForeingKeyJoinQ1[1];
+                    // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, Branch, etc..)
+                    $useQueryFk1Level1 = ucfirst($resourceJoin1Level1);
 
-                        // Eliminamos los 2 primeros caracteres (id) de nuestro string
-                        $resourceJoin1 = substr($idForeingKeyJoin1, 2);
-                        $resourceJoin2 = substr($idForeingKeyJoin2, 2);
+                    // En este paso ya tenemos UserQuery, ClientQuery, etc..)
+                    $queryFkJoin1Level1 = $useQueryFk1Level1."Query";
 
-                        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
-                        $useQuery1 = ucfirst($resourceJoin1);
-                        $useQuery2 = ucfirst($resourceJoin2);
+                    //Creamos el objeto de Query de los 2 recursos para validar si tienen idcompany como columna
+                    $getQueryFk1Level1 = new $queryFkJoin1Level1;
 
-                        // En este paso ya tenemos UserQuery, ClientQuery, etc..)
-                        $queryForeingKeyJoin1 = $useQuery1."Query";
-                        $queryForeingKeyJoin2 = $useQuery2."Query";
+                    // Comprobamos si existe idcompany en el Objeto y lo almacenamos en una variable booleana
+                    $hasIdCompanyQueryFk1Level1 = $getQueryFk1Level1->create()->getTableMap()->hasColumn('idcompany');
 
-                        //Creamos el objeto de Query de los 2 recursos para validar si tienen idcompany como columna
-                        $getQuery1 = new $queryForeingKeyJoin1;
-                        $getQuery2 = new $queryForeingKeyJoin2;
+                    // Si uno de los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
+                    if($hasIdCompanyQueryFk1Level1 == true){
 
-                        // Comprobamos si existe idcompany en el Objeto y lo almacenamos en una variable booleana
-                        $hasIdCompanyQ1 = $getQuery1->create()->getTableMap()->hasColumn('idcompany');
-                        $hasIdCompanyQ2 = $getQuery2->create()->getTableMap()->hasColumn('idcompany');
-
-                        // Si uno de los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
-                        if($hasIdCompanyQ1 == true || $hasIdCompanyQ2 == true){
-                            if($hasIdCompanyQ1 == true){
-                                $result = $query->create('alias')
-                                    ->join('alias.'.$useQuery1.' alias2')
-                                    ->useQuery('alias2')
-                                    ->filterByIdCompany($idcompany)
-                                    ->endUse()
-                                    ->paginate($page, $limit);
-                            }
-                            if($hasIdCompanyQ2 == true){
-                                $result = $query->create('alias')
-                                    ->join('alias.'.$useQuery2.' alias2')
-                                    ->useQuery('alias2')
-                                    ->filterByIdCompany($idcompany)
-                                    ->endUse()
-                                    ->paginate($page, $limit);
-                            }
-                        }else{
-
-                            //Pendiente
-                            //...
-
+                        if($hasIdCompanyQueryFk1Level1 == true){
+                            $result = $query->create('alias')
+                                ->join('alias.'.$useQueryFk1Level1.' alias2')
+                                ->useQuery('alias2')
+                                ->filterByIdCompany($idcompany)
+                                ->endUse()
+                                ->paginate($page, $limit);
                         }
 
                     }
                 }
             }
         }else{
-
             // Si el $query es del recurso Company
             if($query->getModelName() == 'Company'){
                 $result = $query->paginate($page,$limit);
@@ -1294,7 +1363,7 @@ class ArrayManage
             foreach ($filters as $filter){
                 $params = $query->getParams();
                 if(isset($filter['in'])){
-                    
+
                     if(!empty($params)){
                         foreach($params as $param){
                             if($filter['attribute'] == $param['column']){

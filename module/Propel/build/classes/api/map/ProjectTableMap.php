@@ -39,7 +39,7 @@ class ProjectTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('idproject', 'Idproject', 'INTEGER', true, null, null);
-        $this->addForeignKey('iddepartament', 'Iddepartament', 'INTEGER', 'department', 'iddepartment', true, null, null);
+        $this->addForeignKey('iddepartment', 'Iddepartment', 'INTEGER', 'department', 'iddepartment', true, null, null);
         $this->addForeignKey('project_dependency', 'ProjectDependency', 'INTEGER', 'project', 'idproject', true, null, null);
         $this->addColumn('project_name', 'ProjectName', 'VARCHAR', false, 245, null);
         // validators
@@ -50,8 +50,8 @@ class ProjectTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Department', 'Department', RelationMap::MANY_TO_ONE, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE');
         $this->addRelation('ProjectRelatedByProjectDependency', 'Project', RelationMap::MANY_TO_ONE, array('project_dependency' => 'idproject', ), 'CASCADE', 'CASCADE');
-        $this->addRelation('Department', 'Department', RelationMap::MANY_TO_ONE, array('iddepartament' => 'iddepartment', ), 'CASCADE', 'CASCADE');
         $this->addRelation('ProjectRelatedByIdproject', 'Project', RelationMap::ONE_TO_MANY, array('idproject' => 'project_dependency', ), 'CASCADE', 'CASCADE', 'ProjectsRelatedByIdproject');
         $this->addRelation('Projectactivity', 'Projectactivity', RelationMap::ONE_TO_MANY, array('idproject' => 'idproject', ), 'CASCADE', 'CASCADE', 'Projectactivitys');
     } // buildRelations()

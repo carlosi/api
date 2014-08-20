@@ -27,18 +27,30 @@ class ProjectForm extends Form
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idproject',
+            'options' => array(
+                'label' => 'idproject'
+            )
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idproject'
+            'name' => 'iddepartment',
+            'options' => array(
+                'label' => 'iddepartment'
+            )
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'project_dependency',
+            'options' => array(
+                'label' => 'project_dependency'
+            )
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'project_name',
+            'options' => array(
+                'label' => 'project_name'
+            )
         ));
     }
 }

@@ -178,8 +178,8 @@
     <column name="client_cellular" phpName="ClientCellular" type="VARCHAR" size="16" required="false"/>
     <column name="client_phone" phpName="ClientPhone" type="VARCHAR" size="16" required="false"/>
     <column name="client_language" phpName="ClientLanguage" type="VARCHAR" size="6" required="false"/>
-    <column name="client_status" phpName="ClientStatus" type="CHAR" sqlType="enum('pending','active','suspended','fraud')" required="true"/>
-    <column name="client_type" phpName="ClientType" type="CHAR" sqlType="enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER')" required="false" defaultValue="NORMAL"/>
+    <column name="client_status" phpName="ClientStatus" type="CHAR" sqlType="enum('pending','active','suspended','fraud')" required="true" defaultValue="pending"/>
+    <column name="client_type" phpName="ClientType" type="CHAR" sqlType="enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER')" required="true" defaultValue="NORMAL"/>
     <foreign-key foreignTable="company" name="idcompany_client" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idcompany" foreign="idcompany"/>
     </foreign-key>
@@ -370,29 +370,35 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="department" phpName="Department" idMethod="native">
-    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="idcompany" phpName="Idcompany" type="INTEGER" required="true"/>
-    <column name="department_name" phpName="DepartmentName" type="VARCHAR" size="245" required="true"/>
-    <foreign-key foreignTable="company" name="departament_idcompany" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="idcompany" foreign="idcompany"/>
+  <table name="departamentmember" phpName="Departamentmember" idMethod="native">
+    <column name="iddepartamentmember" phpName="Iddepartamentmember" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="iddepartament" phpName="Iddepartament" type="INTEGER" required="true"/>
+    <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="department" name="iddepartament_departamentmember" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iddepartament" foreign="iddepartment"/>
     </foreign-key>
-    <index name="idcompany">
-      <index-column name="idcompany"/>
+    <foreign-key foreignTable="user" name="iduser_departamentmember" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
+    </foreign-key>
+    <index name="iddepartament">
+      <index-column name="iddepartament"/>
+    </index>
+    <index name="iduser">
+      <index-column name="iduser"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="departmentmember" phpName="Departmentmember" idMethod="native">
-    <column name="iddepartmentmember" phpName="Iddepartmentmember" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
-    <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
-    <index name="iddepartament">
-      <index-column name="iddepartment"/>
-    </index>
-    <index name="iduser">
-      <index-column name="iduser"/>
+  <table name="department" phpName="Department" idMethod="native">
+    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idcompany" phpName="Idcompany" type="INTEGER" required="true"/>
+    <column name="departament_name" phpName="DepartamentName" type="VARCHAR" size="245" required="true"/>
+    <foreign-key foreignTable="company" name="departament_idcompany" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idcompany" foreign="idcompany"/>
+    </foreign-key>
+    <index name="idcompany">
+      <index-column name="idcompany"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -991,17 +997,17 @@
   </table>
   <table name="project" phpName="Project" idMethod="native">
     <column name="idproject" phpName="Idproject" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
+    <column name="iddepartament" phpName="Iddepartament" type="INTEGER" required="true"/>
     <column name="project_dependency" phpName="ProjectDependency" type="INTEGER" required="true"/>
     <column name="project_name" phpName="ProjectName" type="VARCHAR" size="245" required="false"/>
-    <foreign-key foreignTable="department" name="project_iddepartament" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iddepartment" foreign="iddepartment"/>
-    </foreign-key>
     <foreign-key foreignTable="project" name="project_dependency" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="project_dependency" foreign="idproject"/>
     </foreign-key>
+    <foreign-key foreignTable="department" name="project_iddepartament" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iddepartament" foreign="iddepartment"/>
+    </foreign-key>
     <index name="iddepartament">
-      <index-column name="iddepartment"/>
+      <index-column name="iddepartament"/>
     </index>
     <index name="project_dependency">
       <index-column name="project_dependency"/>
@@ -1189,7 +1195,7 @@
   <table name="useracl" phpName="Useracl" idMethod="native">
     <column name="iduseracl" phpName="Iduseracl" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
-    <column name="module_name" phpName="ModuleName" type="CHAR" sqlType="enum('basic','sales','company','manufacture','contents','project')" required="true" defaultValue="basic"/>
+    <column name="module_name" phpName="ModuleName" type="CHAR" sqlType="enum('basic','sales','company','manufacture','contents')" required="true" defaultValue="basic"/>
     <column name="user_accesslevel" phpName="UserAccesslevel" type="CHAR" sqlType="enum('1','2','3','4','5')" required="true" defaultValue="1"/>
     <foreign-key foreignTable="user" name="iduser_useracl" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="iduser" foreign="iduser"/>

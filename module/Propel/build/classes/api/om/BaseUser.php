@@ -91,12 +91,6 @@ abstract class BaseUser extends BaseObject implements Persistent
     protected $collChatpublicsPartial;
 
     /**
-     * @var        PropelObjectCollection|Departamentmember[] Collection to store aggregation of Departamentmember objects.
-     */
-    protected $collDepartamentmembers;
-    protected $collDepartamentmembersPartial;
-
-    /**
      * @var        PropelObjectCollection|Loguser[] Collection to store aggregation of Loguser objects.
      */
     protected $collLogusers;
@@ -199,12 +193,6 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $chatpublicsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $departamentmembersScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -617,8 +605,6 @@ abstract class BaseUser extends BaseObject implements Persistent
 
             $this->collChatpublics = null;
 
-            $this->collDepartamentmembers = null;
-
             $this->collLogusers = null;
 
             $this->collMlquestions = null;
@@ -822,23 +808,6 @@ abstract class BaseUser extends BaseObject implements Persistent
 
             if ($this->collChatpublics !== null) {
                 foreach ($this->collChatpublics as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->departamentmembersScheduledForDeletion !== null) {
-                if (!$this->departamentmembersScheduledForDeletion->isEmpty()) {
-                    DepartamentmemberQuery::create()
-                        ->filterByPrimaryKeys($this->departamentmembersScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->departamentmembersScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collDepartamentmembers !== null) {
-                foreach ($this->collDepartamentmembers as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1240,14 +1209,6 @@ abstract class BaseUser extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collDepartamentmembers !== null) {
-                    foreach ($this->collDepartamentmembers as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collLogusers !== null) {
                     foreach ($this->collLogusers as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1442,9 +1403,6 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
             if (null !== $this->collChatpublics) {
                 $result['Chatpublics'] = $this->collChatpublics->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collDepartamentmembers) {
-                $result['Departamentmembers'] = $this->collDepartamentmembers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collLogusers) {
                 $result['Logusers'] = $this->collLogusers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1672,12 +1630,6 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getDepartamentmembers() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDepartamentmember($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getLogusers() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addLoguser($relObj->copy($deepCopy));
@@ -1865,9 +1817,6 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
         if ('Chatpublic' == $relationName) {
             $this->initChatpublics();
-        }
-        if ('Departamentmember' == $relationName) {
-            $this->initDepartamentmembers();
         }
         if ('Loguser' == $relationName) {
             $this->initLogusers();
@@ -2627,256 +2576,6 @@ abstract class BaseUser extends BaseObject implements Persistent
         $query->joinWith('Client', $join_behavior);
 
         return $this->getChatpublics($query, $con);
-    }
-
-    /**
-     * Clears out the collDepartamentmembers collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return User The current object (for fluent API support)
-     * @see        addDepartamentmembers()
-     */
-    public function clearDepartamentmembers()
-    {
-        $this->collDepartamentmembers = null; // important to set this to null since that means it is uninitialized
-        $this->collDepartamentmembersPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collDepartamentmembers collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialDepartamentmembers($v = true)
-    {
-        $this->collDepartamentmembersPartial = $v;
-    }
-
-    /**
-     * Initializes the collDepartamentmembers collection.
-     *
-     * By default this just sets the collDepartamentmembers collection to an empty array (like clearcollDepartamentmembers());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDepartamentmembers($overrideExisting = true)
-    {
-        if (null !== $this->collDepartamentmembers && !$overrideExisting) {
-            return;
-        }
-        $this->collDepartamentmembers = new PropelObjectCollection();
-        $this->collDepartamentmembers->setModel('Departamentmember');
-    }
-
-    /**
-     * Gets an array of Departamentmember objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this User is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Departamentmember[] List of Departamentmember objects
-     * @throws PropelException
-     */
-    public function getDepartamentmembers($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collDepartamentmembersPartial && !$this->isNew();
-        if (null === $this->collDepartamentmembers || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDepartamentmembers) {
-                // return empty collection
-                $this->initDepartamentmembers();
-            } else {
-                $collDepartamentmembers = DepartamentmemberQuery::create(null, $criteria)
-                    ->filterByUser($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collDepartamentmembersPartial && count($collDepartamentmembers)) {
-                      $this->initDepartamentmembers(false);
-
-                      foreach ($collDepartamentmembers as $obj) {
-                        if (false == $this->collDepartamentmembers->contains($obj)) {
-                          $this->collDepartamentmembers->append($obj);
-                        }
-                      }
-
-                      $this->collDepartamentmembersPartial = true;
-                    }
-
-                    $collDepartamentmembers->getInternalIterator()->rewind();
-
-                    return $collDepartamentmembers;
-                }
-
-                if ($partial && $this->collDepartamentmembers) {
-                    foreach ($this->collDepartamentmembers as $obj) {
-                        if ($obj->isNew()) {
-                            $collDepartamentmembers[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDepartamentmembers = $collDepartamentmembers;
-                $this->collDepartamentmembersPartial = false;
-            }
-        }
-
-        return $this->collDepartamentmembers;
-    }
-
-    /**
-     * Sets a collection of Departamentmember objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $departamentmembers A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return User The current object (for fluent API support)
-     */
-    public function setDepartamentmembers(PropelCollection $departamentmembers, PropelPDO $con = null)
-    {
-        $departamentmembersToDelete = $this->getDepartamentmembers(new Criteria(), $con)->diff($departamentmembers);
-
-
-        $this->departamentmembersScheduledForDeletion = $departamentmembersToDelete;
-
-        foreach ($departamentmembersToDelete as $departamentmemberRemoved) {
-            $departamentmemberRemoved->setUser(null);
-        }
-
-        $this->collDepartamentmembers = null;
-        foreach ($departamentmembers as $departamentmember) {
-            $this->addDepartamentmember($departamentmember);
-        }
-
-        $this->collDepartamentmembers = $departamentmembers;
-        $this->collDepartamentmembersPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Departamentmember objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Departamentmember objects.
-     * @throws PropelException
-     */
-    public function countDepartamentmembers(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collDepartamentmembersPartial && !$this->isNew();
-        if (null === $this->collDepartamentmembers || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDepartamentmembers) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getDepartamentmembers());
-            }
-            $query = DepartamentmemberQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByUser($this)
-                ->count($con);
-        }
-
-        return count($this->collDepartamentmembers);
-    }
-
-    /**
-     * Method called to associate a Departamentmember object to this object
-     * through the Departamentmember foreign key attribute.
-     *
-     * @param    Departamentmember $l Departamentmember
-     * @return User The current object (for fluent API support)
-     */
-    public function addDepartamentmember(Departamentmember $l)
-    {
-        if ($this->collDepartamentmembers === null) {
-            $this->initDepartamentmembers();
-            $this->collDepartamentmembersPartial = true;
-        }
-
-        if (!in_array($l, $this->collDepartamentmembers->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDepartamentmember($l);
-
-            if ($this->departamentmembersScheduledForDeletion and $this->departamentmembersScheduledForDeletion->contains($l)) {
-                $this->departamentmembersScheduledForDeletion->remove($this->departamentmembersScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	Departamentmember $departamentmember The departamentmember object to add.
-     */
-    protected function doAddDepartamentmember($departamentmember)
-    {
-        $this->collDepartamentmembers[]= $departamentmember;
-        $departamentmember->setUser($this);
-    }
-
-    /**
-     * @param	Departamentmember $departamentmember The departamentmember object to remove.
-     * @return User The current object (for fluent API support)
-     */
-    public function removeDepartamentmember($departamentmember)
-    {
-        if ($this->getDepartamentmembers()->contains($departamentmember)) {
-            $this->collDepartamentmembers->remove($this->collDepartamentmembers->search($departamentmember));
-            if (null === $this->departamentmembersScheduledForDeletion) {
-                $this->departamentmembersScheduledForDeletion = clone $this->collDepartamentmembers;
-                $this->departamentmembersScheduledForDeletion->clear();
-            }
-            $this->departamentmembersScheduledForDeletion[]= clone $departamentmember;
-            $departamentmember->setUser(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this User is new, it will return
-     * an empty collection; or if this User has previously
-     * been saved, it will retrieve related Departamentmembers from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in User.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Departamentmember[] List of Departamentmember objects
-     */
-    public function getDepartamentmembersJoinDepartment($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = DepartamentmemberQuery::create(null, $criteria);
-        $query->joinWith('Department', $join_behavior);
-
-        return $this->getDepartamentmembers($query, $con);
     }
 
     /**
@@ -5553,11 +5252,6 @@ abstract class BaseUser extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collDepartamentmembers) {
-                foreach ($this->collDepartamentmembers as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collLogusers) {
                 foreach ($this->collLogusers as $o) {
                     $o->clearAllReferences($deep);
@@ -5632,10 +5326,6 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->collChatpublics->clearIterator();
         }
         $this->collChatpublics = null;
-        if ($this->collDepartamentmembers instanceof PropelCollection) {
-            $this->collDepartamentmembers->clearIterator();
-        }
-        $this->collDepartamentmembers = null;
         if ($this->collLogusers instanceof PropelCollection) {
             $this->collLogusers->clearIterator();
         }

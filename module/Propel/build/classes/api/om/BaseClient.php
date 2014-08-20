@@ -97,7 +97,6 @@ abstract class BaseClient extends BaseObject implements Persistent
 
     /**
      * The value for the client_status field.
-     * Note: this column has a database default value of: 'pending'
      * @var        string
      */
     protected $client_status;
@@ -214,7 +213,6 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function applyDefaultValues()
     {
-        $this->client_status = 'pending';
         $this->client_type = 'NORMAL';
     }
 
@@ -658,10 +656,6 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->client_status !== 'pending') {
-                return false;
-            }
-
             if ($this->client_type !== 'NORMAL') {
                 return false;
             }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DepartamentmemberFilter.php
+ * DepartmentmemberFilter.php
  * BuyBuy
  *
  * Created by Carlos Esparza on 12/08/2014.
@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\Company\Departamentmember\Filter;
+namespace API\REST\V1\ACL\Company\Departmentmember\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -29,10 +29,10 @@ use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\InputFilterAwareInterface;
 
 /**
- * Class DepartamentmemberFilter
- * @package API\REST\V1\ACL\Company\Departamentmember\Filter
+ * Class DepartmentmemberFilter
+ * @package API\REST\V1\ACL\Company\Departmentmember\Filter
  */
-class DepartamentmemberFilter implements InputFilterAwareInterface
+class DepartmentmemberFilter implements InputFilterAwareInterface
 {
     /**
      * @var
@@ -58,18 +58,18 @@ class DepartamentmemberFilter implements InputFilterAwareInterface
             {
                 $inputFilter = new InputFilter();
 
-                // iddepartamentmember: DataType = INT, PK = true, NN = true, AI = true
+                // idDepartmentmember: DataType = INT, PK = true, NN = true, AI = true
                 $inputFilter->add(array(
-                    'name'     => 'iddepartamentmember',
+                    'name'     => 'idDepartmentmember',
                     'required' => false,
                     'filters'  => array(
                                     array('name' => 'Int'),
                     ),
                 ));
 
-                // iddepartament: DataType = INT,  NN = true
+                // idDepartment: DataType = INT,  NN = true
                 $inputFilter->add(array(
-                    'name'     => 'iddepartament',
+                    'name'     => 'idDepartment',
                     'required' => false,
                     'filters'  => array(
                         array('name' => 'Int'),

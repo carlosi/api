@@ -35,8 +35,8 @@ abstract class BaseProjectPeer
     /** the column name for the idproject field */
     const IDPROJECT = 'project.idproject';
 
-    /** the column name for the iddepartament field */
-    const IDDEPARTAMENT = 'project.iddepartament';
+    /** the column name for the iddepartment field */
+    const IDDEPARTMENT = 'project.iddepartment';
 
     /** the column name for the project_dependency field */
     const PROJECT_DEPENDENCY = 'project.project_dependency';
@@ -63,11 +63,11 @@ abstract class BaseProjectPeer
      * e.g. ProjectPeer::$fieldNames[ProjectPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproject', 'Iddepartament', 'ProjectDependency', 'ProjectName', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproject', 'iddepartament', 'projectDependency', 'projectName', ),
-        BasePeer::TYPE_COLNAME => array (ProjectPeer::IDPROJECT, ProjectPeer::IDDEPARTAMENT, ProjectPeer::PROJECT_DEPENDENCY, ProjectPeer::PROJECT_NAME, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECT', 'IDDEPARTAMENT', 'PROJECT_DEPENDENCY', 'PROJECT_NAME', ),
-        BasePeer::TYPE_FIELDNAME => array ('idproject', 'iddepartament', 'project_dependency', 'project_name', ),
+        BasePeer::TYPE_PHPNAME => array ('Idproject', 'Iddepartment', 'ProjectDependency', 'ProjectName', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproject', 'iddepartment', 'projectDependency', 'projectName', ),
+        BasePeer::TYPE_COLNAME => array (ProjectPeer::IDPROJECT, ProjectPeer::IDDEPARTMENT, ProjectPeer::PROJECT_DEPENDENCY, ProjectPeer::PROJECT_NAME, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECT', 'IDDEPARTMENT', 'PROJECT_DEPENDENCY', 'PROJECT_NAME', ),
+        BasePeer::TYPE_FIELDNAME => array ('idproject', 'iddepartment', 'project_dependency', 'project_name', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
@@ -78,11 +78,11 @@ abstract class BaseProjectPeer
      * e.g. ProjectPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idproject' => 0, 'Iddepartament' => 1, 'ProjectDependency' => 2, 'ProjectName' => 3, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idproject' => 0, 'iddepartament' => 1, 'projectDependency' => 2, 'projectName' => 3, ),
-        BasePeer::TYPE_COLNAME => array (ProjectPeer::IDPROJECT => 0, ProjectPeer::IDDEPARTAMENT => 1, ProjectPeer::PROJECT_DEPENDENCY => 2, ProjectPeer::PROJECT_NAME => 3, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECT' => 0, 'IDDEPARTAMENT' => 1, 'PROJECT_DEPENDENCY' => 2, 'PROJECT_NAME' => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('idproject' => 0, 'iddepartament' => 1, 'project_dependency' => 2, 'project_name' => 3, ),
+        BasePeer::TYPE_PHPNAME => array ('Idproject' => 0, 'Iddepartment' => 1, 'ProjectDependency' => 2, 'ProjectName' => 3, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idproject' => 0, 'iddepartment' => 1, 'projectDependency' => 2, 'projectName' => 3, ),
+        BasePeer::TYPE_COLNAME => array (ProjectPeer::IDPROJECT => 0, ProjectPeer::IDDEPARTMENT => 1, ProjectPeer::PROJECT_DEPENDENCY => 2, ProjectPeer::PROJECT_NAME => 3, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDPROJECT' => 0, 'IDDEPARTMENT' => 1, 'PROJECT_DEPENDENCY' => 2, 'PROJECT_NAME' => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('idproject' => 0, 'iddepartment' => 1, 'project_dependency' => 2, 'project_name' => 3, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
@@ -158,12 +158,12 @@ abstract class BaseProjectPeer
     {
         if (null === $alias) {
             $criteria->addSelectColumn(ProjectPeer::IDPROJECT);
-            $criteria->addSelectColumn(ProjectPeer::IDDEPARTAMENT);
+            $criteria->addSelectColumn(ProjectPeer::IDDEPARTMENT);
             $criteria->addSelectColumn(ProjectPeer::PROJECT_DEPENDENCY);
             $criteria->addSelectColumn(ProjectPeer::PROJECT_NAME);
         } else {
             $criteria->addSelectColumn($alias . '.idproject');
-            $criteria->addSelectColumn($alias . '.iddepartament');
+            $criteria->addSelectColumn($alias . '.iddepartment');
             $criteria->addSelectColumn($alias . '.project_dependency');
             $criteria->addSelectColumn($alias . '.project_name');
         }
@@ -509,7 +509,7 @@ abstract class BaseProjectPeer
             $con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(ProjectPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(ProjectPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -546,7 +546,7 @@ abstract class BaseProjectPeer
         $startcol = ProjectPeer::NUM_HYDRATE_COLUMNS;
         DepartmentPeer::addSelectColumns($criteria);
 
-        $criteria->addJoin(ProjectPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(ProjectPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -627,7 +627,7 @@ abstract class BaseProjectPeer
             $con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(ProjectPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(ProjectPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -666,7 +666,7 @@ abstract class BaseProjectPeer
         DepartmentPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + DepartmentPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(ProjectPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(ProjectPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -708,57 +708,6 @@ abstract class BaseProjectPeer
         $stmt->closeCursor();
 
         return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related ProjectRelatedByProjectDependency table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptProjectRelatedByProjectDependency(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ProjectPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ProjectPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(ProjectPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ProjectPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
     }
 
 
@@ -812,76 +761,53 @@ abstract class BaseProjectPeer
 
 
     /**
-     * Selects a collection of Project objects pre-filled with all related objects except ProjectRelatedByProjectDependency.
+     * Returns the number of rows matching criteria, joining the related ProjectRelatedByProjectDependency table
      *
-     * @param      Criteria  $criteria
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Project objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     * @return int Number of matching rows.
      */
-    public static function doSelectJoinAllExceptProjectRelatedByProjectDependency(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinAllExceptProjectRelatedByProjectDependency(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
+        // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
 
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ProjectPeer::DATABASE_NAME);
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ProjectPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
         }
 
-        ProjectPeer::addSelectColumns($criteria);
-        $startcol2 = ProjectPeer::NUM_HYDRATE_COLUMNS;
+        if (!$criteria->hasSelectClause()) {
+            ProjectPeer::addSelectColumns($criteria);
+        }
 
-        DepartmentPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + DepartmentPeer::NUM_HYDRATE_COLUMNS;
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
 
-        $criteria->addJoin(ProjectPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        // Set the correct dbName
+        $criteria->setDbName(ProjectPeer::DATABASE_NAME);
 
+        if ($con === null) {
+            $con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
 
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
+        $criteria->addJoin(ProjectPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ProjectPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ProjectPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ProjectPeer::getOMClass();
+        $stmt = BasePeer::doCount($criteria, $con);
 
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ProjectPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Department rows
-
-                $key2 = DepartmentPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = DepartmentPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = DepartmentPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    DepartmentPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Project) to the collection in $obj2 (Department)
-                $obj2->addProject($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
         }
         $stmt->closeCursor();
 
-        return $results;
+        return $count;
     }
 
 
@@ -926,6 +852,80 @@ abstract class BaseProjectPeer
                 $obj1->hydrate($row);
                 ProjectPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Project objects pre-filled with all related objects except ProjectRelatedByProjectDependency.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Project objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptProjectRelatedByProjectDependency(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ProjectPeer::DATABASE_NAME);
+        }
+
+        ProjectPeer::addSelectColumns($criteria);
+        $startcol2 = ProjectPeer::NUM_HYDRATE_COLUMNS;
+
+        DepartmentPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + DepartmentPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ProjectPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ProjectPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ProjectPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ProjectPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ProjectPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Department rows
+
+                $key2 = DepartmentPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = DepartmentPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = DepartmentPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    DepartmentPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Project) to the collection in $obj2 (Department)
+                $obj2->addProject($obj1);
+
+            } // if joined row is not null
 
             $results[] = $obj1;
         }
