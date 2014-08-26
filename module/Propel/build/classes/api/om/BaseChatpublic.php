@@ -70,10 +70,10 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
     protected $aUser;
 
     /**
-     * @var        PropelObjectCollection|ChatpublicpAttachedfile[] Collection to store aggregation of ChatpublicpAttachedfile objects.
+     * @var        PropelObjectCollection|ChatpublicAttachedfile[] Collection to store aggregation of ChatpublicAttachedfile objects.
      */
-    protected $collChatpublicpAttachedfiles;
-    protected $collChatpublicpAttachedfilesPartial;
+    protected $collChatpublicAttachedfiles;
+    protected $collChatpublicAttachedfilesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -99,7 +99,7 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $chatpublicpAttachedfilesScheduledForDeletion = null;
+    protected $chatpublicAttachedfilesScheduledForDeletion = null;
 
     /**
      * Get the [idchatpublic] column value.
@@ -416,7 +416,7 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
 
             $this->aClient = null;
             $this->aUser = null;
-            $this->collChatpublicpAttachedfiles = null;
+            $this->collChatpublicAttachedfiles = null;
 
         } // if (deep)
     }
@@ -561,17 +561,17 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
-            if ($this->chatpublicpAttachedfilesScheduledForDeletion !== null) {
-                if (!$this->chatpublicpAttachedfilesScheduledForDeletion->isEmpty()) {
-                    ChatpublicpAttachedfileQuery::create()
-                        ->filterByPrimaryKeys($this->chatpublicpAttachedfilesScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->chatpublicAttachedfilesScheduledForDeletion !== null) {
+                if (!$this->chatpublicAttachedfilesScheduledForDeletion->isEmpty()) {
+                    ChatpublicAttachedfileQuery::create()
+                        ->filterByPrimaryKeys($this->chatpublicAttachedfilesScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->chatpublicpAttachedfilesScheduledForDeletion = null;
+                    $this->chatpublicAttachedfilesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collChatpublicpAttachedfiles !== null) {
-                foreach ($this->collChatpublicpAttachedfiles as $referrerFK) {
+            if ($this->collChatpublicAttachedfiles !== null) {
+                foreach ($this->collChatpublicAttachedfiles as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -762,8 +762,8 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
             }
 
 
-                if ($this->collChatpublicpAttachedfiles !== null) {
-                    foreach ($this->collChatpublicpAttachedfiles as $referrerFK) {
+                if ($this->collChatpublicAttachedfiles !== null) {
+                    foreach ($this->collChatpublicAttachedfiles as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -867,8 +867,8 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
             if (null !== $this->aUser) {
                 $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->collChatpublicpAttachedfiles) {
-                $result['ChatpublicpAttachedfiles'] = $this->collChatpublicpAttachedfiles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->collChatpublicAttachedfiles) {
+                $result['ChatpublicAttachedfiles'] = $this->collChatpublicAttachedfiles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1039,9 +1039,9 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
-            foreach ($this->getChatpublicpAttachedfiles() as $relObj) {
+            foreach ($this->getChatpublicAttachedfiles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addChatpublicpAttachedfile($relObj->copy($deepCopy));
+                    $copyObj->addChatpublicAttachedfile($relObj->copy($deepCopy));
                 }
             }
 
@@ -1210,42 +1210,42 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
-        if ('ChatpublicpAttachedfile' == $relationName) {
-            $this->initChatpublicpAttachedfiles();
+        if ('ChatpublicAttachedfile' == $relationName) {
+            $this->initChatpublicAttachedfiles();
         }
     }
 
     /**
-     * Clears out the collChatpublicpAttachedfiles collection
+     * Clears out the collChatpublicAttachedfiles collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return Chatpublic The current object (for fluent API support)
-     * @see        addChatpublicpAttachedfiles()
+     * @see        addChatpublicAttachedfiles()
      */
-    public function clearChatpublicpAttachedfiles()
+    public function clearChatpublicAttachedfiles()
     {
-        $this->collChatpublicpAttachedfiles = null; // important to set this to null since that means it is uninitialized
-        $this->collChatpublicpAttachedfilesPartial = null;
+        $this->collChatpublicAttachedfiles = null; // important to set this to null since that means it is uninitialized
+        $this->collChatpublicAttachedfilesPartial = null;
 
         return $this;
     }
 
     /**
-     * reset is the collChatpublicpAttachedfiles collection loaded partially
+     * reset is the collChatpublicAttachedfiles collection loaded partially
      *
      * @return void
      */
-    public function resetPartialChatpublicpAttachedfiles($v = true)
+    public function resetPartialChatpublicAttachedfiles($v = true)
     {
-        $this->collChatpublicpAttachedfilesPartial = $v;
+        $this->collChatpublicAttachedfilesPartial = $v;
     }
 
     /**
-     * Initializes the collChatpublicpAttachedfiles collection.
+     * Initializes the collChatpublicAttachedfiles collection.
      *
-     * By default this just sets the collChatpublicpAttachedfiles collection to an empty array (like clearcollChatpublicpAttachedfiles());
+     * By default this just sets the collChatpublicAttachedfiles collection to an empty array (like clearcollChatpublicAttachedfiles());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1254,17 +1254,17 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
      *
      * @return void
      */
-    public function initChatpublicpAttachedfiles($overrideExisting = true)
+    public function initChatpublicAttachedfiles($overrideExisting = true)
     {
-        if (null !== $this->collChatpublicpAttachedfiles && !$overrideExisting) {
+        if (null !== $this->collChatpublicAttachedfiles && !$overrideExisting) {
             return;
         }
-        $this->collChatpublicpAttachedfiles = new PropelObjectCollection();
-        $this->collChatpublicpAttachedfiles->setModel('ChatpublicpAttachedfile');
+        $this->collChatpublicAttachedfiles = new PropelObjectCollection();
+        $this->collChatpublicAttachedfiles->setModel('ChatpublicAttachedfile');
     }
 
     /**
-     * Gets an array of ChatpublicpAttachedfile objects which contain a foreign key that references this object.
+     * Gets an array of ChatpublicAttachedfile objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1274,107 +1274,107 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|ChatpublicpAttachedfile[] List of ChatpublicpAttachedfile objects
+     * @return PropelObjectCollection|ChatpublicAttachedfile[] List of ChatpublicAttachedfile objects
      * @throws PropelException
      */
-    public function getChatpublicpAttachedfiles($criteria = null, PropelPDO $con = null)
+    public function getChatpublicAttachedfiles($criteria = null, PropelPDO $con = null)
     {
-        $partial = $this->collChatpublicpAttachedfilesPartial && !$this->isNew();
-        if (null === $this->collChatpublicpAttachedfiles || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collChatpublicpAttachedfiles) {
+        $partial = $this->collChatpublicAttachedfilesPartial && !$this->isNew();
+        if (null === $this->collChatpublicAttachedfiles || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collChatpublicAttachedfiles) {
                 // return empty collection
-                $this->initChatpublicpAttachedfiles();
+                $this->initChatpublicAttachedfiles();
             } else {
-                $collChatpublicpAttachedfiles = ChatpublicpAttachedfileQuery::create(null, $criteria)
+                $collChatpublicAttachedfiles = ChatpublicAttachedfileQuery::create(null, $criteria)
                     ->filterByChatpublic($this)
                     ->find($con);
                 if (null !== $criteria) {
-                    if (false !== $this->collChatpublicpAttachedfilesPartial && count($collChatpublicpAttachedfiles)) {
-                      $this->initChatpublicpAttachedfiles(false);
+                    if (false !== $this->collChatpublicAttachedfilesPartial && count($collChatpublicAttachedfiles)) {
+                      $this->initChatpublicAttachedfiles(false);
 
-                      foreach ($collChatpublicpAttachedfiles as $obj) {
-                        if (false == $this->collChatpublicpAttachedfiles->contains($obj)) {
-                          $this->collChatpublicpAttachedfiles->append($obj);
+                      foreach ($collChatpublicAttachedfiles as $obj) {
+                        if (false == $this->collChatpublicAttachedfiles->contains($obj)) {
+                          $this->collChatpublicAttachedfiles->append($obj);
                         }
                       }
 
-                      $this->collChatpublicpAttachedfilesPartial = true;
+                      $this->collChatpublicAttachedfilesPartial = true;
                     }
 
-                    $collChatpublicpAttachedfiles->getInternalIterator()->rewind();
+                    $collChatpublicAttachedfiles->getInternalIterator()->rewind();
 
-                    return $collChatpublicpAttachedfiles;
+                    return $collChatpublicAttachedfiles;
                 }
 
-                if ($partial && $this->collChatpublicpAttachedfiles) {
-                    foreach ($this->collChatpublicpAttachedfiles as $obj) {
+                if ($partial && $this->collChatpublicAttachedfiles) {
+                    foreach ($this->collChatpublicAttachedfiles as $obj) {
                         if ($obj->isNew()) {
-                            $collChatpublicpAttachedfiles[] = $obj;
+                            $collChatpublicAttachedfiles[] = $obj;
                         }
                     }
                 }
 
-                $this->collChatpublicpAttachedfiles = $collChatpublicpAttachedfiles;
-                $this->collChatpublicpAttachedfilesPartial = false;
+                $this->collChatpublicAttachedfiles = $collChatpublicAttachedfiles;
+                $this->collChatpublicAttachedfilesPartial = false;
             }
         }
 
-        return $this->collChatpublicpAttachedfiles;
+        return $this->collChatpublicAttachedfiles;
     }
 
     /**
-     * Sets a collection of ChatpublicpAttachedfile objects related by a one-to-many relationship
+     * Sets a collection of ChatpublicAttachedfile objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param PropelCollection $chatpublicpAttachedfiles A Propel collection.
+     * @param PropelCollection $chatpublicAttachedfiles A Propel collection.
      * @param PropelPDO $con Optional connection object
      * @return Chatpublic The current object (for fluent API support)
      */
-    public function setChatpublicpAttachedfiles(PropelCollection $chatpublicpAttachedfiles, PropelPDO $con = null)
+    public function setChatpublicAttachedfiles(PropelCollection $chatpublicAttachedfiles, PropelPDO $con = null)
     {
-        $chatpublicpAttachedfilesToDelete = $this->getChatpublicpAttachedfiles(new Criteria(), $con)->diff($chatpublicpAttachedfiles);
+        $chatpublicAttachedfilesToDelete = $this->getChatpublicAttachedfiles(new Criteria(), $con)->diff($chatpublicAttachedfiles);
 
 
-        $this->chatpublicpAttachedfilesScheduledForDeletion = $chatpublicpAttachedfilesToDelete;
+        $this->chatpublicAttachedfilesScheduledForDeletion = $chatpublicAttachedfilesToDelete;
 
-        foreach ($chatpublicpAttachedfilesToDelete as $chatpublicpAttachedfileRemoved) {
-            $chatpublicpAttachedfileRemoved->setChatpublic(null);
+        foreach ($chatpublicAttachedfilesToDelete as $chatpublicAttachedfileRemoved) {
+            $chatpublicAttachedfileRemoved->setChatpublic(null);
         }
 
-        $this->collChatpublicpAttachedfiles = null;
-        foreach ($chatpublicpAttachedfiles as $chatpublicpAttachedfile) {
-            $this->addChatpublicpAttachedfile($chatpublicpAttachedfile);
+        $this->collChatpublicAttachedfiles = null;
+        foreach ($chatpublicAttachedfiles as $chatpublicAttachedfile) {
+            $this->addChatpublicAttachedfile($chatpublicAttachedfile);
         }
 
-        $this->collChatpublicpAttachedfiles = $chatpublicpAttachedfiles;
-        $this->collChatpublicpAttachedfilesPartial = false;
+        $this->collChatpublicAttachedfiles = $chatpublicAttachedfiles;
+        $this->collChatpublicAttachedfilesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related ChatpublicpAttachedfile objects.
+     * Returns the number of related ChatpublicAttachedfile objects.
      *
      * @param Criteria $criteria
      * @param boolean $distinct
      * @param PropelPDO $con
-     * @return int             Count of related ChatpublicpAttachedfile objects.
+     * @return int             Count of related ChatpublicAttachedfile objects.
      * @throws PropelException
      */
-    public function countChatpublicpAttachedfiles(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    public function countChatpublicAttachedfiles(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
     {
-        $partial = $this->collChatpublicpAttachedfilesPartial && !$this->isNew();
-        if (null === $this->collChatpublicpAttachedfiles || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collChatpublicpAttachedfiles) {
+        $partial = $this->collChatpublicAttachedfilesPartial && !$this->isNew();
+        if (null === $this->collChatpublicAttachedfiles || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collChatpublicAttachedfiles) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getChatpublicpAttachedfiles());
+                return count($this->getChatpublicAttachedfiles());
             }
-            $query = ChatpublicpAttachedfileQuery::create(null, $criteria);
+            $query = ChatpublicAttachedfileQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1384,28 +1384,28 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
                 ->count($con);
         }
 
-        return count($this->collChatpublicpAttachedfiles);
+        return count($this->collChatpublicAttachedfiles);
     }
 
     /**
-     * Method called to associate a ChatpublicpAttachedfile object to this object
-     * through the ChatpublicpAttachedfile foreign key attribute.
+     * Method called to associate a ChatpublicAttachedfile object to this object
+     * through the ChatpublicAttachedfile foreign key attribute.
      *
-     * @param    ChatpublicpAttachedfile $l ChatpublicpAttachedfile
+     * @param    ChatpublicAttachedfile $l ChatpublicAttachedfile
      * @return Chatpublic The current object (for fluent API support)
      */
-    public function addChatpublicpAttachedfile(ChatpublicpAttachedfile $l)
+    public function addChatpublicAttachedfile(ChatpublicAttachedfile $l)
     {
-        if ($this->collChatpublicpAttachedfiles === null) {
-            $this->initChatpublicpAttachedfiles();
-            $this->collChatpublicpAttachedfilesPartial = true;
+        if ($this->collChatpublicAttachedfiles === null) {
+            $this->initChatpublicAttachedfiles();
+            $this->collChatpublicAttachedfilesPartial = true;
         }
 
-        if (!in_array($l, $this->collChatpublicpAttachedfiles->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddChatpublicpAttachedfile($l);
+        if (!in_array($l, $this->collChatpublicAttachedfiles->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddChatpublicAttachedfile($l);
 
-            if ($this->chatpublicpAttachedfilesScheduledForDeletion and $this->chatpublicpAttachedfilesScheduledForDeletion->contains($l)) {
-                $this->chatpublicpAttachedfilesScheduledForDeletion->remove($this->chatpublicpAttachedfilesScheduledForDeletion->search($l));
+            if ($this->chatpublicAttachedfilesScheduledForDeletion and $this->chatpublicAttachedfilesScheduledForDeletion->contains($l)) {
+                $this->chatpublicAttachedfilesScheduledForDeletion->remove($this->chatpublicAttachedfilesScheduledForDeletion->search($l));
             }
         }
 
@@ -1413,28 +1413,28 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
     }
 
     /**
-     * @param	ChatpublicpAttachedfile $chatpublicpAttachedfile The chatpublicpAttachedfile object to add.
+     * @param	ChatpublicAttachedfile $chatpublicAttachedfile The chatpublicAttachedfile object to add.
      */
-    protected function doAddChatpublicpAttachedfile($chatpublicpAttachedfile)
+    protected function doAddChatpublicAttachedfile($chatpublicAttachedfile)
     {
-        $this->collChatpublicpAttachedfiles[]= $chatpublicpAttachedfile;
-        $chatpublicpAttachedfile->setChatpublic($this);
+        $this->collChatpublicAttachedfiles[]= $chatpublicAttachedfile;
+        $chatpublicAttachedfile->setChatpublic($this);
     }
 
     /**
-     * @param	ChatpublicpAttachedfile $chatpublicpAttachedfile The chatpublicpAttachedfile object to remove.
+     * @param	ChatpublicAttachedfile $chatpublicAttachedfile The chatpublicAttachedfile object to remove.
      * @return Chatpublic The current object (for fluent API support)
      */
-    public function removeChatpublicpAttachedfile($chatpublicpAttachedfile)
+    public function removeChatpublicAttachedfile($chatpublicAttachedfile)
     {
-        if ($this->getChatpublicpAttachedfiles()->contains($chatpublicpAttachedfile)) {
-            $this->collChatpublicpAttachedfiles->remove($this->collChatpublicpAttachedfiles->search($chatpublicpAttachedfile));
-            if (null === $this->chatpublicpAttachedfilesScheduledForDeletion) {
-                $this->chatpublicpAttachedfilesScheduledForDeletion = clone $this->collChatpublicpAttachedfiles;
-                $this->chatpublicpAttachedfilesScheduledForDeletion->clear();
+        if ($this->getChatpublicAttachedfiles()->contains($chatpublicAttachedfile)) {
+            $this->collChatpublicAttachedfiles->remove($this->collChatpublicAttachedfiles->search($chatpublicAttachedfile));
+            if (null === $this->chatpublicAttachedfilesScheduledForDeletion) {
+                $this->chatpublicAttachedfilesScheduledForDeletion = clone $this->collChatpublicAttachedfiles;
+                $this->chatpublicAttachedfilesScheduledForDeletion->clear();
             }
-            $this->chatpublicpAttachedfilesScheduledForDeletion[]= clone $chatpublicpAttachedfile;
-            $chatpublicpAttachedfile->setChatpublic(null);
+            $this->chatpublicAttachedfilesScheduledForDeletion[]= clone $chatpublicAttachedfile;
+            $chatpublicAttachedfile->setChatpublic(null);
         }
 
         return $this;
@@ -1472,8 +1472,8 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->collChatpublicpAttachedfiles) {
-                foreach ($this->collChatpublicpAttachedfiles as $o) {
+            if ($this->collChatpublicAttachedfiles) {
+                foreach ($this->collChatpublicAttachedfiles as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -1487,10 +1487,10 @@ abstract class BaseChatpublic extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->collChatpublicpAttachedfiles instanceof PropelCollection) {
-            $this->collChatpublicpAttachedfiles->clearIterator();
+        if ($this->collChatpublicAttachedfiles instanceof PropelCollection) {
+            $this->collChatpublicAttachedfiles->clearIterator();
         }
-        $this->collChatpublicpAttachedfiles = null;
+        $this->collChatpublicAttachedfiles = null;
         $this->aClient = null;
         $this->aUser = null;
     }

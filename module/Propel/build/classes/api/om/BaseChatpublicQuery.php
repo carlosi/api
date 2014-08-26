@@ -30,9 +30,9 @@
  * @method ChatpublicQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
  * @method ChatpublicQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
- * @method ChatpublicQuery leftJoinChatpublicpAttachedfile($relationAlias = null) Adds a LEFT JOIN clause to the query using the ChatpublicpAttachedfile relation
- * @method ChatpublicQuery rightJoinChatpublicpAttachedfile($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ChatpublicpAttachedfile relation
- * @method ChatpublicQuery innerJoinChatpublicpAttachedfile($relationAlias = null) Adds a INNER JOIN clause to the query using the ChatpublicpAttachedfile relation
+ * @method ChatpublicQuery leftJoinChatpublicAttachedfile($relationAlias = null) Adds a LEFT JOIN clause to the query using the ChatpublicAttachedfile relation
+ * @method ChatpublicQuery rightJoinChatpublicAttachedfile($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ChatpublicAttachedfile relation
+ * @method ChatpublicQuery innerJoinChatpublicAttachedfile($relationAlias = null) Adds a INNER JOIN clause to the query using the ChatpublicAttachedfile relation
  *
  * @method Chatpublic findOne(PropelPDO $con = null) Return the first Chatpublic matching the query
  * @method Chatpublic findOneOrCreate(PropelPDO $con = null) Return the first Chatpublic matching the query, or a new Chatpublic object populated from the query conditions when no match is found
@@ -598,41 +598,41 @@ abstract class BaseChatpublicQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related ChatpublicpAttachedfile object
+     * Filter the query by a related ChatpublicAttachedfile object
      *
-     * @param   ChatpublicpAttachedfile|PropelObjectCollection $chatpublicpAttachedfile  the related object to use as filter
+     * @param   ChatpublicAttachedfile|PropelObjectCollection $chatpublicAttachedfile  the related object to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return                 ChatpublicQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
-    public function filterByChatpublicpAttachedfile($chatpublicpAttachedfile, $comparison = null)
+    public function filterByChatpublicAttachedfile($chatpublicAttachedfile, $comparison = null)
     {
-        if ($chatpublicpAttachedfile instanceof ChatpublicpAttachedfile) {
+        if ($chatpublicAttachedfile instanceof ChatpublicAttachedfile) {
             return $this
-                ->addUsingAlias(ChatpublicPeer::IDCHATPUBLIC, $chatpublicpAttachedfile->getIdchatpublic(), $comparison);
-        } elseif ($chatpublicpAttachedfile instanceof PropelObjectCollection) {
+                ->addUsingAlias(ChatpublicPeer::IDCHATPUBLIC, $chatpublicAttachedfile->getIdchatpublic(), $comparison);
+        } elseif ($chatpublicAttachedfile instanceof PropelObjectCollection) {
             return $this
-                ->useChatpublicpAttachedfileQuery()
-                ->filterByPrimaryKeys($chatpublicpAttachedfile->getPrimaryKeys())
+                ->useChatpublicAttachedfileQuery()
+                ->filterByPrimaryKeys($chatpublicAttachedfile->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByChatpublicpAttachedfile() only accepts arguments of type ChatpublicpAttachedfile or PropelCollection');
+            throw new PropelException('filterByChatpublicAttachedfile() only accepts arguments of type ChatpublicAttachedfile or PropelCollection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the ChatpublicpAttachedfile relation
+     * Adds a JOIN clause to the query using the ChatpublicAttachedfile relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return ChatpublicQuery The current query, for fluid interface
      */
-    public function joinChatpublicpAttachedfile($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinChatpublicAttachedfile($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ChatpublicpAttachedfile');
+        $relationMap = $tableMap->getRelation('ChatpublicAttachedfile');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -647,14 +647,14 @@ abstract class BaseChatpublicQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'ChatpublicpAttachedfile');
+            $this->addJoinObject($join, 'ChatpublicAttachedfile');
         }
 
         return $this;
     }
 
     /**
-     * Use the ChatpublicpAttachedfile relation ChatpublicpAttachedfile object
+     * Use the ChatpublicAttachedfile relation ChatpublicAttachedfile object
      *
      * @see       useQuery()
      *
@@ -662,13 +662,13 @@ abstract class BaseChatpublicQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   ChatpublicpAttachedfileQuery A secondary query class using the current class as primary query
+     * @return   ChatpublicAttachedfileQuery A secondary query class using the current class as primary query
      */
-    public function useChatpublicpAttachedfileQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useChatpublicAttachedfileQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinChatpublicpAttachedfile($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ChatpublicpAttachedfile', 'ChatpublicpAttachedfileQuery');
+            ->joinChatpublicAttachedfile($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ChatpublicAttachedfile', 'ChatpublicAttachedfileQuery');
     }
 
     /**

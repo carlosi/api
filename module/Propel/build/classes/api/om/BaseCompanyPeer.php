@@ -416,6 +416,9 @@ abstract class BaseCompanyPeer
         // Invalidate objects in ExpensecategoryPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ExpensecategoryPeer::clearInstancePool();
+        // Invalidate objects in MarketingchannelPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        MarketingchannelPeer::clearInstancePool();
         // Invalidate objects in MxtaxinfoPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         MxtaxinfoPeer::clearInstancePool();
@@ -806,6 +809,12 @@ abstract class BaseCompanyPeer
 
             $criteria->add(ExpensecategoryPeer::IDCOMPANY, $obj->getIdcompany());
             $affectedRows += ExpensecategoryPeer::doDelete($criteria, $con);
+
+            // delete related Marketingchannel objects
+            $criteria = new Criteria(MarketingchannelPeer::DATABASE_NAME);
+
+            $criteria->add(MarketingchannelPeer::IDCOMPANY, $obj->getIdcompany());
+            $affectedRows += MarketingchannelPeer::doDelete($criteria, $con);
 
             // delete related Mxtaxinfo objects
             $criteria = new Criteria(MxtaxinfoPeer::DATABASE_NAME);

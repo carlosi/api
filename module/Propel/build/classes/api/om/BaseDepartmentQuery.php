@@ -22,6 +22,14 @@
  * @method DepartmentQuery rightJoinCompany($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Company relation
  * @method DepartmentQuery innerJoinCompany($relationAlias = null) Adds a INNER JOIN clause to the query using the Company relation
  *
+ * @method DepartmentQuery leftJoinDepartmentleader($relationAlias = null) Adds a LEFT JOIN clause to the query using the Departmentleader relation
+ * @method DepartmentQuery rightJoinDepartmentleader($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Departmentleader relation
+ * @method DepartmentQuery innerJoinDepartmentleader($relationAlias = null) Adds a INNER JOIN clause to the query using the Departmentleader relation
+ *
+ * @method DepartmentQuery leftJoinDepartmentmember($relationAlias = null) Adds a LEFT JOIN clause to the query using the Departmentmember relation
+ * @method DepartmentQuery rightJoinDepartmentmember($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Departmentmember relation
+ * @method DepartmentQuery innerJoinDepartmentmember($relationAlias = null) Adds a INNER JOIN clause to the query using the Departmentmember relation
+ *
  * @method DepartmentQuery leftJoinProject($relationAlias = null) Adds a LEFT JOIN clause to the query using the Project relation
  * @method DepartmentQuery rightJoinProject($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Project relation
  * @method DepartmentQuery innerJoinProject($relationAlias = null) Adds a INNER JOIN clause to the query using the Project relation
@@ -420,6 +428,154 @@ abstract class BaseDepartmentQuery extends ModelCriteria
         return $this
             ->joinCompany($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Company', 'CompanyQuery');
+    }
+
+    /**
+     * Filter the query by a related Departmentleader object
+     *
+     * @param   Departmentleader|PropelObjectCollection $departmentleader  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 DepartmentQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDepartmentleader($departmentleader, $comparison = null)
+    {
+        if ($departmentleader instanceof Departmentleader) {
+            return $this
+                ->addUsingAlias(DepartmentPeer::IDDEPARTMENT, $departmentleader->getIddepartment(), $comparison);
+        } elseif ($departmentleader instanceof PropelObjectCollection) {
+            return $this
+                ->useDepartmentleaderQuery()
+                ->filterByPrimaryKeys($departmentleader->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDepartmentleader() only accepts arguments of type Departmentleader or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Departmentleader relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return DepartmentQuery The current query, for fluid interface
+     */
+    public function joinDepartmentleader($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Departmentleader');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Departmentleader');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Departmentleader relation Departmentleader object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   DepartmentleaderQuery A secondary query class using the current class as primary query
+     */
+    public function useDepartmentleaderQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDepartmentleader($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Departmentleader', 'DepartmentleaderQuery');
+    }
+
+    /**
+     * Filter the query by a related Departmentmember object
+     *
+     * @param   Departmentmember|PropelObjectCollection $departmentmember  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 DepartmentQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDepartmentmember($departmentmember, $comparison = null)
+    {
+        if ($departmentmember instanceof Departmentmember) {
+            return $this
+                ->addUsingAlias(DepartmentPeer::IDDEPARTMENT, $departmentmember->getIddepartment(), $comparison);
+        } elseif ($departmentmember instanceof PropelObjectCollection) {
+            return $this
+                ->useDepartmentmemberQuery()
+                ->filterByPrimaryKeys($departmentmember->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDepartmentmember() only accepts arguments of type Departmentmember or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Departmentmember relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return DepartmentQuery The current query, for fluid interface
+     */
+    public function joinDepartmentmember($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Departmentmember');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Departmentmember');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Departmentmember relation Departmentmember object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   DepartmentmemberQuery A secondary query class using the current class as primary query
+     */
+    public function useDepartmentmemberQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDepartmentmember($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Departmentmember', 'DepartmentmemberQuery');
     }
 
     /**

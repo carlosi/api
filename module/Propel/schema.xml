@@ -152,11 +152,11 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="chatpublicp_attachedfile" phpName="ChatpublicpAttachedfile" idMethod="native">
-    <column name="idchatpublicp_attachedfile" phpName="IdchatpublicpAttachedfile" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+  <table name="chatpublic_attachedfile" phpName="ChatpublicAttachedfile" idMethod="native">
+    <column name="idchatpublic_attachedfile" phpName="IdchatpublicAttachedfile" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="idchatpublic" phpName="Idchatpublic" type="INTEGER" required="true"/>
-    <column name="chatpublicp_attachedfile_url" phpName="ChatpublicpAttachedfileUrl" type="LONGVARCHAR" required="true"/>
-    <foreign-key foreignTable="chatpublic" name="idchatpublic_chatpublicp_attachedfile" onDelete="CASCADE" onUpdate="CASCADE">
+    <column name="chatpublic_attachedfile_url" phpName="ChatpublicAttachedfileUrl" type="LONGVARCHAR" required="true"/>
+    <foreign-key foreignTable="chatpublic" name="idchatpublic_chatpublic_attachedfile" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idchatpublic" foreign="idchatpublic"/>
     </foreign-key>
     <index name="idchatpublic">
@@ -374,7 +374,7 @@
     <column name="iddepartment" phpName="Iddepartment" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="idcompany" phpName="Idcompany" type="INTEGER" required="true"/>
     <column name="department_name" phpName="DepartmentName" type="VARCHAR" size="245" required="true"/>
-    <foreign-key foreignTable="company" name="departament_idcompany" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="company" name="department_idcompany" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idcompany" foreign="idcompany"/>
     </foreign-key>
     <index name="idcompany">
@@ -384,11 +384,38 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
+  <table name="departmentleader" phpName="Departmentleader" idMethod="native">
+    <column name="iddepartmentleader" phpName="Iddepartmentleader" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
+    <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
+    <column name="departmentleader_title" phpName="DepartmentleaderTitle" type="VARCHAR" size="245" required="true"/>
+    <foreign-key foreignTable="user" name="iduser_departmentleader" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
+    </foreign-key>
+    <foreign-key foreignTable="department" name="iddeparment_departmentleader" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iddepartment" foreign="iddepartment"/>
+    </foreign-key>
+    <index name="iddepartment">
+      <index-column name="iddepartment"/>
+    </index>
+    <index name="iduser">
+      <index-column name="iduser"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
   <table name="departmentmember" phpName="Departmentmember" idMethod="native">
     <column name="iddepartmentmember" phpName="Iddepartmentmember" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
-    <index name="iddepartament">
+    <foreign-key foreignTable="department" name="iddepartment_departmentmember" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iddepartment" foreign="iddepartment"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_departmentmember" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
+    </foreign-key>
+    <index name="iddepartment">
       <index-column name="iddepartment"/>
     </index>
     <index name="iduser">
@@ -403,6 +430,9 @@
     <column name="idexpensetransaction" phpName="Idexpensetransaction" type="INTEGER" required="true"/>
     <column name="depreciationappreciation_amount" phpName="DepreciationappreciationAmount" type="DECIMAL" size="10" scale="2" required="true" defaultValue="0.00"/>
     <column name="depreciationappreciation_cycle" phpName="DepreciationappreciationCycle" type="CHAR" sqlType="enum('weekly','monthly','semiannual','annually')" required="true" defaultValue="annually"/>
+    <foreign-key foreignTable="expensetransaction" name="idexpensetransaction_inventory" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idexpensetransaction" foreign="idexpensetransaction"/>
+    </foreign-key>
     <index name="idexpensetransaction">
       <index-column name="idexpensetransaction"/>
     </index>
@@ -509,6 +539,144 @@
     <foreign-key foreignTable="user" name="iduser_loguser" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="iduser" foreign="iduser"/>
     </foreign-key>
+    <index name="iduser">
+      <index-column name="iduser"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingcampaign" phpName="Marketingcampaign" idMethod="native">
+    <column name="idmarketingcampaign" phpName="Idmarketingcampaign" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idmarketingchannel" phpName="Idmarketingchannel" type="INTEGER" required="true"/>
+    <column name="marketingcampaign_name" phpName="MarketingcampaignName" type="LONGVARCHAR" required="true"/>
+    <column name="marketingcampaign_created_at" phpName="MarketingcampaignCreatedAt" type="TIMESTAMP" required="true"/>
+    <foreign-key foreignTable="marketingchannel" name="idmarketingcampaign_marketingcampaign" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idmarketingchannel" foreign="idmarketingchannel"/>
+    </foreign-key>
+    <index name="idmarketingchannel">
+      <index-column name="idmarketingchannel"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingcampaignclient" phpName="Marketingcampaignclient" idMethod="native">
+    <column name="idmarketingcampaignclient" phpName="Idmarketingcampaignclient" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="idclient" phpName="Idclient" type="INTEGER" required="true"/>
+    <column name="idmarketingcampaign" phpName="Idmarketingcampaign" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="client" name="idclient_marketingcampaignclient" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idclient" foreign="idclient"/>
+    </foreign-key>
+    <foreign-key foreignTable="marketingcampaign" name="idmarketingcampaign_marketingcampaignclient" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idmarketingcampaign" foreign="idmarketingcampaign"/>
+    </foreign-key>
+    <index name="idclient">
+      <index-column name="idclient"/>
+    </index>
+    <index name="idmarketingcampaign">
+      <index-column name="idmarketingcampaign"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingcandidate" phpName="Marketingcandidate" idMethod="native">
+    <column name="idmarketingcandidate" phpName="Idmarketingcandidate" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
+    <column name="idclient" phpName="Idclient" type="INTEGER" required="true"/>
+    <column name="marketingcandidate_saleexpectation" phpName="MarketingcandidateSaleexpectation" type="DECIMAL" size="10" scale="2" required="true" defaultValue="0.00"/>
+    <column name="marketingcandidate_levelexpectation" phpName="MarketingcandidateLevelexpectation" type="INTEGER" required="true" defaultValue="1"/>
+    <foreign-key foreignTable="client" name="idclient_marketingcandidate" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idclient" foreign="idclient"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_marketingcandidate" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
+    </foreign-key>
+    <index name="iduser">
+      <index-column name="iduser"/>
+    </index>
+    <index name="idclient">
+      <index-column name="idclient"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingchannel" phpName="Marketingchannel" idMethod="native">
+    <column name="idmarketingchannel" phpName="Idmarketingchannel" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idcompany" phpName="Idcompany" type="INTEGER" required="true"/>
+    <column name="marketingchannel_name" phpName="MarketingchannelName" type="VARCHAR" size="245" required="true"/>
+    <foreign-key foreignTable="company" name="idcompany_marketingchannel" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idcompany" foreign="idcompany"/>
+    </foreign-key>
+    <index name="idcompany">
+      <index-column name="idcompany"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingprospection" phpName="Marketingprospection" idMethod="native">
+    <column name="idmarketingprospection" phpName="Idmarketingprospection" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idmarketingcampaignclient" phpName="Idmarketingcampaignclient" type="INTEGER" required="true"/>
+    <column name="marketingprospection_saleexpectation" phpName="MarketingprospectionSaleexpectation" type="DECIMAL" size="10" scale="2" required="true" defaultValue="0.00"/>
+    <column name="marketingprospection_levelexpectation" phpName="MarketingprospectionLevelexpectation" type="INTEGER" required="true" defaultValue="3"/>
+    <column name="marketingprospection_startdate" phpName="MarketingprospectionStartdate" type="TIMESTAMP" required="true"/>
+    <foreign-key foreignTable="marketingcampaignclient" name="idmarketingcampaignclient_marketingprospection" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idmarketingcampaignclient" foreign="idmarketingcampaignclient"/>
+    </foreign-key>
+    <index name="idmarketingcampaignclient">
+      <index-column name="idmarketingcampaignclient"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingprospectioninteraction" phpName="Marketingprospectioninteraction" idMethod="native">
+    <column name="idmarketingprospectioninteraction" phpName="Idmarketingprospectioninteraction" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="idmarketingprospectionuser" phpName="Idmarketingprospectionuser" type="INTEGER" required="true"/>
+    <column name="marketingprospectioninteraction_type" phpName="MarketingprospectioninteractionType" type="CHAR" sqlType="enum('visitfromclient','call','chat','email','visittoclient','videocall','undefined')" required="true" defaultValue="undefined"/>
+    <column name="marketingprospectioninteraction_date" phpName="MarketingprospectioninteractionDate" type="TIMESTAMP" required="false"/>
+    <column name="marketingprospectioninteraction_comment" phpName="MarketingprospectioninteractionComment" type="LONGVARCHAR" required="false"/>
+    <foreign-key foreignTable="marketingprospectionuser" name="idmarketingprospectioninteraction_mktpi" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idmarketingprospectionuser" foreign="idmarketingprospectionuser"/>
+    </foreign-key>
+    <index name="idmarketingprospectionuser">
+      <index-column name="idmarketingprospectionuser"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingprospectionnote" phpName="Marketingprospectionnote" idMethod="native">
+    <column name="idmarketingprospectionnote" phpName="Idmarketingprospectionnote" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idmarketingprospectionuser" phpName="Idmarketingprospectionuser" type="INTEGER" required="true"/>
+    <column name="marketingprospectionnote_note" phpName="MarketingprospectionnoteNote" type="LONGVARCHAR" required="true"/>
+    <column name="marketingprospectionnote_date" phpName="MarketingprospectionnoteDate" type="TIMESTAMP" required="true"/>
+    <foreign-key foreignTable="marketingprospectionuser" name="idmarketingprospectionuser_marketingprospectionnote" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idmarketingprospectionuser" foreign="idmarketingprospectionuser"/>
+    </foreign-key>
+    <index name="idmarketingprospectionuser">
+      <index-column name="idmarketingprospectionuser"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="marketingprospectionuser" phpName="Marketingprospectionuser" idMethod="native">
+    <column name="idmarketingprospectionuser" phpName="Idmarketingprospectionuser" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
+    <column name="idmarketingprospection" phpName="Idmarketingprospection" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="marketingprospection" name="idmarketingprospection_marketingprospectionuser" onDelete="RESTRICT" onUpdate="RESTRICT">
+      <reference local="idmarketingprospection" foreign="idmarketingprospection"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_marketingprospectionuser" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
+    </foreign-key>
+    <index name="idmarketingprospection">
+      <index-column name="idmarketingprospection"/>
+    </index>
     <index name="iduser">
       <index-column name="iduser"/>
     </index>
@@ -994,17 +1162,17 @@
     <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
     <column name="project_dependency" phpName="ProjectDependency" type="INTEGER" required="true"/>
     <column name="project_name" phpName="ProjectName" type="VARCHAR" size="245" required="false"/>
-    <foreign-key foreignTable="department" name="project_iddepartament" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="department" name="iddepartment_project" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="iddepartment" foreign="iddepartment"/>
     </foreign-key>
-    <foreign-key foreignTable="project" name="project_dependency" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="project" name="dependency_project" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="project_dependency" foreign="idproject"/>
     </foreign-key>
-    <index name="iddepartament">
-      <index-column name="iddepartment"/>
-    </index>
     <index name="project_dependency">
       <index-column name="project_dependency"/>
+    </index>
+    <index name="iddepartment">
+      <index-column name="iddepartment"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -1189,7 +1357,7 @@
   <table name="useracl" phpName="Useracl" idMethod="native">
     <column name="iduseracl" phpName="Iduseracl" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
-    <column name="module_name" phpName="ModuleName" type="CHAR" sqlType="enum('basic','sales','company','manufacture','contents','project')" required="true" defaultValue="basic"/>
+    <column name="module_name" phpName="ModuleName" type="CHAR" sqlType="enum('basic','sales','company','manufacture','contents')" required="true" defaultValue="basic"/>
     <column name="user_accesslevel" phpName="UserAccesslevel" type="CHAR" sqlType="enum('1','2','3','4','5')" required="true" defaultValue="1"/>
     <foreign-key foreignTable="user" name="iduser_useracl" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="iduser" foreign="iduser"/>

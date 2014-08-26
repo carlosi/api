@@ -126,6 +126,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
     protected $collExpensecategorysPartial;
 
     /**
+     * @var        PropelObjectCollection|Marketingchannel[] Collection to store aggregation of Marketingchannel objects.
+     */
+    protected $collMarketingchannels;
+    protected $collMarketingchannelsPartial;
+
+    /**
      * @var        PropelObjectCollection|Mxtaxinfo[] Collection to store aggregation of Mxtaxinfo objects.
      */
     protected $collMxtaxinfos;
@@ -216,6 +222,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $expensecategorysScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $marketingchannelsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -661,6 +673,8 @@ abstract class BaseCompany extends BaseObject implements Persistent
 
             $this->collExpensecategorys = null;
 
+            $this->collMarketingchannels = null;
+
             $this->collMxtaxinfos = null;
 
             $this->collProductionlines = null;
@@ -908,6 +922,23 @@ abstract class BaseCompany extends BaseObject implements Persistent
 
             if ($this->collExpensecategorys !== null) {
                 foreach ($this->collExpensecategorys as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->marketingchannelsScheduledForDeletion !== null) {
+                if (!$this->marketingchannelsScheduledForDeletion->isEmpty()) {
+                    MarketingchannelQuery::create()
+                        ->filterByPrimaryKeys($this->marketingchannelsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->marketingchannelsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collMarketingchannels !== null) {
+                foreach ($this->collMarketingchannels as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1245,6 +1276,14 @@ abstract class BaseCompany extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collMarketingchannels !== null) {
+                    foreach ($this->collMarketingchannels as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collMxtaxinfos !== null) {
                     foreach ($this->collMxtaxinfos as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1412,6 +1451,9 @@ abstract class BaseCompany extends BaseObject implements Persistent
             }
             if (null !== $this->collExpensecategorys) {
                 $result['Expensecategorys'] = $this->collExpensecategorys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collMarketingchannels) {
+                $result['Marketingchannels'] = $this->collMarketingchannels->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collMxtaxinfos) {
                 $result['Mxtaxinfos'] = $this->collMxtaxinfos->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1663,6 +1705,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getMarketingchannels() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addMarketingchannel($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getMxtaxinfos() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addMxtaxinfo($relObj->copy($deepCopy));
@@ -1774,6 +1822,9 @@ abstract class BaseCompany extends BaseObject implements Persistent
         }
         if ('Expensecategory' == $relationName) {
             $this->initExpensecategorys();
+        }
+        if ('Marketingchannel' == $relationName) {
+            $this->initMarketingchannels();
         }
         if ('Mxtaxinfo' == $relationName) {
             $this->initMxtaxinfos();
@@ -3393,6 +3444,231 @@ abstract class BaseCompany extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collMarketingchannels collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Company The current object (for fluent API support)
+     * @see        addMarketingchannels()
+     */
+    public function clearMarketingchannels()
+    {
+        $this->collMarketingchannels = null; // important to set this to null since that means it is uninitialized
+        $this->collMarketingchannelsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collMarketingchannels collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialMarketingchannels($v = true)
+    {
+        $this->collMarketingchannelsPartial = $v;
+    }
+
+    /**
+     * Initializes the collMarketingchannels collection.
+     *
+     * By default this just sets the collMarketingchannels collection to an empty array (like clearcollMarketingchannels());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initMarketingchannels($overrideExisting = true)
+    {
+        if (null !== $this->collMarketingchannels && !$overrideExisting) {
+            return;
+        }
+        $this->collMarketingchannels = new PropelObjectCollection();
+        $this->collMarketingchannels->setModel('Marketingchannel');
+    }
+
+    /**
+     * Gets an array of Marketingchannel objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Company is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Marketingchannel[] List of Marketingchannel objects
+     * @throws PropelException
+     */
+    public function getMarketingchannels($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collMarketingchannelsPartial && !$this->isNew();
+        if (null === $this->collMarketingchannels || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collMarketingchannels) {
+                // return empty collection
+                $this->initMarketingchannels();
+            } else {
+                $collMarketingchannels = MarketingchannelQuery::create(null, $criteria)
+                    ->filterByCompany($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collMarketingchannelsPartial && count($collMarketingchannels)) {
+                      $this->initMarketingchannels(false);
+
+                      foreach ($collMarketingchannels as $obj) {
+                        if (false == $this->collMarketingchannels->contains($obj)) {
+                          $this->collMarketingchannels->append($obj);
+                        }
+                      }
+
+                      $this->collMarketingchannelsPartial = true;
+                    }
+
+                    $collMarketingchannels->getInternalIterator()->rewind();
+
+                    return $collMarketingchannels;
+                }
+
+                if ($partial && $this->collMarketingchannels) {
+                    foreach ($this->collMarketingchannels as $obj) {
+                        if ($obj->isNew()) {
+                            $collMarketingchannels[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collMarketingchannels = $collMarketingchannels;
+                $this->collMarketingchannelsPartial = false;
+            }
+        }
+
+        return $this->collMarketingchannels;
+    }
+
+    /**
+     * Sets a collection of Marketingchannel objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $marketingchannels A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Company The current object (for fluent API support)
+     */
+    public function setMarketingchannels(PropelCollection $marketingchannels, PropelPDO $con = null)
+    {
+        $marketingchannelsToDelete = $this->getMarketingchannels(new Criteria(), $con)->diff($marketingchannels);
+
+
+        $this->marketingchannelsScheduledForDeletion = $marketingchannelsToDelete;
+
+        foreach ($marketingchannelsToDelete as $marketingchannelRemoved) {
+            $marketingchannelRemoved->setCompany(null);
+        }
+
+        $this->collMarketingchannels = null;
+        foreach ($marketingchannels as $marketingchannel) {
+            $this->addMarketingchannel($marketingchannel);
+        }
+
+        $this->collMarketingchannels = $marketingchannels;
+        $this->collMarketingchannelsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Marketingchannel objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Marketingchannel objects.
+     * @throws PropelException
+     */
+    public function countMarketingchannels(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collMarketingchannelsPartial && !$this->isNew();
+        if (null === $this->collMarketingchannels || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collMarketingchannels) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getMarketingchannels());
+            }
+            $query = MarketingchannelQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCompany($this)
+                ->count($con);
+        }
+
+        return count($this->collMarketingchannels);
+    }
+
+    /**
+     * Method called to associate a Marketingchannel object to this object
+     * through the Marketingchannel foreign key attribute.
+     *
+     * @param    Marketingchannel $l Marketingchannel
+     * @return Company The current object (for fluent API support)
+     */
+    public function addMarketingchannel(Marketingchannel $l)
+    {
+        if ($this->collMarketingchannels === null) {
+            $this->initMarketingchannels();
+            $this->collMarketingchannelsPartial = true;
+        }
+
+        if (!in_array($l, $this->collMarketingchannels->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddMarketingchannel($l);
+
+            if ($this->marketingchannelsScheduledForDeletion and $this->marketingchannelsScheduledForDeletion->contains($l)) {
+                $this->marketingchannelsScheduledForDeletion->remove($this->marketingchannelsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Marketingchannel $marketingchannel The marketingchannel object to add.
+     */
+    protected function doAddMarketingchannel($marketingchannel)
+    {
+        $this->collMarketingchannels[]= $marketingchannel;
+        $marketingchannel->setCompany($this);
+    }
+
+    /**
+     * @param	Marketingchannel $marketingchannel The marketingchannel object to remove.
+     * @return Company The current object (for fluent API support)
+     */
+    public function removeMarketingchannel($marketingchannel)
+    {
+        if ($this->getMarketingchannels()->contains($marketingchannel)) {
+            $this->collMarketingchannels->remove($this->collMarketingchannels->search($marketingchannel));
+            if (null === $this->marketingchannelsScheduledForDeletion) {
+                $this->marketingchannelsScheduledForDeletion = clone $this->collMarketingchannels;
+                $this->marketingchannelsScheduledForDeletion->clear();
+            }
+            $this->marketingchannelsScheduledForDeletion[]= clone $marketingchannel;
+            $marketingchannel->setCompany(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears out the collMxtaxinfos collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -4613,6 +4889,11 @@ abstract class BaseCompany extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collMarketingchannels) {
+                foreach ($this->collMarketingchannels as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collMxtaxinfos) {
                 foreach ($this->collMxtaxinfos as $o) {
                     $o->clearAllReferences($deep);
@@ -4670,6 +4951,10 @@ abstract class BaseCompany extends BaseObject implements Persistent
             $this->collExpensecategorys->clearIterator();
         }
         $this->collExpensecategorys = null;
+        if ($this->collMarketingchannels instanceof PropelCollection) {
+            $this->collMarketingchannels->clearIterator();
+        }
+        $this->collMarketingchannels = null;
         if ($this->collMxtaxinfos instanceof PropelCollection) {
             $this->collMxtaxinfos->clearIterator();
         }

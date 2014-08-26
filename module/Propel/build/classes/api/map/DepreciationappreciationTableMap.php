@@ -39,7 +39,7 @@ class DepreciationappreciationTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('iddepreciationappreciation', 'Iddepreciationappreciation', 'INTEGER', true, null, null);
-        $this->addColumn('idexpensetransaction', 'Idexpensetransaction', 'INTEGER', true, null, null);
+        $this->addForeignKey('idexpensetransaction', 'Idexpensetransaction', 'INTEGER', 'expensetransaction', 'idexpensetransaction', true, null, null);
         $this->addColumn('depreciationappreciation_amount', 'DepreciationappreciationAmount', 'DECIMAL', true, 10, 0);
         $this->addColumn('depreciationappreciation_cycle', 'DepreciationappreciationCycle', 'CHAR', true, null, 'annually');
         $this->getColumn('depreciationappreciation_cycle', false)->setValueSet(array (
@@ -56,6 +56,7 @@ class DepreciationappreciationTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Expensetransaction', 'Expensetransaction', RelationMap::MANY_TO_ONE, array('idexpensetransaction' => 'idexpensetransaction', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // DepreciationappreciationTableMap

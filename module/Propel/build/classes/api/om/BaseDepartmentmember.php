@@ -48,6 +48,16 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
     protected $iduser;
 
     /**
+     * @var        Department
+     */
+    protected $aDepartment;
+
+    /**
+     * @var        User
+     */
+    protected $aUser;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -138,6 +148,10 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
             $this->modifiedColumns[] = DepartmentmemberPeer::IDDEPARTMENT;
         }
 
+        if ($this->aDepartment !== null && $this->aDepartment->getIddepartment() !== $v) {
+            $this->aDepartment = null;
+        }
+
 
         return $this;
     } // setIddepartment()
@@ -157,6 +171,10 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
         if ($this->iduser !== $v) {
             $this->iduser = $v;
             $this->modifiedColumns[] = DepartmentmemberPeer::IDUSER;
+        }
+
+        if ($this->aUser !== null && $this->aUser->getIduser() !== $v) {
+            $this->aUser = null;
         }
 
 
@@ -230,6 +248,12 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
+        if ($this->aDepartment !== null && $this->iddepartment !== $this->aDepartment->getIddepartment()) {
+            $this->aDepartment = null;
+        }
+        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIduser()) {
+            $this->aUser = null;
+        }
     } // ensureConsistency
 
     /**
@@ -269,6 +293,8 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aDepartment = null;
+            $this->aUser = null;
         } // if (deep)
     }
 
@@ -381,6 +407,25 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
+
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aDepartment !== null) {
+                if ($this->aDepartment->isModified() || $this->aDepartment->isNew()) {
+                    $affectedRows += $this->aDepartment->save($con);
+                }
+                $this->setDepartment($this->aDepartment);
+            }
+
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
+                }
+                $this->setUser($this->aUser);
+            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -542,6 +587,24 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
             $failureMap = array();
 
 
+            // We call the validate method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aDepartment !== null) {
+                if (!$this->aDepartment->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aDepartment->getValidationFailures());
+                }
+            }
+
+            if ($this->aUser !== null) {
+                if (!$this->aUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
+                }
+            }
+
+
             if (($retval = DepartmentmemberPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
@@ -608,10 +671,11 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
         if (isset($alreadyDumpedObjects['Departmentmember'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
@@ -628,6 +692,14 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->aDepartment) {
+                $result['Department'] = $this->aDepartment->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aUser) {
+                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+        }
 
         return $result;
     }
@@ -776,6 +848,18 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
     {
         $copyObj->setIddepartment($this->getIddepartment());
         $copyObj->setIduser($this->getIduser());
+
+        if ($deepCopy && !$this->startCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+            // store object hash to prevent cycle
+            $this->startCopy = true;
+
+            //unflag object copy
+            $this->startCopy = false;
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setIddepartmentmember(NULL); // this is a auto-increment column, so set to default value
@@ -823,6 +907,110 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Department object.
+     *
+     * @param                  Department $v
+     * @return Departmentmember The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setDepartment(Department $v = null)
+    {
+        if ($v === null) {
+            $this->setIddepartment(NULL);
+        } else {
+            $this->setIddepartment($v->getIddepartment());
+        }
+
+        $this->aDepartment = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Department object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDepartmentmember($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Department object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Department The associated Department object.
+     * @throws PropelException
+     */
+    public function getDepartment(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aDepartment === null && ($this->iddepartment !== null) && $doQuery) {
+            $this->aDepartment = DepartmentQuery::create()->findPk($this->iddepartment, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aDepartment->addDepartmentmembers($this);
+             */
+        }
+
+        return $this->aDepartment;
+    }
+
+    /**
+     * Declares an association between this object and a User object.
+     *
+     * @param                  User $v
+     * @return Departmentmember The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setIduser(NULL);
+        } else {
+            $this->setIduser($v->getIduser());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDepartmentmember($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
+            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addDepartmentmembers($this);
+             */
+        }
+
+        return $this->aUser;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -852,10 +1040,18 @@ abstract class BaseDepartmentmember extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->aDepartment instanceof Persistent) {
+              $this->aDepartment->clearAllReferences($deep);
+            }
+            if ($this->aUser instanceof Persistent) {
+              $this->aUser->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        $this->aDepartment = null;
+        $this->aUser = null;
     }
 
     /**

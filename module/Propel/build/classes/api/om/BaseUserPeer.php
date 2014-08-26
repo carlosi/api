@@ -458,9 +458,21 @@ abstract class BaseUserPeer
         // Invalidate objects in ChatpublicPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ChatpublicPeer::clearInstancePool();
+        // Invalidate objects in DepartmentleaderPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        DepartmentleaderPeer::clearInstancePool();
+        // Invalidate objects in DepartmentmemberPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        DepartmentmemberPeer::clearInstancePool();
         // Invalidate objects in LoguserPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         LoguserPeer::clearInstancePool();
+        // Invalidate objects in MarketingcandidatePeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        MarketingcandidatePeer::clearInstancePool();
+        // Invalidate objects in MarketingprospectionuserPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        MarketingprospectionuserPeer::clearInstancePool();
         // Invalidate objects in MlquestionPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         MlquestionPeer::clearInstancePool();
@@ -1078,11 +1090,35 @@ abstract class BaseUserPeer
             $criteria->add(ChatpublicPeer::IDUSER, $obj->getIduser());
             $affectedRows += ChatpublicPeer::doDelete($criteria, $con);
 
+            // delete related Departmentleader objects
+            $criteria = new Criteria(DepartmentleaderPeer::DATABASE_NAME);
+
+            $criteria->add(DepartmentleaderPeer::IDUSER, $obj->getIduser());
+            $affectedRows += DepartmentleaderPeer::doDelete($criteria, $con);
+
+            // delete related Departmentmember objects
+            $criteria = new Criteria(DepartmentmemberPeer::DATABASE_NAME);
+
+            $criteria->add(DepartmentmemberPeer::IDUSER, $obj->getIduser());
+            $affectedRows += DepartmentmemberPeer::doDelete($criteria, $con);
+
             // delete related Loguser objects
             $criteria = new Criteria(LoguserPeer::DATABASE_NAME);
 
             $criteria->add(LoguserPeer::IDUSER, $obj->getIduser());
             $affectedRows += LoguserPeer::doDelete($criteria, $con);
+
+            // delete related Marketingcandidate objects
+            $criteria = new Criteria(MarketingcandidatePeer::DATABASE_NAME);
+
+            $criteria->add(MarketingcandidatePeer::IDUSER, $obj->getIduser());
+            $affectedRows += MarketingcandidatePeer::doDelete($criteria, $con);
+
+            // delete related Marketingprospectionuser objects
+            $criteria = new Criteria(MarketingprospectionuserPeer::DATABASE_NAME);
+
+            $criteria->add(MarketingprospectionuserPeer::IDUSER, $obj->getIduser());
+            $affectedRows += MarketingprospectionuserPeer::doDelete($criteria, $con);
 
             // delete related Mlquestion objects
             $criteria = new Criteria(MlquestionPeer::DATABASE_NAME);

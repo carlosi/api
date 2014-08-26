@@ -66,7 +66,11 @@ class UserTableMap extends TableMap
         $this->addRelation('BranchUser', 'BranchUser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'BranchUsers');
         $this->addRelation('Chatcorp', 'Chatcorp', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Chatcorps');
         $this->addRelation('Chatpublic', 'Chatpublic', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Chatpublics');
+        $this->addRelation('Departmentleader', 'Departmentleader', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Departmentleaders');
+        $this->addRelation('Departmentmember', 'Departmentmember', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Departmentmembers');
         $this->addRelation('Loguser', 'Loguser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Logusers');
+        $this->addRelation('Marketingcandidate', 'Marketingcandidate', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Marketingcandidates');
+        $this->addRelation('Marketingprospectionuser', 'Marketingprospectionuser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Marketingprospectionusers');
         $this->addRelation('Mlquestion', 'Mlquestion', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Mlquestions');
         $this->addRelation('OrderconflictComment', 'OrderconflictComment', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'OrderconflictComments');
         $this->addRelation('Productionordercomment', 'Productionordercomment', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Productionordercomments');

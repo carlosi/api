@@ -29,14 +29,14 @@ class BankaccountForm extends Form
             'type' => 'Hidden',
             'name' => 'idbankaccount',
             'options' => array(
-                'label' => 'Id Sucursal'
+                'label' => 'id bank account'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idcompany',
             'options' => array(
-                'label' => 'Id Compañía'
+                'label' => 'id company'
             ),
 
         ));

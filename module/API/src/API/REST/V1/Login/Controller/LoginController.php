@@ -110,8 +110,7 @@ class LoginController extends AbstractActionController
                         $loginArray['ACL'] = array(
                             'to_company' => (int)SessionManager::getUserLevelToCompany($user->getIdUser()),
                             'to_sales' => (int)SessionManager::getUserLevelToSales($user->getIdUser()),
-                            'to_manufacture' => (int)SessionManager::getUserLevelToManufacture($user->getIdUser()),
-                            'to_contents' => (int)SessionManager::getUserLevelToContents($user->getIdUser()),  
+                            'to_contents' => (int)SessionManager::getUserLevelToContents($user->getIdUser()),
                         );
                         $token = SessionManager::getValidToken($user->getIdUser());
                         $loginArray['Token'] = array(

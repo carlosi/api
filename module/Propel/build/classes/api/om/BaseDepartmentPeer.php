@@ -365,6 +365,12 @@ abstract class BaseDepartmentPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in DepartmentleaderPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        DepartmentleaderPeer::clearInstancePool();
+        // Invalidate objects in DepartmentmemberPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        DepartmentmemberPeer::clearInstancePool();
         // Invalidate objects in ProjectPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProjectPeer::clearInstancePool();
@@ -939,6 +945,18 @@ abstract class BaseDepartmentPeer
         $objects = DepartmentPeer::doSelect($criteria, $con);
         foreach ($objects as $obj) {
 
+
+            // delete related Departmentleader objects
+            $criteria = new Criteria(DepartmentleaderPeer::DATABASE_NAME);
+
+            $criteria->add(DepartmentleaderPeer::IDDEPARTMENT, $obj->getIddepartment());
+            $affectedRows += DepartmentleaderPeer::doDelete($criteria, $con);
+
+            // delete related Departmentmember objects
+            $criteria = new Criteria(DepartmentmemberPeer::DATABASE_NAME);
+
+            $criteria->add(DepartmentmemberPeer::IDDEPARTMENT, $obj->getIddepartment());
+            $affectedRows += DepartmentmemberPeer::doDelete($criteria, $con);
 
             // delete related Project objects
             $criteria = new Criteria(ProjectPeer::DATABASE_NAME);

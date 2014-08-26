@@ -144,6 +144,18 @@ abstract class BaseClient extends BaseObject implements Persistent
     protected $collClienttaxsPartial;
 
     /**
+     * @var        PropelObjectCollection|Marketingcampaignclient[] Collection to store aggregation of Marketingcampaignclient objects.
+     */
+    protected $collMarketingcampaignclients;
+    protected $collMarketingcampaignclientsPartial;
+
+    /**
+     * @var        PropelObjectCollection|Marketingcandidate[] Collection to store aggregation of Marketingcandidate objects.
+     */
+    protected $collMarketingcandidates;
+    protected $collMarketingcandidatesPartial;
+
+    /**
      * @var        PropelObjectCollection|Order[] Collection to store aggregation of Order objects.
      */
     protected $collOrders;
@@ -198,6 +210,18 @@ abstract class BaseClient extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $clienttaxsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $marketingcampaignclientsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $marketingcandidatesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -780,6 +804,10 @@ abstract class BaseClient extends BaseObject implements Persistent
 
             $this->collClienttaxs = null;
 
+            $this->collMarketingcampaignclients = null;
+
+            $this->collMarketingcandidates = null;
+
             $this->collOrders = null;
 
         } // if (deep)
@@ -997,6 +1025,40 @@ abstract class BaseClient extends BaseObject implements Persistent
 
             if ($this->collClienttaxs !== null) {
                 foreach ($this->collClienttaxs as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->marketingcampaignclientsScheduledForDeletion !== null) {
+                if (!$this->marketingcampaignclientsScheduledForDeletion->isEmpty()) {
+                    MarketingcampaignclientQuery::create()
+                        ->filterByPrimaryKeys($this->marketingcampaignclientsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->marketingcampaignclientsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collMarketingcampaignclients !== null) {
+                foreach ($this->collMarketingcampaignclients as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->marketingcandidatesScheduledForDeletion !== null) {
+                if (!$this->marketingcandidatesScheduledForDeletion->isEmpty()) {
+                    MarketingcandidateQuery::create()
+                        ->filterByPrimaryKeys($this->marketingcandidatesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->marketingcandidatesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collMarketingcandidates !== null) {
+                foreach ($this->collMarketingcandidates as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1286,6 +1348,22 @@ abstract class BaseClient extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collMarketingcampaignclients !== null) {
+                    foreach ($this->collMarketingcampaignclients as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collMarketingcandidates !== null) {
+                    foreach ($this->collMarketingcandidates as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collOrders !== null) {
                     foreach ($this->collOrders as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1434,6 +1512,12 @@ abstract class BaseClient extends BaseObject implements Persistent
             }
             if (null !== $this->collClienttaxs) {
                 $result['Clienttaxs'] = $this->collClienttaxs->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collMarketingcampaignclients) {
+                $result['Marketingcampaignclients'] = $this->collMarketingcampaignclients->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collMarketingcandidates) {
+                $result['Marketingcandidates'] = $this->collMarketingcandidates->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collOrders) {
                 $result['Orders'] = $this->collOrders->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1685,6 +1769,18 @@ abstract class BaseClient extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getMarketingcampaignclients() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addMarketingcampaignclient($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getMarketingcandidates() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addMarketingcandidate($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getOrders() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addOrder($relObj->copy($deepCopy));
@@ -1818,6 +1914,12 @@ abstract class BaseClient extends BaseObject implements Persistent
         }
         if ('Clienttax' == $relationName) {
             $this->initClienttaxs();
+        }
+        if ('Marketingcampaignclient' == $relationName) {
+            $this->initMarketingcampaignclients();
+        }
+        if ('Marketingcandidate' == $relationName) {
+            $this->initMarketingcandidates();
         }
         if ('Order' == $relationName) {
             $this->initOrders();
@@ -2975,6 +3077,506 @@ abstract class BaseClient extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collMarketingcampaignclients collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Client The current object (for fluent API support)
+     * @see        addMarketingcampaignclients()
+     */
+    public function clearMarketingcampaignclients()
+    {
+        $this->collMarketingcampaignclients = null; // important to set this to null since that means it is uninitialized
+        $this->collMarketingcampaignclientsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collMarketingcampaignclients collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialMarketingcampaignclients($v = true)
+    {
+        $this->collMarketingcampaignclientsPartial = $v;
+    }
+
+    /**
+     * Initializes the collMarketingcampaignclients collection.
+     *
+     * By default this just sets the collMarketingcampaignclients collection to an empty array (like clearcollMarketingcampaignclients());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initMarketingcampaignclients($overrideExisting = true)
+    {
+        if (null !== $this->collMarketingcampaignclients && !$overrideExisting) {
+            return;
+        }
+        $this->collMarketingcampaignclients = new PropelObjectCollection();
+        $this->collMarketingcampaignclients->setModel('Marketingcampaignclient');
+    }
+
+    /**
+     * Gets an array of Marketingcampaignclient objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Client is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Marketingcampaignclient[] List of Marketingcampaignclient objects
+     * @throws PropelException
+     */
+    public function getMarketingcampaignclients($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collMarketingcampaignclientsPartial && !$this->isNew();
+        if (null === $this->collMarketingcampaignclients || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collMarketingcampaignclients) {
+                // return empty collection
+                $this->initMarketingcampaignclients();
+            } else {
+                $collMarketingcampaignclients = MarketingcampaignclientQuery::create(null, $criteria)
+                    ->filterByClient($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collMarketingcampaignclientsPartial && count($collMarketingcampaignclients)) {
+                      $this->initMarketingcampaignclients(false);
+
+                      foreach ($collMarketingcampaignclients as $obj) {
+                        if (false == $this->collMarketingcampaignclients->contains($obj)) {
+                          $this->collMarketingcampaignclients->append($obj);
+                        }
+                      }
+
+                      $this->collMarketingcampaignclientsPartial = true;
+                    }
+
+                    $collMarketingcampaignclients->getInternalIterator()->rewind();
+
+                    return $collMarketingcampaignclients;
+                }
+
+                if ($partial && $this->collMarketingcampaignclients) {
+                    foreach ($this->collMarketingcampaignclients as $obj) {
+                        if ($obj->isNew()) {
+                            $collMarketingcampaignclients[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collMarketingcampaignclients = $collMarketingcampaignclients;
+                $this->collMarketingcampaignclientsPartial = false;
+            }
+        }
+
+        return $this->collMarketingcampaignclients;
+    }
+
+    /**
+     * Sets a collection of Marketingcampaignclient objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $marketingcampaignclients A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Client The current object (for fluent API support)
+     */
+    public function setMarketingcampaignclients(PropelCollection $marketingcampaignclients, PropelPDO $con = null)
+    {
+        $marketingcampaignclientsToDelete = $this->getMarketingcampaignclients(new Criteria(), $con)->diff($marketingcampaignclients);
+
+
+        $this->marketingcampaignclientsScheduledForDeletion = $marketingcampaignclientsToDelete;
+
+        foreach ($marketingcampaignclientsToDelete as $marketingcampaignclientRemoved) {
+            $marketingcampaignclientRemoved->setClient(null);
+        }
+
+        $this->collMarketingcampaignclients = null;
+        foreach ($marketingcampaignclients as $marketingcampaignclient) {
+            $this->addMarketingcampaignclient($marketingcampaignclient);
+        }
+
+        $this->collMarketingcampaignclients = $marketingcampaignclients;
+        $this->collMarketingcampaignclientsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Marketingcampaignclient objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Marketingcampaignclient objects.
+     * @throws PropelException
+     */
+    public function countMarketingcampaignclients(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collMarketingcampaignclientsPartial && !$this->isNew();
+        if (null === $this->collMarketingcampaignclients || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collMarketingcampaignclients) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getMarketingcampaignclients());
+            }
+            $query = MarketingcampaignclientQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByClient($this)
+                ->count($con);
+        }
+
+        return count($this->collMarketingcampaignclients);
+    }
+
+    /**
+     * Method called to associate a Marketingcampaignclient object to this object
+     * through the Marketingcampaignclient foreign key attribute.
+     *
+     * @param    Marketingcampaignclient $l Marketingcampaignclient
+     * @return Client The current object (for fluent API support)
+     */
+    public function addMarketingcampaignclient(Marketingcampaignclient $l)
+    {
+        if ($this->collMarketingcampaignclients === null) {
+            $this->initMarketingcampaignclients();
+            $this->collMarketingcampaignclientsPartial = true;
+        }
+
+        if (!in_array($l, $this->collMarketingcampaignclients->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddMarketingcampaignclient($l);
+
+            if ($this->marketingcampaignclientsScheduledForDeletion and $this->marketingcampaignclientsScheduledForDeletion->contains($l)) {
+                $this->marketingcampaignclientsScheduledForDeletion->remove($this->marketingcampaignclientsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Marketingcampaignclient $marketingcampaignclient The marketingcampaignclient object to add.
+     */
+    protected function doAddMarketingcampaignclient($marketingcampaignclient)
+    {
+        $this->collMarketingcampaignclients[]= $marketingcampaignclient;
+        $marketingcampaignclient->setClient($this);
+    }
+
+    /**
+     * @param	Marketingcampaignclient $marketingcampaignclient The marketingcampaignclient object to remove.
+     * @return Client The current object (for fluent API support)
+     */
+    public function removeMarketingcampaignclient($marketingcampaignclient)
+    {
+        if ($this->getMarketingcampaignclients()->contains($marketingcampaignclient)) {
+            $this->collMarketingcampaignclients->remove($this->collMarketingcampaignclients->search($marketingcampaignclient));
+            if (null === $this->marketingcampaignclientsScheduledForDeletion) {
+                $this->marketingcampaignclientsScheduledForDeletion = clone $this->collMarketingcampaignclients;
+                $this->marketingcampaignclientsScheduledForDeletion->clear();
+            }
+            $this->marketingcampaignclientsScheduledForDeletion[]= clone $marketingcampaignclient;
+            $marketingcampaignclient->setClient(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Marketingcampaignclients from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Marketingcampaignclient[] List of Marketingcampaignclient objects
+     */
+    public function getMarketingcampaignclientsJoinMarketingcampaign($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = MarketingcampaignclientQuery::create(null, $criteria);
+        $query->joinWith('Marketingcampaign', $join_behavior);
+
+        return $this->getMarketingcampaignclients($query, $con);
+    }
+
+    /**
+     * Clears out the collMarketingcandidates collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Client The current object (for fluent API support)
+     * @see        addMarketingcandidates()
+     */
+    public function clearMarketingcandidates()
+    {
+        $this->collMarketingcandidates = null; // important to set this to null since that means it is uninitialized
+        $this->collMarketingcandidatesPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collMarketingcandidates collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialMarketingcandidates($v = true)
+    {
+        $this->collMarketingcandidatesPartial = $v;
+    }
+
+    /**
+     * Initializes the collMarketingcandidates collection.
+     *
+     * By default this just sets the collMarketingcandidates collection to an empty array (like clearcollMarketingcandidates());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initMarketingcandidates($overrideExisting = true)
+    {
+        if (null !== $this->collMarketingcandidates && !$overrideExisting) {
+            return;
+        }
+        $this->collMarketingcandidates = new PropelObjectCollection();
+        $this->collMarketingcandidates->setModel('Marketingcandidate');
+    }
+
+    /**
+     * Gets an array of Marketingcandidate objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Client is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Marketingcandidate[] List of Marketingcandidate objects
+     * @throws PropelException
+     */
+    public function getMarketingcandidates($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collMarketingcandidatesPartial && !$this->isNew();
+        if (null === $this->collMarketingcandidates || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collMarketingcandidates) {
+                // return empty collection
+                $this->initMarketingcandidates();
+            } else {
+                $collMarketingcandidates = MarketingcandidateQuery::create(null, $criteria)
+                    ->filterByClient($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collMarketingcandidatesPartial && count($collMarketingcandidates)) {
+                      $this->initMarketingcandidates(false);
+
+                      foreach ($collMarketingcandidates as $obj) {
+                        if (false == $this->collMarketingcandidates->contains($obj)) {
+                          $this->collMarketingcandidates->append($obj);
+                        }
+                      }
+
+                      $this->collMarketingcandidatesPartial = true;
+                    }
+
+                    $collMarketingcandidates->getInternalIterator()->rewind();
+
+                    return $collMarketingcandidates;
+                }
+
+                if ($partial && $this->collMarketingcandidates) {
+                    foreach ($this->collMarketingcandidates as $obj) {
+                        if ($obj->isNew()) {
+                            $collMarketingcandidates[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collMarketingcandidates = $collMarketingcandidates;
+                $this->collMarketingcandidatesPartial = false;
+            }
+        }
+
+        return $this->collMarketingcandidates;
+    }
+
+    /**
+     * Sets a collection of Marketingcandidate objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $marketingcandidates A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Client The current object (for fluent API support)
+     */
+    public function setMarketingcandidates(PropelCollection $marketingcandidates, PropelPDO $con = null)
+    {
+        $marketingcandidatesToDelete = $this->getMarketingcandidates(new Criteria(), $con)->diff($marketingcandidates);
+
+
+        $this->marketingcandidatesScheduledForDeletion = $marketingcandidatesToDelete;
+
+        foreach ($marketingcandidatesToDelete as $marketingcandidateRemoved) {
+            $marketingcandidateRemoved->setClient(null);
+        }
+
+        $this->collMarketingcandidates = null;
+        foreach ($marketingcandidates as $marketingcandidate) {
+            $this->addMarketingcandidate($marketingcandidate);
+        }
+
+        $this->collMarketingcandidates = $marketingcandidates;
+        $this->collMarketingcandidatesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Marketingcandidate objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Marketingcandidate objects.
+     * @throws PropelException
+     */
+    public function countMarketingcandidates(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collMarketingcandidatesPartial && !$this->isNew();
+        if (null === $this->collMarketingcandidates || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collMarketingcandidates) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getMarketingcandidates());
+            }
+            $query = MarketingcandidateQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByClient($this)
+                ->count($con);
+        }
+
+        return count($this->collMarketingcandidates);
+    }
+
+    /**
+     * Method called to associate a Marketingcandidate object to this object
+     * through the Marketingcandidate foreign key attribute.
+     *
+     * @param    Marketingcandidate $l Marketingcandidate
+     * @return Client The current object (for fluent API support)
+     */
+    public function addMarketingcandidate(Marketingcandidate $l)
+    {
+        if ($this->collMarketingcandidates === null) {
+            $this->initMarketingcandidates();
+            $this->collMarketingcandidatesPartial = true;
+        }
+
+        if (!in_array($l, $this->collMarketingcandidates->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddMarketingcandidate($l);
+
+            if ($this->marketingcandidatesScheduledForDeletion and $this->marketingcandidatesScheduledForDeletion->contains($l)) {
+                $this->marketingcandidatesScheduledForDeletion->remove($this->marketingcandidatesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Marketingcandidate $marketingcandidate The marketingcandidate object to add.
+     */
+    protected function doAddMarketingcandidate($marketingcandidate)
+    {
+        $this->collMarketingcandidates[]= $marketingcandidate;
+        $marketingcandidate->setClient($this);
+    }
+
+    /**
+     * @param	Marketingcandidate $marketingcandidate The marketingcandidate object to remove.
+     * @return Client The current object (for fluent API support)
+     */
+    public function removeMarketingcandidate($marketingcandidate)
+    {
+        if ($this->getMarketingcandidates()->contains($marketingcandidate)) {
+            $this->collMarketingcandidates->remove($this->collMarketingcandidates->search($marketingcandidate));
+            if (null === $this->marketingcandidatesScheduledForDeletion) {
+                $this->marketingcandidatesScheduledForDeletion = clone $this->collMarketingcandidates;
+                $this->marketingcandidatesScheduledForDeletion->clear();
+            }
+            $this->marketingcandidatesScheduledForDeletion[]= clone $marketingcandidate;
+            $marketingcandidate->setClient(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Marketingcandidates from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Marketingcandidate[] List of Marketingcandidate objects
+     */
+    public function getMarketingcandidatesJoinUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = MarketingcandidateQuery::create(null, $criteria);
+        $query->joinWith('User', $join_behavior);
+
+        return $this->getMarketingcandidates($query, $con);
+    }
+
+    /**
      * Clears out the collOrders collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -3290,6 +3892,16 @@ abstract class BaseClient extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collMarketingcampaignclients) {
+                foreach ($this->collMarketingcampaignclients as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collMarketingcandidates) {
+                foreach ($this->collMarketingcandidates as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collOrders) {
                 foreach ($this->collOrders as $o) {
                     $o->clearAllReferences($deep);
@@ -3322,6 +3934,14 @@ abstract class BaseClient extends BaseObject implements Persistent
             $this->collClienttaxs->clearIterator();
         }
         $this->collClienttaxs = null;
+        if ($this->collMarketingcampaignclients instanceof PropelCollection) {
+            $this->collMarketingcampaignclients->clearIterator();
+        }
+        $this->collMarketingcampaignclients = null;
+        if ($this->collMarketingcandidates instanceof PropelCollection) {
+            $this->collMarketingcandidates->clearIterator();
+        }
+        $this->collMarketingcandidates = null;
         if ($this->collOrders instanceof PropelCollection) {
             $this->collOrders->clearIterator();
         }

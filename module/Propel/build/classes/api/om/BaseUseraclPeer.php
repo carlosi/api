@@ -50,7 +50,6 @@ abstract class BaseUseraclPeer
     const MODULE_NAME_COMPANY = 'company';
     const MODULE_NAME_MANUFACTURE = 'manufacture';
     const MODULE_NAME_CONTENTS = 'contents';
-    const MODULE_NAME_PROJECT = 'project';
 
     /** The enumerated values for the user_accesslevel field */
     const USER_ACCESSLEVEL_1 = '1';
@@ -109,7 +108,6 @@ abstract class BaseUseraclPeer
             UseraclPeer::MODULE_NAME_COMPANY,
             UseraclPeer::MODULE_NAME_MANUFACTURE,
             UseraclPeer::MODULE_NAME_CONTENTS,
-            UseraclPeer::MODULE_NAME_PROJECT,
         ),
         UseraclPeer::USER_ACCESSLEVEL => array(
             UseraclPeer::USER_ACCESSLEVEL_1,

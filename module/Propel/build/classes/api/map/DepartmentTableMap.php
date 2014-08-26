@@ -50,6 +50,8 @@ class DepartmentTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Company', 'Company', RelationMap::MANY_TO_ONE, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Departmentleader', 'Departmentleader', RelationMap::ONE_TO_MANY, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE', 'Departmentleaders');
+        $this->addRelation('Departmentmember', 'Departmentmember', RelationMap::ONE_TO_MANY, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE', 'Departmentmembers');
         $this->addRelation('Project', 'Project', RelationMap::ONE_TO_MANY, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE', 'Projects');
     } // buildRelations()
 

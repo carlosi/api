@@ -93,6 +93,12 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
     protected $collBankexpensetransactionsPartial;
 
     /**
+     * @var        PropelObjectCollection|Depreciationappreciation[] Collection to store aggregation of Depreciationappreciation objects.
+     */
+    protected $collDepreciationappreciations;
+    protected $collDepreciationappreciationsPartial;
+
+    /**
      * @var        PropelObjectCollection|Expensetransactionfile[] Collection to store aggregation of Expensetransactionfile objects.
      */
     protected $collExpensetransactionfiles;
@@ -123,6 +129,12 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $bankexpensetransactionsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $depreciationappreciationsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -578,6 +590,8 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             $this->aExpenseitem = null;
             $this->collBankexpensetransactions = null;
 
+            $this->collDepreciationappreciations = null;
+
             $this->collExpensetransactionfiles = null;
 
         } // if (deep)
@@ -727,6 +741,23 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
 
             if ($this->collBankexpensetransactions !== null) {
                 foreach ($this->collBankexpensetransactions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->depreciationappreciationsScheduledForDeletion !== null) {
+                if (!$this->depreciationappreciationsScheduledForDeletion->isEmpty()) {
+                    DepreciationappreciationQuery::create()
+                        ->filterByPrimaryKeys($this->depreciationappreciationsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->depreciationappreciationsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDepreciationappreciations !== null) {
+                foreach ($this->collDepreciationappreciations as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -954,6 +985,14 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collDepreciationappreciations !== null) {
+                    foreach ($this->collDepreciationappreciations as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collExpensetransactionfiles !== null) {
                     foreach ($this->collExpensetransactionfiles as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1070,6 +1109,9 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             }
             if (null !== $this->collBankexpensetransactions) {
                 $result['Bankexpensetransactions'] = $this->collBankexpensetransactions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collDepreciationappreciations) {
+                $result['Depreciationappreciations'] = $this->collDepreciationappreciations->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collExpensetransactionfiles) {
                 $result['Expensetransactionfiles'] = $this->collExpensetransactionfiles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1267,6 +1309,12 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getDepreciationappreciations() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDepreciationappreciation($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getExpensetransactionfiles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addExpensetransactionfile($relObj->copy($deepCopy));
@@ -1388,6 +1436,9 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
     {
         if ('Bankexpensetransaction' == $relationName) {
             $this->initBankexpensetransactions();
+        }
+        if ('Depreciationappreciation' == $relationName) {
+            $this->initDepreciationappreciations();
         }
         if ('Expensetransactionfile' == $relationName) {
             $this->initExpensetransactionfiles();
@@ -1642,6 +1693,231 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
         $query->joinWith('Bankaccount', $join_behavior);
 
         return $this->getBankexpensetransactions($query, $con);
+    }
+
+    /**
+     * Clears out the collDepreciationappreciations collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Expensetransaction The current object (for fluent API support)
+     * @see        addDepreciationappreciations()
+     */
+    public function clearDepreciationappreciations()
+    {
+        $this->collDepreciationappreciations = null; // important to set this to null since that means it is uninitialized
+        $this->collDepreciationappreciationsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collDepreciationappreciations collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialDepreciationappreciations($v = true)
+    {
+        $this->collDepreciationappreciationsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDepreciationappreciations collection.
+     *
+     * By default this just sets the collDepreciationappreciations collection to an empty array (like clearcollDepreciationappreciations());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDepreciationappreciations($overrideExisting = true)
+    {
+        if (null !== $this->collDepreciationappreciations && !$overrideExisting) {
+            return;
+        }
+        $this->collDepreciationappreciations = new PropelObjectCollection();
+        $this->collDepreciationappreciations->setModel('Depreciationappreciation');
+    }
+
+    /**
+     * Gets an array of Depreciationappreciation objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Expensetransaction is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Depreciationappreciation[] List of Depreciationappreciation objects
+     * @throws PropelException
+     */
+    public function getDepreciationappreciations($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collDepreciationappreciationsPartial && !$this->isNew();
+        if (null === $this->collDepreciationappreciations || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDepreciationappreciations) {
+                // return empty collection
+                $this->initDepreciationappreciations();
+            } else {
+                $collDepreciationappreciations = DepreciationappreciationQuery::create(null, $criteria)
+                    ->filterByExpensetransaction($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collDepreciationappreciationsPartial && count($collDepreciationappreciations)) {
+                      $this->initDepreciationappreciations(false);
+
+                      foreach ($collDepreciationappreciations as $obj) {
+                        if (false == $this->collDepreciationappreciations->contains($obj)) {
+                          $this->collDepreciationappreciations->append($obj);
+                        }
+                      }
+
+                      $this->collDepreciationappreciationsPartial = true;
+                    }
+
+                    $collDepreciationappreciations->getInternalIterator()->rewind();
+
+                    return $collDepreciationappreciations;
+                }
+
+                if ($partial && $this->collDepreciationappreciations) {
+                    foreach ($this->collDepreciationappreciations as $obj) {
+                        if ($obj->isNew()) {
+                            $collDepreciationappreciations[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDepreciationappreciations = $collDepreciationappreciations;
+                $this->collDepreciationappreciationsPartial = false;
+            }
+        }
+
+        return $this->collDepreciationappreciations;
+    }
+
+    /**
+     * Sets a collection of Depreciationappreciation objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $depreciationappreciations A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Expensetransaction The current object (for fluent API support)
+     */
+    public function setDepreciationappreciations(PropelCollection $depreciationappreciations, PropelPDO $con = null)
+    {
+        $depreciationappreciationsToDelete = $this->getDepreciationappreciations(new Criteria(), $con)->diff($depreciationappreciations);
+
+
+        $this->depreciationappreciationsScheduledForDeletion = $depreciationappreciationsToDelete;
+
+        foreach ($depreciationappreciationsToDelete as $depreciationappreciationRemoved) {
+            $depreciationappreciationRemoved->setExpensetransaction(null);
+        }
+
+        $this->collDepreciationappreciations = null;
+        foreach ($depreciationappreciations as $depreciationappreciation) {
+            $this->addDepreciationappreciation($depreciationappreciation);
+        }
+
+        $this->collDepreciationappreciations = $depreciationappreciations;
+        $this->collDepreciationappreciationsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Depreciationappreciation objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Depreciationappreciation objects.
+     * @throws PropelException
+     */
+    public function countDepreciationappreciations(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collDepreciationappreciationsPartial && !$this->isNew();
+        if (null === $this->collDepreciationappreciations || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDepreciationappreciations) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDepreciationappreciations());
+            }
+            $query = DepreciationappreciationQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByExpensetransaction($this)
+                ->count($con);
+        }
+
+        return count($this->collDepreciationappreciations);
+    }
+
+    /**
+     * Method called to associate a Depreciationappreciation object to this object
+     * through the Depreciationappreciation foreign key attribute.
+     *
+     * @param    Depreciationappreciation $l Depreciationappreciation
+     * @return Expensetransaction The current object (for fluent API support)
+     */
+    public function addDepreciationappreciation(Depreciationappreciation $l)
+    {
+        if ($this->collDepreciationappreciations === null) {
+            $this->initDepreciationappreciations();
+            $this->collDepreciationappreciationsPartial = true;
+        }
+
+        if (!in_array($l, $this->collDepreciationappreciations->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDepreciationappreciation($l);
+
+            if ($this->depreciationappreciationsScheduledForDeletion and $this->depreciationappreciationsScheduledForDeletion->contains($l)) {
+                $this->depreciationappreciationsScheduledForDeletion->remove($this->depreciationappreciationsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Depreciationappreciation $depreciationappreciation The depreciationappreciation object to add.
+     */
+    protected function doAddDepreciationappreciation($depreciationappreciation)
+    {
+        $this->collDepreciationappreciations[]= $depreciationappreciation;
+        $depreciationappreciation->setExpensetransaction($this);
+    }
+
+    /**
+     * @param	Depreciationappreciation $depreciationappreciation The depreciationappreciation object to remove.
+     * @return Expensetransaction The current object (for fluent API support)
+     */
+    public function removeDepreciationappreciation($depreciationappreciation)
+    {
+        if ($this->getDepreciationappreciations()->contains($depreciationappreciation)) {
+            $this->collDepreciationappreciations->remove($this->collDepreciationappreciations->search($depreciationappreciation));
+            if (null === $this->depreciationappreciationsScheduledForDeletion) {
+                $this->depreciationappreciationsScheduledForDeletion = clone $this->collDepreciationappreciations;
+                $this->depreciationappreciationsScheduledForDeletion->clear();
+            }
+            $this->depreciationappreciationsScheduledForDeletion[]= clone $depreciationappreciation;
+            $depreciationappreciation->setExpensetransaction(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -1910,6 +2186,11 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collDepreciationappreciations) {
+                foreach ($this->collDepreciationappreciations as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collExpensetransactionfiles) {
                 foreach ($this->collExpensetransactionfiles as $o) {
                     $o->clearAllReferences($deep);
@@ -1926,6 +2207,10 @@ abstract class BaseExpensetransaction extends BaseObject implements Persistent
             $this->collBankexpensetransactions->clearIterator();
         }
         $this->collBankexpensetransactions = null;
+        if ($this->collDepreciationappreciations instanceof PropelCollection) {
+            $this->collDepreciationappreciations->clearIterator();
+        }
+        $this->collDepreciationappreciations = null;
         if ($this->collExpensetransactionfiles instanceof PropelCollection) {
             $this->collExpensetransactionfiles->clearIterator();
         }

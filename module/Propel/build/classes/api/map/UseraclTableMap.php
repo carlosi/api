@@ -47,7 +47,6 @@ class UseraclTableMap extends TableMap
   2 => 'company',
   3 => 'manufacture',
   4 => 'contents',
-  5 => 'project',
 ));
         $this->addColumn('user_accesslevel', 'UserAccesslevel', 'CHAR', true, null, '1');
         $this->getColumn('user_accesslevel', false)->setValueSet(array (

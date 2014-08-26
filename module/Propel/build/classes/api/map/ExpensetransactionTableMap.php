@@ -66,6 +66,7 @@ class ExpensetransactionTableMap extends TableMap
     {
         $this->addRelation('Expenseitem', 'Expenseitem', RelationMap::MANY_TO_ONE, array('idexpenseitem' => 'idexpenseitem', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Bankexpensetransaction', 'Bankexpensetransaction', RelationMap::ONE_TO_MANY, array('idexpensetransaction' => 'idexpensetransaction', ), 'CASCADE', 'CASCADE', 'Bankexpensetransactions');
+        $this->addRelation('Depreciationappreciation', 'Depreciationappreciation', RelationMap::ONE_TO_MANY, array('idexpensetransaction' => 'idexpensetransaction', ), 'CASCADE', 'CASCADE', 'Depreciationappreciations');
         $this->addRelation('Expensetransactionfile', 'Expensetransactionfile', RelationMap::ONE_TO_MANY, array('idexpensetransaction' => 'idexpensetransaction', ), 'CASCADE', 'CASCADE', 'Expensetransactionfiles');
     } // buildRelations()
 

@@ -462,6 +462,9 @@ abstract class BaseExpensetransactionPeer
         // Invalidate objects in BankexpensetransactionPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         BankexpensetransactionPeer::clearInstancePool();
+        // Invalidate objects in DepreciationappreciationPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        DepreciationappreciationPeer::clearInstancePool();
         // Invalidate objects in ExpensetransactionfilePeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ExpensetransactionfilePeer::clearInstancePool();
@@ -1042,6 +1045,12 @@ abstract class BaseExpensetransactionPeer
 
             $criteria->add(BankexpensetransactionPeer::IDEXPENSETRANSACTION, $obj->getIdexpensetransaction());
             $affectedRows += BankexpensetransactionPeer::doDelete($criteria, $con);
+
+            // delete related Depreciationappreciation objects
+            $criteria = new Criteria(DepreciationappreciationPeer::DATABASE_NAME);
+
+            $criteria->add(DepreciationappreciationPeer::IDEXPENSETRANSACTION, $obj->getIdexpensetransaction());
+            $affectedRows += DepreciationappreciationPeer::doDelete($criteria, $con);
 
             // delete related Expensetransactionfile objects
             $criteria = new Criteria(ExpensetransactionfilePeer::DATABASE_NAME);

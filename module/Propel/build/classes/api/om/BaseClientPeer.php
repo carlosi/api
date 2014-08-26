@@ -501,6 +501,12 @@ abstract class BaseClientPeer
         // Invalidate objects in ClienttaxPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ClienttaxPeer::clearInstancePool();
+        // Invalidate objects in MarketingcampaignclientPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        MarketingcampaignclientPeer::clearInstancePool();
+        // Invalidate objects in MarketingcandidatePeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        MarketingcandidatePeer::clearInstancePool();
         // Invalidate objects in OrderPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         OrderPeer::clearInstancePool();
@@ -1105,6 +1111,18 @@ abstract class BaseClientPeer
 
             $criteria->add(ClienttaxPeer::IDCLIENT, $obj->getIdclient());
             $affectedRows += ClienttaxPeer::doDelete($criteria, $con);
+
+            // delete related Marketingcampaignclient objects
+            $criteria = new Criteria(MarketingcampaignclientPeer::DATABASE_NAME);
+
+            $criteria->add(MarketingcampaignclientPeer::IDCLIENT, $obj->getIdclient());
+            $affectedRows += MarketingcampaignclientPeer::doDelete($criteria, $con);
+
+            // delete related Marketingcandidate objects
+            $criteria = new Criteria(MarketingcandidatePeer::DATABASE_NAME);
+
+            $criteria->add(MarketingcandidatePeer::IDCLIENT, $obj->getIdclient());
+            $affectedRows += MarketingcandidatePeer::doDelete($criteria, $con);
 
             // delete related Order objects
             $criteria = new Criteria(OrderPeer::DATABASE_NAME);

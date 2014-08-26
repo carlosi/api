@@ -62,6 +62,14 @@
  * @method ClientQuery rightJoinClienttax($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Clienttax relation
  * @method ClientQuery innerJoinClienttax($relationAlias = null) Adds a INNER JOIN clause to the query using the Clienttax relation
  *
+ * @method ClientQuery leftJoinMarketingcampaignclient($relationAlias = null) Adds a LEFT JOIN clause to the query using the Marketingcampaignclient relation
+ * @method ClientQuery rightJoinMarketingcampaignclient($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Marketingcampaignclient relation
+ * @method ClientQuery innerJoinMarketingcampaignclient($relationAlias = null) Adds a INNER JOIN clause to the query using the Marketingcampaignclient relation
+ *
+ * @method ClientQuery leftJoinMarketingcandidate($relationAlias = null) Adds a LEFT JOIN clause to the query using the Marketingcandidate relation
+ * @method ClientQuery rightJoinMarketingcandidate($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Marketingcandidate relation
+ * @method ClientQuery innerJoinMarketingcandidate($relationAlias = null) Adds a INNER JOIN clause to the query using the Marketingcandidate relation
+ *
  * @method ClientQuery leftJoinOrder($relationAlias = null) Adds a LEFT JOIN clause to the query using the Order relation
  * @method ClientQuery rightJoinOrder($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Order relation
  * @method ClientQuery innerJoinOrder($relationAlias = null) Adds a INNER JOIN clause to the query using the Order relation
@@ -1140,6 +1148,154 @@ abstract class BaseClientQuery extends ModelCriteria
         return $this
             ->joinClienttax($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Clienttax', 'ClienttaxQuery');
+    }
+
+    /**
+     * Filter the query by a related Marketingcampaignclient object
+     *
+     * @param   Marketingcampaignclient|PropelObjectCollection $marketingcampaignclient  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ClientQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByMarketingcampaignclient($marketingcampaignclient, $comparison = null)
+    {
+        if ($marketingcampaignclient instanceof Marketingcampaignclient) {
+            return $this
+                ->addUsingAlias(ClientPeer::IDCLIENT, $marketingcampaignclient->getIdclient(), $comparison);
+        } elseif ($marketingcampaignclient instanceof PropelObjectCollection) {
+            return $this
+                ->useMarketingcampaignclientQuery()
+                ->filterByPrimaryKeys($marketingcampaignclient->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByMarketingcampaignclient() only accepts arguments of type Marketingcampaignclient or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Marketingcampaignclient relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ClientQuery The current query, for fluid interface
+     */
+    public function joinMarketingcampaignclient($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Marketingcampaignclient');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Marketingcampaignclient');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Marketingcampaignclient relation Marketingcampaignclient object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   MarketingcampaignclientQuery A secondary query class using the current class as primary query
+     */
+    public function useMarketingcampaignclientQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinMarketingcampaignclient($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Marketingcampaignclient', 'MarketingcampaignclientQuery');
+    }
+
+    /**
+     * Filter the query by a related Marketingcandidate object
+     *
+     * @param   Marketingcandidate|PropelObjectCollection $marketingcandidate  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ClientQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByMarketingcandidate($marketingcandidate, $comparison = null)
+    {
+        if ($marketingcandidate instanceof Marketingcandidate) {
+            return $this
+                ->addUsingAlias(ClientPeer::IDCLIENT, $marketingcandidate->getIdclient(), $comparison);
+        } elseif ($marketingcandidate instanceof PropelObjectCollection) {
+            return $this
+                ->useMarketingcandidateQuery()
+                ->filterByPrimaryKeys($marketingcandidate->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByMarketingcandidate() only accepts arguments of type Marketingcandidate or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Marketingcandidate relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ClientQuery The current query, for fluid interface
+     */
+    public function joinMarketingcandidate($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Marketingcandidate');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Marketingcandidate');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Marketingcandidate relation Marketingcandidate object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   MarketingcandidateQuery A secondary query class using the current class as primary query
+     */
+    public function useMarketingcandidateQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinMarketingcandidate($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Marketingcandidate', 'MarketingcandidateQuery');
     }
 
     /**

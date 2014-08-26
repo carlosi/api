@@ -40,9 +40,25 @@
  * @method UserQuery rightJoinChatpublic($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Chatpublic relation
  * @method UserQuery innerJoinChatpublic($relationAlias = null) Adds a INNER JOIN clause to the query using the Chatpublic relation
  *
+ * @method UserQuery leftJoinDepartmentleader($relationAlias = null) Adds a LEFT JOIN clause to the query using the Departmentleader relation
+ * @method UserQuery rightJoinDepartmentleader($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Departmentleader relation
+ * @method UserQuery innerJoinDepartmentleader($relationAlias = null) Adds a INNER JOIN clause to the query using the Departmentleader relation
+ *
+ * @method UserQuery leftJoinDepartmentmember($relationAlias = null) Adds a LEFT JOIN clause to the query using the Departmentmember relation
+ * @method UserQuery rightJoinDepartmentmember($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Departmentmember relation
+ * @method UserQuery innerJoinDepartmentmember($relationAlias = null) Adds a INNER JOIN clause to the query using the Departmentmember relation
+ *
  * @method UserQuery leftJoinLoguser($relationAlias = null) Adds a LEFT JOIN clause to the query using the Loguser relation
  * @method UserQuery rightJoinLoguser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Loguser relation
  * @method UserQuery innerJoinLoguser($relationAlias = null) Adds a INNER JOIN clause to the query using the Loguser relation
+ *
+ * @method UserQuery leftJoinMarketingcandidate($relationAlias = null) Adds a LEFT JOIN clause to the query using the Marketingcandidate relation
+ * @method UserQuery rightJoinMarketingcandidate($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Marketingcandidate relation
+ * @method UserQuery innerJoinMarketingcandidate($relationAlias = null) Adds a INNER JOIN clause to the query using the Marketingcandidate relation
+ *
+ * @method UserQuery leftJoinMarketingprospectionuser($relationAlias = null) Adds a LEFT JOIN clause to the query using the Marketingprospectionuser relation
+ * @method UserQuery rightJoinMarketingprospectionuser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Marketingprospectionuser relation
+ * @method UserQuery innerJoinMarketingprospectionuser($relationAlias = null) Adds a INNER JOIN clause to the query using the Marketingprospectionuser relation
  *
  * @method UserQuery leftJoinMlquestion($relationAlias = null) Adds a LEFT JOIN clause to the query using the Mlquestion relation
  * @method UserQuery rightJoinMlquestion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Mlquestion relation
@@ -796,6 +812,154 @@ abstract class BaseUserQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related Departmentleader object
+     *
+     * @param   Departmentleader|PropelObjectCollection $departmentleader  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDepartmentleader($departmentleader, $comparison = null)
+    {
+        if ($departmentleader instanceof Departmentleader) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $departmentleader->getIduser(), $comparison);
+        } elseif ($departmentleader instanceof PropelObjectCollection) {
+            return $this
+                ->useDepartmentleaderQuery()
+                ->filterByPrimaryKeys($departmentleader->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDepartmentleader() only accepts arguments of type Departmentleader or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Departmentleader relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinDepartmentleader($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Departmentleader');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Departmentleader');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Departmentleader relation Departmentleader object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   DepartmentleaderQuery A secondary query class using the current class as primary query
+     */
+    public function useDepartmentleaderQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDepartmentleader($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Departmentleader', 'DepartmentleaderQuery');
+    }
+
+    /**
+     * Filter the query by a related Departmentmember object
+     *
+     * @param   Departmentmember|PropelObjectCollection $departmentmember  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDepartmentmember($departmentmember, $comparison = null)
+    {
+        if ($departmentmember instanceof Departmentmember) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $departmentmember->getIduser(), $comparison);
+        } elseif ($departmentmember instanceof PropelObjectCollection) {
+            return $this
+                ->useDepartmentmemberQuery()
+                ->filterByPrimaryKeys($departmentmember->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDepartmentmember() only accepts arguments of type Departmentmember or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Departmentmember relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinDepartmentmember($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Departmentmember');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Departmentmember');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Departmentmember relation Departmentmember object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   DepartmentmemberQuery A secondary query class using the current class as primary query
+     */
+    public function useDepartmentmemberQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDepartmentmember($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Departmentmember', 'DepartmentmemberQuery');
+    }
+
+    /**
      * Filter the query by a related Loguser object
      *
      * @param   Loguser|PropelObjectCollection $loguser  the related object to use as filter
@@ -867,6 +1031,154 @@ abstract class BaseUserQuery extends ModelCriteria
         return $this
             ->joinLoguser($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Loguser', 'LoguserQuery');
+    }
+
+    /**
+     * Filter the query by a related Marketingcandidate object
+     *
+     * @param   Marketingcandidate|PropelObjectCollection $marketingcandidate  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByMarketingcandidate($marketingcandidate, $comparison = null)
+    {
+        if ($marketingcandidate instanceof Marketingcandidate) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $marketingcandidate->getIduser(), $comparison);
+        } elseif ($marketingcandidate instanceof PropelObjectCollection) {
+            return $this
+                ->useMarketingcandidateQuery()
+                ->filterByPrimaryKeys($marketingcandidate->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByMarketingcandidate() only accepts arguments of type Marketingcandidate or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Marketingcandidate relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinMarketingcandidate($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Marketingcandidate');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Marketingcandidate');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Marketingcandidate relation Marketingcandidate object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   MarketingcandidateQuery A secondary query class using the current class as primary query
+     */
+    public function useMarketingcandidateQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinMarketingcandidate($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Marketingcandidate', 'MarketingcandidateQuery');
+    }
+
+    /**
+     * Filter the query by a related Marketingprospectionuser object
+     *
+     * @param   Marketingprospectionuser|PropelObjectCollection $marketingprospectionuser  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByMarketingprospectionuser($marketingprospectionuser, $comparison = null)
+    {
+        if ($marketingprospectionuser instanceof Marketingprospectionuser) {
+            return $this
+                ->addUsingAlias(UserPeer::IDUSER, $marketingprospectionuser->getIduser(), $comparison);
+        } elseif ($marketingprospectionuser instanceof PropelObjectCollection) {
+            return $this
+                ->useMarketingprospectionuserQuery()
+                ->filterByPrimaryKeys($marketingprospectionuser->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByMarketingprospectionuser() only accepts arguments of type Marketingprospectionuser or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Marketingprospectionuser relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinMarketingprospectionuser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Marketingprospectionuser');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Marketingprospectionuser');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Marketingprospectionuser relation Marketingprospectionuser object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   MarketingprospectionuserQuery A secondary query class using the current class as primary query
+     */
+    public function useMarketingprospectionuserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinMarketingprospectionuser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Marketingprospectionuser', 'MarketingprospectionuserQuery');
     }
 
     /**

@@ -39,8 +39,8 @@ class DepartmentmemberTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('iddepartmentmember', 'Iddepartmentmember', 'INTEGER', true, null, null);
-        $this->addColumn('iddepartment', 'Iddepartment', 'INTEGER', true, null, null);
-        $this->addColumn('iduser', 'Iduser', 'INTEGER', true, null, null);
+        $this->addForeignKey('iddepartment', 'Iddepartment', 'INTEGER', 'department', 'iddepartment', true, null, null);
+        $this->addForeignKey('iduser', 'Iduser', 'INTEGER', 'user', 'iduser', true, null, null);
         // validators
     } // initialize()
 
@@ -49,6 +49,8 @@ class DepartmentmemberTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Department', 'Department', RelationMap::MANY_TO_ONE, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // DepartmentmemberTableMap

@@ -375,9 +375,9 @@ abstract class BaseChatpublicPeer
      */
     public static function clearRelatedInstancePool()
     {
-        // Invalidate objects in ChatpublicpAttachedfilePeer instance pool,
+        // Invalidate objects in ChatpublicAttachedfilePeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ChatpublicpAttachedfilePeer::clearInstancePool();
+        ChatpublicAttachedfilePeer::clearInstancePool();
     }
 
     /**
@@ -1343,11 +1343,11 @@ abstract class BaseChatpublicPeer
         foreach ($objects as $obj) {
 
 
-            // delete related ChatpublicpAttachedfile objects
-            $criteria = new Criteria(ChatpublicpAttachedfilePeer::DATABASE_NAME);
+            // delete related ChatpublicAttachedfile objects
+            $criteria = new Criteria(ChatpublicAttachedfilePeer::DATABASE_NAME);
 
-            $criteria->add(ChatpublicpAttachedfilePeer::IDCHATPUBLIC, $obj->getIdchatpublic());
-            $affectedRows += ChatpublicpAttachedfilePeer::doDelete($criteria, $con);
+            $criteria->add(ChatpublicAttachedfilePeer::IDCHATPUBLIC, $obj->getIdchatpublic());
+            $affectedRows += ChatpublicAttachedfilePeer::doDelete($criteria, $con);
         }
 
         return $affectedRows;

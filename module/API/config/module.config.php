@@ -262,6 +262,19 @@ return array(
                     ),
                 ),
             ),
+            'orderitem' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version]/orderitem[/:id][/:token][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'id' => '[0-9]+',
+                        'version' => '1',
+                    ),
+                ),
+            ),
             // Module Routes SATMexico
             'clienttax' => array(
                 'type' => 'Segment',

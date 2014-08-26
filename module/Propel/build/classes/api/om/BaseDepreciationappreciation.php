@@ -56,6 +56,11 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
     protected $depreciationappreciation_cycle;
 
     /**
+     * @var        Expensetransaction
+     */
+    protected $aExpensetransaction;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -177,6 +182,10 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
         if ($this->idexpensetransaction !== $v) {
             $this->idexpensetransaction = $v;
             $this->modifiedColumns[] = DepreciationappreciationPeer::IDEXPENSETRANSACTION;
+        }
+
+        if ($this->aExpensetransaction !== null && $this->aExpensetransaction->getIdexpensetransaction() !== $v) {
+            $this->aExpensetransaction = null;
         }
 
 
@@ -301,6 +310,9 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
     public function ensureConsistency()
     {
 
+        if ($this->aExpensetransaction !== null && $this->idexpensetransaction !== $this->aExpensetransaction->getIdexpensetransaction()) {
+            $this->aExpensetransaction = null;
+        }
     } // ensureConsistency
 
     /**
@@ -340,6 +352,7 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aExpensetransaction = null;
         } // if (deep)
     }
 
@@ -452,6 +465,18 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
+
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aExpensetransaction !== null) {
+                if ($this->aExpensetransaction->isModified() || $this->aExpensetransaction->isNew()) {
+                    $affectedRows += $this->aExpensetransaction->save($con);
+                }
+                $this->setExpensetransaction($this->aExpensetransaction);
+            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -619,6 +644,18 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
             $failureMap = array();
 
 
+            // We call the validate method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aExpensetransaction !== null) {
+                if (!$this->aExpensetransaction->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aExpensetransaction->getValidationFailures());
+                }
+            }
+
+
             if (($retval = DepreciationappreciationPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
@@ -688,10 +725,11 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
         if (isset($alreadyDumpedObjects['Depreciationappreciation'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
@@ -709,6 +747,11 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->aExpensetransaction) {
+                $result['Expensetransaction'] = $this->aExpensetransaction->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+        }
 
         return $result;
     }
@@ -863,6 +906,18 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
         $copyObj->setIdexpensetransaction($this->getIdexpensetransaction());
         $copyObj->setDepreciationappreciationAmount($this->getDepreciationappreciationAmount());
         $copyObj->setDepreciationappreciationCycle($this->getDepreciationappreciationCycle());
+
+        if ($deepCopy && !$this->startCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+            // store object hash to prevent cycle
+            $this->startCopy = true;
+
+            //unflag object copy
+            $this->startCopy = false;
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setIddepreciationappreciation(NULL); // this is a auto-increment column, so set to default value
@@ -910,6 +965,58 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
     }
 
     /**
+     * Declares an association between this object and a Expensetransaction object.
+     *
+     * @param                  Expensetransaction $v
+     * @return Depreciationappreciation The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setExpensetransaction(Expensetransaction $v = null)
+    {
+        if ($v === null) {
+            $this->setIdexpensetransaction(NULL);
+        } else {
+            $this->setIdexpensetransaction($v->getIdexpensetransaction());
+        }
+
+        $this->aExpensetransaction = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Expensetransaction object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDepreciationappreciation($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Expensetransaction object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Expensetransaction The associated Expensetransaction object.
+     * @throws PropelException
+     */
+    public function getExpensetransaction(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aExpensetransaction === null && ($this->idexpensetransaction !== null) && $doQuery) {
+            $this->aExpensetransaction = ExpensetransactionQuery::create()->findPk($this->idexpensetransaction, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aExpensetransaction->addDepreciationappreciations($this);
+             */
+        }
+
+        return $this->aExpensetransaction;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -941,10 +1048,14 @@ abstract class BaseDepreciationappreciation extends BaseObject implements Persis
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->aExpensetransaction instanceof Persistent) {
+              $this->aExpensetransaction->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        $this->aExpensetransaction = null;
     }
 
     /**

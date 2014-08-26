@@ -203,19 +203,19 @@ CREATE TABLE `chatpublic`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- chatpublicp_attachedfile
+-- chatpublic_attachedfile
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `chatpublicp_attachedfile`;
+DROP TABLE IF EXISTS `chatpublic_attachedfile`;
 
-CREATE TABLE `chatpublicp_attachedfile`
+CREATE TABLE `chatpublic_attachedfile`
 (
-    `idchatpublicp_attachedfile` INTEGER NOT NULL AUTO_INCREMENT,
+    `idchatpublic_attachedfile` INTEGER NOT NULL AUTO_INCREMENT,
     `idchatpublic` INTEGER NOT NULL,
-    `chatpublicp_attachedfile_url` TEXT NOT NULL,
-    PRIMARY KEY (`idchatpublicp_attachedfile`),
+    `chatpublic_attachedfile_url` TEXT NOT NULL,
+    PRIMARY KEY (`idchatpublic_attachedfile`),
     INDEX `idchatpublic` (`idchatpublic`),
-    CONSTRAINT `idchatpublic_chatpublicp_attachedfile`
+    CONSTRAINT `idchatpublic_chatpublic_attachedfile`
         FOREIGN KEY (`idchatpublic`)
         REFERENCES `chatpublic` (`idchatpublic`)
         ON UPDATE CASCADE
@@ -497,9 +497,36 @@ CREATE TABLE `department`
     `department_name` VARCHAR(245) NOT NULL,
     PRIMARY KEY (`iddepartment`),
     INDEX `idcompany` (`idcompany`),
-    CONSTRAINT `departament_idcompany`
+    CONSTRAINT `department_idcompany`
         FOREIGN KEY (`idcompany`)
         REFERENCES `company` (`idcompany`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- departmentleader
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `departmentleader`;
+
+CREATE TABLE `departmentleader`
+(
+    `iddepartmentleader` INTEGER NOT NULL AUTO_INCREMENT,
+    `iddepartment` INTEGER NOT NULL,
+    `iduser` INTEGER NOT NULL,
+    `departmentleader_title` VARCHAR(245) NOT NULL,
+    PRIMARY KEY (`iddepartmentleader`),
+    INDEX `iddepartment` (`iddepartment`),
+    INDEX `iduser` (`iduser`),
+    CONSTRAINT `iduser_departmentleader`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iddeparment_departmentleader`
+        FOREIGN KEY (`iddepartment`)
+        REFERENCES `department` (`iddepartment`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -516,8 +543,18 @@ CREATE TABLE `departmentmember`
     `iddepartment` INTEGER NOT NULL,
     `iduser` INTEGER NOT NULL,
     PRIMARY KEY (`iddepartmentmember`),
-    INDEX `iddepartament` (`iddepartment`),
-    INDEX `iduser` (`iduser`)
+    INDEX `iddepartment` (`iddepartment`),
+    INDEX `iduser` (`iduser`),
+    CONSTRAINT `iddepartment_departmentmember`
+        FOREIGN KEY (`iddepartment`)
+        REFERENCES `department` (`iddepartment`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_departmentmember`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -533,7 +570,12 @@ CREATE TABLE `depreciationappreciation`
     `depreciationappreciation_amount` DECIMAL(10,2) DEFAULT 0.00 NOT NULL,
     `depreciationappreciation_cycle` enum('weekly','monthly','semiannual','annually') DEFAULT 'annually' NOT NULL,
     PRIMARY KEY (`iddepreciationappreciation`),
-    INDEX `idexpensetransaction` (`idexpensetransaction`)
+    INDEX `idexpensetransaction` (`idexpensetransaction`),
+    CONSTRAINT `idexpensetransaction_inventory`
+        FOREIGN KEY (`idexpensetransaction`)
+        REFERENCES `expensetransaction` (`idexpensetransaction`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -672,6 +714,190 @@ CREATE TABLE `loguser`
     PRIMARY KEY (`idloguser`),
     INDEX `iduser` (`iduser`),
     CONSTRAINT `iduser_loguser`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingcampaign
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingcampaign`;
+
+CREATE TABLE `marketingcampaign`
+(
+    `idmarketingcampaign` INTEGER NOT NULL AUTO_INCREMENT,
+    `idmarketingchannel` INTEGER NOT NULL,
+    `marketingcampaign_name` TEXT NOT NULL,
+    `marketingcampaign_created_at` DATETIME NOT NULL,
+    PRIMARY KEY (`idmarketingcampaign`),
+    INDEX `idmarketingchannel` (`idmarketingchannel`),
+    CONSTRAINT `idmarketingcampaign_marketingcampaign`
+        FOREIGN KEY (`idmarketingchannel`)
+        REFERENCES `marketingchannel` (`idmarketingchannel`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingcampaignclient
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingcampaignclient`;
+
+CREATE TABLE `marketingcampaignclient`
+(
+    `idmarketingcampaignclient` INTEGER NOT NULL,
+    `idclient` INTEGER NOT NULL,
+    `idmarketingcampaign` INTEGER NOT NULL,
+    PRIMARY KEY (`idmarketingcampaignclient`),
+    INDEX `idclient` (`idclient`),
+    INDEX `idmarketingcampaign` (`idmarketingcampaign`),
+    CONSTRAINT `idclient_marketingcampaignclient`
+        FOREIGN KEY (`idclient`)
+        REFERENCES `client` (`idclient`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `idmarketingcampaign_marketingcampaignclient`
+        FOREIGN KEY (`idmarketingcampaign`)
+        REFERENCES `marketingcampaign` (`idmarketingcampaign`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingcandidate
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingcandidate`;
+
+CREATE TABLE `marketingcandidate`
+(
+    `idmarketingcandidate` INTEGER NOT NULL AUTO_INCREMENT,
+    `iduser` INTEGER NOT NULL,
+    `idclient` INTEGER NOT NULL,
+    `marketingcandidate_saleexpectation` DECIMAL(10,2) DEFAULT 0.00 NOT NULL,
+    `marketingcandidate_levelexpectation` INTEGER DEFAULT 1 NOT NULL,
+    PRIMARY KEY (`idmarketingcandidate`),
+    INDEX `iduser` (`iduser`),
+    INDEX `idclient` (`idclient`),
+    CONSTRAINT `idclient_marketingcandidate`
+        FOREIGN KEY (`idclient`)
+        REFERENCES `client` (`idclient`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_marketingcandidate`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingchannel
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingchannel`;
+
+CREATE TABLE `marketingchannel`
+(
+    `idmarketingchannel` INTEGER NOT NULL AUTO_INCREMENT,
+    `idcompany` INTEGER NOT NULL,
+    `marketingchannel_name` VARCHAR(245) NOT NULL,
+    PRIMARY KEY (`idmarketingchannel`),
+    INDEX `idcompany` (`idcompany`),
+    CONSTRAINT `idcompany_marketingchannel`
+        FOREIGN KEY (`idcompany`)
+        REFERENCES `company` (`idcompany`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingprospection
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingprospection`;
+
+CREATE TABLE `marketingprospection`
+(
+    `idmarketingprospection` INTEGER NOT NULL AUTO_INCREMENT,
+    `idmarketingcampaignclient` INTEGER NOT NULL,
+    `marketingprospection_saleexpectation` DECIMAL(10,2) DEFAULT 0.00 NOT NULL,
+    `marketingprospection_levelexpectation` INTEGER DEFAULT 3 NOT NULL,
+    `marketingprospection_startdate` DATETIME NOT NULL,
+    PRIMARY KEY (`idmarketingprospection`),
+    INDEX `idmarketingcampaignclient` (`idmarketingcampaignclient`),
+    CONSTRAINT `idmarketingcampaignclient_marketingprospection`
+        FOREIGN KEY (`idmarketingcampaignclient`)
+        REFERENCES `marketingcampaignclient` (`idmarketingcampaignclient`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingprospectioninteraction
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingprospectioninteraction`;
+
+CREATE TABLE `marketingprospectioninteraction`
+(
+    `idmarketingprospectioninteraction` INTEGER NOT NULL,
+    `idmarketingprospectionuser` INTEGER NOT NULL,
+    `marketingprospectioninteraction_type` enum('visitfromclient','call','chat','email','visittoclient','videocall','undefined') DEFAULT 'undefined' NOT NULL,
+    `marketingprospectioninteraction_date` DATETIME,
+    `marketingprospectioninteraction_comment` TEXT,
+    PRIMARY KEY (`idmarketingprospectioninteraction`),
+    INDEX `idmarketingprospectionuser` (`idmarketingprospectionuser`),
+    CONSTRAINT `idmarketingprospectioninteraction_mktpi`
+        FOREIGN KEY (`idmarketingprospectionuser`)
+        REFERENCES `marketingprospectionuser` (`idmarketingprospectionuser`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingprospectionnote
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingprospectionnote`;
+
+CREATE TABLE `marketingprospectionnote`
+(
+    `idmarketingprospectionnote` INTEGER NOT NULL AUTO_INCREMENT,
+    `idmarketingprospectionuser` INTEGER NOT NULL,
+    `marketingprospectionnote_note` TEXT NOT NULL,
+    `marketingprospectionnote_date` DATETIME NOT NULL,
+    PRIMARY KEY (`idmarketingprospectionnote`),
+    INDEX `idmarketingprospectionuser` (`idmarketingprospectionuser`),
+    CONSTRAINT `idmarketingprospectionuser_marketingprospectionnote`
+        FOREIGN KEY (`idmarketingprospectionuser`)
+        REFERENCES `marketingprospectionuser` (`idmarketingprospectionuser`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- marketingprospectionuser
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `marketingprospectionuser`;
+
+CREATE TABLE `marketingprospectionuser`
+(
+    `idmarketingprospectionuser` INTEGER NOT NULL AUTO_INCREMENT,
+    `iduser` INTEGER NOT NULL,
+    `idmarketingprospection` INTEGER NOT NULL,
+    PRIMARY KEY (`idmarketingprospectionuser`),
+    INDEX `idmarketingprospection` (`idmarketingprospection`),
+    INDEX `iduser` (`iduser`),
+    CONSTRAINT `idmarketingprospection_marketingprospectionuser`
+        FOREIGN KEY (`idmarketingprospection`)
+        REFERENCES `marketingprospection` (`idmarketingprospection`),
+    CONSTRAINT `iduser_marketingprospectionuser`
         FOREIGN KEY (`iduser`)
         REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
@@ -1306,14 +1532,14 @@ CREATE TABLE `project`
     `project_dependency` INTEGER NOT NULL,
     `project_name` VARCHAR(245),
     PRIMARY KEY (`idproject`),
-    INDEX `iddepartament` (`iddepartment`),
     INDEX `project_dependency` (`project_dependency`),
-    CONSTRAINT `project_iddepartament`
+    INDEX `iddepartment` (`iddepartment`),
+    CONSTRAINT `iddepartment_project`
         FOREIGN KEY (`iddepartment`)
         REFERENCES `department` (`iddepartment`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT `project_dependency`
+    CONSTRAINT `dependency_project`
         FOREIGN KEY (`project_dependency`)
         REFERENCES `project` (`idproject`)
         ON UPDATE CASCADE
@@ -1558,7 +1784,7 @@ CREATE TABLE `useracl`
 (
     `iduseracl` INTEGER NOT NULL AUTO_INCREMENT,
     `iduser` INTEGER NOT NULL,
-    `module_name` enum('basic','sales','company','manufacture','contents','project') DEFAULT 'basic' NOT NULL,
+    `module_name` enum('basic','sales','company','manufacture','contents') DEFAULT 'basic' NOT NULL,
     `user_accesslevel` enum('1','2','3','4','5') DEFAULT '1' NOT NULL,
     PRIMARY KEY (`iduseracl`),
     INDEX `iduser` (`iduser`),
