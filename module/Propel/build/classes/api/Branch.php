@@ -190,11 +190,11 @@ class Branch extends BaseBranch
      * @return array
      */
     public function getCollection($idcompany, $page, $limit, array $filters=null, $order, $dir){
-
+        $branchQuery = new BranchQuery();
         //Los Filtros
         if($filters!=null){
             foreach ($filters as $filter){
-                $params = BranchQuery::create()->getParams();
+                $params = $branchQuery->getParams();
                 if(isset($filter['in'])){
 
                     if(!empty($params)){
@@ -206,12 +206,12 @@ class Branch extends BaseBranch
                             }
                         }
                         if($flag){
-                            BranchQuery::create()->addOr('branch.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $branchQuery->addOr('branch.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }else{
-                            BranchQuery::create()->addAnd('branch.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $branchQuery->addAnd('branch.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }
                     }else{
-                        BranchQuery::create()->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
+                        $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
                     }
                 }
 
@@ -219,36 +219,36 @@ class Branch extends BaseBranch
                     if(!empty($params)){
                         foreach($params as $param){
                             if($filter['attribute'] = $param['column']){
-                                BranchQuery::create()->addOr('branch.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
+                                $branchQuery->addOr('branch.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
                             }
                         }
                     }else{
-                        BranchQuery::filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL);
+                        $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL);
                     }
                 }
                 if(isset($filter['gt'])){
-                    BranchQuery::create()->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
+                    $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
                 }
                 if(isset($filter['lt'])){
-                    BranchQuery::create()->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN);
+                    $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN);
                 }
                 if(isset($filter['from']) && isset($filter['to'])){
-                    BranchQuery::create()->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
+                    $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
                         ->add(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['to'], \Criteria::LESS_EQUAL);
                 }
                 if(isset($filter['like'])){
-                    BranchQuery::create()->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
+                    $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
                 }
             }
         }
-
+  
         //Order y Dir
         if($order !=null || $dir !=null){
-            BranchQuery::create()->orderBy($order, $dir);
+            $branchQuery ->orderBy($order, $dir);
         }
 
         // Obtenemos el filtrado por medio del idcompany del recurso.
-        $result = BranchQuery::create()->filterByIdCompany($idcompany)->paginate($page,$limit);
+        $result = $branchQuery ->filterByIdCompany($idcompany)->paginate($page,$limit);
 
 
         $links = array(
@@ -361,7 +361,7 @@ class Branch extends BaseBranch
 
 
         // End ACL //
-
+        
         $response = array(
             '_links' => $getCollection['links'],
             'ACL' => $acl,
@@ -375,6 +375,14 @@ class Branch extends BaseBranch
             ),
             'branches' => $branchArray,
         );
+        switch(TYPE_RESPONSE){
+            case "xml" :{
+                $response['branches'] = array(
+                    'branch' => $branchArray
+                );
+                break;
+            }
+        }
 
         return $response;
     }

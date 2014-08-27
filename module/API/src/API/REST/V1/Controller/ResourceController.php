@@ -119,7 +119,6 @@ class ResourceController extends AbstractRestfulController
         if($userLevel!=0){
 
             $dataArray = HttpRequest::resourceData($data, $request, $response, $resourceName);
-
             // Instanciamos nuestro formulario resourceFormPostPut
             $resourceFormPostPut = ResourceManager::getResourceFormPostPut($resourceName);
             $FormPostPut = $resourceFormPostPut::init($userLevel);
@@ -162,6 +161,10 @@ class ResourceController extends AbstractRestfulController
                         break;
                     }
                     case "json":{
+                        return new JsonModel($issave['bodyResponse']);
+                        break;
+                    }
+                    default: {
                         return new JsonModel($issave['bodyResponse']);
                         break;
                     }
@@ -260,7 +263,24 @@ class ResourceController extends AbstractRestfulController
                         return new JsonModel($bodyResponse);
                     }
                 }else{
-                    $Response = $resource->getCollectionResponse($getCollection, $userLevel);
+                    $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
+                    switch(TYPE_RESPONSE){
+                        case "xml":{
+                            // Create the config object
+                            $response = $this->getResponse();
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                    }
                     return new JsonModel($Response);
                 }
             }else{
@@ -321,9 +341,26 @@ class ResourceController extends AbstractRestfulController
                 $entity = $resource->getEntity($id);
                 
                 //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
-                $response = $resource->getEntityResponse($entity,$userLevel);
+                $bodyResponse = $resource->getEntityResponse($entity,$userLevel);
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        // Create the config object
+                        $response = $this->getResponse();
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($response);
+                        break;
+                    }
+                    default: {
+                        return new JsonModel($response);
+                        break;
+                    }
+                }
                 
-                return new JsonModel($response);
+                
 
             }else{
                  //Modifiamos el Header de nuestra respuesta
@@ -386,6 +423,10 @@ class ResourceController extends AbstractRestfulController
                     break;
                 }
                 case "json":{
+                    return new JsonModel($functionUpdate);
+                    break;
+                }
+                default: {
                     return new JsonModel($functionUpdate);
                     break;
                 }

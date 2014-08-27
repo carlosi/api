@@ -56,7 +56,6 @@ class Xml extends AbstractWriter
     protected function addBranch($branchName, array $config, XMLWriter $writer)
     {
         $branchType = null;
-
         foreach ($config as $key => $value) {
             if ($branchType === null) {
                 if (is_numeric($key)) {
@@ -71,7 +70,7 @@ class Xml extends AbstractWriter
 
             if ($branchType === 'numeric') {
                 if (is_array($value)) {
-                    $this->addBranch($value, $value, $writer);
+                    $this->addBranch($branchName, $value, $writer);
                 } else {
                     $writer->writeElement($branchName, (string) $value);
                 }
