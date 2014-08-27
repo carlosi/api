@@ -101,6 +101,12 @@ class ResourceController extends AbstractRestfulController
         //Obtenemos el IdCompany al que pertenece el usuario
         $idCompany = ResourceManager::getIDCompany($token);
 
+        // Instanciamos el objeto request
+        $request = $this->getRequest();
+
+        // Instanciamos el objeto response
+        $response = $this->getResponse();
+
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
 
@@ -112,9 +118,6 @@ class ResourceController extends AbstractRestfulController
 
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
-            
-            $request = $this->getRequest();
-            $response = $this->getResponse();
 
             $dataArray = HttpRequest::resourceData($data, $request, $response, $resourceName);
 
@@ -150,13 +153,23 @@ class ResourceController extends AbstractRestfulController
                 $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel);
 
                 //Modifiamos el Header de nuestra respuesta
-                $response = $this->getResponse();
                 $response->setStatusCode($issave['statusCode']); //BAD REQUEST
-                return new JsonModel($issave['bodyResponse']);
+
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        // Create the config object
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($issave['bodyResponse']));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($issave['bodyResponse']);
+                        break;
+                    }
+                }
             //Si el formulario no fue valido
             }else{
                 //Modifiamos el Header de nuestra respuesta
-                $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                 $messageArray = array();
@@ -167,13 +180,11 @@ class ResourceController extends AbstractRestfulController
                         array_push($messageArray, $message);
                     }
                 }
-                $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 return new JsonModel(JSonResponse::getResponseBody(400, $messageArray));
             }
         //Si el usuario no tiene permisos sobre el recurso
         }else{
-            $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
             return new JsonModel(JSonResponse::getResponseBody(403));
         }

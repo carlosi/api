@@ -27,10 +27,10 @@ class HttpRequest
      * @param $resource
      * @return array|JsonModel
      */
-    public static function resourceData($data, $request, $response, $resource){
+    public static function resourceData($data, $request, $response, $resourceName){
 
         // Instanciamos el Formulario "resourceForm"
-        $resourceForm = ResourceManager::getResourceForm($resource);
+        $resourceForm = ResourceManager::getResourceForm($resourceName);
 
         // Obtenemos los elementos del Formulario "resourceForm"
         $elementsForm = $resourceForm->getElements();
