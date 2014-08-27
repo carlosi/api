@@ -28,7 +28,7 @@ class Xml extends AbstractWriter
         $writer->setIndentString(str_repeat(' ', 4));
 
         $writer->startDocument('1.0', 'UTF-8');
-        $writer->startElement('zend-config');
+        $writer->startElement(RESOURCE);
 
         foreach ($config as $sectionName => $data) {
             if (!is_array($data)) {

@@ -77,7 +77,7 @@ class Branch extends BaseBranch
         }else{
             $bodyResponse = array(
                 'Error' => array(
-                    'HTTP Status' => 400 . ' Bad Request',
+                    'HTTP_Status' => 400 . ' Bad Request',
                     'Title' => 'Resource data pre-validation error',
                     'Details' => "branch_name ". "'".$dataArray["branch_name"]."'". " already exists",
                 ),
@@ -312,12 +312,6 @@ class Branch extends BaseBranch
             //Eliminamos los campos que hacen referencia a otras tablas
             unset($row['idcompany']);
 
-            // Eliminamos las columnas que sean null
-            foreach($row as $key => $value){
-                if($value == null){
-                    unset($row[$key]);
-                }
-            }
             array_push($branchArray, $row);
         }
 
@@ -478,7 +472,7 @@ class Branch extends BaseBranch
                             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                             $bodyResponse = array(
                                 'Error' => array(
-                                    'HTTP Status' => 400 . ' Bad Request',
+                                    'HTTP_Status' => 400 . ' Bad Request',
                                     'Title' => 'Resource data pre-validation error',
                                     'Details' => "branch_name ". "'".$branchArray['branch_name']."'". " already exists",
                                 ),
@@ -490,7 +484,7 @@ class Branch extends BaseBranch
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                         $bodyResponse = array(
                             'Error' => array(
-                                'HTTP Status' => 400 . ' Bad Request',
+                                'HTTP_Status' => 400 . ' Bad Request',
                                 'Title' => 'No changes were found',
                             ),
                         );
@@ -518,7 +512,7 @@ class Branch extends BaseBranch
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
                     'Error' => array(
-                        'HTTP Status' => 400 . ' Bad Request',
+                        'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'No changes were found',
                     ),
                 );
@@ -530,7 +524,7 @@ class Branch extends BaseBranch
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
             $bodyResponse = array(
                 'Error' => array(
-                    'HTTP Status' => 400 . ' Bad Request',
+                    'HTTP_Status' => 400 . ' Bad Request',
                     'Title' => 'The request data is invalid',
                     'Details' => 'Invalid idbranch',
                 ),

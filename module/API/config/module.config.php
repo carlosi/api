@@ -67,13 +67,14 @@ return array(
             'branch' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v[:version]/branch[/:id][/:token][/]',
+                    'route'    => '/v[:version][/:typeResponse]/branch[/:id][/:token][/]',
                     'defaults' => array(
                         'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
                         'id' => '[0-9]+',
                         'version' => '1',
+                        'typeResponse' => 'xml|json',
                     ),
                 ),
             ),
