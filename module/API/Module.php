@@ -37,8 +37,8 @@ class Module
         $moduleRouteListener->attach($eventManager);
         
         //ApiProblemListener
-        $apiProblemListener = new ApiProblemListener();
-        $apiProblemListener->attach($eventManager);
+        //$apiProblemListener = new ApiProblemListener();
+        //$apiProblemListener->attach($eventManager);
 
         $tokenListener = new TokenListener();
         $tokenListener->attach($eventManager);
