@@ -323,7 +323,18 @@ class ResourceController extends AbstractRestfulController
 
             $functionUpdate = $resource->updateResource($id, $data, $idCompany, $userLevel, $request, $response);
 
-            return new JsonModel($functionUpdate);
+            switch(TYPE_RESPONSE){
+                case "xml":{
+                    // Create the config object
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($functionUpdate));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($functionUpdate);
+                    break;
+                }
+            }
 
         //Si el usuario no tiene permisos sobre el recurso
         }else{
