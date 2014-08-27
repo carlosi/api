@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ResourceController.php
  * BuyBuy
@@ -8,7 +7,7 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\Controller;
+ namespace API\REST\V1\Controller;
 
 // - ZF2 - //
 use Zend\Http\Response;
@@ -278,6 +277,62 @@ class ResourceController extends AbstractRestfulController
             return new JsonModel($bodyResponse);
         }
     }
+    
+    public function get($id){
+        
+        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+        $token = $this->getToken();
+
+        //Obtenemos el IdUser propietario del token
+        $idUser = ResourceManager::getIDUser($token);
+
+        //Obtenemos el IdCompany al que pertenece el usuario
+        $idCompany = ResourceManager::getIDCompany($token);
+
+        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+        $resourceName = ucfirst(RESOURCE);
+
+        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+        $module = ResourceManager::getModule($resourceName);
+        
+        //Obtenemnos el nivel de acceso del usuario para el recurso
+        $userLevel = ResourceManager::getUserLevels($idUser, $module);
+        
+        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
+        if($userLevel!=0){
+            
+            //Instanciamos nuestro recurso
+            $resource = ResourceManager::getResource($resourceName);
+            
+            if($resource->isIdValid($id,$idCompany)){
+                              
+                //Obtenemos nuestra entidad
+                $entity = $resource->getEntity($id);
+                
+                //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
+                $response = $resource->getEntityResponse($entity,$userLevel);
+                
+                return new JsonModel($response);
+
+            }else{
+                 //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid id',
+                    ),
+                );
+             }
+        }else{
+            $response = $this->getResponse();
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
+            return new JsonModel(JSonResponse::getResponseBody(403));
+        }
+
+    }
 
     /**
      * @param mixed $data
@@ -321,4 +376,74 @@ class ResourceController extends AbstractRestfulController
             return new JsonModel(JSonResponse::getResponseBody(403));
         }
     }
+    
+    public function delete($id) {
+        
+        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+        $token = $this->getToken();
+        
+        //Obtenemos el IdUser propietario del token
+        $idUser = ResourceManager::getIDUser($token);
+
+        //Obtenemos el IdCompany al que pertenece el usuario
+        $idCompany = ResourceManager::getIDCompany($token);
+
+        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+        $resourceName = ucfirst(RESOURCE);
+        
+        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+        $module = ResourceManager::getModule($resourceName);
+        
+        //Obtenemnos el nivel de acceso del usuario para el recurso
+        $userLevel = ResourceManager::getUserLevels($idUser, $module);
+        
+        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
+        if($userLevel!=0){
+             //Instanciamos nuestro recurso
+             $resource = ResourceManager::getResource($resourceName);
+        
+             //Verificamos si el id que se quiere eliminar pertenece a la compañia
+             if($resource->isIdValid($id,$idCompany)){
+                 
+                 if($resource->deleteEntity($id,$userLevel)){
+                     //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //NOT CONTENT
+                 }else{
+                    //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid id',
+                        ),
+                    );
+                    return new JsonModel($bodyResponse);
+                }
+             }else{
+                 //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP Status' => 403 . ' Forbidden',
+                        'Title' => 'Access denied',
+                        'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                    ),
+                );
+                return new JsonModel($bodyResponse);
+             }
+
+        }else{
+            $response = $this->getResponse();
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
+            return new JsonModel(JSonResponse::getResponseBody(403));
+        }
+
+    }
+    
+    
+    
 }

@@ -2,3 +2,5 @@
 .idea/
 # Mac OS X
 .DS_Store
+/nbproject/private/
+nbproject/
