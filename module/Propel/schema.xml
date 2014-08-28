@@ -83,7 +83,7 @@
     </vendor>
   </table>
   <table name="branch_user_acl" phpName="BranchUserAcl" idMethod="native">
-    <column name="idbranch_user_acl" phpName="IdbranchUserAcl" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idbranch_user_acl" phpName="IdbranchBranchUserAcl" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="idbranch" phpName="Idbranch" type="INTEGER" required="true"/>
     <column name="module_name" phpName="ModuleName" type="CHAR" sqlType="enum('basic','sales','company','manufacture','contents')" required="true" defaultValue="basic"/>

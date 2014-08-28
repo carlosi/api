@@ -12,7 +12,7 @@
 // - ZF2 - //
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;
+use Zend\View\Model\JsonModel;  
 
 // - Shared - //
 use API\REST\V1\Shared\Functions\HttpRequest;
@@ -77,7 +77,7 @@ class ResourceController extends AbstractRestfulController
         //Retornamos la respuesta
         $body = array(
             'Success' => array(
-                'HTTP Status' => '200' ,
+                'HTTP_Status' => '200' ,
                 'Allow' => implode(',', $this->_getOptions()),
                 'More Info' => URL_API_DOCS.'/'.table
             ),
@@ -196,7 +196,6 @@ class ResourceController extends AbstractRestfulController
      * @return mixed|JsonModel
      */
     public function getList() {
-
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
 
@@ -211,13 +210,13 @@ class ResourceController extends AbstractRestfulController
 
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
-
+        
         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
         $module = ResourceManager::getModule($resourceName);
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
-
+        
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
 
@@ -242,8 +241,9 @@ class ResourceController extends AbstractRestfulController
 
             // Instanciamos nuestro Recurso
             $resource = ResourceManager::getResource($resourceName);
-            $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
 
+            $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
+            
             if(!empty($getCollection['data'])){
                 // Si el recurso que solicitan es Company
                 if(RESOURCE == 'company'){
@@ -255,12 +255,28 @@ class ResourceController extends AbstractRestfulController
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
                         $bodyResponse = array(
                             'Error' => array(
-                                'HTTP Status' => 403 . ' Forbidden',
+                                'HTTP_Status' => 403 . ' Forbidden',
                                 'Title' => 'Access denied',
                                 'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
                             ),
                         );
-                        return new JsonModel($bodyResponse);
+                        switch(TYPE_RESPONSE){
+                            case "xml":{
+                                // Create the config object
+                                $response = $this->getResponse();
+                                $writer = new \Zend\Config\Writer\Xml();
+                                return $response->setContent($writer->toString($bodyResponse));
+                                break;
+                            }
+                            case "json":{
+                                return new JsonModel($bodyResponse);
+                                break;
+                            }
+                            default: {
+                                return new JsonModel($bodyResponse);
+                                break;
+                            }
+                        }
                     }
                 }else{
                     $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
@@ -284,28 +300,61 @@ class ResourceController extends AbstractRestfulController
                     return new JsonModel($Response);
                 }
             }else{
+                
                 //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //No Content
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //No Content
                 $bodyResponse = array(
                     'Error' => array(
-                        'HTTP Status' => 204 . ' Bad Request',
+                        'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'No Content',
                         'Details' => 'The server successfully processed the request, but is not returning any content.',
                     ),
                 );
-                return new JsonModel($bodyResponse);
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        // Create the config object
+                        $response = $this->getResponse();
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                }
             }
         }else{
             //Modifiamos el Header de nuestra respuesta
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
             $bodyResponse = array(
                 'Error' => array(
-                    'HTTP Status' => 403 . ' Forbidden',
+                    'HTTP_Status' => 403 . ' Forbidden',
                     'Title' => 'Access denied',
                     'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
                 ),
             );
-            return new JsonModel($bodyResponse);
+            switch(TYPE_RESPONSE){
+                case "xml":{
+                    // Create the config object
+                    $response = $this->getResponse();
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+            }
         }
     }
     
@@ -368,7 +417,7 @@ class ResourceController extends AbstractRestfulController
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
                     'Error' => array(
-                        'HTTP Status' => 400 . ' Bad Request',
+                        'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'The request data is invalid',
                         'Details' => 'Invalid id',
                     ),
@@ -478,7 +527,7 @@ class ResourceController extends AbstractRestfulController
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
                         'Error' => array(
-                            'HTTP Status' => 400 . ' Bad Request',
+                            'HTTP_Status' => 400 . ' Bad Request',
                             'Title' => 'The request data is invalid',
                             'Details' => 'Invalid id',
                         ),
@@ -491,7 +540,7 @@ class ResourceController extends AbstractRestfulController
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
                 $bodyResponse = array(
                     'Error' => array(
-                        'HTTP Status' => 403 . ' Forbidden',
+                        'HTTP_Status' => 403 . ' Forbidden',
                         'Title' => 'Access denied',
                         'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
                     ),

@@ -288,8 +288,8 @@ return array(
 
     // Zend\Validator\StringLength
     "Invalid type given. String expected" => "Invalid type given. String expected",
-    "input is less than %min% characters long" => "input is less than %min% characters long",
-    "input is more than %max% characters long" => "input is more than %max% characters long",
+    "The input is less than %min% characters long" => "The input is less than %min% characters long",
+    "The input is more than %max% characters long" => "The input is more than %max% characters long",
 
     // Zend\Validator\Uri
     "Invalid type given. String expected" => "Invalid type given. String expected",

@@ -13,7 +13,7 @@ namespace API\REST\V1\Shared\Functions;
 // - Propel - //
 use Client;
 use ClientQuery;
-use UseraclQuery;
+use BranchUserAclQuery;
 use TokenQuery;
 use UserQuery;
 use Exception;
@@ -218,7 +218,7 @@ class ResourceManager{
     public static function getUserLevels($iduser, $module){
         $module = strtolower($module);
         if (is_int($iduser)){
-            $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
+            $userLevel = BranchUserAclQuery::create()->filterByIduser($iduser)->find();
             foreach($userLevel as $level){
                 if($level->getModuleName() == $module){
                     return (int)$level->getUserAccesslevel();

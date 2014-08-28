@@ -2,7 +2,7 @@
 
 namespace API\REST\V1\Shared\Functions;
 
-use UseraclQuery;
+use BranchUserAcl;
 use Exception;
 use TokenQuery;
 use UserQuery;
@@ -13,7 +13,7 @@ class SessionManager {
         
     public static function getUserLevelToCompany($iduser){
         if (is_int($iduser)){
-            $userLevel = UseraclQuery::create()->findByIduser($iduser);
+            $userLevel = BranchUserAclQuery::create()->findByIduser($iduser);
             foreach($userLevel as $level){
                 if($level->getModuleName() == "company"){
                     return (int)$level->getUserAccesslevel();
@@ -25,7 +25,7 @@ class SessionManager {
         
 	public static function getUserLevelToSales($iduser){
         if (is_int($iduser)){
-            $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
+            $userLevel = BranchUserAclQuery::create()->filterByIduser($iduser)->find();
             foreach($userLevel as $level){
                 if($level->getModuleName() == "sales"){
                     return (int) $level->getUserAccesslevel();
@@ -37,7 +37,7 @@ class SessionManager {
         
 	public static function getUserLevelToContents($iduser){
         if (is_int($iduser)){
-            $userLevel = UseraclQuery::create()->filterByIduser($iduser)->find();
+            $userLevel = BranchUserAclQuery::create()->filterByIduser($iduser)->find();
             foreach($userLevel as $level){
                 if($level->getModuleName() == "contents"){
                     return (int) $level->getUserAccesslevel();
