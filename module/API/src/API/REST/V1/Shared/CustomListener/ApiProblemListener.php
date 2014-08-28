@@ -194,23 +194,38 @@ class ApiProblemListener implements ListenerAggregateInterface
                     if($requestHeaders->get('Content-Type') == null){
 
                     }else{
-                        $getContentType = $requestHeaders->get('Content-Type')->getMediaType();
-                        $getContentBody = $request->getContent($getContentType);
 
-                        // Validate that the Body ​​are of type json
-                        $decodeJson = json_decode($getContentBody);
-                        if($decodeJson == null){
-
-                            $response->setStatusCode(Response::STATUS_CODE_400);
-                            $responseHeaders->addHeaderLine('Message', 'Sintax Error');
+                        if($request->getMethod() == "GET"){
+                            $response->setStatusCode(Response::STATUS_CODE_500);
                             $statusCode = $response->getStatusCode();
 
                             $body = array(
-                                'HTTP Status' => $statusCode,
-                                'Title' => 'Bad Request' ,
-                                'Details' => 'JSON Sintax Error',
+                                'HTTP Status' => $statusCode ,
+                                'Title' => 'Internal Server Error' ,
                                 'More Info' => 'http://rest.api.buybuy.com.mx/docs'
                             );
+                        }
+
+                        if($request->getMethod() == "POST"){
+
+                            $getContentType = $requestHeaders->get('Content-Type')->getMediaType();
+                            $getContentBody = $request->getContent($getContentType);
+
+                            // Validate that the Body ​​are of type json
+                            $decodeJson = json_decode($getContentBody);
+                            if($decodeJson == null){
+
+                                $response->setStatusCode(Response::STATUS_CODE_400);
+                                $responseHeaders->addHeaderLine('Message', 'Sintax Error');
+                                $statusCode = $response->getStatusCode();
+
+                                $body = array(
+                                    'HTTP Status' => $statusCode,
+                                    'Title' => 'Bad Request' ,
+                                    'Details' => 'JSON Sintax Error',
+                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                );
+                            }
                         }
                     }
                     $jsonModel = new JsonModel($body);
