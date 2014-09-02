@@ -33,16 +33,22 @@ class DepartmentForm extends Form
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idcompany',
-            'options' => array(
-                'label' => 'idcompany'
-            ),
-        ));
-        $this->add(array(
-            'type' => 'Hidden',
             'name' => 'department_name',
             'options' => array(
-                'label' => 'department_name'
+                'label' => 'department name'
+            ),
+        ));
+        
+        $this->add(array(
+            'type' => 'Select',
+            'name' => 'department_type',
+            'options' => array(
+                'disable_inarray_validator' => true,
+                'value_options' => array(
+                    'global' => 'global',
+                    'local' => 'local',
+                ),
+                'label' => 'department type'
             ),
         ));
     }

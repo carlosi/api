@@ -152,7 +152,7 @@ class ResourceManager{
     public static function getModule($resource){
         // - autoload_classmap.php //
         require __DIR__ . '/../../../../../../autoload_classmap.php';
-
+        
         foreach($className as $key => $value){
             if(substr_count($key, $resource)){
                 if(substr_count($key, "Company\\".$resource)){

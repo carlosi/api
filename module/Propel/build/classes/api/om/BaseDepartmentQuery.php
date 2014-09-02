@@ -352,7 +352,7 @@ abstract class BaseDepartmentQuery extends ModelCriteria
     {
         if ($branchdepartment instanceof Branchdepartment) {
             return $this
-                ->addUsingAlias(DepartmentPeer::IDDEPARTMENT, $branchdepartment->getIddepartament(), $comparison);
+                ->addUsingAlias(DepartmentPeer::IDDEPARTMENT, $branchdepartment->getIddepartment(), $comparison);
         } elseif ($branchdepartment instanceof PropelObjectCollection) {
             return $this
                 ->useBranchdepartmentQuery()

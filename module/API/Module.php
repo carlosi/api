@@ -15,8 +15,9 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
 // - Shared - //
-use API\REST\V1\Shared\CustomListener\TokenListener;
 use API\REST\V1\Shared\CustomListener\ApiProblemListener;
+use API\REST\V1\Shared\CustomListener\TokenListener;
+use API\REST\V1\Shared\CustomListener\ResourceListener;
 use API\REST\V1\Shared\CustomListener\ContentTypeListener;
 
 /**
@@ -35,12 +36,18 @@ class Module
         
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        
-        //ApiProblemListener
-        $apiProblemListener = new ApiProblemListener();
-        $apiProblemListener->attach($eventManager);
 
+
+        //ApiProblemListener
+        //$apiProblemListener = new ApiProblemListener();
+        //$apiProblemListener->attach($eventManager);
+
+        //TokenListener
         $tokenListener = new TokenListener();
+        $tokenListener->attach($eventManager);
+
+        //ResourceListener
+        $tokenListener = new ResourceListener();
         $tokenListener->attach($eventManager);
 
         //ContentTypeListener

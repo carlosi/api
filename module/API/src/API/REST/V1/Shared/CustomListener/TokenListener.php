@@ -62,14 +62,15 @@ class TokenListener implements ListenerAggregateInterface {
      */
     //Se toma desiciones personales para la aplicación
     public function onDispatch(MvcEvent $e){
-        define('RESOURCE',$e->getRouteMatch()->getMatchedRouteName());
+
         define('API_VERSION', $e->getRouteMatch()->getParam('version'));
         define('TYPE_RESPONSE', $e->getRouteMatch()->getParam('typeResponse'));
         define('URL_API_DOCS', 'http://api.rest.buybuy.com.mx/docs');
         define('URL_API', 'http://api.rest.buybuy.com.mx');
 
         if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
-            $token = $e->getRouteMatch()->getParam('token') ? $e->getRouteMatch()->getParam('token') : null;
+            $token = $e->getRequest()->getHeader('Authorization') ? $e->getRequest()->getHeader('Authorization')->getFieldValue() : null;
+
             if(ResourceManager::TokenIsValid($token)){
 
             }else{

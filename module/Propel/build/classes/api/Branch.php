@@ -377,7 +377,7 @@ class Branch extends BaseBranch
         );
         switch(TYPE_RESPONSE){
             case "xml" :{
-                $response['branches'] = array(
+                    $response['branches'] = array(
                     'branch' => $branchArray
                 );
                 break;

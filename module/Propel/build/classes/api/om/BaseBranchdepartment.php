@@ -42,10 +42,10 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
     protected $idbranch;
 
     /**
-     * The value for the iddepartament field.
+     * The value for the iddepartment field.
      * @var        int
      */
-    protected $iddepartament;
+    protected $iddepartment;
 
     /**
      * @var        Department
@@ -100,14 +100,14 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [iddepartament] column value.
+     * Get the [iddepartment] column value.
      *
      * @return int
      */
-    public function getIddepartament()
+    public function getIddepartment()
     {
 
-        return $this->iddepartament;
+        return $this->iddepartment;
     }
 
     /**
@@ -157,19 +157,19 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
     } // setIdbranch()
 
     /**
-     * Set the value of [iddepartament] column.
+     * Set the value of [iddepartment] column.
      *
      * @param  int $v new value
      * @return Branchdepartment The current object (for fluent API support)
      */
-    public function setIddepartament($v)
+    public function setIddepartment($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->iddepartament !== $v) {
-            $this->iddepartament = $v;
+        if ($this->iddepartment !== $v) {
+            $this->iddepartment = $v;
             $this->modifiedColumns[] = BranchdepartmentPeer::IDDEPARTAMENT;
         }
 
@@ -179,7 +179,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
 
 
         return $this;
-    } // setIddepartament()
+    } // setIddepartment()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -215,7 +215,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
 
             $this->idbranchdepartment = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->idbranch = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->iddepartament = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+            $this->iddepartment = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -251,7 +251,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
         if ($this->aBranch !== null && $this->idbranch !== $this->aBranch->getIdbranch()) {
             $this->aBranch = null;
         }
-        if ($this->aDepartment !== null && $this->iddepartament !== $this->aDepartment->getIddepartment()) {
+        if ($this->aDepartment !== null && $this->iddepartment !== $this->aDepartment->getIddepartment()) {
             $this->aDepartment = null;
         }
     } // ensureConsistency
@@ -471,7 +471,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
             $modifiedColumns[':p' . $index++]  = '`idbranch`';
         }
         if ($this->isColumnModified(BranchdepartmentPeer::IDDEPARTAMENT)) {
-            $modifiedColumns[':p' . $index++]  = '`iddepartament`';
+            $modifiedColumns[':p' . $index++]  = '`iddepartment`';
         }
 
         $sql = sprintf(
@@ -490,8 +490,8 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
                     case '`idbranch`':
                         $stmt->bindValue($identifier, $this->idbranch, PDO::PARAM_INT);
                         break;
-                    case '`iddepartament`':
-                        $stmt->bindValue($identifier, $this->iddepartament, PDO::PARAM_INT);
+                    case '`iddepartment`':
+                        $stmt->bindValue($identifier, $this->iddepartment, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -652,7 +652,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
                 return $this->getIdbranch();
                 break;
             case 2:
-                return $this->getIddepartament();
+                return $this->getIddepartment();
                 break;
             default:
                 return null;
@@ -685,7 +685,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getIdbranchdepartment(),
             $keys[1] => $this->getIdbranch(),
-            $keys[2] => $this->getIddepartament(),
+            $keys[2] => $this->getIddepartment(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -740,7 +740,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
                 $this->setIdbranch($value);
                 break;
             case 2:
-                $this->setIddepartament($value);
+                $this->setIddepartment($value);
                 break;
         } // switch()
     }
@@ -768,7 +768,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setIdbranchdepartment($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setIdbranch($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setIddepartament($arr[$keys[2]]);
+        if (array_key_exists($keys[2], $arr)) $this->setIddepartment($arr[$keys[2]]);
     }
 
     /**
@@ -782,7 +782,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
 
         if ($this->isColumnModified(BranchdepartmentPeer::IDBRANCHDEPARTMENT)) $criteria->add(BranchdepartmentPeer::IDBRANCHDEPARTMENT, $this->idbranchdepartment);
         if ($this->isColumnModified(BranchdepartmentPeer::IDBRANCH)) $criteria->add(BranchdepartmentPeer::IDBRANCH, $this->idbranch);
-        if ($this->isColumnModified(BranchdepartmentPeer::IDDEPARTAMENT)) $criteria->add(BranchdepartmentPeer::IDDEPARTAMENT, $this->iddepartament);
+        if ($this->isColumnModified(BranchdepartmentPeer::IDDEPARTAMENT)) $criteria->add(BranchdepartmentPeer::IDDEPARTAMENT, $this->iddepartment);
 
         return $criteria;
     }
@@ -847,7 +847,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setIdbranch($this->getIdbranch());
-        $copyObj->setIddepartament($this->getIddepartament());
+        $copyObj->setIddepartment($this->getIddepartment());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -916,9 +916,9 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
     public function setDepartment(Department $v = null)
     {
         if ($v === null) {
-            $this->setIddepartament(NULL);
+            $this->setIddepartment(NULL);
         } else {
-            $this->setIddepartament($v->getIddepartment());
+            $this->setIddepartment($v->getIddepartment());
         }
 
         $this->aDepartment = $v;
@@ -944,8 +944,8 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
      */
     public function getDepartment(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aDepartment === null && ($this->iddepartament !== null) && $doQuery) {
-            $this->aDepartment = DepartmentQuery::create()->findPk($this->iddepartament, $con);
+        if ($this->aDepartment === null && ($this->iddepartment !== null) && $doQuery) {
+            $this->aDepartment = DepartmentQuery::create()->findPk($this->iddepartment, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
@@ -1017,7 +1017,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
     {
         $this->idbranchdepartment = null;
         $this->idbranch = null;
-        $this->iddepartament = null;
+        $this->iddepartment = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;

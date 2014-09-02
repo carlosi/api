@@ -40,7 +40,7 @@ class BranchdepartmentTableMap extends TableMap
         // columns
         $this->addPrimaryKey('idbranchdepartment', 'Idbranchdepartment', 'INTEGER', true, null, null);
         $this->addForeignKey('idbranch', 'Idbranch', 'INTEGER', 'branch', 'idbranch', true, null, null);
-        $this->addForeignKey('iddepartament', 'Iddepartament', 'INTEGER', 'department', 'iddepartment', true, null, null);
+        $this->addForeignKey('iddepartment', 'Iddepartment', 'INTEGER', 'department', 'iddepartment', true, null, null);
         // validators
     } // initialize()
 
@@ -49,7 +49,7 @@ class BranchdepartmentTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Department', 'Department', RelationMap::MANY_TO_ONE, array('iddepartament' => 'iddepartment', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Department', 'Department', RelationMap::MANY_TO_ONE, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Branch', 'Branch', RelationMap::MANY_TO_ONE, array('idbranch' => 'idbranch', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 

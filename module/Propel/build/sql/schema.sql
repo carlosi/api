@@ -146,12 +146,12 @@ CREATE TABLE `branchdepartment`
 (
     `idbranchdepartment` INTEGER NOT NULL AUTO_INCREMENT,
     `idbranch` INTEGER NOT NULL,
-    `iddepartament` INTEGER NOT NULL,
+    `iddepartment` INTEGER NOT NULL,
     PRIMARY KEY (`idbranchdepartment`),
     INDEX `idbranch` (`idbranch`),
-    INDEX `iddepartament` (`iddepartament`),
+    INDEX `iddepartment` (`iddepartment`),
     CONSTRAINT `idbranch_branchdepartment`
-        FOREIGN KEY (`iddepartament`)
+        FOREIGN KEY (`iddepartment`)
         REFERENCES `department` (`iddepartment`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,

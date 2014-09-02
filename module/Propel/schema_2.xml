@@ -370,18 +370,18 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="departamentmember" phpName="Departamentmember" idMethod="native">
-    <column name="iddepartamentmember" phpName="Iddepartamentmember" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="iddepartament" phpName="Iddepartament" type="INTEGER" required="true"/>
+  <table name="departmentmember" phpName="Departamentmember" idMethod="native">
+    <column name="iddepartmentmember" phpName="Iddepartmentmember" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
-    <foreign-key foreignTable="department" name="iddepartament_departamentmember" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iddepartament" foreign="iddepartment"/>
+    <foreign-key foreignTable="department" name="iddepartment_departmentmember" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iddepartment" foreign="iddepartment"/>
     </foreign-key>
-    <foreign-key foreignTable="user" name="iduser_departamentmember" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="user" name="iduser_departmentmember" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="iduser" foreign="iduser"/>
     </foreign-key>
-    <index name="iddepartament">
-      <index-column name="iddepartament"/>
+    <index name="iddepartment">
+      <index-column name="iddepartment"/>
     </index>
     <index name="iduser">
       <index-column name="iduser"/>
@@ -393,8 +393,8 @@
   <table name="department" phpName="Department" idMethod="native">
     <column name="iddepartment" phpName="Iddepartment" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="idcompany" phpName="Idcompany" type="INTEGER" required="true"/>
-    <column name="departament_name" phpName="DepartamentName" type="VARCHAR" size="245" required="true"/>
-    <foreign-key foreignTable="company" name="departament_idcompany" onDelete="CASCADE" onUpdate="CASCADE">
+    <column name="department_name" phpName="DepartamentName" type="VARCHAR" size="245" required="true"/>
+    <foreign-key foreignTable="company" name="department_idcompany" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idcompany" foreign="idcompany"/>
     </foreign-key>
     <index name="idcompany">
@@ -997,17 +997,17 @@
   </table>
   <table name="project" phpName="Project" idMethod="native">
     <column name="idproject" phpName="Idproject" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="iddepartament" phpName="Iddepartament" type="INTEGER" required="true"/>
+    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
     <column name="project_dependency" phpName="ProjectDependency" type="INTEGER" required="true"/>
     <column name="project_name" phpName="ProjectName" type="VARCHAR" size="245" required="false"/>
     <foreign-key foreignTable="project" name="project_dependency" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="project_dependency" foreign="idproject"/>
     </foreign-key>
-    <foreign-key foreignTable="department" name="project_iddepartament" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iddepartament" foreign="iddepartment"/>
+    <foreign-key foreignTable="department" name="project_iddepartment" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iddepartment" foreign="iddepartment"/>
     </foreign-key>
-    <index name="iddepartament">
-      <index-column name="iddepartament"/>
+    <index name="iddepartment">
+      <index-column name="iddepartment"/>
     </index>
     <index name="project_dependency">
       <index-column name="project_dependency"/>

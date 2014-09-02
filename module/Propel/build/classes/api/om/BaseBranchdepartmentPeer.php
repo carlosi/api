@@ -38,8 +38,8 @@ abstract class BaseBranchdepartmentPeer
     /** the column name for the idbranch field */
     const IDBRANCH = 'branchdepartment.idbranch';
 
-    /** the column name for the iddepartament field */
-    const IDDEPARTAMENT = 'branchdepartment.iddepartament';
+    /** the column name for the iddepartment field */
+    const IDDEPARTAMENT = 'branchdepartment.iddepartment';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -60,11 +60,11 @@ abstract class BaseBranchdepartmentPeer
      * e.g. BranchdepartmentPeer::$fieldNames[BranchdepartmentPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idbranchdepartment', 'Idbranch', 'Iddepartament', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idbranchdepartment', 'idbranch', 'iddepartament', ),
+        BasePeer::TYPE_PHPNAME => array ('Idbranchdepartment', 'Idbranch', 'Iddepartment', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idbranchdepartment', 'idbranch', 'iddepartment', ),
         BasePeer::TYPE_COLNAME => array (BranchdepartmentPeer::IDBRANCHDEPARTMENT, BranchdepartmentPeer::IDBRANCH, BranchdepartmentPeer::IDDEPARTAMENT, ),
         BasePeer::TYPE_RAW_COLNAME => array ('IDBRANCHDEPARTMENT', 'IDBRANCH', 'IDDEPARTAMENT', ),
-        BasePeer::TYPE_FIELDNAME => array ('idbranchdepartment', 'idbranch', 'iddepartament', ),
+        BasePeer::TYPE_FIELDNAME => array ('idbranchdepartment', 'idbranch', 'iddepartment', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -75,11 +75,11 @@ abstract class BaseBranchdepartmentPeer
      * e.g. BranchdepartmentPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idbranchdepartment' => 0, 'Idbranch' => 1, 'Iddepartament' => 2, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idbranchdepartment' => 0, 'idbranch' => 1, 'iddepartament' => 2, ),
+        BasePeer::TYPE_PHPNAME => array ('Idbranchdepartment' => 0, 'Idbranch' => 1, 'Iddepartment' => 2, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idbranchdepartment' => 0, 'idbranch' => 1, 'iddepartment' => 2, ),
         BasePeer::TYPE_COLNAME => array (BranchdepartmentPeer::IDBRANCHDEPARTMENT => 0, BranchdepartmentPeer::IDBRANCH => 1, BranchdepartmentPeer::IDDEPARTAMENT => 2, ),
         BasePeer::TYPE_RAW_COLNAME => array ('IDBRANCHDEPARTMENT' => 0, 'IDBRANCH' => 1, 'IDDEPARTAMENT' => 2, ),
-        BasePeer::TYPE_FIELDNAME => array ('idbranchdepartment' => 0, 'idbranch' => 1, 'iddepartament' => 2, ),
+        BasePeer::TYPE_FIELDNAME => array ('idbranchdepartment' => 0, 'idbranch' => 1, 'iddepartment' => 2, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -160,7 +160,7 @@ abstract class BaseBranchdepartmentPeer
         } else {
             $criteria->addSelectColumn($alias . '.idbranchdepartment');
             $criteria->addSelectColumn($alias . '.idbranch');
-            $criteria->addSelectColumn($alias . '.iddepartament');
+            $criteria->addSelectColumn($alias . '.iddepartment');
         }
     }
 

@@ -107,9 +107,9 @@
   <table name="branchdepartment" phpName="Branchdepartment" idMethod="native">
     <column name="idbranchdepartment" phpName="Idbranchdepartment" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="idbranch" phpName="Idbranch" type="INTEGER" required="true"/>
-    <column name="iddepartament" phpName="Iddepartament" type="INTEGER" required="true"/>
+    <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
     <foreign-key foreignTable="department" name="idbranch_branchdepartment" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iddepartament" foreign="iddepartment"/>
+      <reference local="iddepartment" foreign="iddepartment"/>
     </foreign-key>
     <foreign-key foreignTable="branch" name="iddepartment_branchdepartment" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idbranch" foreign="idbranch"/>
@@ -117,8 +117,8 @@
     <index name="idbranch">
       <index-column name="idbranch"/>
     </index>
-    <index name="iddepartament">
-      <index-column name="iddepartament"/>
+    <index name="iddepartment">
+      <index-column name="iddepartment"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>

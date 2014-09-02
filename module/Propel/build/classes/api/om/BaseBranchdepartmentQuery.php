@@ -8,11 +8,11 @@
  *
  * @method BranchdepartmentQuery orderByIdbranchdepartment($order = Criteria::ASC) Order by the idbranchdepartment column
  * @method BranchdepartmentQuery orderByIdbranch($order = Criteria::ASC) Order by the idbranch column
- * @method BranchdepartmentQuery orderByIddepartament($order = Criteria::ASC) Order by the iddepartament column
+ * @method BranchdepartmentQuery orderByIddepartment($order = Criteria::ASC) Order by the iddepartment column
  *
  * @method BranchdepartmentQuery groupByIdbranchdepartment() Group by the idbranchdepartment column
  * @method BranchdepartmentQuery groupByIdbranch() Group by the idbranch column
- * @method BranchdepartmentQuery groupByIddepartament() Group by the iddepartament column
+ * @method BranchdepartmentQuery groupByIddepartment() Group by the iddepartment column
  *
  * @method BranchdepartmentQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method BranchdepartmentQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -30,11 +30,11 @@
  * @method Branchdepartment findOneOrCreate(PropelPDO $con = null) Return the first Branchdepartment matching the query, or a new Branchdepartment object populated from the query conditions when no match is found
  *
  * @method Branchdepartment findOneByIdbranch(int $idbranch) Return the first Branchdepartment filtered by the idbranch column
- * @method Branchdepartment findOneByIddepartament(int $iddepartament) Return the first Branchdepartment filtered by the iddepartament column
+ * @method Branchdepartment findOneByIddepartment(int $iddepartment) Return the first Branchdepartment filtered by the iddepartment column
  *
  * @method array findByIdbranchdepartment(int $idbranchdepartment) Return Branchdepartment objects filtered by the idbranchdepartment column
  * @method array findByIdbranch(int $idbranch) Return Branchdepartment objects filtered by the idbranch column
- * @method array findByIddepartament(int $iddepartament) Return Branchdepartment objects filtered by the iddepartament column
+ * @method array findByIddepartment(int $iddepartment) Return Branchdepartment objects filtered by the iddepartment column
  *
  * @package    propel.generator.api.om
  */
@@ -142,7 +142,7 @@ abstract class BaseBranchdepartmentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idbranchdepartment`, `idbranch`, `iddepartament` FROM `branchdepartment` WHERE `idbranchdepartment` = :p0';
+        $sql = 'SELECT `idbranchdepartment`, `idbranch`, `iddepartment` FROM `branchdepartment` WHERE `idbranchdepartment` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -318,19 +318,19 @@ abstract class BaseBranchdepartmentQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the iddepartament column
+     * Filter the query on the iddepartment column
      *
      * Example usage:
      * <code>
-     * $query->filterByIddepartament(1234); // WHERE iddepartament = 1234
-     * $query->filterByIddepartament(array(12, 34)); // WHERE iddepartament IN (12, 34)
-     * $query->filterByIddepartament(array('min' => 12)); // WHERE iddepartament >= 12
-     * $query->filterByIddepartament(array('max' => 12)); // WHERE iddepartament <= 12
+     * $query->filterByIddepartment(1234); // WHERE iddepartment = 1234
+     * $query->filterByIddepartment(array(12, 34)); // WHERE iddepartment IN (12, 34)
+     * $query->filterByIddepartment(array('min' => 12)); // WHERE iddepartment >= 12
+     * $query->filterByIddepartment(array('max' => 12)); // WHERE iddepartment <= 12
      * </code>
      *
      * @see       filterByDepartment()
      *
-     * @param     mixed $iddepartament The value to use as filter.
+     * @param     mixed $iddepartment The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -338,16 +338,16 @@ abstract class BaseBranchdepartmentQuery extends ModelCriteria
      *
      * @return BranchdepartmentQuery The current query, for fluid interface
      */
-    public function filterByIddepartament($iddepartament = null, $comparison = null)
+    public function filterByIddepartment($iddepartment = null, $comparison = null)
     {
-        if (is_array($iddepartament)) {
+        if (is_array($iddepartment)) {
             $useMinMax = false;
-            if (isset($iddepartament['min'])) {
-                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartament['min'], Criteria::GREATER_EQUAL);
+            if (isset($iddepartment['min'])) {
+                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartment['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($iddepartament['max'])) {
-                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartament['max'], Criteria::LESS_EQUAL);
+            if (isset($iddepartment['max'])) {
+                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartment['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -358,7 +358,7 @@ abstract class BaseBranchdepartmentQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartament, $comparison);
+        return $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartment, $comparison);
     }
 
     /**
