@@ -66,8 +66,15 @@ class ResourceManager{
             $namespaceResource[$key] = '\\'.$key;
         }
 
-         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-        $module = ResourceManager::getModule($resource);
+        if(RESOURCE_CHILD!=null){
+            $module = MODULE_RESOURCE;
+            if(class_exists(ucfirst(RESOURCE_CHILD))){
+                $module = MODULE_RESOURCE_CHILD;
+            }
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
 
         //Creamos el objeto de las FormPostPut
         $namespaceResource = array_search('\\API\\REST\\V1\\ACL\\'.$module.'\\'.$resource.'\\Form\\'.$resource.'Form', $namespaceResource);
@@ -82,6 +89,7 @@ class ResourceManager{
      * @return mixed
      */
     public static function getResourceFormGET($resource){
+
         // - autoload_classmap.php //
         require __DIR__ . '/../../../../../../autoload_classmap.php';
         $namespaceResource = array();
@@ -89,9 +97,17 @@ class ResourceManager{
             $namespaceResource[$key] = '\\'.$key;
         }
 
-        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-        $module = ResourceManager::getModule($resource);
-
+        if(RESOURCE_CHILD!=null){
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+            if(class_exists(ucfirst(RESOURCE_CHILD))){
+                // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+                $module = MODULE_RESOURCE_CHILD;
+            }
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
         //Creamos el objeto de las FormPostPut
         $namespaceResource = array_search('\\API\\REST\\V1\\ACL\\'.$module.'\\'.$resource.'\\Form\\'.$resource.'FormGET', $namespaceResource);
         $objetResourceForm = new $namespaceResource;
@@ -152,7 +168,7 @@ class ResourceManager{
     public static function getModule($resource){
         // - autoload_classmap.php //
         require __DIR__ . '/../../../../../../autoload_classmap.php';
-        
+
         foreach($className as $key => $value){
             if(substr_count($key, $resource)){
                 if(substr_count($key, "Company\\".$resource)){
@@ -206,8 +222,11 @@ class ResourceManager{
             'Shipping' => 'Shipping',
         );
 
-        return $array[$module];
-
+        if(isset($module)){
+            return $array[$module];
+        }else{
+            return false;
+        }
     }
 
     /**

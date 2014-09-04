@@ -17,8 +17,8 @@ use API\REST\V1\ACL\Company\Client\Form\ClientForm;
  * Class ClientFormGET
  * @package API\REST\V1\ACL\Company\Client\Form
  */
-class ClientFormGET{
-
+class ClientFormGET
+{
     /**
      * @param $userLevel
      * @return ClientForm
@@ -67,5 +67,5 @@ class ClientFormGET{
         return $clientForm;
     }
      
-    }
+}
     

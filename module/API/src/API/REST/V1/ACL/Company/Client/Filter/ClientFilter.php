@@ -119,9 +119,29 @@ class ClientFilter implements InputFilterAwareInterface
                 ),
             ));
 
-            // client_fullname: DataType = VARCHAR(245), NN = true
+            // client_firstname: DataType = VARCHAR(245), NN = true
             $inputFilter->add(array(
-                'name'     => 'client_fullname',
+                'name'     => 'client_firstname',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 245,
+                        ),
+                    ),
+                ),
+            ));
+
+            // client_lastname: DataType = VARCHAR(245), NN = true
+            $inputFilter->add(array(
+                'name'     => 'client_lastname',
                 'required' => true,
                 'filters'  => array(
                     array('name' => 'StripTags'),

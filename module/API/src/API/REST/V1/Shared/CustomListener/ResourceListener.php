@@ -67,34 +67,103 @@ class ResourceListener implements ListenerAggregateInterface {
 
         define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
         define('RESOURCE_CHILD', $e->getRouteMatch()->getParam('resourceChild'));
-        
+
         if(RESOURCE != null){
             $id = $e->getRouteMatch()->getParam('id');
-            if(RESOURCE_CHILD != null){      
-                if($id != null){
-                    define('ID_RESOURCE', $id);
-                    define('ID_RESOURCE_CHILD', $e->getRouteMatch()->getParam('idChild'));
-                    if(ID_RESOURCE_CHILD!=null){
-                        $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                        $e->getRouteMatch()->setParam('function', 'getList');
+            if(RESOURCE_CHILD != null){
+                // La inicial de nuestro string la hacemos mayuscula
+                $resourcenameChild = RESOURCE_CHILD;
+                $resourceNameChild = ucfirst($resourcenameChild);
+                // Verificamos que exista el recurso
+                $hasResourceChild = ResourceManager::getModule($resourceNameChild);
+                // Si sí existe el recurso
+                if($hasResourceChild){
+                    if($id != null){
+                        //Hacemos de nuestro Recurso Child un recurso concatenado con nuestro parent (ejemplo: Branchdepartment)
+                        $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                        $resourceNameChild = ucfirst($resourcenameChild);
+
+                        define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                        define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                        define('MODULE_RESOURCE_CHILD', $hasResourceChild);
+                        define('ID_RESOURCE', $id);
+                        define('ID_RESOURCE_CHILD', $e->getRouteMatch()->getParam('idChild'));
+
+                        if(ID_RESOURCE_CHILD!=null){
+                            $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                            $e->getRouteMatch()->setParam('function', 'getList');
+                        }else{
+                            $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                            $e->getRouteMatch()->setParam('action', 'getListChild');
+                        }
                     }else{
-                        $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                        $e->getRouteMatch()->setParam('action', 'getListChild');
+                        $response->setStatusCode(Response::STATUS_CODE_409);
+                        $statusCode = $response->getStatusCode();
+
+                        $body = array(
+                            'HTTP Status' => $statusCode,
+                            'Title' => 'Conflict' ,
+                            'Details' => 'The request could not be processed because resource '.RESOURCE.' need an id',
+                            'More Info' => 'http://rest.api.buybuy.com.mx/docs/'.RESOURCE
+                        );
+                        $jsonModel = new JsonModel($body);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel)->stopPropagation();
                     }
                 }else{
-                    $response->setStatusCode(Response::STATUS_CODE_409);
-                    $statusCode = $response->getStatusCode();
+                    // La inicial de nuestro string la hacemos mayuscula
+                    $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                    $resourceNameChild = ucfirst($resourcenameChild);
+                    // Verificamos que exista el recurso
+                    $hasResourceChild = ResourceManager::getModule($resourceNameChild);
+                    // Si sí existe el recurso
+                    if($hasResourceChild){
+                        if($id != null){
 
-                    $body = array(
-                        'HTTP Status' => $statusCode,
-                        'Title' => 'Conflict' ,
-                        'Details' => 'The request could not be processed because resource '.RESOURCE.' need an id',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs/'.RESOURCE
-                    );
-                    $jsonModel = new JsonModel($body);
-                    $jsonModel->setTerminal(true);
-                    $e->setResult($jsonModel);
-                    $e->setViewModel($jsonModel)->stopPropagation();
+                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                            define('MODULE_RESOURCE_CHILD', $hasResourceChild);
+                            define('ID_RESOURCE', $id);
+                            define('ID_RESOURCE_CHILD', $e->getRouteMatch()->getParam('idChild'));
+
+                            if(ID_RESOURCE_CHILD!=null){
+                                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                $e->getRouteMatch()->setParam('function', 'getList');
+                            }else{
+                                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                $e->getRouteMatch()->setParam('action', 'getListChild');
+                            }
+                        }else{
+                            $response->setStatusCode(Response::STATUS_CODE_409);
+                            $statusCode = $response->getStatusCode();
+
+                            $body = array(
+                                'HTTP Status' => $statusCode,
+                                'Title' => 'Conflict' ,
+                                'Details' => 'The request could not be processed because resource '.RESOURCE.' need an id',
+                                'More Info' => 'http://rest.api.buybuy.com.mx/docs/'.RESOURCE
+                            );
+                            $jsonModel = new JsonModel($body);
+                            $jsonModel->setTerminal(true);
+                            $e->setResult($jsonModel);
+                            $e->setViewModel($jsonModel)->stopPropagation();
+                        }
+                    }else{
+                        $response->setStatusCode(Response::STATUS_CODE_404);
+                        $statusCode = $response->getStatusCode();
+
+                        $body = array(
+                            'HTTP Status' => $statusCode,
+                            'Title' => 'Not Found' ,
+                            'Details' => 'Resource not found',
+                            'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        );
+                        $jsonModel = new JsonModel($body);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel)->stopPropagation();
+                    }
                 }
             }
         }else{
@@ -112,6 +181,8 @@ class ResourceListener implements ListenerAggregateInterface {
             $e->setResult($jsonModel);
             $e->setViewModel($jsonModel)->stopPropagation();
         }
+
+        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
     }
 }
 ?>

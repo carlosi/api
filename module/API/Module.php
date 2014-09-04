@@ -39,8 +39,8 @@ class Module
 
 
         //ApiProblemListener
-        //$apiProblemListener = new ApiProblemListener();
-        //$apiProblemListener->attach($eventManager);
+        $apiProblemListener = new ApiProblemListener();
+        $apiProblemListener->attach($eventManager);
 
         //TokenListener
         $tokenListener = new TokenListener();

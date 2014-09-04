@@ -71,25 +71,81 @@ class TokenListener implements ListenerAggregateInterface {
         if ($e->getRouteMatch()->getMatchedRouteName() != 'login'){
             $token = $e->getRequest()->getHeader('Authorization') ? $e->getRequest()->getHeader('Authorization')->getFieldValue() : null;
 
-            if(ResourceManager::TokenIsValid($token)){
+            if($token){
+                if(ResourceManager::TokenIsValid($token)){
 
+                }else{
+                    $response = $e->getResponse();
+                    $response->setStatusCode(Response::STATUS_CODE_401);
+                    $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
+
+                    $body = array(
+                        'HTTP_Status' => '401' ,
+                        'Title' => 'Unauthorized' ,
+                        'Details' => 'Invalid or expired token',
+                        'More_Info' => URL_API_DOCS
+                    );
+
+                    switch(TYPE_RESPONSE){
+                        case "xml":{
+                            // Create the config object
+                            $writer = new \Zend\Config\Writer\Xml();
+                            $xmlModel = $response->setContent($writer->toString($body));
+                            $e->setResult($jsonModel);
+                            $e->setViewModel($jsonModel)->stopPropagation();
+                            break;
+                        }
+                        case "json":{
+                            $jsonModel = new JsonModel($body);
+                            $jsonModel->setTerminal(true);
+                            $e->setResult($jsonModel);
+                            $e->setViewModel($jsonModel)->stopPropagation();
+                            break;
+                        }
+                        default: {
+                        $jsonModel = new JsonModel($body);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel)->stopPropagation();
+                        break;
+                        }
+                    }
+                }
             }else{
                 $response = $e->getResponse();
-                $response->setStatusCode(Response::STATUS_CODE_401);
-                $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
-
+                $response->setStatusCode(Response::STATUS_CODE_499);
                 $body = array(
-                    'HTTP Status' => '401' ,
-                    'Title' => 'Unauthorized' ,
-                    'Details' => 'Invalid or expired token',
-                    'More Info' => URL_API_DOCS
+                    'HTTP_Status' => '499' ,
+                    'Title' => 'Token required' ,
+                    'Details' => 'Token is required',
+                    'More_Info' => URL_API_DOCS
                 );
 
-                $jsonModel = new JsonModel($body);
-                $jsonModel->setTerminal(true);
-                $e->setResult($jsonModel);
-                $e->setViewModel($jsonModel)->stopPropagation();
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        // Create the config object
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($body));
+                        $e->stopPropagation();
+                        break;
+                    }
+                    case "json":{
+                        $jsonModel = new JsonModel($body);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel)->stopPropagation();
+                        break;
+                    }
+                    default: {
+                    $jsonModel = new JsonModel($body);
+                    $jsonModel->setTerminal(true);
+                    $e->setResult($jsonModel);
+                    $e->setViewModel($jsonModel)->stopPropagation();
+                    break;
+                    }
+                }
             }
+
         }
     }
 }

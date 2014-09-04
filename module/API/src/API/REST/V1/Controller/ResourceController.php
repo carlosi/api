@@ -196,6 +196,7 @@ class ResourceController extends AbstractRestfulController
      * @return mixed|JsonModel
      */
     public function getList() {
+
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
 
@@ -207,32 +208,64 @@ class ResourceController extends AbstractRestfulController
 
         // Instanciamos el objeto Response, el cual utilizamos en las respuestas
         $response = $this->getResponse();
-        
+
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
-        
+
         if(RESOURCE_CHILD!=null){
-            $resourceName = ucfirst(RESOURCE).RESOURCE_CHILD;
+            $resourceName = NAME_RESOURCE_CHILD;
+            $module = MODULE_RESOURCE_CHILD;
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
         }
-        
-        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-        $module = ResourceManager::getModule($resourceName);
-        
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
-        
+
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
 
+            // Instanciamos nuestro Recurso
+            $resource = ResourceManager::getResource($resourceName);
+
+            if(RESOURCE_CHILD !=null){
+                if(!$resource->isIdValid(ID_RESOURCE,$idCompany)){
+
+                    //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid '.RESOURCE.' id',
+                        ),
+                    );
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                        }
+                    }
+                }
+            }
             // Instanciamos nuestro formulario resourceFormPostPut
             $resourceFormGET = ResourceManager::getResourceFormGET($resourceName);
             $resourceFormGET = $resourceFormGET::init($userLevel);
-                    
+
             if(RESOURCE_CHILD!=null){
-                $resourceFormGET = ResourceManager::getResourceFormGET(ucfirst(RESOURCE_CHILD));
+                $resourceFormGET = ResourceManager::getResourceFormGET(ucfirst($resourceName));
                 $resourceFormGET = $resourceFormGET::init($userLevel);
             }
-            
 
             //Guardamos en un arrglo los campos a los que el usuario va poder tener acceso de acuerdo a su nivel
             $allowedColumns = array();
@@ -245,21 +278,21 @@ class ResourceController extends AbstractRestfulController
             $dir = $this->params()->fromQuery('dir') ? $this->params()->fromQuery('dir')  : 'asc';
             $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.RESOURCE;
             if(RESOURCE_CHILD!=null){
-                $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.RESOURCE_CHILD;
+                $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.LOWER_NAME_RESOURCE_CHILD;
+                if(class_exists(ucfirst(RESOURCE_CHILD))){
+                    $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.LOWER_NAME_RESOURCE_CHILD;
+                }
             }
             $page = (int) $this->params()->fromQuery('page') ? (int)$this->params()->fromQuery('page')  : 1;
             $filters = $this->params()->fromQuery('filter') ? $this->params()->fromQuery('filter') : null;
             if($filters != null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
-            
-            // Instanciamos nuestro Recurso
-            $resource = ResourceManager::getResource($resourceName);
-            
+
             if(RESOURCE_CHILD!=null){
                 $getCollection = $resource->getCollection(ID_RESOURCE,$idCompany, $page, $limit, $filters, $order, $dir);
             }else{
                 $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
             }
-                
+             var_dump($order);
             if(!empty($getCollection['data'])){
                 // Si el recurso que solicitan es Company
                 if(RESOURCE == 'company'){
