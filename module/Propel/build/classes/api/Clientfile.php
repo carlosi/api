@@ -197,11 +197,11 @@ class Clientfile extends BaseClientfile
                 'client_firstname' => $clientQuery['client_firstname'],
                 'client_lastname' => $clientQuery['client_lastname'],
             ),
-            'clientfiles' => $clientfileArray,
+            'files' => $clientfileArray,
         );
         switch(TYPE_RESPONSE){
             case "xml" :{
-                $response['clientfiles'] = array(
+                $response['files'] = array(
                     'file' => $clientfileArray
                 );
                 break;

@@ -1,7 +1,7 @@
 <?php
 
 use API\REST\V1\ACL\Company\Client\Form\ClientFormGET;
-use API\REST\V1\ACL\Company\Clienttax\Form\ClienttaxFormGET;
+use API\REST\V1\ACL\SATMexico\Clienttax\Form\ClienttaxFormGET;
 
 /**
  * Skeleton subclass for representing a row from the 'clienttax' table.
@@ -157,12 +157,12 @@ class Clienttax extends BaseClienttax
 
         foreach ($getCollection['data'] as $item){
 
-            $clienttaxQuery = ClienttaxQuery::create()->filterByIdclientfile($item['idclientfile'])->findOne();
+            $clienttaxQuery = ClienttaxQuery::create()->filterByIdclienttax($item['idclienttax'])->findOne();
             $clienttax = $clienttaxQuery->toArray(BasePeer::TYPE_FIELDNAME);
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/client/'.$clienttax['idclient'].'/file'),
+                    'self' => array('href' => URL_API.'/client/'.$clienttax['idclient'].'/tax'),
                 ),
             );
 
@@ -197,12 +197,12 @@ class Clienttax extends BaseClienttax
                 'client_firstname' => $clientQuery['client_firstname'],
                 'client_lastname' => $clientQuery['client_lastname'],
             ),
-            'clienttaxes' => $clienttaxArray,
+            'taxes' => $clienttaxArray,
         );
         switch(TYPE_RESPONSE){
             case "xml" :{
-                $response['clienttaxes'] = array(
-                    'file' => $clienttaxArray
+                $response['taxes'] = array(
+                    'tax' => $clienttaxArray
                 );
                 break;
             }

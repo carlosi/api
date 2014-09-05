@@ -4,7 +4,7 @@
   * module.config.php
   * BuyBuy
   *
-  * Created by Carlos Esparza on 12/08/2014.
+  * Created by Buybuy on 12/08/2014.
   * Copyright (c) 2014 Buybuy. All rightreserved.
   */
 
@@ -23,11 +23,25 @@ return array(
                     ),
                 ),
             ),
+            // Module Routes Documentation
+            'documentation' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version]/documentation[/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Documentation\Controller\IndexController',
+                        'action'	 => 'index',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                    ),
+                ),
+            ),
             // All Module Routes
             'resources' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route'    => '/v[:version][/:typeResponse][/:resource][/:id][/:resourceChild][/:idChild][/]',
+                    'route'    => '/v[:version][/:typeResponse]/:resource[/:id][/:resourceChild][/:idChild][/]',
                     'defaults' => array(
                         'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
@@ -36,8 +50,8 @@ return array(
                         'idChild' => '[0-9]+',
                         'version' => '1',
                         'typeResponse' => 'xml|json',
-                        'resource' => 'company|branch|client|bankaccount|user|project|order|mxtaxdocument',
-                        'resourceChild' => 'department|address|comment|file|tax|item|bankexpensetransaction|expensecategory',
+                        'resource' => 'company|branch|client|bankaccount|user|project|order|mxtaxdocument|department|marketingchannel|marketingcampaign',
+                        'resourceChild' => 'department|leader|address|comment|file|tax|item|bankexpensetransaction|expensecategory|client',
                     ),
                 ),
             ),
@@ -75,8 +89,9 @@ return array(
     'controllers' => array(
         'invokables' => array(
 
-            'API\REST\V1\Login\Controller\LoginController'    => 'API\REST\V1\Login\Controller\LoginController',
-            'API\REST\V1\Controller\ResourceController'       => 'API\REST\V1\Controller\ResourceController',
+            'API\REST\V1\Login\Controller\LoginController'                  => 'API\REST\V1\Login\Controller\LoginController',
+            'API\REST\V1\Documentation\Controller\IndexController'          => 'API\REST\V1\Documentation\Controller\IndexController',
+            'API\REST\V1\Controller\ResourceController'                     => 'API\REST\V1\Controller\ResourceController',
 
             ),
     ),

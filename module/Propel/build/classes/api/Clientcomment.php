@@ -197,11 +197,11 @@ class Clientcomment extends BaseClientcomment
                 'client_firstname' => $clientQuery['client_firstname'],
                 'client_lastname' => $clientQuery['client_lastname'],
             ),
-            'clientcomments' => $clientcommentArray,
+            'comments' => $clientcommentArray,
         );
         switch(TYPE_RESPONSE){
             case "xml" :{
-                $response['clientcomments'] = array(
+                $response['comments'] = array(
                     'comment' => $clientcommentArray
                 );
                 break;

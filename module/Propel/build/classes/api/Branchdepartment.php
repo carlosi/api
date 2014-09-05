@@ -72,15 +72,12 @@ class Branchdepartment extends BaseBranchdepartment
     }
 
     public function getCollection($idResource,$idCompany, $page, $limit, $filters, $order, $dir){
-        $departmentQuery = new BranchdepartmentQuery();
-
-        //Los Joins
-        $departmentQuery->joinBranch()->joinDepartment();
+        $branchdepartmentQuery = new BranchdepartmentQuery();
 
         //Los Filtros
         if($filters!=null){
             foreach ($filters as $filter){
-                $params = $departmentQuery->getParams();
+                $params = $branchdepartmentQuery->getParams();
                 if(isset($filter['in'])){
                     if(!empty($params)){
                         foreach($params as $param){
@@ -91,47 +88,47 @@ class Branchdepartment extends BaseBranchdepartment
                             }
                         }
                         if($flag){
-                            $departmentQuery->addOr('department'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $branchdepartmentQuery->addOr('department'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }else{
-                            $departmentQuery->addAnd('department.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $branchdepartmentQuery->addAnd('department.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }
                     }else{
-                        $departmentQuery ->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN)->endUse();
+                        $branchdepartmentQuery ->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN)->endUse();
                     }
                 }
                 if(isset($filter['neq'])){
                     if(!empty($params)){
                         foreach($params as $param){
                             if($filter['attribute'] = $param['column']){
-                                $departmentQuery->addOr('department.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
+                                $branchdepartmentQuery->addOr('department.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
                             }
                         }
                     }else{
-                        $departmentQuery->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL)->endUse();
+                        $branchdepartmentQuery->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL)->endUse();
                     }
                 }
                 if(isset($filter['gt'])){
-                    $departmentQuery ->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN)->endUse();
+                    $branchdepartmentQuery->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN)->endUse();
                 }
                 if(isset($filter['lt'])){
-                    $departmentQuery ->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN)->endUse();
+                    $branchdepartmentQuery->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN)->endUse();
                 }
                 if(isset($filter['from']) && isset($filter['to'])){
-                    $departmentQuery->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
+                    $branchdepartmentQuery->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
                         ->add(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['to'], \Criteria::LESS_EQUAL);
                 }
                 if(isset($filter['like'])){
-                    $departmentQuery ->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE)->endUse();
+                    $branchdepartmentQuery->useDepartmentQuery()->filterBy(BasePeer::translateFieldname('department', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE)->endUse();
                 }
             }
         }
         //Order y Dir
         if($order !=null || $dir !=null){
-            $departmentQuery ->orderBy($order, $dir);
+            $branchdepartmentQuery->orderBy($order, $dir);
         }
 
         // Obtenemos el filtrado por medio del idcompany del recurso.
-        $result =  $departmentQuery->useBranchQuery()->filterByIdcompany($idCompany)->filterByIdbranch($idResource)->endUse()->paginate($page,$limit);
+        $result =  $branchdepartmentQuery->useBranchQuery()->filterByIdcompany($idCompany)->filterByIdbranch($idResource)->endUse()->paginate($page,$limit);
 
         $links = array(
             'self' => array('href' => URL_API.'/branch/'.$idResource.'/department?page='.$result->getPage()),

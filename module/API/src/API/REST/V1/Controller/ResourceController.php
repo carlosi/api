@@ -3,7 +3,7 @@
  * ResourceController.php
  * BuyBuy
  *
- * Created by Carlos Esparza on 12/08/2014.
+ * Created by Buybuy on 12/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
@@ -196,7 +196,6 @@ class ResourceController extends AbstractRestfulController
      * @return mixed|JsonModel
      */
     public function getList() {
-
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
 
@@ -219,6 +218,7 @@ class ResourceController extends AbstractRestfulController
             // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
             $module = MODULE_RESOURCE;
         }
+
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
 
@@ -229,6 +229,7 @@ class ResourceController extends AbstractRestfulController
             $resource = ResourceManager::getResource($resourceName);
 
             if(RESOURCE_CHILD !=null){
+
                 if(!$resource->isIdValid(ID_RESOURCE,$idCompany)){
 
                     //Modifiamos el Header de nuestra respuesta
@@ -262,10 +263,6 @@ class ResourceController extends AbstractRestfulController
             $resourceFormGET = ResourceManager::getResourceFormGET($resourceName);
             $resourceFormGET = $resourceFormGET::init($userLevel);
 
-            if(RESOURCE_CHILD!=null){
-                $resourceFormGET = ResourceManager::getResourceFormGET(ucfirst($resourceName));
-                $resourceFormGET = $resourceFormGET::init($userLevel);
-            }
 
             //Guardamos en un arrglo los campos a los que el usuario va poder tener acceso de acuerdo a su nivel
             $allowedColumns = array();
@@ -288,11 +285,11 @@ class ResourceController extends AbstractRestfulController
             if($filters != null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
 
             if(RESOURCE_CHILD!=null){
-                $getCollection = $resource->getCollection(ID_RESOURCE,$idCompany, $page, $limit, $filters, $order, $dir);
+                $getCollection = $resource->getCollection(ID_RESOURCE,$idCompany, $page, $limit, $filters, $order,$dir);
             }else{
                 $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
             }
-             var_dump($order);
+
             if(!empty($getCollection['data'])){
                 // Si el recurso que solicitan es Company
                 if(RESOURCE == 'company'){
@@ -322,14 +319,14 @@ class ResourceController extends AbstractRestfulController
                                 break;
                             }
                             default: {
-                                return new JsonModel($bodyResponse);
-                                break;
+                            return new JsonModel($bodyResponse);
+                            break;
                             }
                         }
                     }
                 }else{
 
-                        $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
+                    $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
                     switch(TYPE_RESPONSE){
                         case "xml":{
                             // Create the config object
@@ -343,8 +340,8 @@ class ResourceController extends AbstractRestfulController
                             break;
                         }
                         default: {
-                            return new JsonModel($bodyResponse);
-                            break;
+                        return new JsonModel($bodyResponse);
+                        break;
                         }
                     }
                     return new JsonModel($Response);
@@ -373,8 +370,8 @@ class ResourceController extends AbstractRestfulController
                         break;
                     }
                     default: {
-                        return new JsonModel($bodyResponse);
-                        break;
+                    return new JsonModel($bodyResponse);
+                    break;
                     }
                 }
             }
@@ -401,13 +398,13 @@ class ResourceController extends AbstractRestfulController
                     break;
                 }
                 default: {
-                    return new JsonModel($bodyResponse);
-                    break;
+                return new JsonModel($bodyResponse);
+                break;
                 }
             }
         }
     }
-    
+
     public function get($id){
 
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
@@ -422,23 +419,65 @@ class ResourceController extends AbstractRestfulController
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
 
-        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-        $module = ResourceManager::getModule($resourceName);
-        
+        if(RESOURCE_CHILD!=null){
+            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+            $resourceName = NAME_RESOURCE_CHILD;
+            $module = MODULE_RESOURCE_CHILD;
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
+
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
-        
+
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
-            
+
             //Instanciamos nuestro recurso
             $resource = ResourceManager::getResource($resourceName);
-            
-            if($resource->isIdValid($id,$idCompany)){
-                              
-                //Obtenemos nuestra entidad
-                $entity = $resource->getEntity($id);
-                
+
+            $isIdValid = $resource->isIdValid($id,$idCompany);
+
+            if($isIdValid){
+
+                if(RESOURCE_CHILD !=null && ID_RESOURCE_CHILD !=null){
+                    //Obtenemos nuestra entidad child
+                    $isIdChildValid = $resource->isIdChildValid($id,ID_RESOURCE_CHILD);
+                    if($isIdChildValid){
+                        $entity = $resource->getEntity(ID_RESOURCE_CHILD);
+                    }else{
+                        //Modifiamos el Header de nuestra respuesta
+                        $response = $this->getResponse();
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        $bodyResponse = array(
+                            'Error' => array(
+                                'HTTP_Status' => 400 . ' Bad Request',
+                                'Title' => 'The request data is invalid',
+                                'Details' => 'Invalid '.RESOURCE_CHILD.' id',
+                            ),
+                        );
+                        switch(TYPE_RESPONSE){
+                            case "xml":{;
+                                $writer = new \Zend\Config\Writer\Xml();
+                                return $response->setContent($writer->toString($bodyResponse));
+                                break;
+                            }
+                            case "json":{
+                                return new JsonModel($bodyResponse);
+                                break;
+                            }
+                            default: {
+                            return new JsonModel($bodyResponse);
+                            break;
+                            }
+                        }
+                    }
+                }else{
+                    //Obtenemos nuestra entidad padre
+                    $entity = $resource->getEntity($id);
+                }
+
                 //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
                 $bodyResponse = $resource->getEntityResponse($entity,$userLevel);
                 switch(TYPE_RESPONSE){
@@ -454,29 +493,57 @@ class ResourceController extends AbstractRestfulController
                         break;
                     }
                     default: {
-                        return new JsonModel($bodyResponse);
-                        break;
+                    return new JsonModel($bodyResponse);
+                    break;
                     }
                 }
-                
-                
 
             }else{
-                 //Modifiamos el Header de nuestra respuesta
+                //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
                     'Error' => array(
                         'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id',
+                        'Details' => 'Invalid '.RESOURCE.' id',
                     ),
                 );
-             }
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+            }
         }else{
             $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            return new JsonModel(JSonResponse::getResponseBody(403));
+            $bodyResponse = JSonResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }
         }
 
     }

@@ -4,7 +4,7 @@
  * ResourceAPI.php
  * BuyBuy
  *
- * Created by Carlos Esparza on 12/08/2014.
+ * Created by Buybuy on 12/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
@@ -67,7 +67,7 @@ class ResourceManager{
         }
 
         if(RESOURCE_CHILD!=null){
-            $module = MODULE_RESOURCE;
+            $module = MODULE_RESOURCE_CHILD;
             if(class_exists(ucfirst(RESOURCE_CHILD))){
                 $module = MODULE_RESOURCE_CHILD;
             }
@@ -99,7 +99,7 @@ class ResourceManager{
 
         if(RESOURCE_CHILD!=null){
             // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-            $module = MODULE_RESOURCE;
+            $module = MODULE_RESOURCE_CHILD;
             if(class_exists(ucfirst(RESOURCE_CHILD))){
                 // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
                 $module = MODULE_RESOURCE_CHILD;
@@ -128,8 +128,17 @@ class ResourceManager{
             $namespaceResource[$key] = '\\'.$key;
         }
 
-        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-        $module = ResourceManager::getModule($resource);
+        if(RESOURCE_CHILD!=null){
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE_CHILD;
+            if(class_exists(ucfirst(RESOURCE_CHILD))){
+                // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+                $module = MODULE_RESOURCE_CHILD;
+            }
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
 
         //Creamos el objeto de las FormPostPut
         $namespaceResource = array_search('\\API\\REST\\V1\\ACL\\'.$module.'\\'.$resource.'\\Form\\'.$resource.'FormPostPut', $namespaceResource);
@@ -151,9 +160,17 @@ class ResourceManager{
             $namespaceResource[$key] = '\\'.$key;
         }
 
-        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-        $module = ResourceManager::getModule($resource);
-
+        if(RESOURCE_CHILD!=null){
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE_CHILD;
+            if(class_exists(ucfirst(RESOURCE_CHILD))){
+                // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+                $module = MODULE_RESOURCE_CHILD;
+            }
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
         //Creamos el objeto de las FormPostPut
         $namespaceResource = array_search('\\API\\REST\\V1\\ACL\\'.$module.'\\'.$resource.'\\Filter\\'.$resource.'FilterPostPut', $namespaceResource);
         $objectResourceFilterPostPut = new $namespaceResource;
@@ -199,6 +216,10 @@ class ResourceManager{
                     $module = 'Sales';
                     break;
                 }
+                if(substr_count($key, "SalesForce\\".$resource)){
+                    $module = 'SalesForce';
+                    break;
+                }
                 if(substr_count($key, "SATMexico\\".$resource)){
                     $module = 'SATMexico';
                     break;
@@ -218,6 +239,7 @@ class ResourceManager{
             'Production' => 'Production',
             'Project' => 'Project',
             'Sales' => 'Sales',
+            'SalesForce' => 'SalesForce',
             'SATMexico' => 'SATMexico',
             'Shipping' => 'Shipping',
         );

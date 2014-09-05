@@ -197,11 +197,11 @@ class Clientaddress extends BaseClientaddress
                 'client_firstname' => $clientQuery['client_firstname'],
                 'client_lastname' => $clientQuery['client_lastname'],
             ),
-            'clientaddresses' => $clientaddressArray,
+            'addresses' => $clientaddressArray,
         );
         switch(TYPE_RESPONSE){
             case "xml" :{
-                $response['clientaddresses'] = array(
+                $response['addresses'] = array(
                     'address' => $clientaddressArray
                 );
                 break;
