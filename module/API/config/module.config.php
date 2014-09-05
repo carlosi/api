@@ -37,21 +37,165 @@ return array(
                     ),
                 ),
             ),
-            // All Module Routes
-            'resources' => array(
-                'type' => 'Segment',
+            // Module Routes Company
+            'company' => array(
+                'type' => 'segment',
                 'options' => array(
-                    'route'    => '/v[:version][/:typeResponse]/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'route'    => '/v[:version][/:typeResponse]/company/:resource[/:id][/:resourceChild][/:idChild][/]',
                     'defaults' => array(
                         'controller' => 'API\REST\V1\Controller\ResourceController',
                     ),
                     'constraints' => array(
-                        'id' => '[0-9]+',
-                        'idChild' => '[0-9]+',
                         'version' => '1',
                         'typeResponse' => 'xml|json',
-                        'resource' => 'company|branch|client|bankaccount|user|project|order|mxtaxdocument|department|marketingchannel|marketingcampaign',
-                        'resourceChild' => 'department|leader|address|comment|file|tax|item|bankexpensetransaction|expensecategory|client',
+                        'resource' => 'address|user|client|branch',
+                        'resourceChild' => 'staff|address|file|department|leader|member',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Routes Contents
+            'contents' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/contents/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Routes Expense
+            'expense' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/expense/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Routes MercadoLibre
+            'mercadolibre' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/mercadolibre/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Routes Production
+            'production' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/production/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Routes Sales
+            'sales' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/sales/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Routes SalesForce
+            'salesforce' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/salesforce/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Routes SATMexico
+            'satmexico' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/satmexico/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
+                    ),
+                ),
+            ),
+            // Module Route Shipping
+            'shipping' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route'    => '/v[:version][/:typeResponse]/shipping/:resource[/:id][/:resourceChild][/:idChild][/]',
+                    'defaults' => array(
+                        'controller' => 'API\REST\V1\Controller\ResourceController',
+                    ),
+                    'constraints' => array(
+                        'version' => '1',
+                        'typeResponse' => 'xml|json',
+                        'resource' => '',
+                        'resourceChild' => '',
+                        'id' => '[0-9]+',
+                        'idChild' => '[0-9]+',
                     ),
                 ),
             ),

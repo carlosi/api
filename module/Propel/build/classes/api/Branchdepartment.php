@@ -131,11 +131,11 @@ class Branchdepartment extends BaseBranchdepartment
         $result =  $branchdepartmentQuery->useBranchQuery()->filterByIdcompany($idCompany)->filterByIdbranch($idResource)->endUse()->paginate($page,$limit);
 
         $links = array(
-            'self' => array('href' => URL_API.'/branch/'.$idResource.'/department?page='.$result->getPage()),
-            'prev' => array('href' => URL_API.'/branch/'.$idResource.'department?page='.$result->getPreviousPage()),
-            'next' => array('href' => URL_API.'/branch/'.$idResource.'department?page='.$result->getNextPage()),
-            'first' => array('href' => URL_API.'/branch/'.$idResource.'department'),
-            'last' => array('href' => URL_API.'/branch/'.$idResource.'department?page='.$result->getLastPage()),
+            'self' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'/department?page='.$result->getPage()),
+            'prev' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department?page='.$result->getPreviousPage()),
+            'next' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department?page='.$result->getNextPage()),
+            'first' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department'),
+            'last' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){
@@ -207,7 +207,7 @@ class Branchdepartment extends BaseBranchdepartment
             'resume' => $getCollection['resume'],
             'branch' => array(
                 '_links' => array(
-                    'self' => array('href' => URL_API.'/branch/'.$branchArray['idbranch']),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/branch/'.$branchArray['idbranch']),
                 ),
                 'idbranch' => $branchArray['idbranch'],
                 'branch_name' => $branchArray['branch_name'],

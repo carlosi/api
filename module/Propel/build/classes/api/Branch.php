@@ -124,7 +124,7 @@ class Branch extends BaseBranch
         $body = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>URL_API.'/v'.API_VERSION.'/branch/'.$branch->getPrimaryKey()
+                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/'.$branch->getPrimaryKey()
                 ),
             ),
         );
@@ -142,7 +142,7 @@ class Branch extends BaseBranch
                         $body[strtolower(get_class($halResource))] = array(
                             "_links" => array(
                                 "self" => array(
-                                    "href" =>URL_API.'/v'.API_VERSION.'/'.  strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
                                 ),
                             ),
                         );
@@ -159,7 +159,7 @@ class Branch extends BaseBranch
                         $body[strtolower(get_class($halResource))] = array(
                             "_links" => array(
                                 "self" => array(
-                                    "href" =>URL_API.'/v'.API_VERSION.'/'. strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
                                 ),
                             ),
                         );
@@ -256,11 +256,11 @@ class Branch extends BaseBranch
 
 
         $links = array(
-            'self' => array('href' => URL_API.'/branch?page='.$result->getPage()),
-            'prev' => array('href' => URL_API.'/branch?page='.$result->getPreviousPage()),
-            'next' => array('href' => URL_API.'/branch?page='.$result->getNextPage()),
-            'first' => array('href' => URL_API.'/branch'),
-            'last' => array('href' => URL_API.'/branch?page='.$result->getLastPage()),
+            'self' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getPage()),
+            'prev' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getPreviousPage()),
+            'next' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getNextPage()),
+            'first' => array('href' => URL_API.'/'.MODULE.'/branch'),
+            'last' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){
@@ -305,7 +305,7 @@ class Branch extends BaseBranch
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/branch/'.$item['idbranch']),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/branch/'.$item['idbranch']),
                 ),
             );
 
@@ -439,7 +439,7 @@ class Branch extends BaseBranch
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
                                 "_links" => array(
-                                    'self' => URL_API.'/branch/'.$branchPKQuery->getIdbranch(),
+                                    'self' => URL_API.'/'.MODULE.'/branch/'.$branchPKQuery->getIdbranch(),
                                 ),
                             );
 
