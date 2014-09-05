@@ -183,6 +183,7 @@ class ResourceManager{
      * @return mixed
      */
     public static function getModule($resource){
+
         // - autoload_classmap.php //
         require __DIR__ . '/../../../../../../autoload_classmap.php';
 

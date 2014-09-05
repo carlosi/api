@@ -200,7 +200,7 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/client/'.$client['idclient']),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$client['idclient']),
                 ),
             );
 

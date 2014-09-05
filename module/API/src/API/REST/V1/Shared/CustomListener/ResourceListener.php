@@ -86,8 +86,6 @@ class ResourceListener implements ListenerAggregateInterface {
                         $hasResourceChild = ResourceManager::getModule($resourceNameChild);
                         // Si sí existe el recurso
                         if($hasResourceChild){
-
-                            /*
                             if($id != null){
 
                                 $resourcenameChild = RESOURCE.RESOURCE_CHILD;
@@ -122,11 +120,11 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $e->setViewModel($jsonModel)->stopPropagation();
                             }
                         }else{
-                            */
 
                             // La inicial de nuestro string la hacemos mayuscula
                             $resourcenameChild = RESOURCE.RESOURCE_CHILD;
                             $resourceNameChild = ucfirst($resourcenameChild);
+
                             // Verificamos que exista el recurso
                             $hasResourceChild = ResourceManager::getModule($resourceNameChild);
                             // Si sí existe el recurso

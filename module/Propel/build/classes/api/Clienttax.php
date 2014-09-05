@@ -109,11 +109,11 @@ class Clienttax extends BaseClienttax
         $result =  $clienttaxQuery->useClientQuery()->filterByIdcompany($idCompany)->filterByIdclient($idResource)->endUse()->paginate($page,$limit);
 
         $links = array(
-            'self' => array('href' => URL_API.'/client/'.$idResource.'/tax?page='.$result->getPage()),
-            'prev' => array('href' => URL_API.'/client/'.$idResource.'/tax?page='.$result->getPreviousPage()),
-            'next' => array('href' => URL_API.'/client/'.$idResource.'/tax?page='.$result->getNextPage()),
-            'first' => array('href' => URL_API.'/client/'.$idResource.'/tax'),
-            'last' => array('href' => URL_API.'/client/'.$idResource.'/tax?page='.$result->getLastPage()),
+            'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$idResource.'/tax?page='.$result->getPage()),
+            'prev' => array('href' => URL_API.'/'.MODULE.'/client/'.$idResource.'/tax?page='.$result->getPreviousPage()),
+            'next' => array('href' => URL_API.'/'.MODULE.'/client/'.$idResource.'/tax?page='.$result->getNextPage()),
+            'first' => array('href' => URL_API.'/'.MODULE.'/client/'.$idResource.'/tax'),
+            'last' => array('href' => URL_API.'/'.MODULE.'/client/'.$idResource.'/tax?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){
@@ -162,7 +162,7 @@ class Clienttax extends BaseClienttax
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/client/'.$clienttax['idclient'].'/tax'),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$clienttax['idclient'].'/tax'),
                 ),
             );
 
@@ -191,7 +191,7 @@ class Clienttax extends BaseClienttax
             'resume' => $getCollection['resume'],
             'client' => array(
                 '_links' => array(
-                    'self' => array('href' => URL_API.'/client/'.$clientQuery['idclient']),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$clientQuery['idclient']),
                 ),
                 'idclient' => $clientQuery['idclient'],
                 'client_firstname' => $clientQuery['client_firstname'],
