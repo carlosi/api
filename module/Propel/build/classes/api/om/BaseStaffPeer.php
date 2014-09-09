@@ -38,11 +38,11 @@ abstract class BaseStaffPeer
     /** the column name for the iduser field */
     const IDUSER = 'staff.iduser';
 
+    /** the column name for the staff_name field */
+    const STAFF_NAME = 'staff.staff_name';
+
     /** the column name for the staff_firstname field */
     const STAFF_FIRSTNAME = 'staff.staff_firstname';
-
-    /** the column name for the staff_lastname field */
-    const STAFF_LASTNAME = 'staff.staff_lastname';
 
     /** the column name for the staff_email field */
     const STAFF_EMAIL = 'staff.staff_email';
@@ -84,11 +84,11 @@ abstract class BaseStaffPeer
      * e.g. StaffPeer::$fieldNames[StaffPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idstaff', 'Iduser', 'StaffFirstname', 'StaffLastname', 'StaffEmail', 'StaffEmail2', 'StaffPhone', 'StaffCellular', 'StaffLanguage', 'StaffIsoCodecountry', 'StaffIsoCodephone', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idstaff', 'iduser', 'staffFirstname', 'staffLastname', 'staffEmail', 'staffEmail2', 'staffPhone', 'staffCellular', 'staffLanguage', 'staffIsoCodecountry', 'staffIsoCodephone', ),
-        BasePeer::TYPE_COLNAME => array (StaffPeer::IDSTAFF, StaffPeer::IDUSER, StaffPeer::STAFF_FIRSTNAME, StaffPeer::STAFF_LASTNAME, StaffPeer::STAFF_EMAIL, StaffPeer::STAFF_EMAIL2, StaffPeer::STAFF_PHONE, StaffPeer::STAFF_CELLULAR, StaffPeer::STAFF_LANGUAGE, StaffPeer::STAFF_ISO_CODECOUNTRY, StaffPeer::STAFF_ISO_CODEPHONE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDSTAFF', 'IDUSER', 'STAFF_FIRSTNAME', 'STAFF_LASTNAME', 'STAFF_EMAIL', 'STAFF_EMAIL2', 'STAFF_PHONE', 'STAFF_CELLULAR', 'STAFF_LANGUAGE', 'STAFF_ISO_CODECOUNTRY', 'STAFF_ISO_CODEPHONE', ),
-        BasePeer::TYPE_FIELDNAME => array ('idstaff', 'iduser', 'staff_firstname', 'staff_lastname', 'staff_email', 'staff_email2', 'staff_phone', 'staff_cellular', 'staff_language', 'staff_iso_codecountry', 'staff_iso_codephone', ),
+        BasePeer::TYPE_PHPNAME => array ('Idstaff', 'Iduser', 'StaffName', 'StaffFirstname', 'StaffEmail', 'StaffEmail2', 'StaffPhone', 'StaffCellular', 'StaffLanguage', 'StaffIsoCodecountry', 'StaffIsoCodephone', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idstaff', 'iduser', 'staffName', 'staffFirstname', 'staffEmail', 'staffEmail2', 'staffPhone', 'staffCellular', 'staffLanguage', 'staffIsoCodecountry', 'staffIsoCodephone', ),
+        BasePeer::TYPE_COLNAME => array (StaffPeer::IDSTAFF, StaffPeer::IDUSER, StaffPeer::STAFF_NAME, StaffPeer::STAFF_FIRSTNAME, StaffPeer::STAFF_EMAIL, StaffPeer::STAFF_EMAIL2, StaffPeer::STAFF_PHONE, StaffPeer::STAFF_CELLULAR, StaffPeer::STAFF_LANGUAGE, StaffPeer::STAFF_ISO_CODECOUNTRY, StaffPeer::STAFF_ISO_CODEPHONE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDSTAFF', 'IDUSER', 'STAFF_NAME', 'STAFF_FIRSTNAME', 'STAFF_EMAIL', 'STAFF_EMAIL2', 'STAFF_PHONE', 'STAFF_CELLULAR', 'STAFF_LANGUAGE', 'STAFF_ISO_CODECOUNTRY', 'STAFF_ISO_CODEPHONE', ),
+        BasePeer::TYPE_FIELDNAME => array ('idstaff', 'iduser', 'staff_name', 'staff_firstname', 'staff_email', 'staff_email2', 'staff_phone', 'staff_cellular', 'staff_language', 'staff_iso_codecountry', 'staff_iso_codephone', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
@@ -99,11 +99,11 @@ abstract class BaseStaffPeer
      * e.g. StaffPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idstaff' => 0, 'Iduser' => 1, 'StaffFirstname' => 2, 'StaffLastname' => 3, 'StaffEmail' => 4, 'StaffEmail2' => 5, 'StaffPhone' => 6, 'StaffCellular' => 7, 'StaffLanguage' => 8, 'StaffIsoCodecountry' => 9, 'StaffIsoCodephone' => 10, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idstaff' => 0, 'iduser' => 1, 'staffFirstname' => 2, 'staffLastname' => 3, 'staffEmail' => 4, 'staffEmail2' => 5, 'staffPhone' => 6, 'staffCellular' => 7, 'staffLanguage' => 8, 'staffIsoCodecountry' => 9, 'staffIsoCodephone' => 10, ),
-        BasePeer::TYPE_COLNAME => array (StaffPeer::IDSTAFF => 0, StaffPeer::IDUSER => 1, StaffPeer::STAFF_FIRSTNAME => 2, StaffPeer::STAFF_LASTNAME => 3, StaffPeer::STAFF_EMAIL => 4, StaffPeer::STAFF_EMAIL2 => 5, StaffPeer::STAFF_PHONE => 6, StaffPeer::STAFF_CELLULAR => 7, StaffPeer::STAFF_LANGUAGE => 8, StaffPeer::STAFF_ISO_CODECOUNTRY => 9, StaffPeer::STAFF_ISO_CODEPHONE => 10, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDSTAFF' => 0, 'IDUSER' => 1, 'STAFF_FIRSTNAME' => 2, 'STAFF_LASTNAME' => 3, 'STAFF_EMAIL' => 4, 'STAFF_EMAIL2' => 5, 'STAFF_PHONE' => 6, 'STAFF_CELLULAR' => 7, 'STAFF_LANGUAGE' => 8, 'STAFF_ISO_CODECOUNTRY' => 9, 'STAFF_ISO_CODEPHONE' => 10, ),
-        BasePeer::TYPE_FIELDNAME => array ('idstaff' => 0, 'iduser' => 1, 'staff_firstname' => 2, 'staff_lastname' => 3, 'staff_email' => 4, 'staff_email2' => 5, 'staff_phone' => 6, 'staff_cellular' => 7, 'staff_language' => 8, 'staff_iso_codecountry' => 9, 'staff_iso_codephone' => 10, ),
+        BasePeer::TYPE_PHPNAME => array ('Idstaff' => 0, 'Iduser' => 1, 'StaffName' => 2, 'StaffFirstname' => 3, 'StaffEmail' => 4, 'StaffEmail2' => 5, 'StaffPhone' => 6, 'StaffCellular' => 7, 'StaffLanguage' => 8, 'StaffIsoCodecountry' => 9, 'StaffIsoCodephone' => 10, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idstaff' => 0, 'iduser' => 1, 'staffName' => 2, 'staffFirstname' => 3, 'staffEmail' => 4, 'staffEmail2' => 5, 'staffPhone' => 6, 'staffCellular' => 7, 'staffLanguage' => 8, 'staffIsoCodecountry' => 9, 'staffIsoCodephone' => 10, ),
+        BasePeer::TYPE_COLNAME => array (StaffPeer::IDSTAFF => 0, StaffPeer::IDUSER => 1, StaffPeer::STAFF_NAME => 2, StaffPeer::STAFF_FIRSTNAME => 3, StaffPeer::STAFF_EMAIL => 4, StaffPeer::STAFF_EMAIL2 => 5, StaffPeer::STAFF_PHONE => 6, StaffPeer::STAFF_CELLULAR => 7, StaffPeer::STAFF_LANGUAGE => 8, StaffPeer::STAFF_ISO_CODECOUNTRY => 9, StaffPeer::STAFF_ISO_CODEPHONE => 10, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDSTAFF' => 0, 'IDUSER' => 1, 'STAFF_NAME' => 2, 'STAFF_FIRSTNAME' => 3, 'STAFF_EMAIL' => 4, 'STAFF_EMAIL2' => 5, 'STAFF_PHONE' => 6, 'STAFF_CELLULAR' => 7, 'STAFF_LANGUAGE' => 8, 'STAFF_ISO_CODECOUNTRY' => 9, 'STAFF_ISO_CODEPHONE' => 10, ),
+        BasePeer::TYPE_FIELDNAME => array ('idstaff' => 0, 'iduser' => 1, 'staff_name' => 2, 'staff_firstname' => 3, 'staff_email' => 4, 'staff_email2' => 5, 'staff_phone' => 6, 'staff_cellular' => 7, 'staff_language' => 8, 'staff_iso_codecountry' => 9, 'staff_iso_codephone' => 10, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
@@ -180,8 +180,8 @@ abstract class BaseStaffPeer
         if (null === $alias) {
             $criteria->addSelectColumn(StaffPeer::IDSTAFF);
             $criteria->addSelectColumn(StaffPeer::IDUSER);
+            $criteria->addSelectColumn(StaffPeer::STAFF_NAME);
             $criteria->addSelectColumn(StaffPeer::STAFF_FIRSTNAME);
-            $criteria->addSelectColumn(StaffPeer::STAFF_LASTNAME);
             $criteria->addSelectColumn(StaffPeer::STAFF_EMAIL);
             $criteria->addSelectColumn(StaffPeer::STAFF_EMAIL2);
             $criteria->addSelectColumn(StaffPeer::STAFF_PHONE);
@@ -192,8 +192,8 @@ abstract class BaseStaffPeer
         } else {
             $criteria->addSelectColumn($alias . '.idstaff');
             $criteria->addSelectColumn($alias . '.iduser');
+            $criteria->addSelectColumn($alias . '.staff_name');
             $criteria->addSelectColumn($alias . '.staff_firstname');
-            $criteria->addSelectColumn($alias . '.staff_lastname');
             $criteria->addSelectColumn($alias . '.staff_email');
             $criteria->addSelectColumn($alias . '.staff_email2');
             $criteria->addSelectColumn($alias . '.staff_phone');

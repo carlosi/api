@@ -54,11 +54,10 @@ abstract class BaseOrder extends BaseObject implements Persistent
     protected $created_at;
 
     /**
-     * The value for the order_capture field.
-     * Note: this column has a database default value of: 'incomplete'
+     * The value for the order_status field.
      * @var        string
      */
-    protected $order_capture;
+    protected $order_status;
 
     /**
      * The value for the order_payment field.
@@ -68,7 +67,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
 
     /**
      * The value for the order_paymentmode field.
-     * Note: this column has a database default value of: 'unique'
+     * Note: this column has a database default value of: 'UNIQUE'
      * @var        string
      */
     protected $order_paymentmode;
@@ -202,8 +201,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
      */
     public function applyDefaultValues()
     {
-        $this->order_capture = 'incomplete';
-        $this->order_paymentmode = 'unique';
+        $this->order_paymentmode = 'UNIQUE';
         $this->order_delivery = 'SHIPMODE';
     }
 
@@ -291,14 +289,14 @@ abstract class BaseOrder extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [order_capture] column value.
+     * Get the [order_status] column value.
      *
      * @return string
      */
-    public function getOrderCapture()
+    public function getOrderStatus()
     {
 
-        return $this->order_capture;
+        return $this->order_status;
     }
 
     /**
@@ -429,25 +427,25 @@ abstract class BaseOrder extends BaseObject implements Persistent
     } // setCreatedAt()
 
     /**
-     * Set the value of [order_capture] column.
+     * Set the value of [order_status] column.
      *
      * @param  string $v new value
      * @return Order The current object (for fluent API support)
      */
-    public function setOrderCapture($v)
+    public function setOrderStatus($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->order_capture !== $v) {
-            $this->order_capture = $v;
-            $this->modifiedColumns[] = OrderPeer::ORDER_CAPTURE;
+        if ($this->order_status !== $v) {
+            $this->order_status = $v;
+            $this->modifiedColumns[] = OrderPeer::ORDER_STATUS;
         }
 
 
         return $this;
-    } // setOrderCapture()
+    } // setOrderStatus()
 
     /**
      * Set the value of [order_payment] column.
@@ -522,11 +520,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->order_capture !== 'incomplete') {
-                return false;
-            }
-
-            if ($this->order_paymentmode !== 'unique') {
+            if ($this->order_paymentmode !== 'UNIQUE') {
                 return false;
             }
 
@@ -560,7 +554,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
             $this->idbranch = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->idclient = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->created_at = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            $this->order_capture = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+            $this->order_status = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->order_payment = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
             $this->order_paymentmode = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->order_delivery = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
@@ -957,8 +951,8 @@ abstract class BaseOrder extends BaseObject implements Persistent
         if ($this->isColumnModified(OrderPeer::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`created_at`';
         }
-        if ($this->isColumnModified(OrderPeer::ORDER_CAPTURE)) {
-            $modifiedColumns[':p' . $index++]  = '`order_capture`';
+        if ($this->isColumnModified(OrderPeer::ORDER_STATUS)) {
+            $modifiedColumns[':p' . $index++]  = '`order_status`';
         }
         if ($this->isColumnModified(OrderPeer::ORDER_PAYMENT)) {
             $modifiedColumns[':p' . $index++]  = '`order_payment`';
@@ -992,8 +986,8 @@ abstract class BaseOrder extends BaseObject implements Persistent
                     case '`created_at`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
                         break;
-                    case '`order_capture`':
-                        $stmt->bindValue($identifier, $this->order_capture, PDO::PARAM_STR);
+                    case '`order_status`':
+                        $stmt->bindValue($identifier, $this->order_status, PDO::PARAM_STR);
                         break;
                     case '`order_payment`':
                         $stmt->bindValue($identifier, $this->order_payment, PDO::PARAM_STR);
@@ -1225,7 +1219,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
                 return $this->getCreatedAt();
                 break;
             case 4:
-                return $this->getOrderCapture();
+                return $this->getOrderStatus();
                 break;
             case 5:
                 return $this->getOrderPayment();
@@ -1269,7 +1263,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
             $keys[1] => $this->getIdbranch(),
             $keys[2] => $this->getIdclient(),
             $keys[3] => $this->getCreatedAt(),
-            $keys[4] => $this->getOrderCapture(),
+            $keys[4] => $this->getOrderStatus(),
             $keys[5] => $this->getOrderPayment(),
             $keys[6] => $this->getOrderPaymentmode(),
             $keys[7] => $this->getOrderDelivery(),
@@ -1354,7 +1348,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
                 $this->setCreatedAt($value);
                 break;
             case 4:
-                $this->setOrderCapture($value);
+                $this->setOrderStatus($value);
                 break;
             case 5:
                 $this->setOrderPayment($value);
@@ -1393,7 +1387,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
         if (array_key_exists($keys[1], $arr)) $this->setIdbranch($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setIdclient($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setCreatedAt($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setOrderCapture($arr[$keys[4]]);
+        if (array_key_exists($keys[4], $arr)) $this->setOrderStatus($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setOrderPayment($arr[$keys[5]]);
         if (array_key_exists($keys[6], $arr)) $this->setOrderPaymentmode($arr[$keys[6]]);
         if (array_key_exists($keys[7], $arr)) $this->setOrderDelivery($arr[$keys[7]]);
@@ -1412,7 +1406,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
         if ($this->isColumnModified(OrderPeer::IDBRANCH)) $criteria->add(OrderPeer::IDBRANCH, $this->idbranch);
         if ($this->isColumnModified(OrderPeer::IDCLIENT)) $criteria->add(OrderPeer::IDCLIENT, $this->idclient);
         if ($this->isColumnModified(OrderPeer::CREATED_AT)) $criteria->add(OrderPeer::CREATED_AT, $this->created_at);
-        if ($this->isColumnModified(OrderPeer::ORDER_CAPTURE)) $criteria->add(OrderPeer::ORDER_CAPTURE, $this->order_capture);
+        if ($this->isColumnModified(OrderPeer::ORDER_STATUS)) $criteria->add(OrderPeer::ORDER_STATUS, $this->order_status);
         if ($this->isColumnModified(OrderPeer::ORDER_PAYMENT)) $criteria->add(OrderPeer::ORDER_PAYMENT, $this->order_payment);
         if ($this->isColumnModified(OrderPeer::ORDER_PAYMENTMODE)) $criteria->add(OrderPeer::ORDER_PAYMENTMODE, $this->order_paymentmode);
         if ($this->isColumnModified(OrderPeer::ORDER_DELIVERY)) $criteria->add(OrderPeer::ORDER_DELIVERY, $this->order_delivery);
@@ -1482,7 +1476,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
         $copyObj->setIdbranch($this->getIdbranch());
         $copyObj->setIdclient($this->getIdclient());
         $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setOrderCapture($this->getOrderCapture());
+        $copyObj->setOrderStatus($this->getOrderStatus());
         $copyObj->setOrderPayment($this->getOrderPayment());
         $copyObj->setOrderPaymentmode($this->getOrderPaymentmode());
         $copyObj->setOrderDelivery($this->getOrderDelivery());
@@ -2449,31 +2443,6 @@ abstract class BaseOrder extends BaseObject implements Persistent
         return $this;
     }
 
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Order is new, it will return
-     * an empty collection; or if this Order has previously
-     * been saved, it will retrieve related Ordercomments from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Order.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Ordercomment[] List of Ordercomment objects
-     */
-    public function getOrdercommentsJoinUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = OrdercommentQuery::create(null, $criteria);
-        $query->joinWith('User', $join_behavior);
-
-        return $this->getOrdercomments($query, $con);
-    }
-
     /**
      * Clears out the collOrderfiles collection
      *
@@ -2697,31 +2666,6 @@ abstract class BaseOrder extends BaseObject implements Persistent
         }
 
         return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Order is new, it will return
-     * an empty collection; or if this Order has previously
-     * been saved, it will retrieve related Orderfiles from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Order.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Orderfile[] List of Orderfile objects
-     */
-    public function getOrderfilesJoinUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = OrderfileQuery::create(null, $criteria);
-        $query->joinWith('User', $join_behavior);
-
-        return $this->getOrderfiles($query, $con);
     }
 
     /**
@@ -3458,7 +3402,7 @@ abstract class BaseOrder extends BaseObject implements Persistent
         $this->idbranch = null;
         $this->idclient = null;
         $this->created_at = null;
-        $this->order_capture = null;
+        $this->order_status = null;
         $this->order_payment = null;
         $this->order_paymentmode = null;
         $this->order_delivery = null;

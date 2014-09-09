@@ -115,22 +115,10 @@ abstract class BaseUser extends BaseObject implements Persistent
     protected $collMlquestionsPartial;
 
     /**
-     * @var        PropelObjectCollection|Ordercomment[] Collection to store aggregation of Ordercomment objects.
-     */
-    protected $collOrdercomments;
-    protected $collOrdercommentsPartial;
-
-    /**
      * @var        PropelObjectCollection|OrderconflictComment[] Collection to store aggregation of OrderconflictComment objects.
      */
     protected $collOrderconflictComments;
     protected $collOrderconflictCommentsPartial;
-
-    /**
-     * @var        PropelObjectCollection|Orderfile[] Collection to store aggregation of Orderfile objects.
-     */
-    protected $collOrderfiles;
-    protected $collOrderfilesPartial;
 
     /**
      * @var        PropelObjectCollection|Productionordercomment[] Collection to store aggregation of Productionordercomment objects.
@@ -161,12 +149,6 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     protected $collProspectioninterests;
     protected $collProspectioninterestsPartial;
-
-    /**
-     * @var        PropelObjectCollection|Quoutenote[] Collection to store aggregation of Quoutenote objects.
-     */
-    protected $collQuoutenotes;
-    protected $collQuoutenotesPartial;
 
     /**
      * @var        PropelObjectCollection|Staff[] Collection to store aggregation of Staff objects.
@@ -264,19 +246,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $ordercommentsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
     protected $orderconflictCommentsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $orderfilesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -307,12 +277,6 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $prospectioninterestsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $quoutenotesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -697,11 +661,7 @@ abstract class BaseUser extends BaseObject implements Persistent
 
             $this->collMlquestions = null;
 
-            $this->collOrdercomments = null;
-
             $this->collOrderconflictComments = null;
-
-            $this->collOrderfiles = null;
 
             $this->collProductionordercomments = null;
 
@@ -712,8 +672,6 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->collProjectactivityusers = null;
 
             $this->collProspectioninterests = null;
-
-            $this->collQuoutenotes = null;
 
             $this->collStaffs = null;
 
@@ -980,23 +938,6 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
             }
 
-            if ($this->ordercommentsScheduledForDeletion !== null) {
-                if (!$this->ordercommentsScheduledForDeletion->isEmpty()) {
-                    OrdercommentQuery::create()
-                        ->filterByPrimaryKeys($this->ordercommentsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->ordercommentsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collOrdercomments !== null) {
-                foreach ($this->collOrdercomments as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             if ($this->orderconflictCommentsScheduledForDeletion !== null) {
                 if (!$this->orderconflictCommentsScheduledForDeletion->isEmpty()) {
                     OrderconflictCommentQuery::create()
@@ -1008,23 +949,6 @@ abstract class BaseUser extends BaseObject implements Persistent
 
             if ($this->collOrderconflictComments !== null) {
                 foreach ($this->collOrderconflictComments as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->orderfilesScheduledForDeletion !== null) {
-                if (!$this->orderfilesScheduledForDeletion->isEmpty()) {
-                    OrderfileQuery::create()
-                        ->filterByPrimaryKeys($this->orderfilesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->orderfilesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collOrderfiles !== null) {
-                foreach ($this->collOrderfiles as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1110,23 +1034,6 @@ abstract class BaseUser extends BaseObject implements Persistent
 
             if ($this->collProspectioninterests !== null) {
                 foreach ($this->collProspectioninterests as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->quoutenotesScheduledForDeletion !== null) {
-                if (!$this->quoutenotesScheduledForDeletion->isEmpty()) {
-                    QuoutenoteQuery::create()
-                        ->filterByPrimaryKeys($this->quoutenotesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->quoutenotesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collQuoutenotes !== null) {
-                foreach ($this->collQuoutenotes as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1458,24 +1365,8 @@ abstract class BaseUser extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collOrdercomments !== null) {
-                    foreach ($this->collOrdercomments as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collOrderconflictComments !== null) {
                     foreach ($this->collOrderconflictComments as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
-                if ($this->collOrderfiles !== null) {
-                    foreach ($this->collOrderfiles as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1516,14 +1407,6 @@ abstract class BaseUser extends BaseObject implements Persistent
 
                 if ($this->collProspectioninterests !== null) {
                     foreach ($this->collProspectioninterests as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
-                if ($this->collQuoutenotes !== null) {
-                    foreach ($this->collQuoutenotes as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1689,14 +1572,8 @@ abstract class BaseUser extends BaseObject implements Persistent
             if (null !== $this->collMlquestions) {
                 $result['Mlquestions'] = $this->collMlquestions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collOrdercomments) {
-                $result['Ordercomments'] = $this->collOrdercomments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collOrderconflictComments) {
                 $result['OrderconflictComments'] = $this->collOrderconflictComments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collOrderfiles) {
-                $result['Orderfiles'] = $this->collOrderfiles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collProductionordercomments) {
                 $result['Productionordercomments'] = $this->collProductionordercomments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1712,9 +1589,6 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
             if (null !== $this->collProspectioninterests) {
                 $result['Prospectioninterests'] = $this->collProspectioninterests->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collQuoutenotes) {
-                $result['Quoutenotes'] = $this->collQuoutenotes->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collStaffs) {
                 $result['Staffs'] = $this->collStaffs->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1948,21 +1822,9 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getOrdercomments() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addOrdercomment($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getOrderconflictComments() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addOrderconflictComment($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getOrderfiles() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addOrderfile($relObj->copy($deepCopy));
                 }
             }
 
@@ -1993,12 +1855,6 @@ abstract class BaseUser extends BaseObject implements Persistent
             foreach ($this->getProspectioninterests() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addProspectioninterest($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getQuoutenotes() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addQuoutenote($relObj->copy($deepCopy));
                 }
             }
 
@@ -2166,14 +2022,8 @@ abstract class BaseUser extends BaseObject implements Persistent
         if ('Mlquestion' == $relationName) {
             $this->initMlquestions();
         }
-        if ('Ordercomment' == $relationName) {
-            $this->initOrdercomments();
-        }
         if ('OrderconflictComment' == $relationName) {
             $this->initOrderconflictComments();
-        }
-        if ('Orderfile' == $relationName) {
-            $this->initOrderfiles();
         }
         if ('Productionordercomment' == $relationName) {
             $this->initProductionordercomments();
@@ -2189,9 +2039,6 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
         if ('Prospectioninterest' == $relationName) {
             $this->initProspectioninterests();
-        }
-        if ('Quoutenote' == $relationName) {
-            $this->initQuoutenotes();
         }
         if ('Staff' == $relationName) {
             $this->initStaffs();
@@ -3911,256 +3758,6 @@ abstract class BaseUser extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collOrdercomments collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return User The current object (for fluent API support)
-     * @see        addOrdercomments()
-     */
-    public function clearOrdercomments()
-    {
-        $this->collOrdercomments = null; // important to set this to null since that means it is uninitialized
-        $this->collOrdercommentsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collOrdercomments collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialOrdercomments($v = true)
-    {
-        $this->collOrdercommentsPartial = $v;
-    }
-
-    /**
-     * Initializes the collOrdercomments collection.
-     *
-     * By default this just sets the collOrdercomments collection to an empty array (like clearcollOrdercomments());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initOrdercomments($overrideExisting = true)
-    {
-        if (null !== $this->collOrdercomments && !$overrideExisting) {
-            return;
-        }
-        $this->collOrdercomments = new PropelObjectCollection();
-        $this->collOrdercomments->setModel('Ordercomment');
-    }
-
-    /**
-     * Gets an array of Ordercomment objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this User is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Ordercomment[] List of Ordercomment objects
-     * @throws PropelException
-     */
-    public function getOrdercomments($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collOrdercommentsPartial && !$this->isNew();
-        if (null === $this->collOrdercomments || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collOrdercomments) {
-                // return empty collection
-                $this->initOrdercomments();
-            } else {
-                $collOrdercomments = OrdercommentQuery::create(null, $criteria)
-                    ->filterByUser($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collOrdercommentsPartial && count($collOrdercomments)) {
-                      $this->initOrdercomments(false);
-
-                      foreach ($collOrdercomments as $obj) {
-                        if (false == $this->collOrdercomments->contains($obj)) {
-                          $this->collOrdercomments->append($obj);
-                        }
-                      }
-
-                      $this->collOrdercommentsPartial = true;
-                    }
-
-                    $collOrdercomments->getInternalIterator()->rewind();
-
-                    return $collOrdercomments;
-                }
-
-                if ($partial && $this->collOrdercomments) {
-                    foreach ($this->collOrdercomments as $obj) {
-                        if ($obj->isNew()) {
-                            $collOrdercomments[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collOrdercomments = $collOrdercomments;
-                $this->collOrdercommentsPartial = false;
-            }
-        }
-
-        return $this->collOrdercomments;
-    }
-
-    /**
-     * Sets a collection of Ordercomment objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $ordercomments A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return User The current object (for fluent API support)
-     */
-    public function setOrdercomments(PropelCollection $ordercomments, PropelPDO $con = null)
-    {
-        $ordercommentsToDelete = $this->getOrdercomments(new Criteria(), $con)->diff($ordercomments);
-
-
-        $this->ordercommentsScheduledForDeletion = $ordercommentsToDelete;
-
-        foreach ($ordercommentsToDelete as $ordercommentRemoved) {
-            $ordercommentRemoved->setUser(null);
-        }
-
-        $this->collOrdercomments = null;
-        foreach ($ordercomments as $ordercomment) {
-            $this->addOrdercomment($ordercomment);
-        }
-
-        $this->collOrdercomments = $ordercomments;
-        $this->collOrdercommentsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Ordercomment objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Ordercomment objects.
-     * @throws PropelException
-     */
-    public function countOrdercomments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collOrdercommentsPartial && !$this->isNew();
-        if (null === $this->collOrdercomments || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collOrdercomments) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getOrdercomments());
-            }
-            $query = OrdercommentQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByUser($this)
-                ->count($con);
-        }
-
-        return count($this->collOrdercomments);
-    }
-
-    /**
-     * Method called to associate a Ordercomment object to this object
-     * through the Ordercomment foreign key attribute.
-     *
-     * @param    Ordercomment $l Ordercomment
-     * @return User The current object (for fluent API support)
-     */
-    public function addOrdercomment(Ordercomment $l)
-    {
-        if ($this->collOrdercomments === null) {
-            $this->initOrdercomments();
-            $this->collOrdercommentsPartial = true;
-        }
-
-        if (!in_array($l, $this->collOrdercomments->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddOrdercomment($l);
-
-            if ($this->ordercommentsScheduledForDeletion and $this->ordercommentsScheduledForDeletion->contains($l)) {
-                $this->ordercommentsScheduledForDeletion->remove($this->ordercommentsScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	Ordercomment $ordercomment The ordercomment object to add.
-     */
-    protected function doAddOrdercomment($ordercomment)
-    {
-        $this->collOrdercomments[]= $ordercomment;
-        $ordercomment->setUser($this);
-    }
-
-    /**
-     * @param	Ordercomment $ordercomment The ordercomment object to remove.
-     * @return User The current object (for fluent API support)
-     */
-    public function removeOrdercomment($ordercomment)
-    {
-        if ($this->getOrdercomments()->contains($ordercomment)) {
-            $this->collOrdercomments->remove($this->collOrdercomments->search($ordercomment));
-            if (null === $this->ordercommentsScheduledForDeletion) {
-                $this->ordercommentsScheduledForDeletion = clone $this->collOrdercomments;
-                $this->ordercommentsScheduledForDeletion->clear();
-            }
-            $this->ordercommentsScheduledForDeletion[]= clone $ordercomment;
-            $ordercomment->setUser(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this User is new, it will return
-     * an empty collection; or if this User has previously
-     * been saved, it will retrieve related Ordercomments from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in User.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Ordercomment[] List of Ordercomment objects
-     */
-    public function getOrdercommentsJoinOrder($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = OrdercommentQuery::create(null, $criteria);
-        $query->joinWith('Order', $join_behavior);
-
-        return $this->getOrdercomments($query, $con);
-    }
-
-    /**
      * Clears out the collOrderconflictComments collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -4408,256 +4005,6 @@ abstract class BaseUser extends BaseObject implements Persistent
         $query->joinWith('Orderconflict', $join_behavior);
 
         return $this->getOrderconflictComments($query, $con);
-    }
-
-    /**
-     * Clears out the collOrderfiles collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return User The current object (for fluent API support)
-     * @see        addOrderfiles()
-     */
-    public function clearOrderfiles()
-    {
-        $this->collOrderfiles = null; // important to set this to null since that means it is uninitialized
-        $this->collOrderfilesPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collOrderfiles collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialOrderfiles($v = true)
-    {
-        $this->collOrderfilesPartial = $v;
-    }
-
-    /**
-     * Initializes the collOrderfiles collection.
-     *
-     * By default this just sets the collOrderfiles collection to an empty array (like clearcollOrderfiles());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initOrderfiles($overrideExisting = true)
-    {
-        if (null !== $this->collOrderfiles && !$overrideExisting) {
-            return;
-        }
-        $this->collOrderfiles = new PropelObjectCollection();
-        $this->collOrderfiles->setModel('Orderfile');
-    }
-
-    /**
-     * Gets an array of Orderfile objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this User is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Orderfile[] List of Orderfile objects
-     * @throws PropelException
-     */
-    public function getOrderfiles($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collOrderfilesPartial && !$this->isNew();
-        if (null === $this->collOrderfiles || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collOrderfiles) {
-                // return empty collection
-                $this->initOrderfiles();
-            } else {
-                $collOrderfiles = OrderfileQuery::create(null, $criteria)
-                    ->filterByUser($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collOrderfilesPartial && count($collOrderfiles)) {
-                      $this->initOrderfiles(false);
-
-                      foreach ($collOrderfiles as $obj) {
-                        if (false == $this->collOrderfiles->contains($obj)) {
-                          $this->collOrderfiles->append($obj);
-                        }
-                      }
-
-                      $this->collOrderfilesPartial = true;
-                    }
-
-                    $collOrderfiles->getInternalIterator()->rewind();
-
-                    return $collOrderfiles;
-                }
-
-                if ($partial && $this->collOrderfiles) {
-                    foreach ($this->collOrderfiles as $obj) {
-                        if ($obj->isNew()) {
-                            $collOrderfiles[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collOrderfiles = $collOrderfiles;
-                $this->collOrderfilesPartial = false;
-            }
-        }
-
-        return $this->collOrderfiles;
-    }
-
-    /**
-     * Sets a collection of Orderfile objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $orderfiles A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return User The current object (for fluent API support)
-     */
-    public function setOrderfiles(PropelCollection $orderfiles, PropelPDO $con = null)
-    {
-        $orderfilesToDelete = $this->getOrderfiles(new Criteria(), $con)->diff($orderfiles);
-
-
-        $this->orderfilesScheduledForDeletion = $orderfilesToDelete;
-
-        foreach ($orderfilesToDelete as $orderfileRemoved) {
-            $orderfileRemoved->setUser(null);
-        }
-
-        $this->collOrderfiles = null;
-        foreach ($orderfiles as $orderfile) {
-            $this->addOrderfile($orderfile);
-        }
-
-        $this->collOrderfiles = $orderfiles;
-        $this->collOrderfilesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Orderfile objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Orderfile objects.
-     * @throws PropelException
-     */
-    public function countOrderfiles(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collOrderfilesPartial && !$this->isNew();
-        if (null === $this->collOrderfiles || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collOrderfiles) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getOrderfiles());
-            }
-            $query = OrderfileQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByUser($this)
-                ->count($con);
-        }
-
-        return count($this->collOrderfiles);
-    }
-
-    /**
-     * Method called to associate a Orderfile object to this object
-     * through the Orderfile foreign key attribute.
-     *
-     * @param    Orderfile $l Orderfile
-     * @return User The current object (for fluent API support)
-     */
-    public function addOrderfile(Orderfile $l)
-    {
-        if ($this->collOrderfiles === null) {
-            $this->initOrderfiles();
-            $this->collOrderfilesPartial = true;
-        }
-
-        if (!in_array($l, $this->collOrderfiles->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddOrderfile($l);
-
-            if ($this->orderfilesScheduledForDeletion and $this->orderfilesScheduledForDeletion->contains($l)) {
-                $this->orderfilesScheduledForDeletion->remove($this->orderfilesScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	Orderfile $orderfile The orderfile object to add.
-     */
-    protected function doAddOrderfile($orderfile)
-    {
-        $this->collOrderfiles[]= $orderfile;
-        $orderfile->setUser($this);
-    }
-
-    /**
-     * @param	Orderfile $orderfile The orderfile object to remove.
-     * @return User The current object (for fluent API support)
-     */
-    public function removeOrderfile($orderfile)
-    {
-        if ($this->getOrderfiles()->contains($orderfile)) {
-            $this->collOrderfiles->remove($this->collOrderfiles->search($orderfile));
-            if (null === $this->orderfilesScheduledForDeletion) {
-                $this->orderfilesScheduledForDeletion = clone $this->collOrderfiles;
-                $this->orderfilesScheduledForDeletion->clear();
-            }
-            $this->orderfilesScheduledForDeletion[]= clone $orderfile;
-            $orderfile->setUser(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this User is new, it will return
-     * an empty collection; or if this User has previously
-     * been saved, it will retrieve related Orderfiles from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in User.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Orderfile[] List of Orderfile objects
-     */
-    public function getOrderfilesJoinOrder($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = OrderfileQuery::create(null, $criteria);
-        $query->joinWith('Order', $join_behavior);
-
-        return $this->getOrderfiles($query, $con);
     }
 
     /**
@@ -5911,256 +5258,6 @@ abstract class BaseUser extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collQuoutenotes collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return User The current object (for fluent API support)
-     * @see        addQuoutenotes()
-     */
-    public function clearQuoutenotes()
-    {
-        $this->collQuoutenotes = null; // important to set this to null since that means it is uninitialized
-        $this->collQuoutenotesPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collQuoutenotes collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialQuoutenotes($v = true)
-    {
-        $this->collQuoutenotesPartial = $v;
-    }
-
-    /**
-     * Initializes the collQuoutenotes collection.
-     *
-     * By default this just sets the collQuoutenotes collection to an empty array (like clearcollQuoutenotes());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initQuoutenotes($overrideExisting = true)
-    {
-        if (null !== $this->collQuoutenotes && !$overrideExisting) {
-            return;
-        }
-        $this->collQuoutenotes = new PropelObjectCollection();
-        $this->collQuoutenotes->setModel('Quoutenote');
-    }
-
-    /**
-     * Gets an array of Quoutenote objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this User is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Quoutenote[] List of Quoutenote objects
-     * @throws PropelException
-     */
-    public function getQuoutenotes($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collQuoutenotesPartial && !$this->isNew();
-        if (null === $this->collQuoutenotes || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collQuoutenotes) {
-                // return empty collection
-                $this->initQuoutenotes();
-            } else {
-                $collQuoutenotes = QuoutenoteQuery::create(null, $criteria)
-                    ->filterByUser($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collQuoutenotesPartial && count($collQuoutenotes)) {
-                      $this->initQuoutenotes(false);
-
-                      foreach ($collQuoutenotes as $obj) {
-                        if (false == $this->collQuoutenotes->contains($obj)) {
-                          $this->collQuoutenotes->append($obj);
-                        }
-                      }
-
-                      $this->collQuoutenotesPartial = true;
-                    }
-
-                    $collQuoutenotes->getInternalIterator()->rewind();
-
-                    return $collQuoutenotes;
-                }
-
-                if ($partial && $this->collQuoutenotes) {
-                    foreach ($this->collQuoutenotes as $obj) {
-                        if ($obj->isNew()) {
-                            $collQuoutenotes[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collQuoutenotes = $collQuoutenotes;
-                $this->collQuoutenotesPartial = false;
-            }
-        }
-
-        return $this->collQuoutenotes;
-    }
-
-    /**
-     * Sets a collection of Quoutenote objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $quoutenotes A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return User The current object (for fluent API support)
-     */
-    public function setQuoutenotes(PropelCollection $quoutenotes, PropelPDO $con = null)
-    {
-        $quoutenotesToDelete = $this->getQuoutenotes(new Criteria(), $con)->diff($quoutenotes);
-
-
-        $this->quoutenotesScheduledForDeletion = $quoutenotesToDelete;
-
-        foreach ($quoutenotesToDelete as $quoutenoteRemoved) {
-            $quoutenoteRemoved->setUser(null);
-        }
-
-        $this->collQuoutenotes = null;
-        foreach ($quoutenotes as $quoutenote) {
-            $this->addQuoutenote($quoutenote);
-        }
-
-        $this->collQuoutenotes = $quoutenotes;
-        $this->collQuoutenotesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Quoutenote objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Quoutenote objects.
-     * @throws PropelException
-     */
-    public function countQuoutenotes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collQuoutenotesPartial && !$this->isNew();
-        if (null === $this->collQuoutenotes || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collQuoutenotes) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getQuoutenotes());
-            }
-            $query = QuoutenoteQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByUser($this)
-                ->count($con);
-        }
-
-        return count($this->collQuoutenotes);
-    }
-
-    /**
-     * Method called to associate a Quoutenote object to this object
-     * through the Quoutenote foreign key attribute.
-     *
-     * @param    Quoutenote $l Quoutenote
-     * @return User The current object (for fluent API support)
-     */
-    public function addQuoutenote(Quoutenote $l)
-    {
-        if ($this->collQuoutenotes === null) {
-            $this->initQuoutenotes();
-            $this->collQuoutenotesPartial = true;
-        }
-
-        if (!in_array($l, $this->collQuoutenotes->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddQuoutenote($l);
-
-            if ($this->quoutenotesScheduledForDeletion and $this->quoutenotesScheduledForDeletion->contains($l)) {
-                $this->quoutenotesScheduledForDeletion->remove($this->quoutenotesScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	Quoutenote $quoutenote The quoutenote object to add.
-     */
-    protected function doAddQuoutenote($quoutenote)
-    {
-        $this->collQuoutenotes[]= $quoutenote;
-        $quoutenote->setUser($this);
-    }
-
-    /**
-     * @param	Quoutenote $quoutenote The quoutenote object to remove.
-     * @return User The current object (for fluent API support)
-     */
-    public function removeQuoutenote($quoutenote)
-    {
-        if ($this->getQuoutenotes()->contains($quoutenote)) {
-            $this->collQuoutenotes->remove($this->collQuoutenotes->search($quoutenote));
-            if (null === $this->quoutenotesScheduledForDeletion) {
-                $this->quoutenotesScheduledForDeletion = clone $this->collQuoutenotes;
-                $this->quoutenotesScheduledForDeletion->clear();
-            }
-            $this->quoutenotesScheduledForDeletion[]= clone $quoutenote;
-            $quoutenote->setUser(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this User is new, it will return
-     * an empty collection; or if this User has previously
-     * been saved, it will retrieve related Quoutenotes from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in User.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Quoutenote[] List of Quoutenote objects
-     */
-    public function getQuoutenotesJoinQuote($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = QuoutenoteQuery::create(null, $criteria);
-        $query->joinWith('Quote', $join_behavior);
-
-        return $this->getQuoutenotes($query, $con);
-    }
-
-    /**
      * Clears out the collStaffs collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -7404,18 +6501,8 @@ abstract class BaseUser extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collOrdercomments) {
-                foreach ($this->collOrdercomments as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collOrderconflictComments) {
                 foreach ($this->collOrderconflictComments as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collOrderfiles) {
-                foreach ($this->collOrderfiles as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -7441,11 +6528,6 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
             if ($this->collProspectioninterests) {
                 foreach ($this->collProspectioninterests as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collQuoutenotes) {
-                foreach ($this->collQuoutenotes as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -7509,18 +6591,10 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->collMlquestions->clearIterator();
         }
         $this->collMlquestions = null;
-        if ($this->collOrdercomments instanceof PropelCollection) {
-            $this->collOrdercomments->clearIterator();
-        }
-        $this->collOrdercomments = null;
         if ($this->collOrderconflictComments instanceof PropelCollection) {
             $this->collOrderconflictComments->clearIterator();
         }
         $this->collOrderconflictComments = null;
-        if ($this->collOrderfiles instanceof PropelCollection) {
-            $this->collOrderfiles->clearIterator();
-        }
-        $this->collOrderfiles = null;
         if ($this->collProductionordercomments instanceof PropelCollection) {
             $this->collProductionordercomments->clearIterator();
         }
@@ -7541,10 +6615,6 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->collProspectioninterests->clearIterator();
         }
         $this->collProspectioninterests = null;
-        if ($this->collQuoutenotes instanceof PropelCollection) {
-            $this->collQuoutenotes->clearIterator();
-        }
-        $this->collQuoutenotes = null;
         if ($this->collStaffs instanceof PropelCollection) {
             $this->collStaffs->clearIterator();
         }

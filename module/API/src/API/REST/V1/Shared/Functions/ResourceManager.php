@@ -171,6 +171,7 @@ class ResourceManager{
             // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
             $module = MODULE_RESOURCE;
         }
+
         //Creamos el objeto de las FormPostPut
         $namespaceResource = array_search('\\API\\REST\\V1\\ACL\\'.$module.'\\'.$resource.'\\Filter\\'.$resource.'FilterPostPut', $namespaceResource);
         $objectResourceFilterPostPut = new $namespaceResource;
@@ -305,45 +306,6 @@ class ResourceManager{
             }
         }else{
             throw new Exception('Token can not be null');
-        }
-    }
-
-    /**
-     * @param $iduser
-     * @return mixed
-     */
-    public static function getValidToken($iduser){
-        $currentDate = date('Y-m-d H:i:s');
-        $tokenList = \TokenQuery::create()->filterByIduser($iduser)->find();
-        foreach ($tokenList as $token){
-            if($currentDate < $token->getExpiresIn()){
-                return $token;
-            }
-        }
-        //Si no encontro token validos, genera uno nuevo y lo retorna PENDIENTE
-    }
-    /**
-     * @param null $token
-     * @return bool
-     */
-    public static function TokenIsValid($token=null){
-        $currentDate = date('Y-m-d H:i:s');
-        if($token != null){
-            //Verificamos que exista el token en la base de datos.
-            $token = TokenQuery::create()->filterByToken($token)->findOne();
-            if(!empty($token)){
-                //Verificamos que no este expirado
-                if($currentDate < $token->getExpiresIn()){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-            else{
-                return false;
-            }
-        }else{
-            return false;
         }
     }
 }

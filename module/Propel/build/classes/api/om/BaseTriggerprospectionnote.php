@@ -60,14 +60,14 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
     protected $triggerprospectionnote_date;
 
     /**
-     * @var        User
-     */
-    protected $aUser;
-
-    /**
      * @var        Triggerprospection
      */
     protected $aTriggerprospection;
+
+    /**
+     * @var        User
+     */
+    protected $aUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -402,8 +402,8 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
             $this->aTriggerprospection = null;
+            $this->aUser = null;
         } // if (deep)
     }
 
@@ -522,18 +522,18 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
             if ($this->aTriggerprospection !== null) {
                 if ($this->aTriggerprospection->isModified() || $this->aTriggerprospection->isNew()) {
                     $affectedRows += $this->aTriggerprospection->save($con);
                 }
                 $this->setTriggerprospection($this->aTriggerprospection);
+            }
+
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
+                }
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -713,15 +713,15 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if (!$this->aUser->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
-                }
-            }
-
             if ($this->aTriggerprospection !== null) {
                 if (!$this->aTriggerprospection->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aTriggerprospection->getValidationFailures());
+                }
+            }
+
+            if ($this->aUser !== null) {
+                if (!$this->aUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
                 }
             }
 
@@ -822,11 +822,11 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aTriggerprospection) {
                 $result['Triggerprospection'] = $this->aTriggerprospection->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aUser) {
+                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1048,58 +1048,6 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param                  User $v
-     * @return Triggerprospectionnote The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setIduser(NULL);
-        } else {
-            $this->setIduser($v->getIduser());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addTriggerprospectionnote($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addTriggerprospectionnotes($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
      * Declares an association between this object and a Triggerprospection object.
      *
      * @param                  Triggerprospection $v
@@ -1152,6 +1100,58 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
     }
 
     /**
+     * Declares an association between this object and a User object.
+     *
+     * @param                  User $v
+     * @return Triggerprospectionnote The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setIduser(NULL);
+        } else {
+            $this->setIduser($v->getIduser());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addTriggerprospectionnote($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
+            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addTriggerprospectionnotes($this);
+             */
+        }
+
+        return $this->aUser;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1183,18 +1183,18 @@ abstract class BaseTriggerprospectionnote extends BaseObject implements Persiste
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aUser instanceof Persistent) {
-              $this->aUser->clearAllReferences($deep);
-            }
             if ($this->aTriggerprospection instanceof Persistent) {
               $this->aTriggerprospection->clearAllReferences($deep);
+            }
+            if ($this->aUser instanceof Persistent) {
+              $this->aUser->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aUser = null;
         $this->aTriggerprospection = null;
+        $this->aUser = null;
     }
 
     /**

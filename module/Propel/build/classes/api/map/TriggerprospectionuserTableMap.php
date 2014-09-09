@@ -49,8 +49,8 @@ class TriggerprospectionuserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Triggerprospection', 'Triggerprospection', RelationMap::MANY_TO_ONE, array('idtriggerprospection' => 'idtriggerprospection', ), null, null);
+        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // TriggerprospectionuserTableMap

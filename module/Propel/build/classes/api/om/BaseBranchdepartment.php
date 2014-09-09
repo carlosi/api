@@ -170,7 +170,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
 
         if ($this->iddepartment !== $v) {
             $this->iddepartment = $v;
-            $this->modifiedColumns[] = BranchdepartmentPeer::IDDEPARTAMENT;
+            $this->modifiedColumns[] = BranchdepartmentPeer::IDDEPARTMENT;
         }
 
         if ($this->aDepartment !== null && $this->aDepartment->getIddepartment() !== $v) {
@@ -470,7 +470,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
         if ($this->isColumnModified(BranchdepartmentPeer::IDBRANCH)) {
             $modifiedColumns[':p' . $index++]  = '`idbranch`';
         }
-        if ($this->isColumnModified(BranchdepartmentPeer::IDDEPARTAMENT)) {
+        if ($this->isColumnModified(BranchdepartmentPeer::IDDEPARTMENT)) {
             $modifiedColumns[':p' . $index++]  = '`iddepartment`';
         }
 
@@ -782,7 +782,7 @@ abstract class BaseBranchdepartment extends BaseObject implements Persistent
 
         if ($this->isColumnModified(BranchdepartmentPeer::IDBRANCHDEPARTMENT)) $criteria->add(BranchdepartmentPeer::IDBRANCHDEPARTMENT, $this->idbranchdepartment);
         if ($this->isColumnModified(BranchdepartmentPeer::IDBRANCH)) $criteria->add(BranchdepartmentPeer::IDBRANCH, $this->idbranch);
-        if ($this->isColumnModified(BranchdepartmentPeer::IDDEPARTAMENT)) $criteria->add(BranchdepartmentPeer::IDDEPARTAMENT, $this->iddepartment);
+        if ($this->isColumnModified(BranchdepartmentPeer::IDDEPARTMENT)) $criteria->add(BranchdepartmentPeer::IDDEPARTMENT, $this->iddepartment);
 
         return $criteria;
     }

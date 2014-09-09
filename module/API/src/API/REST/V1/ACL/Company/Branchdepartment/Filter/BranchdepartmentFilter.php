@@ -58,161 +58,30 @@ class BranchdepartmentFilter implements InputFilterAwareInterface
         if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
 
-            // idbranch: DataType = INT, PK = true, NN = true, AI = true
+            // idbranchdepartment: DataType = INT, PK = true, NN = true, AI = true
+            $inputFilter->add(array(
+                'name'     => 'idbranchdepartment',
+                'required' => false,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+            ));
+
+            // idbranch: DataType = INT, NN = true
             $inputFilter->add(array(
                 'name'     => 'idbranch',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-
-            // idcompany: DataType = INT, NN = true
-            $inputFilter->add(array(
-                'name'     => 'idcompany',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-
-            // branch_name: DataType = VARCHAR(255), NN = true
-            $inputFilter->add(array(
-                'name'     => 'branch_name',
                 'required' => true,
                 'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 1,
-                            'max'      => 255,
-                        ),
-                    ),
+                    array('name' => 'Int'),
                 ),
             ));
 
-            // branch_iso_codecountry: DataType = VARCHAR(45), NN = false
+            // iddepartment: DataType = INT, NN = true
             $inputFilter->add(array(
-                'name'     => 'branch_iso_codecountry',
-                'required' => false,
+                'name'     => 'iddepartment',
+                'required' => true,
                 'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 1,
-                            'max'      => 45,
-                        ),
-                    ),
-                ),
-            ));
-
-            // branch_address: DataType = VARCHAR(65), NN = false
-            $inputFilter->add(array(
-                'name'     => 'branch_address',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 1,
-                            'max'      => 65,
-                        ),
-                    ),
-                ),
-            ));
-
-            // branch_address2: DataType = VARCHAR(65), NN = false
-            $inputFilter->add(array(
-                'name'     => 'branch_address2',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 1,
-                            'max'      => 65,
-                        ),
-                    ),
-                ),
-            ));
-
-            // branch_city: DataType = VARCHAR(65), NN = false
-            $inputFilter->add(array(
-                'name'     => 'branch_city',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 1,
-                            'max'      => 65,
-                        ),
-                    ),
-                ),
-            ));
-
-            // branch_state: DataType = VARCHAR(45), NN = false
-            $inputFilter->add(array(
-                'name'     => 'branch_state',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 1,
-                            'max'      => 45,
-                        ),
-                    ),
-                ),
-            ));
-
-            // branch_zipcode: DataType = VARCHAR(5), NN = false
-            $inputFilter->add(array(
-                'name'     => 'branch_zipcode',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 1,
-                            'max'      => 5,
-                        ),
-                    ),
+                    array('name' => 'Int'),
                 ),
             ));
 

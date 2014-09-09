@@ -50,8 +50,8 @@ class DepartmentleaderTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Department', 'Department', RelationMap::MANY_TO_ONE, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // DepartmentleaderTableMap

@@ -183,6 +183,74 @@ class Branch extends BaseBranch
     }
     /////////// End create ///////////
 
+    /////////// Start get ///////////
+    /**
+     *
+     * @param type $id
+     * @param array $allowedColumns
+     * @return type
+     */
+
+    public function getEntity($id){
+        $entity = BranchQuery::create()->findPk($id);
+        return $entity;
+    }
+
+    /**
+     *
+     * @param type $entity
+     * @param array $allowedColumns
+     * @return array
+     */
+
+    public function getEntityResponse($entity,$userLevel){
+        //Obtenemos nuestra entidad branch en forma de arreglo
+        $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
+
+        //Los Links
+        $response = array(
+            "_links" => array(
+                "self" => array(
+                    "href" =>  URL_API."/v".API_VERSION."/branch/".$entity->getIdbranch(),
+                ),
+            ),
+        );
+        //El ACL
+
+        //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
+        $branchForm = BranchFormGET::init($userLevel);
+        $companyForm = CompanyFormGET::init($userLevel);
+
+        foreach ($branchForm->getElements() as $element){
+            if($element->getOption('value_options')!=null){
+                $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
+            }else{
+                if($element->getAttribute('name')!="idcompany"){
+                    $response["ACL"][$element->getAttribute('name')] = $element->getOption('label');
+                    $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
+                }
+            }
+        }
+        $response["ACL"]["company"]=array(
+            "idcompany" =>  $companyForm->get("idcompany")->getOption('label'),
+            "company_name" =>  $companyForm->get("company_name")->getOption('label'),
+        );
+
+        $company = $entity->getCompany();
+        $response["company"] = array(
+            "_links" => array(
+                "self" => array(
+                    "href" =>  URL_API."/v".API_VERSION."/company/".$company->getIdcompany(),
+                ),
+            ),
+            "idcompany" => $company->getIdcompany(),
+            "company_name" => $company->getCompanyName()
+        );
+        return $response;
+    }
+    /////////// End get ///////////
+
     /////////// Start getList ///////////
     /**
      * @param $idcompany
@@ -362,8 +430,6 @@ class Branch extends BaseBranch
             );
             $acl['company'] = $companyColumns;
         }
-
-
         // End ACL //
 
         $response = array(
@@ -546,72 +612,12 @@ class Branch extends BaseBranch
     }
     /////////// End update ///////////
 
+    /////////// Start delete ///////////
     /**
-     *
-     * @param type $id
-     * @param array $allowedColumns
-     * @return type
+     * @param $id
+     * @param $userLevel
+     * @return bool
      */
-
-    public function getEntity($id){
-        $entity = BranchQuery::create()->findPk($id);
-        return $entity;
-    }
-
-    /**
-     *
-     * @param type $entity
-     * @param array $allowedColumns
-     * @return array
-     */
-
-    public function getEntityResponse($entity,$userLevel){
-        //Obtenemos nuestra entidad branch en forma de arreglo
-        $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
-
-        //Los Links
-        $response = array(
-            "_links" => array(
-                "self" => array(
-                  "href" =>  URL_API."/v".API_VERSION."/branch/".$entity->getIdbranch(),
-                ),
-            ),
-        );
-        //El ACL
-
-        //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
-        $branchForm = BranchFormGET::init($userLevel);
-        $companyForm = CompanyFormGET::init($userLevel);
-
-        foreach ($branchForm->getElements() as $element){
-            if($element->getOption('value_options')!=null){
-                $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-            }else{
-                if($element->getAttribute('name')!="idcompany"){
-                    $response["ACL"][$element->getAttribute('name')] = $element->getOption('label');
-                    $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-                }
-            }
-        }
-        $response["ACL"]["company"]=array(
-            "idcompany" =>  $companyForm->get("idcompany")->getOption('label'),
-            "company_name" =>  $companyForm->get("company_name")->getOption('label'),
-        );
-
-        $company = $entity->getCompany();
-        $response["company"] = array(
-            "_links" => array(
-                "self" => array(
-                  "href" =>  URL_API."/v".API_VERSION."/company/".$company->getIdcompany(),
-                ),
-            ),
-            "idcompany" => $company->getIdcompany(),
-            "company_name" => $company->getCompanyName()
-        );
-        return $response;
-    }
-
     public function deleteEntity($id,$userLevel) {
 
         //Reglas de negocio
@@ -622,5 +628,5 @@ class Branch extends BaseBranch
         return false;
 
     }
-
+    /////////// End delete ///////////
 }

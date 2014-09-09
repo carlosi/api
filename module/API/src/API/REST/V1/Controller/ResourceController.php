@@ -109,8 +109,13 @@ class ResourceController extends AbstractRestfulController
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
 
-        // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-        $module = ResourceManager::getModule($resourceName);
+        if(RESOURCE_CHILD!=null){
+            $resourceName = NAME_RESOURCE_CHILD;
+            $module = MODULE_RESOURCE_CHILD;
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
@@ -605,7 +610,11 @@ class ResourceController extends AbstractRestfulController
             return new JsonModel(JSonResponse::getResponseBody(403));
         }
     }
-    
+
+    /**
+     * @param mixed $id
+     * @return mixed|JsonModel
+     */
     public function delete($id) {
         
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
@@ -633,7 +642,6 @@ class ResourceController extends AbstractRestfulController
         
              //Verificamos si el id que se quiere eliminar pertenece a la compañia
              if($resource->isIdValid($id,$idCompany)){
-                 
                  if($resource->deleteEntity($id,$userLevel)){
                      //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
@@ -672,11 +680,482 @@ class ResourceController extends AbstractRestfulController
         }
 
     }
-    
+
+    /**
+     * @return mixed|JsonModel
+     */
     public function getListChildAction(){
         return $this->getList();
     }
-    
-    
-    
+
+    /////////// Start create Resource Relational ///////////
+    /**
+     * @return mixed|JsonModel
+     */
+    public function createResourceRelationalAction(){
+
+        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+        $token = $this->getToken();
+
+        //Obtenemos el IdUser propietario del token
+        $idUser = ResourceManager::getIDUser($token);
+
+        //Obtenemos el IdCompany al que pertenece el usuario
+        $idCompany = ResourceManager::getIDCompany($token);
+
+        // Instanciamos el objeto request
+        $request = $this->getRequest();
+
+        // Instanciamos el objeto response
+        $response = $this->getResponse();
+
+        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+        $resourceName = ucfirst(RESOURCE);
+
+        if(RESOURCE_CHILD!=null){
+            $resourceName = NAME_RESOURCE_CHILD;
+            $module = MODULE_RESOURCE_CHILD;
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
+
+        //Obtenemnos el nivel de acceso del usuario para el recurso
+        $userLevel = ResourceManager::getUserLevels($idUser, $module);
+
+        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
+        if($userLevel!=0){
+
+            // Obtenemos el id de nuestro recursoChild
+            $idChild = $this->getEvent()->getRouteMatch()->getParam('idChild');
+            // Obtenemos el id de nuestro recurso
+            $idResource = $this->getEvent()->getRouteMatch()->getParam('id');
+            // Obtenemos el nombre de nuestro recurso
+            $resourcename = RESOURCE;
+            // Obtenemos el nombre de nuestro recursoChild
+            $resourcenameChild = RESOURCE_CHILD;
+
+            $resource = ResourceManager::getResource($resourceName);
+
+            if($resource->isIdValidResource($idResource,$idCompany)){
+                if($resource->isIdValidResurceChild($idChild)){
+
+                    // Creamos un array para almacenar los ids que nos mandan desde la URL
+                    $data = array();
+                    $data['id'.$resourcename] = $idResource;
+                    $data['id'.$resourcenameChild] = $idChild;
+
+                    // Instanciamos el Formulario "resourceForm"
+                    $resourceForm = ResourceManager::getResourceForm($resourceName);
+
+                    // Obtenemos los elementos del Formulario "resourceForm"
+                    $elementsForm = $resourceForm->getElements();
+
+                    // Recorremos los elementos de nuestro formulario y le insertamos los valores a $dataArray
+                    if($data != null){
+                        $dataArray = array();
+                        foreach($elementsForm as $key=>$value){
+                            $dataArray[$key] = isset($data[$key]) ? $data[$key] : null;
+                        }
+                    }
+
+                    // Instanciamos nuestro formulario resourceFormPostPut
+                    $resourceFormPostPut = ResourceManager::getResourceFormPostPut($resourceName);
+                    $FormPostPut = $resourceFormPostPut::init($userLevel);
+                    //Le ponemos los datos a nuestro formulario
+                    $FormPostPut->setData($dataArray);
+
+                    // Instanciamos nuestro filtro resourceFilterPostPut
+                    $resourceFilterPostPut = ResourceManager::getResourceFilterPostPut($resourceName);
+
+                    //Le ponemos el filtro a nuestro formulario
+                    $FilterPostPut = $resourceFilterPostPut;
+                    $FormPostPut->setInputFilter($FilterPostPut->getInputFilter($userLevel));
+                    //Si los valores son validos
+                    if($FormPostPut->isValid()){
+
+                        // Instanciamos nuestro recurso
+                        $resource = ResourceManager::getResource($resourceName);
+                        $resourceArray = $resource->toArray(BasePeer::TYPE_FIELDNAME);
+
+                        // Recorremos los elementos de nuestro formularioPost y le insertamos los valores a $responseArray para preparar nuestra respuesta
+                        $responseArray = array();
+                        foreach ($FormPostPut->getElements() as $keyElement => $valueElement){
+                            $responseArray[$keyElement] = $resourceArray[$keyElement];
+                        }
+                        foreach ($dataArray as $dataKey => $dataValue){
+                            if(!is_null($dataValue)){
+                                $responseArray[$dataKey] = $dataArray[$dataKey];
+                            }
+                        }
+
+                        // Ingresamos al objeto del recurso directamente en la clase de Propel
+                        $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel);
+
+                        //Modifiamos el Header de nuestra respuesta
+                        $response->setStatusCode($issave['statusCode']); //BAD REQUEST
+
+                        switch(TYPE_RESPONSE){
+                            case "xml":{
+                                // Create the config object
+                                $writer = new \Zend\Config\Writer\Xml();
+                                return $response->setContent($writer->toString($issave['bodyResponse']));
+                                break;
+                            }
+                            case "json":{
+                                return new JsonModel($issave['bodyResponse']);
+                                break;
+                            }
+                            default: {
+                            return new JsonModel($issave['bodyResponse']);
+                            break;
+                            }
+                        }
+                        //Si el formulario no fue valido
+                    }else{
+                        //Modifiamos el Header de nuestra respuesta
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
+                        $messageArray = array();
+                        foreach ($FormPostPut->getMessages() as $key => $value){
+                            foreach($value as $val){
+                                //Obtenemos el valor de la columna con error
+                                $message = $key.' '.$val;
+                                array_push($messageArray, $message);
+                            }
+                        }
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        return new JsonModel(JSonResponse::getResponseBody(400, $messageArray));
+                    }
+                }else{
+                    //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid id '.RESOURCE_CHILD,
+                        ),
+                    );
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                        }
+                    }
+                }
+            }else{
+                //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP_Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid id '.RESOURCE,
+                    ),
+                );
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+            }
+        //Si el usuario no tiene permisos sobre el recurso
+        }else{
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
+            return new JsonModel(JSonResponse::getResponseBody(403));
+        }
+    }
+    /////////// End create Resource Relational ///////////
+
+    /////////// End update Resource Relational ///////////
+    /**
+     * @param mixed $data
+     * @return mixed|JsonModel
+     */
+    public function updateResourceRelationalAction() {
+
+        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+        $token = $this->getToken();
+
+        //Obtenemos el IdUser propietario del token
+        $idUser = ResourceManager::getIDUser($token);
+
+        //Obtenemos el IdCompany al que pertenece el usuario
+        $idCompany = ResourceManager::getIDCompany($token);
+
+        // Instanciamos el objeto request
+        $request = $this->getRequest();
+
+        // Instanciamos el objeto response
+        $response = $this->getResponse();
+
+        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+        $resourceName = ucfirst(RESOURCE);
+
+        if(RESOURCE_CHILD!=null){
+            $resourceName = NAME_RESOURCE_CHILD;
+            $module = MODULE_RESOURCE_CHILD;
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
+
+        //Obtenemnos el nivel de acceso del usuario para el recurso
+        $userLevel = ResourceManager::getUserLevels($idUser, $module);
+
+        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
+        if($userLevel!=0){
+
+            // Obtenemos el id de nuestro recursoChild
+            $idChild = $this->getEvent()->getRouteMatch()->getParam('idChild');
+            // Obtenemos el id de nuestro recurso
+            $idResource = $this->getEvent()->getRouteMatch()->getParam('id');
+            // Obtenemos el nombre de nuestro recurso
+            $resourcename = RESOURCE;
+            // Obtenemos el nombre de nuestro recursoChild
+            $resourcenameChild = RESOURCE_CHILD;
+
+            $resource = ResourceManager::getResource($resourceName);
+
+            if($resource->isIdValidResource($idResource,$idCompany)){
+                if($resource->isIdValidResurceChild($idChild)){
+
+                    // Creamos un array para almacenar los ids que nos mandan desde la URL
+                    $data = array();
+                    $data['id'.$resourcename] = $idResource;
+                    $data['id'.$resourcenameChild] = $idChild;
+
+                    $functionUpdate = $resource->updateResource($data, $idCompany, $userLevel, $request, $response);
+
+                    switch(TYPE_RESPONSE){
+                        case "xml":{
+                            // Create the config object
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($functionUpdate));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($functionUpdate);
+                            break;
+                        }
+                        default: {
+                        return new JsonModel($functionUpdate);
+                        break;
+                        }
+                    }
+                }else{
+                    //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid id '.RESOURCE_CHILD,
+                        ),
+                    );
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                        }
+                    }
+                }
+            }else{
+                //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP_Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid id '.RESOURCE,
+                    ),
+                );
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+            }
+        //Si el usuario no tiene permisos sobre el recurso
+        }else{
+            $response = $this->getResponse();
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
+            return new JsonModel(JSonResponse::getResponseBody(403));
+        }
+    }
+    /////////// Start update Resource Relational ///////////
+
+    /////////// Start delete Resource Relational ///////////
+    /**
+     * @param mixed $id
+     * @return mixed|JsonModel
+     */
+    public function deleteResourceRelationalAction() {
+
+        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+        $token = $this->getToken();
+
+        //Obtenemos el IdUser propietario del token
+        $idUser = ResourceManager::getIDUser($token);
+
+        //Obtenemos el IdCompany al que pertenece el usuario
+        $idCompany = ResourceManager::getIDCompany($token);
+
+        // Instanciamos el objeto request
+        $request = $this->getRequest();
+
+        // Instanciamos el objeto response
+        $response = $this->getResponse();
+
+        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+        $resourceName = ucfirst(RESOURCE);
+
+        if(RESOURCE_CHILD!=null){
+            $resourceName = NAME_RESOURCE_CHILD;
+            $module = MODULE_RESOURCE_CHILD;
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
+
+        //Obtenemnos el nivel de acceso del usuario para el recurso
+        $userLevel = ResourceManager::getUserLevels($idUser, $module);
+
+        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
+        if($userLevel!=0){
+
+            // Obtenemos el id de nuestro recursoChild
+            $idChild = $this->getEvent()->getRouteMatch()->getParam('idChild');
+            // Obtenemos el id de nuestro recurso
+            $idResource = $this->getEvent()->getRouteMatch()->getParam('id');
+            // Obtenemos el nombre de nuestro recurso
+            $resourcename = RESOURCE;
+            // Obtenemos el nombre de nuestro recursoChild
+            $resourcenameChild = RESOURCE_CHILD;
+            // Obtenemos el nombra del recurso concatenado con el recursoChild
+            $resourcenameRelational = RESOURCE.RESOURCE_CHILD;
+            // Hacemos la primer letra mayúscula
+            $resourceNameRelational = ucfirst($resourcenameRelational);
+
+            // Obtenemos el nombre de los ids
+            $idResourceName = 'id'.$resourcename;
+            $idResourceChildName = 'id'.$resourcenameChild;
+            $idResourceRelationalName = 'id'.$resourcenameRelational;
+            // Creamos un array para almacenar los ids que nos mandan desde la URL
+            $data = array();
+            $data[$idResourceName] = $idResource;
+            $data[$idResourceChildName] = $idChild;
+
+            //Instanciamos nuestra BranchdepartmentQuery
+            $resourceQueryRelational = ResourceManager::getResourceQuery($resourceNameRelational);
+            $filterByIdResource = "filterById".RESOURCE;
+            $filterByIdResourceChild = "filterById".RESOURCE_CHILD;
+            $resourceRelationalData = $resourceQueryRelational->$filterByIdResource($data[$idResourceName])->$filterByIdResourceChild($data[$idResourceChildName])->find();
+            $resourceRelationalArray = $resourceRelationalData->getArrayCopy($idResourceRelationalName);
+
+            // Obtenemos el idbranchdepartment que se desea modificar
+            $idresourceRelational = (key($resourceRelationalArray));
+
+            var_dump($idresourceRelational);
+            //Instanciamos nuestra Branchdepartment
+            $resourceRelational = ResourceManager::getResource($resourceNameRelational);
+
+            //Verificamos si el id que se quiere eliminar pertenece a la compañia
+            if($resourceRelational->isIdValidResource($idResource,$idCompany)){
+                if($resourceRelational->deleteEntity($idresourceRelational,$userLevel)){
+                    //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //NOT CONTENT
+                }else{
+                    //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid id',
+                        ),
+                    );
+                    return new JsonModel($bodyResponse);
+                }
+            }else{
+                //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP_Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Entity not found',
+                    ),
+                );
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+            }
+
+        }else{
+            $response = $this->getResponse();
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
+            return new JsonModel(JSonResponse::getResponseBody(403));
+        }
+
+    }
+    /////////// End delete Resource Relational ///////////
 }

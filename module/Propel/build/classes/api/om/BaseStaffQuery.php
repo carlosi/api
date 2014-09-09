@@ -8,8 +8,8 @@
  *
  * @method StaffQuery orderByIdstaff($order = Criteria::ASC) Order by the idstaff column
  * @method StaffQuery orderByIduser($order = Criteria::ASC) Order by the iduser column
+ * @method StaffQuery orderByStaffName($order = Criteria::ASC) Order by the staff_name column
  * @method StaffQuery orderByStaffFirstname($order = Criteria::ASC) Order by the staff_firstname column
- * @method StaffQuery orderByStaffLastname($order = Criteria::ASC) Order by the staff_lastname column
  * @method StaffQuery orderByStaffEmail($order = Criteria::ASC) Order by the staff_email column
  * @method StaffQuery orderByStaffEmail2($order = Criteria::ASC) Order by the staff_email2 column
  * @method StaffQuery orderByStaffPhone($order = Criteria::ASC) Order by the staff_phone column
@@ -20,8 +20,8 @@
  *
  * @method StaffQuery groupByIdstaff() Group by the idstaff column
  * @method StaffQuery groupByIduser() Group by the iduser column
+ * @method StaffQuery groupByStaffName() Group by the staff_name column
  * @method StaffQuery groupByStaffFirstname() Group by the staff_firstname column
- * @method StaffQuery groupByStaffLastname() Group by the staff_lastname column
  * @method StaffQuery groupByStaffEmail() Group by the staff_email column
  * @method StaffQuery groupByStaffEmail2() Group by the staff_email2 column
  * @method StaffQuery groupByStaffPhone() Group by the staff_phone column
@@ -42,8 +42,8 @@
  * @method Staff findOneOrCreate(PropelPDO $con = null) Return the first Staff matching the query, or a new Staff object populated from the query conditions when no match is found
  *
  * @method Staff findOneByIduser(int $iduser) Return the first Staff filtered by the iduser column
+ * @method Staff findOneByStaffName(string $staff_name) Return the first Staff filtered by the staff_name column
  * @method Staff findOneByStaffFirstname(string $staff_firstname) Return the first Staff filtered by the staff_firstname column
- * @method Staff findOneByStaffLastname(string $staff_lastname) Return the first Staff filtered by the staff_lastname column
  * @method Staff findOneByStaffEmail(string $staff_email) Return the first Staff filtered by the staff_email column
  * @method Staff findOneByStaffEmail2(string $staff_email2) Return the first Staff filtered by the staff_email2 column
  * @method Staff findOneByStaffPhone(string $staff_phone) Return the first Staff filtered by the staff_phone column
@@ -54,8 +54,8 @@
  *
  * @method array findByIdstaff(int $idstaff) Return Staff objects filtered by the idstaff column
  * @method array findByIduser(int $iduser) Return Staff objects filtered by the iduser column
+ * @method array findByStaffName(string $staff_name) Return Staff objects filtered by the staff_name column
  * @method array findByStaffFirstname(string $staff_firstname) Return Staff objects filtered by the staff_firstname column
- * @method array findByStaffLastname(string $staff_lastname) Return Staff objects filtered by the staff_lastname column
  * @method array findByStaffEmail(string $staff_email) Return Staff objects filtered by the staff_email column
  * @method array findByStaffEmail2(string $staff_email2) Return Staff objects filtered by the staff_email2 column
  * @method array findByStaffPhone(string $staff_phone) Return Staff objects filtered by the staff_phone column
@@ -170,7 +170,7 @@ abstract class BaseStaffQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idstaff`, `iduser`, `staff_firstname`, `staff_lastname`, `staff_email`, `staff_email2`, `staff_phone`, `staff_cellular`, `staff_language`, `staff_iso_codecountry`, `staff_iso_codephone` FROM `staff` WHERE `idstaff` = :p0';
+        $sql = 'SELECT `idstaff`, `iduser`, `staff_name`, `staff_firstname`, `staff_email`, `staff_email2`, `staff_phone`, `staff_cellular`, `staff_language`, `staff_iso_codecountry`, `staff_iso_codephone` FROM `staff` WHERE `idstaff` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -346,6 +346,35 @@ abstract class BaseStaffQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the staff_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByStaffName('fooValue');   // WHERE staff_name = 'fooValue'
+     * $query->filterByStaffName('%fooValue%'); // WHERE staff_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $staffName The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return StaffQuery The current query, for fluid interface
+     */
+    public function filterByStaffName($staffName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($staffName)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $staffName)) {
+                $staffName = str_replace('*', '%', $staffName);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(StaffPeer::STAFF_NAME, $staffName, $comparison);
+    }
+
+    /**
      * Filter the query on the staff_firstname column
      *
      * Example usage:
@@ -372,35 +401,6 @@ abstract class BaseStaffQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(StaffPeer::STAFF_FIRSTNAME, $staffFirstname, $comparison);
-    }
-
-    /**
-     * Filter the query on the staff_lastname column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByStaffLastname('fooValue');   // WHERE staff_lastname = 'fooValue'
-     * $query->filterByStaffLastname('%fooValue%'); // WHERE staff_lastname LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $staffLastname The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return StaffQuery The current query, for fluid interface
-     */
-    public function filterByStaffLastname($staffLastname = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($staffLastname)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $staffLastname)) {
-                $staffLastname = str_replace('*', '%', $staffLastname);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(StaffPeer::STAFF_LASTNAME, $staffLastname, $comparison);
     }
 
     /**

@@ -53,8 +53,8 @@ class QuoteitemTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Quote', 'Quote', RelationMap::MANY_TO_ONE, array('idquote' => 'idquote', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Product', 'Product', RelationMap::MANY_TO_ONE, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('Quote', 'Quote', RelationMap::MANY_TO_ONE, array('idquote' => 'idquote', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // QuoteitemTableMap

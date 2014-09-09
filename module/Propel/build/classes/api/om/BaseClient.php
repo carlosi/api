@@ -109,7 +109,7 @@ abstract class BaseClient extends BaseObject implements Persistent
 
     /**
      * The value for the client_type field.
-     * Note: this column has a database default value of: 'normal'
+     * Note: this column has a database default value of: 'NORMAL'
      * @var        string
      */
     protected $client_type;
@@ -255,7 +255,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function applyDefaultValues()
     {
-        $this->client_type = 'normal';
+        $this->client_type = 'NORMAL';
     }
 
     /**
@@ -730,7 +730,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->client_type !== 'normal') {
+            if ($this->client_type !== 'NORMAL') {
                 return false;
             }
 

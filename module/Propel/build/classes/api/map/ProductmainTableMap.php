@@ -83,6 +83,7 @@ class ProductmainTableMap extends TableMap
         $this->addRelation('Productcategory', 'Productcategory', RelationMap::MANY_TO_ONE, array('idproductcategory' => 'idproductcategory', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Mlitem', 'Mlitem', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), null, null, 'Mlitems');
         $this->addRelation('Product', 'Product', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), 'CASCADE', 'CASCADE', 'Products');
+        $this->addRelation('Productmainphoto', 'Productmainphoto', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), 'CASCADE', 'CASCADE', 'Productmainphotos');
         $this->addRelation('Productmainproperty', 'Productmainproperty', RelationMap::ONE_TO_MANY, array('idproductmain' => 'idproductmain', ), 'CASCADE', 'CASCADE', 'Productmainpropertys');
     } // buildRelations()
 

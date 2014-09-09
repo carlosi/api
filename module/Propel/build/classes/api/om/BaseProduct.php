@@ -60,12 +60,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
     protected $collOrderitemsPartial;
 
     /**
-     * @var        PropelObjectCollection|Productphoto[] Collection to store aggregation of Productphoto objects.
-     */
-    protected $collProductphotos;
-    protected $collProductphotosPartial;
-
-    /**
      * @var        PropelObjectCollection|Productproperty[] Collection to store aggregation of Productproperty objects.
      */
     protected $collProductpropertys;
@@ -102,12 +96,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $orderitemsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $productphotosScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -358,8 +346,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
             $this->aProductmain = null;
             $this->collOrderitems = null;
 
-            $this->collProductphotos = null;
-
             $this->collProductpropertys = null;
 
             $this->collQuoteitems = null;
@@ -511,23 +497,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
 
             if ($this->collOrderitems !== null) {
                 foreach ($this->collOrderitems as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->productphotosScheduledForDeletion !== null) {
-                if (!$this->productphotosScheduledForDeletion->isEmpty()) {
-                    ProductphotoQuery::create()
-                        ->filterByPrimaryKeys($this->productphotosScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->productphotosScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collProductphotos !== null) {
-                foreach ($this->collProductphotos as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -742,14 +711,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collProductphotos !== null) {
-                    foreach ($this->collProductphotos as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collProductpropertys !== null) {
                     foreach ($this->collProductpropertys as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -854,9 +815,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
             }
             if (null !== $this->collOrderitems) {
                 $result['Orderitems'] = $this->collOrderitems->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collProductphotos) {
-                $result['Productphotos'] = $this->collProductphotos->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collProductpropertys) {
                 $result['Productpropertys'] = $this->collProductpropertys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1027,12 +985,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getProductphotos() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addProductphoto($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getProductpropertys() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addProductproperty($relObj->copy($deepCopy));
@@ -1160,9 +1112,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
     {
         if ('Orderitem' == $relationName) {
             $this->initOrderitems();
-        }
-        if ('Productphoto' == $relationName) {
-            $this->initProductphotos();
         }
         if ('Productproperty' == $relationName) {
             $this->initProductpropertys();
@@ -1420,231 +1369,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
         $query->joinWith('Order', $join_behavior);
 
         return $this->getOrderitems($query, $con);
-    }
-
-    /**
-     * Clears out the collProductphotos collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Product The current object (for fluent API support)
-     * @see        addProductphotos()
-     */
-    public function clearProductphotos()
-    {
-        $this->collProductphotos = null; // important to set this to null since that means it is uninitialized
-        $this->collProductphotosPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collProductphotos collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialProductphotos($v = true)
-    {
-        $this->collProductphotosPartial = $v;
-    }
-
-    /**
-     * Initializes the collProductphotos collection.
-     *
-     * By default this just sets the collProductphotos collection to an empty array (like clearcollProductphotos());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initProductphotos($overrideExisting = true)
-    {
-        if (null !== $this->collProductphotos && !$overrideExisting) {
-            return;
-        }
-        $this->collProductphotos = new PropelObjectCollection();
-        $this->collProductphotos->setModel('Productphoto');
-    }
-
-    /**
-     * Gets an array of Productphoto objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Product is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Productphoto[] List of Productphoto objects
-     * @throws PropelException
-     */
-    public function getProductphotos($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collProductphotosPartial && !$this->isNew();
-        if (null === $this->collProductphotos || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collProductphotos) {
-                // return empty collection
-                $this->initProductphotos();
-            } else {
-                $collProductphotos = ProductphotoQuery::create(null, $criteria)
-                    ->filterByProduct($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collProductphotosPartial && count($collProductphotos)) {
-                      $this->initProductphotos(false);
-
-                      foreach ($collProductphotos as $obj) {
-                        if (false == $this->collProductphotos->contains($obj)) {
-                          $this->collProductphotos->append($obj);
-                        }
-                      }
-
-                      $this->collProductphotosPartial = true;
-                    }
-
-                    $collProductphotos->getInternalIterator()->rewind();
-
-                    return $collProductphotos;
-                }
-
-                if ($partial && $this->collProductphotos) {
-                    foreach ($this->collProductphotos as $obj) {
-                        if ($obj->isNew()) {
-                            $collProductphotos[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collProductphotos = $collProductphotos;
-                $this->collProductphotosPartial = false;
-            }
-        }
-
-        return $this->collProductphotos;
-    }
-
-    /**
-     * Sets a collection of Productphoto objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $productphotos A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Product The current object (for fluent API support)
-     */
-    public function setProductphotos(PropelCollection $productphotos, PropelPDO $con = null)
-    {
-        $productphotosToDelete = $this->getProductphotos(new Criteria(), $con)->diff($productphotos);
-
-
-        $this->productphotosScheduledForDeletion = $productphotosToDelete;
-
-        foreach ($productphotosToDelete as $productphotoRemoved) {
-            $productphotoRemoved->setProduct(null);
-        }
-
-        $this->collProductphotos = null;
-        foreach ($productphotos as $productphoto) {
-            $this->addProductphoto($productphoto);
-        }
-
-        $this->collProductphotos = $productphotos;
-        $this->collProductphotosPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Productphoto objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Productphoto objects.
-     * @throws PropelException
-     */
-    public function countProductphotos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collProductphotosPartial && !$this->isNew();
-        if (null === $this->collProductphotos || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collProductphotos) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getProductphotos());
-            }
-            $query = ProductphotoQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByProduct($this)
-                ->count($con);
-        }
-
-        return count($this->collProductphotos);
-    }
-
-    /**
-     * Method called to associate a Productphoto object to this object
-     * through the Productphoto foreign key attribute.
-     *
-     * @param    Productphoto $l Productphoto
-     * @return Product The current object (for fluent API support)
-     */
-    public function addProductphoto(Productphoto $l)
-    {
-        if ($this->collProductphotos === null) {
-            $this->initProductphotos();
-            $this->collProductphotosPartial = true;
-        }
-
-        if (!in_array($l, $this->collProductphotos->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddProductphoto($l);
-
-            if ($this->productphotosScheduledForDeletion and $this->productphotosScheduledForDeletion->contains($l)) {
-                $this->productphotosScheduledForDeletion->remove($this->productphotosScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	Productphoto $productphoto The productphoto object to add.
-     */
-    protected function doAddProductphoto($productphoto)
-    {
-        $this->collProductphotos[]= $productphoto;
-        $productphoto->setProduct($this);
-    }
-
-    /**
-     * @param	Productphoto $productphoto The productphoto object to remove.
-     * @return Product The current object (for fluent API support)
-     */
-    public function removeProductphoto($productphoto)
-    {
-        if ($this->getProductphotos()->contains($productphoto)) {
-            $this->collProductphotos->remove($this->collProductphotos->search($productphoto));
-            if (null === $this->productphotosScheduledForDeletion) {
-                $this->productphotosScheduledForDeletion = clone $this->collProductphotos;
-                $this->productphotosScheduledForDeletion->clear();
-            }
-            $this->productphotosScheduledForDeletion[]= clone $productphoto;
-            $productphoto->setProduct(null);
-        }
-
-        return $this;
     }
 
     /**
@@ -2183,11 +1907,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collProductphotos) {
-                foreach ($this->collProductphotos as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collProductpropertys) {
                 foreach ($this->collProductpropertys as $o) {
                     $o->clearAllReferences($deep);
@@ -2209,10 +1928,6 @@ abstract class BaseProduct extends BaseObject implements Persistent
             $this->collOrderitems->clearIterator();
         }
         $this->collOrderitems = null;
-        if ($this->collProductphotos instanceof PropelCollection) {
-            $this->collProductphotos->clearIterator();
-        }
-        $this->collProductphotos = null;
         if ($this->collProductpropertys instanceof PropelCollection) {
             $this->collProductpropertys->clearIterator();
         }

@@ -62,14 +62,14 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
     protected $user_accesslevel;
 
     /**
-     * @var        User
-     */
-    protected $aUser;
-
-    /**
      * @var        Branch
      */
     protected $aBranch;
+
+    /**
+     * @var        User
+     */
+    protected $aUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -118,7 +118,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getIdbranchBranchUserAcl()
+    public function getIdbranchUserAcl()
     {
 
         return $this->idbranch_user_acl;
@@ -174,7 +174,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
      * @param  int $v new value
      * @return BranchUserAcl The current object (for fluent API support)
      */
-    public function setIdbranchBranchUserAcl($v)
+    public function setIdbranchUserAcl($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -187,7 +187,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
 
 
         return $this;
-    } // setIdbranchBranchUserAcl()
+    } // setIdbranchUserAcl()
 
     /**
      * Set the value of [iduser] column.
@@ -403,8 +403,8 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
             $this->aBranch = null;
+            $this->aUser = null;
         } // if (deep)
     }
 
@@ -523,18 +523,18 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
             if ($this->aBranch !== null) {
                 if ($this->aBranch->isModified() || $this->aBranch->isNew()) {
                     $affectedRows += $this->aBranch->save($con);
                 }
                 $this->setBranch($this->aBranch);
+            }
+
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
+                }
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -628,7 +628,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setIdbranchBranchUserAcl($pk);
+        $this->setIdbranchUserAcl($pk);
 
         $this->setNew(false);
     }
@@ -714,15 +714,15 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if (!$this->aUser->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
-                }
-            }
-
             if ($this->aBranch !== null) {
                 if (!$this->aBranch->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aBranch->getValidationFailures());
+                }
+            }
+
+            if ($this->aUser !== null) {
+                if (!$this->aUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
                 }
             }
 
@@ -768,7 +768,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getIdbranchBranchUserAcl();
+                return $this->getIdbranchUserAcl();
                 break;
             case 1:
                 return $this->getIduser();
@@ -811,7 +811,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
         $alreadyDumpedObjects['BranchUserAcl'][$this->getPrimaryKey()] = true;
         $keys = BranchUserAclPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getIdbranchBranchUserAcl(),
+            $keys[0] => $this->getIdbranchUserAcl(),
             $keys[1] => $this->getIduser(),
             $keys[2] => $this->getIdbranch(),
             $keys[3] => $this->getModuleName(),
@@ -823,11 +823,11 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aBranch) {
                 $result['Branch'] = $this->aBranch->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aUser) {
+                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -864,7 +864,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setIdbranchBranchUserAcl($value);
+                $this->setIdbranchUserAcl($value);
                 break;
             case 1:
                 $this->setIduser($value);
@@ -902,7 +902,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
     {
         $keys = BranchUserAclPeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setIdbranchBranchUserAcl($arr[$keys[0]]);
+        if (array_key_exists($keys[0], $arr)) $this->setIdbranchUserAcl($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setIduser($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setIdbranch($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setModuleName($arr[$keys[3]]);
@@ -949,7 +949,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getIdbranchBranchUserAcl();
+        return $this->getIdbranchUserAcl();
     }
 
     /**
@@ -960,7 +960,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
      */
     public function setPrimaryKey($key)
     {
-        $this->setIdbranchBranchUserAcl($key);
+        $this->setIdbranchUserAcl($key);
     }
 
     /**
@@ -970,7 +970,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getIdbranchBranchUserAcl();
+        return null === $this->getIdbranchUserAcl();
     }
 
     /**
@@ -1004,7 +1004,7 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setIdbranchBranchUserAcl(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setIdbranchUserAcl(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1046,58 +1046,6 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
         }
 
         return self::$peer;
-    }
-
-    /**
-     * Declares an association between this object and a User object.
-     *
-     * @param                  User $v
-     * @return BranchUserAcl The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setIduser(NULL);
-        } else {
-            $this->setIduser($v->getIduser());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addBranchUserAcl($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addBranchUserAcls($this);
-             */
-        }
-
-        return $this->aUser;
     }
 
     /**
@@ -1153,6 +1101,58 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a User object.
+     *
+     * @param                  User $v
+     * @return BranchUserAcl The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setIduser(NULL);
+        } else {
+            $this->setIduser($v->getIduser());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addBranchUserAcl($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
+            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addBranchUserAcls($this);
+             */
+        }
+
+        return $this->aUser;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1185,18 +1185,18 @@ abstract class BaseBranchUserAcl extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aUser instanceof Persistent) {
-              $this->aUser->clearAllReferences($deep);
-            }
             if ($this->aBranch instanceof Persistent) {
               $this->aBranch->clearAllReferences($deep);
+            }
+            if ($this->aUser instanceof Persistent) {
+              $this->aUser->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aUser = null;
         $this->aBranch = null;
+        $this->aUser = null;
     }
 
     /**

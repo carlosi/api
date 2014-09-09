@@ -39,7 +39,7 @@ abstract class BaseBranchdepartmentPeer
     const IDBRANCH = 'branchdepartment.idbranch';
 
     /** the column name for the iddepartment field */
-    const IDDEPARTAMENT = 'branchdepartment.iddepartment';
+    const IDDEPARTMENT = 'branchdepartment.iddepartment';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -62,8 +62,8 @@ abstract class BaseBranchdepartmentPeer
     protected static $fieldNames = array (
         BasePeer::TYPE_PHPNAME => array ('Idbranchdepartment', 'Idbranch', 'Iddepartment', ),
         BasePeer::TYPE_STUDLYPHPNAME => array ('idbranchdepartment', 'idbranch', 'iddepartment', ),
-        BasePeer::TYPE_COLNAME => array (BranchdepartmentPeer::IDBRANCHDEPARTMENT, BranchdepartmentPeer::IDBRANCH, BranchdepartmentPeer::IDDEPARTAMENT, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDBRANCHDEPARTMENT', 'IDBRANCH', 'IDDEPARTAMENT', ),
+        BasePeer::TYPE_COLNAME => array (BranchdepartmentPeer::IDBRANCHDEPARTMENT, BranchdepartmentPeer::IDBRANCH, BranchdepartmentPeer::IDDEPARTMENT, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDBRANCHDEPARTMENT', 'IDBRANCH', 'IDDEPARTMENT', ),
         BasePeer::TYPE_FIELDNAME => array ('idbranchdepartment', 'idbranch', 'iddepartment', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
@@ -77,8 +77,8 @@ abstract class BaseBranchdepartmentPeer
     protected static $fieldKeys = array (
         BasePeer::TYPE_PHPNAME => array ('Idbranchdepartment' => 0, 'Idbranch' => 1, 'Iddepartment' => 2, ),
         BasePeer::TYPE_STUDLYPHPNAME => array ('idbranchdepartment' => 0, 'idbranch' => 1, 'iddepartment' => 2, ),
-        BasePeer::TYPE_COLNAME => array (BranchdepartmentPeer::IDBRANCHDEPARTMENT => 0, BranchdepartmentPeer::IDBRANCH => 1, BranchdepartmentPeer::IDDEPARTAMENT => 2, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDBRANCHDEPARTMENT' => 0, 'IDBRANCH' => 1, 'IDDEPARTAMENT' => 2, ),
+        BasePeer::TYPE_COLNAME => array (BranchdepartmentPeer::IDBRANCHDEPARTMENT => 0, BranchdepartmentPeer::IDBRANCH => 1, BranchdepartmentPeer::IDDEPARTMENT => 2, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDBRANCHDEPARTMENT' => 0, 'IDBRANCH' => 1, 'IDDEPARTMENT' => 2, ),
         BasePeer::TYPE_FIELDNAME => array ('idbranchdepartment' => 0, 'idbranch' => 1, 'iddepartment' => 2, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
@@ -156,7 +156,7 @@ abstract class BaseBranchdepartmentPeer
         if (null === $alias) {
             $criteria->addSelectColumn(BranchdepartmentPeer::IDBRANCHDEPARTMENT);
             $criteria->addSelectColumn(BranchdepartmentPeer::IDBRANCH);
-            $criteria->addSelectColumn(BranchdepartmentPeer::IDDEPARTAMENT);
+            $criteria->addSelectColumn(BranchdepartmentPeer::IDDEPARTMENT);
         } else {
             $criteria->addSelectColumn($alias . '.idbranchdepartment');
             $criteria->addSelectColumn($alias . '.idbranch');
@@ -498,7 +498,7 @@ abstract class BaseBranchdepartmentPeer
             $con = Propel::getConnection(BranchdepartmentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -586,7 +586,7 @@ abstract class BaseBranchdepartmentPeer
         $startcol = BranchdepartmentPeer::NUM_HYDRATE_COLUMNS;
         DepartmentPeer::addSelectColumns($criteria);
 
-        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -734,7 +734,7 @@ abstract class BaseBranchdepartmentPeer
             $con = Propel::getConnection(BranchdepartmentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $criteria->addJoin(BranchdepartmentPeer::IDBRANCH, BranchPeer::IDBRANCH, $join_behavior);
 
@@ -778,7 +778,7 @@ abstract class BaseBranchdepartmentPeer
         BranchPeer::addSelectColumns($criteria);
         $startcol4 = $startcol3 + BranchPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $criteria->addJoin(BranchdepartmentPeer::IDBRANCH, BranchPeer::IDBRANCH, $join_behavior);
 
@@ -930,7 +930,7 @@ abstract class BaseBranchdepartmentPeer
             $con = Propel::getConnection(BranchdepartmentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -1046,7 +1046,7 @@ abstract class BaseBranchdepartmentPeer
         DepartmentPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + DepartmentPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTAMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
+        $criteria->addJoin(BranchdepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDDEPARTMENT, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);

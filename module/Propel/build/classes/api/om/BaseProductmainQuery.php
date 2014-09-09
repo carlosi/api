@@ -40,6 +40,10 @@
  * @method ProductmainQuery rightJoinProduct($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Product relation
  * @method ProductmainQuery innerJoinProduct($relationAlias = null) Adds a INNER JOIN clause to the query using the Product relation
  *
+ * @method ProductmainQuery leftJoinProductmainphoto($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productmainphoto relation
+ * @method ProductmainQuery rightJoinProductmainphoto($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productmainphoto relation
+ * @method ProductmainQuery innerJoinProductmainphoto($relationAlias = null) Adds a INNER JOIN clause to the query using the Productmainphoto relation
+ *
  * @method ProductmainQuery leftJoinProductmainproperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productmainproperty relation
  * @method ProductmainQuery rightJoinProductmainproperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productmainproperty relation
  * @method ProductmainQuery innerJoinProductmainproperty($relationAlias = null) Adds a INNER JOIN clause to the query using the Productmainproperty relation
@@ -770,6 +774,80 @@ abstract class BaseProductmainQuery extends ModelCriteria
         return $this
             ->joinProduct($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Product', 'ProductQuery');
+    }
+
+    /**
+     * Filter the query by a related Productmainphoto object
+     *
+     * @param   Productmainphoto|PropelObjectCollection $productmainphoto  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ProductmainQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByProductmainphoto($productmainphoto, $comparison = null)
+    {
+        if ($productmainphoto instanceof Productmainphoto) {
+            return $this
+                ->addUsingAlias(ProductmainPeer::IDPRODUCTMAIN, $productmainphoto->getIdproductmain(), $comparison);
+        } elseif ($productmainphoto instanceof PropelObjectCollection) {
+            return $this
+                ->useProductmainphotoQuery()
+                ->filterByPrimaryKeys($productmainphoto->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByProductmainphoto() only accepts arguments of type Productmainphoto or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Productmainphoto relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ProductmainQuery The current query, for fluid interface
+     */
+    public function joinProductmainphoto($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Productmainphoto');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Productmainphoto');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Productmainphoto relation Productmainphoto object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   ProductmainphotoQuery A secondary query class using the current class as primary query
+     */
+    public function useProductmainphotoQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProductmainphoto($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Productmainphoto', 'ProductmainphotoQuery');
     }
 
     /**

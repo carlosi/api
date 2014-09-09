@@ -470,15 +470,9 @@ abstract class BaseUserPeer
         // Invalidate objects in MlquestionPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         MlquestionPeer::clearInstancePool();
-        // Invalidate objects in OrdercommentPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        OrdercommentPeer::clearInstancePool();
         // Invalidate objects in OrderconflictCommentPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         OrderconflictCommentPeer::clearInstancePool();
-        // Invalidate objects in OrderfilePeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        OrderfilePeer::clearInstancePool();
         // Invalidate objects in ProductionordercommentPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductionordercommentPeer::clearInstancePool();
@@ -494,9 +488,6 @@ abstract class BaseUserPeer
         // Invalidate objects in ProspectioninterestPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProspectioninterestPeer::clearInstancePool();
-        // Invalidate objects in QuoutenotePeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        QuoutenotePeer::clearInstancePool();
         // Invalidate objects in StaffPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         StaffPeer::clearInstancePool();
@@ -1123,23 +1114,11 @@ abstract class BaseUserPeer
             $criteria->add(MlquestionPeer::IDUSER, $obj->getIduser());
             $affectedRows += MlquestionPeer::doDelete($criteria, $con);
 
-            // delete related Ordercomment objects
-            $criteria = new Criteria(OrdercommentPeer::DATABASE_NAME);
-
-            $criteria->add(OrdercommentPeer::IDUSER, $obj->getIduser());
-            $affectedRows += OrdercommentPeer::doDelete($criteria, $con);
-
             // delete related OrderconflictComment objects
             $criteria = new Criteria(OrderconflictCommentPeer::DATABASE_NAME);
 
             $criteria->add(OrderconflictCommentPeer::IDUSER, $obj->getIduser());
             $affectedRows += OrderconflictCommentPeer::doDelete($criteria, $con);
-
-            // delete related Orderfile objects
-            $criteria = new Criteria(OrderfilePeer::DATABASE_NAME);
-
-            $criteria->add(OrderfilePeer::IDUSER, $obj->getIduser());
-            $affectedRows += OrderfilePeer::doDelete($criteria, $con);
 
             // delete related Productionordercomment objects
             $criteria = new Criteria(ProductionordercommentPeer::DATABASE_NAME);
@@ -1170,12 +1149,6 @@ abstract class BaseUserPeer
 
             $criteria->add(ProspectioninterestPeer::IDUSER, $obj->getIduser());
             $affectedRows += ProspectioninterestPeer::doDelete($criteria, $con);
-
-            // delete related Quoutenote objects
-            $criteria = new Criteria(QuoutenotePeer::DATABASE_NAME);
-
-            $criteria->add(QuoutenotePeer::IDUSER, $obj->getIduser());
-            $affectedRows += QuoutenotePeer::doDelete($criteria, $con);
 
             // delete related Staff objects
             $criteria = new Criteria(StaffPeer::DATABASE_NAME);

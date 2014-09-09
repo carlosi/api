@@ -28,10 +28,6 @@
  * @method QuoteQuery rightJoinQuoteitem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Quoteitem relation
  * @method QuoteQuery innerJoinQuoteitem($relationAlias = null) Adds a INNER JOIN clause to the query using the Quoteitem relation
  *
- * @method QuoteQuery leftJoinQuoutenote($relationAlias = null) Adds a LEFT JOIN clause to the query using the Quoutenote relation
- * @method QuoteQuery rightJoinQuoutenote($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Quoutenote relation
- * @method QuoteQuery innerJoinQuoutenote($relationAlias = null) Adds a INNER JOIN clause to the query using the Quoutenote relation
- *
  * @method Quote findOne(PropelPDO $con = null) Return the first Quote matching the query
  * @method Quote findOneOrCreate(PropelPDO $con = null) Return the first Quote matching the query, or a new Quote object populated from the query conditions when no match is found
  *
@@ -545,80 +541,6 @@ abstract class BaseQuoteQuery extends ModelCriteria
         return $this
             ->joinQuoteitem($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Quoteitem', 'QuoteitemQuery');
-    }
-
-    /**
-     * Filter the query by a related Quoutenote object
-     *
-     * @param   Quoutenote|PropelObjectCollection $quoutenote  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 QuoteQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByQuoutenote($quoutenote, $comparison = null)
-    {
-        if ($quoutenote instanceof Quoutenote) {
-            return $this
-                ->addUsingAlias(QuotePeer::IDQUOTE, $quoutenote->getIdquote(), $comparison);
-        } elseif ($quoutenote instanceof PropelObjectCollection) {
-            return $this
-                ->useQuoutenoteQuery()
-                ->filterByPrimaryKeys($quoutenote->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByQuoutenote() only accepts arguments of type Quoutenote or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Quoutenote relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return QuoteQuery The current query, for fluid interface
-     */
-    public function joinQuoutenote($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Quoutenote');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Quoutenote');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Quoutenote relation Quoutenote object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   QuoutenoteQuery A secondary query class using the current class as primary query
-     */
-    public function useQuoutenoteQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinQuoutenote($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Quoutenote', 'QuoutenoteQuery');
     }
 
     /**

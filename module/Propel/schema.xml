@@ -83,16 +83,16 @@
     </vendor>
   </table>
   <table name="branch_user_acl" phpName="BranchUserAcl" idMethod="native">
-    <column name="idbranch_user_acl" phpName="IdbranchBranchUserAcl" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idbranch_user_acl" phpName="IdbranchUserAcl" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="idbranch" phpName="Idbranch" type="INTEGER" required="true"/>
-    <column name="module_name" phpName="ModuleName" type="CHAR" sqlType="enum('basic','sales','company','manufacture','contents')" required="true" defaultValue="basic"/>
+    <column name="module_name" phpName="ModuleName" type="CHAR" sqlType="enum('basic','sales','company','satmexico','contents','salesforce')" required="true" defaultValue="basic"/>
     <column name="user_accesslevel" phpName="UserAccesslevel" type="CHAR" sqlType="enum('1','2','3','4','5')" required="true" defaultValue="1"/>
-    <foreign-key foreignTable="user" name="iduser_branch_user_acl" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="branch" name="idbranch_branch_user_acl" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idbranch" foreign="idbranch"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_branch_user_acl" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="iduser">
       <index-column name="iduser"/>
@@ -117,7 +117,7 @@
     <index name="idbranch">
       <index-column name="idbranch"/>
     </index>
-    <index name="iddepartment">
+    <index name="iddepartament">
       <index-column name="iddepartment"/>
     </index>
     <vendor type="mysql">
@@ -203,7 +203,7 @@
     <column name="client_phone" phpName="ClientPhone" type="VARCHAR" size="16" required="false"/>
     <column name="client_language" phpName="ClientLanguage" type="VARCHAR" size="6" required="false"/>
     <column name="client_status" phpName="ClientStatus" type="CHAR" sqlType="enum('pending','active','suspended','fraud')" required="true"/>
-    <column name="client_type" phpName="ClientType" type="CHAR" sqlType="enum('normal','generalpublic','inventorymanager')" required="true" defaultValue="normal"/>
+    <column name="client_type" phpName="ClientType" type="CHAR" sqlType="enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER')" required="false" defaultValue="NORMAL"/>
     <foreign-key foreignTable="company" name="idcompany_client" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idcompany" foreign="idcompany"/>
     </foreign-key>
@@ -423,11 +423,11 @@
     <column name="iddepartment" phpName="Iddepartment" type="INTEGER" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="departmentleader_title" phpName="DepartmentleaderTitle" type="VARCHAR" size="245" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_departmentleader" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="department" name="iddeparment_departmentleader" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="iddepartment" foreign="iddepartment"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_departmentleader" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="iddepartment">
       <index-column name="iddepartment"/>
@@ -721,10 +721,10 @@
     <column name="idbranch" phpName="Idbranch" type="INTEGER" required="true"/>
     <column name="idclient" phpName="Idclient" type="INTEGER" required="true"/>
     <column name="created_at" phpName="CreatedAt" type="DATE" required="true"/>
-    <column name="order_capture" phpName="OrderCapture" type="CHAR" sqlType="enum('complete','incomplete')" required="true" defaultValue="incomplete"/>
-    <column name="order_payment" phpName="OrderPayment" type="CHAR" sqlType="enum('paid','unpaid')" required="true"/>
-    <column name="order_paymentmode" phpName="OrderPaymentmode" type="CHAR" sqlType="enum('unique','partial')" required="true" defaultValue="unique"/>
-    <column name="order_delivery" phpName="OrderDelivery" type="CHAR" sqlType="enum('LOCALMODE','SHIPMODE','TRANSIT','FINISHED','TRANSITTOBRANCH')" required="true" defaultValue="SHIPMODE"/>
+    <column name="order_status" phpName="OrderStatus" type="CHAR" sqlType="enum('COMPLETE','INCOMPLETE')" required="true"/>
+    <column name="order_payment" phpName="OrderPayment" type="CHAR" sqlType="enum('PAID','UNPAID')" required="true"/>
+    <column name="order_paymentmode" phpName="OrderPaymentmode" type="CHAR" sqlType="enum('UNIQUE','PARTIAL')" required="true" defaultValue="UNIQUE"/>
+    <column name="order_delivery" phpName="OrderDelivery" type="CHAR" sqlType="enum('LOCALMODE','SHIPMODE','TRANSIT','FINISHED','TRANSITTOBRANCH','REFUND')" required="true" defaultValue="SHIPMODE"/>
     <foreign-key foreignTable="branch" name="idbranch_order" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idbranch" foreign="idbranch"/>
     </foreign-key>
@@ -744,20 +744,13 @@
   <table name="ordercomment" phpName="Ordercomment" idMethod="native">
     <column name="idordercomment" phpName="Idordercomment" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="idorder" phpName="Idorder" type="INTEGER" required="true"/>
-    <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="ordercomment_note" phpName="OrdercommentNote" type="LONGVARCHAR" required="true"/>
     <column name="ordercomment_date" phpName="OrdercommentDate" type="TIMESTAMP" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_ordercomment" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="order" name="idorder_ordercomment" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idorder" foreign="idorder"/>
     </foreign-key>
     <index name="idorder">
       <index-column name="idorder"/>
-    </index>
-    <index name="iduser">
-      <index-column name="iduser"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -801,22 +794,15 @@
   </table>
   <table name="orderfile" phpName="Orderfile" idMethod="native">
     <column name="idorderfile" phpName="Idorderfile" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="idorder" phpName="Idorder" type="INTEGER" required="true"/>
     <column name="orderfile_url" phpName="OrderfileUrl" type="LONGVARCHAR" required="true"/>
     <column name="orderfile_note" phpName="OrderfileNote" type="LONGVARCHAR" required="false"/>
     <column name="orderfile_uploaddate" phpName="OrderfileUploaddate" type="TIMESTAMP" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_orderfile" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="order" name="idorder_orderfile" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idorder" foreign="idorder"/>
     </foreign-key>
     <index name="idorder">
       <index-column name="idorder"/>
-    </index>
-    <index name="iduser">
-      <index-column name="iduser"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -1067,6 +1053,24 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
+  <table name="productmainphoto" phpName="Productmainphoto" idMethod="native">
+    <column name="idproductmainphoto" phpName="Idproductmainphoto" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idproductmain" phpName="Idproductmain" type="INTEGER" required="true"/>
+    <column name="productmainphoto_url" phpName="ProductmainphotoUrl" type="LONGVARCHAR" required="true"/>
+    <column name="productmainphoto_width" phpName="ProductmainphotoWidth" type="VARCHAR" size="35" required="false"/>
+    <column name="productmainphoto_height" phpName="ProductmainphotoHeight" type="VARCHAR" size="35" required="false"/>
+    <column name="productmainphoto_status" phpName="ProductmainphotoStatus" type="CHAR" sqlType="enum('pending','rejected','active','revision')" required="false"/>
+    <column name="productmainphoto_type" phpName="ProductmainphotoType" type="CHAR" sqlType="enum('private','public')" required="true" defaultValue="private"/>
+    <foreign-key foreignTable="productmain" name="idproductmain_productmainphoto" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idproductmain" foreign="idproductmain"/>
+    </foreign-key>
+    <index name="idproductmain">
+      <index-column name="idproductmain"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
   <table name="productmainproperty" phpName="Productmainproperty" idMethod="native">
     <column name="idproductmainproperty" phpName="Idproductmainproperty" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="idproductmain" phpName="Idproductmain" type="INTEGER" required="true"/>
@@ -1078,24 +1082,6 @@
     </foreign-key>
     <index name="idproductmain">
       <index-column name="idproductmain"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
-  <table name="productphoto" phpName="Productphoto" idMethod="native">
-    <column name="idproductphoto" phpName="Idproductphoto" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="idproduct" phpName="Idproduct" type="INTEGER" required="true"/>
-    <column name="productphoto_url" phpName="ProductphotoUrl" type="LONGVARCHAR" required="true"/>
-    <column name="productphoto_width" phpName="ProductphotoWidth" type="VARCHAR" size="35" required="false"/>
-    <column name="productphoto_height" phpName="ProductphotoHeight" type="VARCHAR" size="35" required="false"/>
-    <column name="productphoto_status" phpName="ProductphotoStatus" type="CHAR" sqlType="enum('pending','rejected','active','revision')" required="false"/>
-    <column name="productphoto_type" phpName="ProductphotoType" type="CHAR" sqlType="enum('private','public')" required="true" defaultValue="private"/>
-    <foreign-key foreignTable="product" name="idproduct_productphoto" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="idproduct" foreign="idproduct"/>
-    </foreign-key>
-    <index name="idproduct">
-      <index-column name="idproduct"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -1257,11 +1243,11 @@
     <column name="orderquote_officialvalue" phpName="OrderquoteOfficialvalue" type="DECIMAL" size="10" scale="2" required="true" defaultValue="0.00"/>
     <column name="orderquote_endvalue" phpName="OrderquoteEndvalue" type="DECIMAL" size="10" scale="2" required="true" defaultValue="0.00"/>
     <column name="orderquote_note" phpName="OrderquoteNote" type="LONGVARCHAR" required="false"/>
-    <foreign-key foreignTable="quote" name="idqoute_quoteitem" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="idquote" foreign="idquote"/>
-    </foreign-key>
     <foreign-key foreignTable="product" name="idproduct_quoteitem" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="idproduct" foreign="idproduct"/>
+    </foreign-key>
+    <foreign-key foreignTable="quote" name="idqoute_quoteitem" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="idquote" foreign="idquote"/>
     </foreign-key>
     <index name="idqoute">
       <index-column name="idquote"/>
@@ -1273,18 +1259,12 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="quoutenote" phpName="Quoutenote" idMethod="native">
-    <column name="idquoutenote" phpName="Idquoutenote" type="INTEGER" primaryKey="true" required="true"/>
+  <table name="quotenote" phpName="Quotenote" idMethod="native">
+    <column name="idquotenote" phpName="Idquotenote" type="INTEGER" primaryKey="true" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
     <column name="idquote" phpName="Idquote" type="INTEGER" required="true"/>
-    <column name="quoutenote_note" phpName="QuoutenoteNote" type="LONGVARCHAR" required="true"/>
-    <column name="quoutenote_date" phpName="QuoutenoteDate" type="TIMESTAMP" required="true"/>
-    <foreign-key foreignTable="quote" name="idquote_quotenote" onDelete="RESTRICT" onUpdate="RESTRICT">
-      <reference local="idquote" foreign="idquote"/>
-    </foreign-key>
-    <foreign-key foreignTable="user" name="iduser_quotenote" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
+    <column name="quotenote_note" phpName="QuotenoteNote" type="LONGVARCHAR" required="true"/>
+    <column name="quotenote_date" phpName="QuotenoteDate" type="TIMESTAMP" required="true"/>
     <index name="iduser">
       <index-column name="iduser"/>
     </index>
@@ -1346,8 +1326,8 @@
   <table name="staff" phpName="Staff" idMethod="native">
     <column name="idstaff" phpName="Idstaff" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
+    <column name="staff_name" phpName="StaffName" type="VARCHAR" size="45" required="false"/>
     <column name="staff_firstname" phpName="StaffFirstname" type="VARCHAR" size="145" required="false"/>
-    <column name="staff_lastname" phpName="StaffLastname" type="VARCHAR" size="145" required="false"/>
     <column name="staff_email" phpName="StaffEmail" type="VARCHAR" size="45" required="false"/>
     <column name="staff_email2" phpName="StaffEmail2" type="VARCHAR" size="45" required="false"/>
     <column name="staff_phone" phpName="StaffPhone" type="VARCHAR" size="45" required="false"/>
@@ -1402,11 +1382,11 @@
     <column name="idtriggerprospection" phpName="Idtriggerprospection" type="INTEGER" required="true"/>
     <column name="triggerprospectionnote_note" phpName="TriggerprospectionnoteNote" type="LONGVARCHAR" required="true"/>
     <column name="triggerprospectionnote_date" phpName="TriggerprospectionnoteDate" type="TIMESTAMP" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_triggerprospectionnote" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="triggerprospection" name="idtriggerprospection_triggerprospectionnote" onDelete="RESTRICT" onUpdate="RESTRICT">
       <reference local="idtriggerprospection" foreign="idtriggerprospection"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_triggerprospectionnote" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="iduser">
       <index-column name="iduser"/>
@@ -1422,11 +1402,11 @@
     <column name="idtriggerprospectionuser" phpName="Idtriggerprospectionuser" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="idtriggerprospection" phpName="Idtriggerprospection" type="INTEGER" required="true"/>
     <column name="iduser" phpName="Iduser" type="INTEGER" required="true"/>
-    <foreign-key foreignTable="user" name="iduser_triggerprospectionuser" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="iduser" foreign="iduser"/>
-    </foreign-key>
     <foreign-key foreignTable="triggerprospection" name="idtriggerprospection_triggerprospectionuser" onDelete="RESTRICT" onUpdate="RESTRICT">
       <reference local="idtriggerprospection" foreign="idtriggerprospection"/>
+    </foreign-key>
+    <foreign-key foreignTable="user" name="iduser_triggerprospectionuser" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="iduser" foreign="iduser"/>
     </foreign-key>
     <index name="iduser">
       <index-column name="iduser"/>

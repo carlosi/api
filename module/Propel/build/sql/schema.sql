@@ -119,19 +119,19 @@ CREATE TABLE `branch_user_acl`
     `idbranch_user_acl` INTEGER NOT NULL AUTO_INCREMENT,
     `iduser` INTEGER NOT NULL,
     `idbranch` INTEGER NOT NULL,
-    `module_name` enum('basic','sales','company','manufacture','contents') DEFAULT 'basic' NOT NULL,
+    `module_name` enum('basic','sales','company','satmexico','contents','salesforce') DEFAULT 'basic' NOT NULL,
     `user_accesslevel` enum('1','2','3','4','5') DEFAULT '1' NOT NULL,
     PRIMARY KEY (`idbranch_user_acl`),
     INDEX `iduser` (`iduser`),
     INDEX `idbranch` (`idbranch`),
-    CONSTRAINT `iduser_branch_user_acl`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idbranch_branch_user_acl`
         FOREIGN KEY (`idbranch`)
         REFERENCES `branch` (`idbranch`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_branch_user_acl`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -149,7 +149,7 @@ CREATE TABLE `branchdepartment`
     `iddepartment` INTEGER NOT NULL,
     PRIMARY KEY (`idbranchdepartment`),
     INDEX `idbranch` (`idbranch`),
-    INDEX `iddepartment` (`iddepartment`),
+    INDEX `iddepartament` (`iddepartment`),
     CONSTRAINT `idbranch_branchdepartment`
         FOREIGN KEY (`iddepartment`)
         REFERENCES `department` (`iddepartment`)
@@ -272,7 +272,7 @@ CREATE TABLE `client`
     `client_phone` VARCHAR(16),
     `client_language` VARCHAR(6),
     `client_status` enum('pending','active','suspended','fraud') NOT NULL,
-    `client_type` enum('normal','generalpublic','inventorymanager') DEFAULT 'normal' NOT NULL,
+    `client_type` enum('NORMAL','GENERALPUBLIC','INVENTORYMANAGER') DEFAULT 'NORMAL',
     PRIMARY KEY (`idclient`),
     INDEX `idcompany` (`idcompany`),
     CONSTRAINT `idcompany_client`
@@ -565,14 +565,14 @@ CREATE TABLE `departmentleader`
     PRIMARY KEY (`iddepartmentleader`),
     INDEX `iddepartment` (`iddepartment`),
     INDEX `iduser` (`iduser`),
-    CONSTRAINT `iduser_departmentleader`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `iddeparment_departmentleader`
         FOREIGN KEY (`iddepartment`)
         REFERENCES `department` (`iddepartment`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `iduser_departmentleader`
+        FOREIGN KEY (`iduser`)
+        REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -958,10 +958,10 @@ CREATE TABLE `order`
     `idbranch` INTEGER NOT NULL,
     `idclient` INTEGER NOT NULL,
     `created_at` DATE NOT NULL,
-    `order_capture` enum('complete','incomplete') DEFAULT 'incomplete' NOT NULL,
-    `order_payment` enum('paid','unpaid') NOT NULL,
-    `order_paymentmode` enum('unique','partial') DEFAULT 'unique' NOT NULL,
-    `order_delivery` enum('LOCALMODE','SHIPMODE','TRANSIT','FINISHED','TRANSITTOBRANCH') DEFAULT 'SHIPMODE' NOT NULL,
+    `order_status` enum('COMPLETE','INCOMPLETE') NOT NULL,
+    `order_payment` enum('PAID','UNPAID') NOT NULL,
+    `order_paymentmode` enum('UNIQUE','PARTIAL') DEFAULT 'UNIQUE' NOT NULL,
+    `order_delivery` enum('LOCALMODE','SHIPMODE','TRANSIT','FINISHED','TRANSITTOBRANCH','REFUND') DEFAULT 'SHIPMODE' NOT NULL,
     PRIMARY KEY (`idorder`),
     INDEX `idbranch` (`idbranch`),
     INDEX `idclient` (`idclient`),
@@ -987,17 +987,10 @@ CREATE TABLE `ordercomment`
 (
     `idordercomment` INTEGER NOT NULL AUTO_INCREMENT,
     `idorder` INTEGER NOT NULL,
-    `iduser` INTEGER NOT NULL,
     `ordercomment_note` TEXT NOT NULL,
     `ordercomment_date` DATETIME NOT NULL,
     PRIMARY KEY (`idordercomment`),
     INDEX `idorder` (`idorder`),
-    INDEX `iduser` (`iduser`),
-    CONSTRAINT `iduser_ordercomment`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idorder_ordercomment`
         FOREIGN KEY (`idorder`)
         REFERENCES `order` (`idorder`)
@@ -1062,19 +1055,12 @@ DROP TABLE IF EXISTS `orderfile`;
 CREATE TABLE `orderfile`
 (
     `idorderfile` INTEGER NOT NULL AUTO_INCREMENT,
-    `iduser` INTEGER NOT NULL,
     `idorder` INTEGER NOT NULL,
     `orderfile_url` TEXT NOT NULL,
     `orderfile_note` TEXT,
     `orderfile_uploaddate` DATETIME NOT NULL,
     PRIMARY KEY (`idorderfile`),
     INDEX `idorder` (`idorder`),
-    INDEX `iduser` (`iduser`),
-    CONSTRAINT `iduser_orderfile`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idorder_orderfile`
         FOREIGN KEY (`idorder`)
         REFERENCES `order` (`idorder`)
@@ -1402,6 +1388,30 @@ CREATE TABLE `productmain`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- productmainphoto
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `productmainphoto`;
+
+CREATE TABLE `productmainphoto`
+(
+    `idproductmainphoto` INTEGER NOT NULL AUTO_INCREMENT,
+    `idproductmain` INTEGER NOT NULL,
+    `productmainphoto_url` TEXT NOT NULL,
+    `productmainphoto_width` VARCHAR(35),
+    `productmainphoto_height` VARCHAR(35),
+    `productmainphoto_status` enum('pending','rejected','active','revision'),
+    `productmainphoto_type` enum('private','public') DEFAULT 'private' NOT NULL,
+    PRIMARY KEY (`idproductmainphoto`),
+    INDEX `idproductmain` (`idproductmain`),
+    CONSTRAINT `idproductmain_productmainphoto`
+        FOREIGN KEY (`idproductmain`)
+        REFERENCES `productmain` (`idproductmain`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- productmainproperty
 -- ---------------------------------------------------------------------
 
@@ -1419,30 +1429,6 @@ CREATE TABLE `productmainproperty`
     CONSTRAINT `idproductmain_productmainproperty`
         FOREIGN KEY (`idproductmain`)
         REFERENCES `productmain` (`idproductmain`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
--- productphoto
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `productphoto`;
-
-CREATE TABLE `productphoto`
-(
-    `idproductphoto` INTEGER NOT NULL AUTO_INCREMENT,
-    `idproduct` INTEGER NOT NULL,
-    `productphoto_url` TEXT NOT NULL,
-    `productphoto_width` VARCHAR(35),
-    `productphoto_height` VARCHAR(35),
-    `productphoto_status` enum('pending','rejected','active','revision'),
-    `productphoto_type` enum('private','public') DEFAULT 'private' NOT NULL,
-    PRIMARY KEY (`idproductphoto`),
-    INDEX `idproduct` (`idproduct`),
-    CONSTRAINT `idproduct_productphoto`
-        FOREIGN KEY (`idproduct`)
-        REFERENCES `product` (`idproduct`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -1661,42 +1647,34 @@ CREATE TABLE `quoteitem`
     PRIMARY KEY (`idquoteitem`),
     INDEX `idqoute` (`idquote`),
     INDEX `idproduct` (`idproduct`),
-    CONSTRAINT `idqoute_quoteitem`
-        FOREIGN KEY (`idquote`)
-        REFERENCES `quote` (`idquote`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
     CONSTRAINT `idproduct_quoteitem`
         FOREIGN KEY (`idproduct`)
         REFERENCES `product` (`idproduct`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `idqoute_quoteitem`
+        FOREIGN KEY (`idquote`)
+        REFERENCES `quote` (`idquote`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- quoutenote
+-- quotenote
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `quoutenote`;
+DROP TABLE IF EXISTS `quotenote`;
 
-CREATE TABLE `quoutenote`
+CREATE TABLE `quotenote`
 (
-    `idquoutenote` INTEGER NOT NULL,
+    `idquotenote` INTEGER NOT NULL,
     `iduser` INTEGER NOT NULL,
     `idquote` INTEGER NOT NULL,
-    `quoutenote_note` TEXT NOT NULL,
-    `quoutenote_date` DATETIME NOT NULL,
-    PRIMARY KEY (`idquoutenote`),
+    `quotenote_note` TEXT NOT NULL,
+    `quotenote_date` DATETIME NOT NULL,
+    PRIMARY KEY (`idquotenote`),
     INDEX `iduser` (`iduser`),
-    INDEX `idquote` (`idquote`),
-    CONSTRAINT `idquote_quotenote`
-        FOREIGN KEY (`idquote`)
-        REFERENCES `quote` (`idquote`),
-    CONSTRAINT `iduser_quotenote`
-        FOREIGN KEY (`iduser`)
-        REFERENCES `user` (`iduser`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+    INDEX `idquote` (`idquote`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -1769,8 +1747,8 @@ CREATE TABLE `staff`
 (
     `idstaff` INTEGER NOT NULL AUTO_INCREMENT,
     `iduser` INTEGER NOT NULL,
+    `staff_name` VARCHAR(45),
     `staff_firstname` VARCHAR(145),
-    `staff_lastname` VARCHAR(145),
     `staff_email` VARCHAR(45),
     `staff_email2` VARCHAR(45),
     `staff_phone` VARCHAR(45),
@@ -1846,14 +1824,14 @@ CREATE TABLE `triggerprospectionnote`
     PRIMARY KEY (`idtriggerprospectionnote`),
     INDEX `iduser` (`iduser`),
     INDEX `idtriggerprospection` (`idtriggerprospection`),
+    CONSTRAINT `idtriggerprospection_triggerprospectionnote`
+        FOREIGN KEY (`idtriggerprospection`)
+        REFERENCES `triggerprospection` (`idtriggerprospection`),
     CONSTRAINT `iduser_triggerprospectionnote`
         FOREIGN KEY (`iduser`)
         REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT `idtriggerprospection_triggerprospectionnote`
-        FOREIGN KEY (`idtriggerprospection`)
-        REFERENCES `triggerprospection` (`idtriggerprospection`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -1870,14 +1848,14 @@ CREATE TABLE `triggerprospectionuser`
     PRIMARY KEY (`idtriggerprospectionuser`),
     INDEX `iduser` (`iduser`),
     INDEX `idtriggerprospection` (`idtriggerprospection`),
+    CONSTRAINT `idtriggerprospection_triggerprospectionuser`
+        FOREIGN KEY (`idtriggerprospection`)
+        REFERENCES `triggerprospection` (`idtriggerprospection`),
     CONSTRAINT `iduser_triggerprospectionuser`
         FOREIGN KEY (`iduser`)
         REFERENCES `user` (`iduser`)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT `idtriggerprospection_triggerprospectionuser`
-        FOREIGN KEY (`idtriggerprospection`)
-        REFERENCES `triggerprospection` (`idtriggerprospection`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

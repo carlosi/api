@@ -25,7 +25,7 @@ class BranchdepartmentFormPostPut{
      */
     public static function init($userLevel){
 
-        $branchForm = new BranchForm();
+        $branchdepartmentForm = new BranchdepartmentForm();
 
         switch ($userLevel){
 
@@ -55,7 +55,7 @@ class BranchdepartmentFormPostPut{
             }
         }
 
-        return $branchForm;
+        return $branchdepartmentForm;
     }
 
 }

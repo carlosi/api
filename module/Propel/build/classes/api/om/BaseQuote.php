@@ -66,12 +66,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
     protected $collQuoteitemsPartial;
 
     /**
-     * @var        PropelObjectCollection|Quoutenote[] Collection to store aggregation of Quoutenote objects.
-     */
-    protected $collQuoutenotes;
-    protected $collQuoutenotesPartial;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -96,12 +90,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $quoteitemsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $quoutenotesScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -404,8 +392,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
             $this->aTriggerprospection = null;
             $this->collQuoteitems = null;
 
-            $this->collQuoutenotes = null;
-
         } // if (deep)
     }
 
@@ -553,23 +539,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
 
             if ($this->collQuoteitems !== null) {
                 foreach ($this->collQuoteitems as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->quoutenotesScheduledForDeletion !== null) {
-                if (!$this->quoutenotesScheduledForDeletion->isEmpty()) {
-                    QuoutenoteQuery::create()
-                        ->filterByPrimaryKeys($this->quoutenotesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->quoutenotesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collQuoutenotes !== null) {
-                foreach ($this->collQuoutenotes as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -756,14 +725,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collQuoutenotes !== null) {
-                    foreach ($this->collQuoutenotes as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
 
             $this->alreadyInValidation = false;
         }
@@ -856,9 +817,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
             }
             if (null !== $this->collQuoteitems) {
                 $result['Quoteitems'] = $this->collQuoteitems->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collQuoutenotes) {
-                $result['Quoutenotes'] = $this->collQuoutenotes->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1029,12 +987,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getQuoutenotes() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addQuoutenote($relObj->copy($deepCopy));
-                }
-            }
-
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -1150,9 +1102,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
     {
         if ('Quoteitem' == $relationName) {
             $this->initQuoteitems();
-        }
-        if ('Quoutenote' == $relationName) {
-            $this->initQuoutenotes();
         }
     }
 
@@ -1407,256 +1356,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collQuoutenotes collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Quote The current object (for fluent API support)
-     * @see        addQuoutenotes()
-     */
-    public function clearQuoutenotes()
-    {
-        $this->collQuoutenotes = null; // important to set this to null since that means it is uninitialized
-        $this->collQuoutenotesPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collQuoutenotes collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialQuoutenotes($v = true)
-    {
-        $this->collQuoutenotesPartial = $v;
-    }
-
-    /**
-     * Initializes the collQuoutenotes collection.
-     *
-     * By default this just sets the collQuoutenotes collection to an empty array (like clearcollQuoutenotes());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initQuoutenotes($overrideExisting = true)
-    {
-        if (null !== $this->collQuoutenotes && !$overrideExisting) {
-            return;
-        }
-        $this->collQuoutenotes = new PropelObjectCollection();
-        $this->collQuoutenotes->setModel('Quoutenote');
-    }
-
-    /**
-     * Gets an array of Quoutenote objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Quote is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Quoutenote[] List of Quoutenote objects
-     * @throws PropelException
-     */
-    public function getQuoutenotes($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collQuoutenotesPartial && !$this->isNew();
-        if (null === $this->collQuoutenotes || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collQuoutenotes) {
-                // return empty collection
-                $this->initQuoutenotes();
-            } else {
-                $collQuoutenotes = QuoutenoteQuery::create(null, $criteria)
-                    ->filterByQuote($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collQuoutenotesPartial && count($collQuoutenotes)) {
-                      $this->initQuoutenotes(false);
-
-                      foreach ($collQuoutenotes as $obj) {
-                        if (false == $this->collQuoutenotes->contains($obj)) {
-                          $this->collQuoutenotes->append($obj);
-                        }
-                      }
-
-                      $this->collQuoutenotesPartial = true;
-                    }
-
-                    $collQuoutenotes->getInternalIterator()->rewind();
-
-                    return $collQuoutenotes;
-                }
-
-                if ($partial && $this->collQuoutenotes) {
-                    foreach ($this->collQuoutenotes as $obj) {
-                        if ($obj->isNew()) {
-                            $collQuoutenotes[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collQuoutenotes = $collQuoutenotes;
-                $this->collQuoutenotesPartial = false;
-            }
-        }
-
-        return $this->collQuoutenotes;
-    }
-
-    /**
-     * Sets a collection of Quoutenote objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $quoutenotes A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Quote The current object (for fluent API support)
-     */
-    public function setQuoutenotes(PropelCollection $quoutenotes, PropelPDO $con = null)
-    {
-        $quoutenotesToDelete = $this->getQuoutenotes(new Criteria(), $con)->diff($quoutenotes);
-
-
-        $this->quoutenotesScheduledForDeletion = $quoutenotesToDelete;
-
-        foreach ($quoutenotesToDelete as $quoutenoteRemoved) {
-            $quoutenoteRemoved->setQuote(null);
-        }
-
-        $this->collQuoutenotes = null;
-        foreach ($quoutenotes as $quoutenote) {
-            $this->addQuoutenote($quoutenote);
-        }
-
-        $this->collQuoutenotes = $quoutenotes;
-        $this->collQuoutenotesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Quoutenote objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Quoutenote objects.
-     * @throws PropelException
-     */
-    public function countQuoutenotes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collQuoutenotesPartial && !$this->isNew();
-        if (null === $this->collQuoutenotes || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collQuoutenotes) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getQuoutenotes());
-            }
-            $query = QuoutenoteQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByQuote($this)
-                ->count($con);
-        }
-
-        return count($this->collQuoutenotes);
-    }
-
-    /**
-     * Method called to associate a Quoutenote object to this object
-     * through the Quoutenote foreign key attribute.
-     *
-     * @param    Quoutenote $l Quoutenote
-     * @return Quote The current object (for fluent API support)
-     */
-    public function addQuoutenote(Quoutenote $l)
-    {
-        if ($this->collQuoutenotes === null) {
-            $this->initQuoutenotes();
-            $this->collQuoutenotesPartial = true;
-        }
-
-        if (!in_array($l, $this->collQuoutenotes->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddQuoutenote($l);
-
-            if ($this->quoutenotesScheduledForDeletion and $this->quoutenotesScheduledForDeletion->contains($l)) {
-                $this->quoutenotesScheduledForDeletion->remove($this->quoutenotesScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	Quoutenote $quoutenote The quoutenote object to add.
-     */
-    protected function doAddQuoutenote($quoutenote)
-    {
-        $this->collQuoutenotes[]= $quoutenote;
-        $quoutenote->setQuote($this);
-    }
-
-    /**
-     * @param	Quoutenote $quoutenote The quoutenote object to remove.
-     * @return Quote The current object (for fluent API support)
-     */
-    public function removeQuoutenote($quoutenote)
-    {
-        if ($this->getQuoutenotes()->contains($quoutenote)) {
-            $this->collQuoutenotes->remove($this->collQuoutenotes->search($quoutenote));
-            if (null === $this->quoutenotesScheduledForDeletion) {
-                $this->quoutenotesScheduledForDeletion = clone $this->collQuoutenotes;
-                $this->quoutenotesScheduledForDeletion->clear();
-            }
-            $this->quoutenotesScheduledForDeletion[]= clone $quoutenote;
-            $quoutenote->setQuote(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Quote is new, it will return
-     * an empty collection; or if this Quote has previously
-     * been saved, it will retrieve related Quoutenotes from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Quote.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Quoutenote[] List of Quoutenote objects
-     */
-    public function getQuoutenotesJoinUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = QuoutenoteQuery::create(null, $criteria);
-        $query->joinWith('User', $join_behavior);
-
-        return $this->getQuoutenotes($query, $con);
-    }
-
-    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1693,11 +1392,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collQuoutenotes) {
-                foreach ($this->collQuoutenotes as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->aTriggerprospection instanceof Persistent) {
               $this->aTriggerprospection->clearAllReferences($deep);
             }
@@ -1709,10 +1403,6 @@ abstract class BaseQuote extends BaseObject implements Persistent
             $this->collQuoteitems->clearIterator();
         }
         $this->collQuoteitems = null;
-        if ($this->collQuoutenotes instanceof PropelCollection) {
-            $this->collQuoutenotes->clearIterator();
-        }
-        $this->collQuoutenotes = null;
         $this->aTriggerprospection = null;
     }
 

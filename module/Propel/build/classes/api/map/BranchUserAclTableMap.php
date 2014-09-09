@@ -38,7 +38,7 @@ class BranchUserAclTableMap extends TableMap
         $this->setPackage('api');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('idbranch_user_acl', 'IdbranchBranchUserAcl', 'INTEGER', true, null, null);
+        $this->addPrimaryKey('idbranch_user_acl', 'IdbranchUserAcl', 'INTEGER', true, null, null);
         $this->addForeignKey('iduser', 'Iduser', 'INTEGER', 'user', 'iduser', true, null, null);
         $this->addForeignKey('idbranch', 'Idbranch', 'INTEGER', 'branch', 'idbranch', true, null, null);
         $this->addColumn('module_name', 'ModuleName', 'CHAR', true, null, 'basic');
@@ -46,8 +46,9 @@ class BranchUserAclTableMap extends TableMap
   0 => 'basic',
   1 => 'sales',
   2 => 'company',
-  3 => 'manufacture',
+  3 => 'satmexico',
   4 => 'contents',
+  5 => 'salesforce',
 ));
         $this->addColumn('user_accesslevel', 'UserAccesslevel', 'CHAR', true, null, '1');
         $this->getColumn('user_accesslevel', false)->setValueSet(array (
@@ -65,8 +66,8 @@ class BranchUserAclTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Branch', 'Branch', RelationMap::MANY_TO_ONE, array('idbranch' => 'idbranch', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 
 } // BranchUserAclTableMap

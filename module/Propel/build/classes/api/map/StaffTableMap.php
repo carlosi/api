@@ -40,8 +40,8 @@ class StaffTableMap extends TableMap
         // columns
         $this->addPrimaryKey('idstaff', 'Idstaff', 'INTEGER', true, null, null);
         $this->addForeignKey('iduser', 'Iduser', 'INTEGER', 'user', 'iduser', true, null, null);
+        $this->addColumn('staff_name', 'StaffName', 'VARCHAR', false, 45, null);
         $this->addColumn('staff_firstname', 'StaffFirstname', 'VARCHAR', false, 145, null);
-        $this->addColumn('staff_lastname', 'StaffLastname', 'VARCHAR', false, 145, null);
         $this->addColumn('staff_email', 'StaffEmail', 'VARCHAR', false, 45, null);
         $this->addColumn('staff_email2', 'StaffEmail2', 'VARCHAR', false, 45, null);
         $this->addColumn('staff_phone', 'StaffPhone', 'VARCHAR', false, 45, null);

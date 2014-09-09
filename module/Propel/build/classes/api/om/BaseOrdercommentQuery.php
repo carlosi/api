@@ -8,23 +8,17 @@
  *
  * @method OrdercommentQuery orderByIdordercomment($order = Criteria::ASC) Order by the idordercomment column
  * @method OrdercommentQuery orderByIdorder($order = Criteria::ASC) Order by the idorder column
- * @method OrdercommentQuery orderByIduser($order = Criteria::ASC) Order by the iduser column
  * @method OrdercommentQuery orderByOrdercommentNote($order = Criteria::ASC) Order by the ordercomment_note column
  * @method OrdercommentQuery orderByOrdercommentDate($order = Criteria::ASC) Order by the ordercomment_date column
  *
  * @method OrdercommentQuery groupByIdordercomment() Group by the idordercomment column
  * @method OrdercommentQuery groupByIdorder() Group by the idorder column
- * @method OrdercommentQuery groupByIduser() Group by the iduser column
  * @method OrdercommentQuery groupByOrdercommentNote() Group by the ordercomment_note column
  * @method OrdercommentQuery groupByOrdercommentDate() Group by the ordercomment_date column
  *
  * @method OrdercommentQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method OrdercommentQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method OrdercommentQuery innerJoin($relation) Adds a INNER JOIN clause to the query
- *
- * @method OrdercommentQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method OrdercommentQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method OrdercommentQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
  * @method OrdercommentQuery leftJoinOrder($relationAlias = null) Adds a LEFT JOIN clause to the query using the Order relation
  * @method OrdercommentQuery rightJoinOrder($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Order relation
@@ -34,13 +28,11 @@
  * @method Ordercomment findOneOrCreate(PropelPDO $con = null) Return the first Ordercomment matching the query, or a new Ordercomment object populated from the query conditions when no match is found
  *
  * @method Ordercomment findOneByIdorder(int $idorder) Return the first Ordercomment filtered by the idorder column
- * @method Ordercomment findOneByIduser(int $iduser) Return the first Ordercomment filtered by the iduser column
  * @method Ordercomment findOneByOrdercommentNote(string $ordercomment_note) Return the first Ordercomment filtered by the ordercomment_note column
  * @method Ordercomment findOneByOrdercommentDate(string $ordercomment_date) Return the first Ordercomment filtered by the ordercomment_date column
  *
  * @method array findByIdordercomment(int $idordercomment) Return Ordercomment objects filtered by the idordercomment column
  * @method array findByIdorder(int $idorder) Return Ordercomment objects filtered by the idorder column
- * @method array findByIduser(int $iduser) Return Ordercomment objects filtered by the iduser column
  * @method array findByOrdercommentNote(string $ordercomment_note) Return Ordercomment objects filtered by the ordercomment_note column
  * @method array findByOrdercommentDate(string $ordercomment_date) Return Ordercomment objects filtered by the ordercomment_date column
  *
@@ -150,7 +142,7 @@ abstract class BaseOrdercommentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idordercomment`, `idorder`, `iduser`, `ordercomment_note`, `ordercomment_date` FROM `ordercomment` WHERE `idordercomment` = :p0';
+        $sql = 'SELECT `idordercomment`, `idorder`, `ordercomment_note`, `ordercomment_date` FROM `ordercomment` WHERE `idordercomment` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -326,50 +318,6 @@ abstract class BaseOrdercommentQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the iduser column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByIduser(1234); // WHERE iduser = 1234
-     * $query->filterByIduser(array(12, 34)); // WHERE iduser IN (12, 34)
-     * $query->filterByIduser(array('min' => 12)); // WHERE iduser >= 12
-     * $query->filterByIduser(array('max' => 12)); // WHERE iduser <= 12
-     * </code>
-     *
-     * @see       filterByUser()
-     *
-     * @param     mixed $iduser The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return OrdercommentQuery The current query, for fluid interface
-     */
-    public function filterByIduser($iduser = null, $comparison = null)
-    {
-        if (is_array($iduser)) {
-            $useMinMax = false;
-            if (isset($iduser['min'])) {
-                $this->addUsingAlias(OrdercommentPeer::IDUSER, $iduser['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($iduser['max'])) {
-                $this->addUsingAlias(OrdercommentPeer::IDUSER, $iduser['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(OrdercommentPeer::IDUSER, $iduser, $comparison);
-    }
-
-    /**
      * Filter the query on the ordercomment_note column
      *
      * Example usage:
@@ -439,82 +387,6 @@ abstract class BaseOrdercommentQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(OrdercommentPeer::ORDERCOMMENT_DATE, $ordercommentDate, $comparison);
-    }
-
-    /**
-     * Filter the query by a related User object
-     *
-     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 OrdercommentQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByUser($user, $comparison = null)
-    {
-        if ($user instanceof User) {
-            return $this
-                ->addUsingAlias(OrdercommentPeer::IDUSER, $user->getIduser(), $comparison);
-        } elseif ($user instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(OrdercommentPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
-        } else {
-            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the User relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return OrdercommentQuery The current query, for fluid interface
-     */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('User');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'User');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the User relation User object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   UserQuery A secondary query class using the current class as primary query
-     */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinUser($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
     }
 
     /**

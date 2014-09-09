@@ -58,7 +58,6 @@ class QuoteTableMap extends TableMap
     {
         $this->addRelation('Triggerprospection', 'Triggerprospection', RelationMap::MANY_TO_ONE, array('idtriggerprospection' => 'idtriggerprospection', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Quoteitem', 'Quoteitem', RelationMap::ONE_TO_MANY, array('idquote' => 'idquote', ), 'CASCADE', 'CASCADE', 'Quoteitems');
-        $this->addRelation('Quoutenote', 'Quoutenote', RelationMap::ONE_TO_MANY, array('idquote' => 'idquote', ), null, null, 'Quoutenotes');
     } // buildRelations()
 
 } // QuoteTableMap

@@ -48,7 +48,7 @@ return array(
                     'constraints' => array(
                         'version' => '1',
                         'typeResponse' => 'xml|json',
-                        'resource' => 'address|user|client|branch',
+                        'resource' => 'company|user|client|branch|department',
                         'resourceChild' => 'staff|address|file|comment|department|leader|member',
                         'id' => '[0-9]+',
                         'idChild' => '[0-9]+',
@@ -174,8 +174,8 @@ return array(
                     'constraints' => array(
                         'version' => '1',
                         'typeResponse' => 'xml|json',
-                        'resource' => '',
-                        'resourceChild' => '',
+                        'resource' => 'client',
+                        'resourceChild' => 'tax',
                         'id' => '[0-9]+',
                         'idChild' => '[0-9]+',
                     ),

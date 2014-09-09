@@ -81,9 +81,9 @@ abstract class BaseClientPeer
     const CLIENT_STATUS_FRAUD = 'fraud';
 
     /** The enumerated values for the client_type field */
-    const CLIENT_TYPE_NORMAL = 'normal';
-    const CLIENT_TYPE_GENERALPUBLIC = 'generalpublic';
-    const CLIENT_TYPE_INVENTORYMANAGER = 'inventorymanager';
+    const CLIENT_TYPE_NORMAL = 'NORMAL';
+    const CLIENT_TYPE_GENERALPUBLIC = 'GENERALPUBLIC';
+    const CLIENT_TYPE_INVENTORYMANAGER = 'INVENTORYMANAGER';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';

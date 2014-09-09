@@ -771,7 +771,7 @@ abstract class BaseDepartmentPeer
             // delete related Branchdepartment objects
             $criteria = new Criteria(BranchdepartmentPeer::DATABASE_NAME);
 
-            $criteria->add(BranchdepartmentPeer::IDDEPARTAMENT, $obj->getIddepartment());
+            $criteria->add(BranchdepartmentPeer::IDDEPARTMENT, $obj->getIddepartment());
             $affectedRows += BranchdepartmentPeer::doDelete($criteria, $con);
 
             // delete related Departmentleader objects

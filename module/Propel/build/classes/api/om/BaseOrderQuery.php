@@ -10,7 +10,7 @@
  * @method OrderQuery orderByIdbranch($order = Criteria::ASC) Order by the idbranch column
  * @method OrderQuery orderByIdclient($order = Criteria::ASC) Order by the idclient column
  * @method OrderQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
- * @method OrderQuery orderByOrderCapture($order = Criteria::ASC) Order by the order_capture column
+ * @method OrderQuery orderByOrderStatus($order = Criteria::ASC) Order by the order_status column
  * @method OrderQuery orderByOrderPayment($order = Criteria::ASC) Order by the order_payment column
  * @method OrderQuery orderByOrderPaymentmode($order = Criteria::ASC) Order by the order_paymentmode column
  * @method OrderQuery orderByOrderDelivery($order = Criteria::ASC) Order by the order_delivery column
@@ -19,7 +19,7 @@
  * @method OrderQuery groupByIdbranch() Group by the idbranch column
  * @method OrderQuery groupByIdclient() Group by the idclient column
  * @method OrderQuery groupByCreatedAt() Group by the created_at column
- * @method OrderQuery groupByOrderCapture() Group by the order_capture column
+ * @method OrderQuery groupByOrderStatus() Group by the order_status column
  * @method OrderQuery groupByOrderPayment() Group by the order_payment column
  * @method OrderQuery groupByOrderPaymentmode() Group by the order_paymentmode column
  * @method OrderQuery groupByOrderDelivery() Group by the order_delivery column
@@ -70,7 +70,7 @@
  * @method Order findOneByIdbranch(int $idbranch) Return the first Order filtered by the idbranch column
  * @method Order findOneByIdclient(int $idclient) Return the first Order filtered by the idclient column
  * @method Order findOneByCreatedAt(string $created_at) Return the first Order filtered by the created_at column
- * @method Order findOneByOrderCapture(string $order_capture) Return the first Order filtered by the order_capture column
+ * @method Order findOneByOrderStatus(string $order_status) Return the first Order filtered by the order_status column
  * @method Order findOneByOrderPayment(string $order_payment) Return the first Order filtered by the order_payment column
  * @method Order findOneByOrderPaymentmode(string $order_paymentmode) Return the first Order filtered by the order_paymentmode column
  * @method Order findOneByOrderDelivery(string $order_delivery) Return the first Order filtered by the order_delivery column
@@ -79,7 +79,7 @@
  * @method array findByIdbranch(int $idbranch) Return Order objects filtered by the idbranch column
  * @method array findByIdclient(int $idclient) Return Order objects filtered by the idclient column
  * @method array findByCreatedAt(string $created_at) Return Order objects filtered by the created_at column
- * @method array findByOrderCapture(string $order_capture) Return Order objects filtered by the order_capture column
+ * @method array findByOrderStatus(string $order_status) Return Order objects filtered by the order_status column
  * @method array findByOrderPayment(string $order_payment) Return Order objects filtered by the order_payment column
  * @method array findByOrderPaymentmode(string $order_paymentmode) Return Order objects filtered by the order_paymentmode column
  * @method array findByOrderDelivery(string $order_delivery) Return Order objects filtered by the order_delivery column
@@ -190,7 +190,7 @@ abstract class BaseOrderQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `idorder`, `idbranch`, `idclient`, `created_at`, `order_capture`, `order_payment`, `order_paymentmode`, `order_delivery` FROM `order` WHERE `idorder` = :p0';
+        $sql = 'SELECT `idorder`, `idbranch`, `idclient`, `created_at`, `order_status`, `order_payment`, `order_paymentmode`, `order_delivery` FROM `order` WHERE `idorder` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -453,32 +453,32 @@ abstract class BaseOrderQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the order_capture column
+     * Filter the query on the order_status column
      *
      * Example usage:
      * <code>
-     * $query->filterByOrderCapture('fooValue');   // WHERE order_capture = 'fooValue'
-     * $query->filterByOrderCapture('%fooValue%'); // WHERE order_capture LIKE '%fooValue%'
+     * $query->filterByOrderStatus('fooValue');   // WHERE order_status = 'fooValue'
+     * $query->filterByOrderStatus('%fooValue%'); // WHERE order_status LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $orderCapture The value to use as filter.
+     * @param     string $orderStatus The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return OrderQuery The current query, for fluid interface
      */
-    public function filterByOrderCapture($orderCapture = null, $comparison = null)
+    public function filterByOrderStatus($orderStatus = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($orderCapture)) {
+            if (is_array($orderStatus)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $orderCapture)) {
-                $orderCapture = str_replace('*', '%', $orderCapture);
+            } elseif (preg_match('/[\%\*]/', $orderStatus)) {
+                $orderStatus = str_replace('*', '%', $orderStatus);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(OrderPeer::ORDER_CAPTURE, $orderCapture, $comparison);
+        return $this->addUsingAlias(OrderPeer::ORDER_STATUS, $orderStatus, $comparison);
     }
 
     /**

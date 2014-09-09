@@ -75,14 +75,14 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
     protected $orderquote_note;
 
     /**
-     * @var        Quote
-     */
-    protected $aQuote;
-
-    /**
      * @var        Product
      */
     protected $aProduct;
+
+    /**
+     * @var        Quote
+     */
+    protected $aQuote;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -487,8 +487,8 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aQuote = null;
             $this->aProduct = null;
+            $this->aQuote = null;
         } // if (deep)
     }
 
@@ -607,18 +607,18 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aQuote !== null) {
-                if ($this->aQuote->isModified() || $this->aQuote->isNew()) {
-                    $affectedRows += $this->aQuote->save($con);
-                }
-                $this->setQuote($this->aQuote);
-            }
-
             if ($this->aProduct !== null) {
                 if ($this->aProduct->isModified() || $this->aProduct->isNew()) {
                     $affectedRows += $this->aProduct->save($con);
                 }
                 $this->setProduct($this->aProduct);
+            }
+
+            if ($this->aQuote !== null) {
+                if ($this->aQuote->isModified() || $this->aQuote->isNew()) {
+                    $affectedRows += $this->aQuote->save($con);
+                }
+                $this->setQuote($this->aQuote);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -810,15 +810,15 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aQuote !== null) {
-                if (!$this->aQuote->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aQuote->getValidationFailures());
-                }
-            }
-
             if ($this->aProduct !== null) {
                 if (!$this->aProduct->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aProduct->getValidationFailures());
+                }
+            }
+
+            if ($this->aQuote !== null) {
+                if (!$this->aQuote->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aQuote->getValidationFailures());
                 }
             }
 
@@ -927,11 +927,11 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aQuote) {
-                $result['Quote'] = $this->aQuote->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aProduct) {
                 $result['Product'] = $this->aProduct->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aQuote) {
+                $result['Quote'] = $this->aQuote->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1165,58 +1165,6 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Quote object.
-     *
-     * @param                  Quote $v
-     * @return Quoteitem The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setQuote(Quote $v = null)
-    {
-        if ($v === null) {
-            $this->setIdquote(NULL);
-        } else {
-            $this->setIdquote($v->getIdquote());
-        }
-
-        $this->aQuote = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Quote object, it will not be re-added.
-        if ($v !== null) {
-            $v->addQuoteitem($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Quote object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Quote The associated Quote object.
-     * @throws PropelException
-     */
-    public function getQuote(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aQuote === null && ($this->idquote !== null) && $doQuery) {
-            $this->aQuote = QuoteQuery::create()->findPk($this->idquote, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aQuote->addQuoteitems($this);
-             */
-        }
-
-        return $this->aQuote;
-    }
-
-    /**
      * Declares an association between this object and a Product object.
      *
      * @param                  Product $v
@@ -1269,6 +1217,58 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Quote object.
+     *
+     * @param                  Quote $v
+     * @return Quoteitem The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setQuote(Quote $v = null)
+    {
+        if ($v === null) {
+            $this->setIdquote(NULL);
+        } else {
+            $this->setIdquote($v->getIdquote());
+        }
+
+        $this->aQuote = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Quote object, it will not be re-added.
+        if ($v !== null) {
+            $v->addQuoteitem($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Quote object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Quote The associated Quote object.
+     * @throws PropelException
+     */
+    public function getQuote(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aQuote === null && ($this->idquote !== null) && $doQuery) {
+            $this->aQuote = QuoteQuery::create()->findPk($this->idquote, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aQuote->addQuoteitems($this);
+             */
+        }
+
+        return $this->aQuote;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1303,18 +1303,18 @@ abstract class BaseQuoteitem extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aQuote instanceof Persistent) {
-              $this->aQuote->clearAllReferences($deep);
-            }
             if ($this->aProduct instanceof Persistent) {
               $this->aProduct->clearAllReferences($deep);
+            }
+            if ($this->aQuote instanceof Persistent) {
+              $this->aQuote->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aQuote = null;
         $this->aProduct = null;
+        $this->aQuote = null;
     }
 
     /**

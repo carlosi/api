@@ -11,7 +11,6 @@
 namespace API\REST\V1\Shared\CustomListener;
 
 // - ZF2 - //
-use API\REST\V1\Shared\Functions\ResourceManager;
 use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -39,7 +38,7 @@ class TokenListener implements ListenerAggregateInterface {
      */
     public function attach(EventManagerInterface $events){
 
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, array($this, 'onDispatch'), 900);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, array($this, 'onDispatch'), 950);
 
     }
 
@@ -74,7 +73,7 @@ class TokenListener implements ListenerAggregateInterface {
                 $token = $e->getRequest()->getHeader('Authorization') ? $e->getRequest()->getHeader('Authorization')->getFieldValue() : null;
 
                 if($token){
-                    if(ResourceManager::TokenIsValid($token)){
+                    if(SessionManager::TokenIsValid($token)){
 
                     }else{
                         $response = $e->getResponse();
@@ -92,9 +91,8 @@ class TokenListener implements ListenerAggregateInterface {
                             case "xml":{
                                 // Create the config object
                                 $writer = new \Zend\Config\Writer\Xml();
-                                $xmlModel = $response->setContent($writer->toString($body));
-                                $e->setResult($jsonModel);
-                                $e->setViewModel($jsonModel)->stopPropagation();
+                                return $response->setContent($writer->toString($body));
+                                $e->stopPropagation();
                                 break;
                             }
                             case "json":{

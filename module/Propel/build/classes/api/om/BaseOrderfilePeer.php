@@ -24,19 +24,16 @@ abstract class BaseOrderfilePeer
     const TM_CLASS = 'OrderfileTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 5;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /** the column name for the idorderfile field */
     const IDORDERFILE = 'orderfile.idorderfile';
-
-    /** the column name for the iduser field */
-    const IDUSER = 'orderfile.iduser';
 
     /** the column name for the idorder field */
     const IDORDER = 'orderfile.idorder';
@@ -69,12 +66,12 @@ abstract class BaseOrderfilePeer
      * e.g. OrderfilePeer::$fieldNames[OrderfilePeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idorderfile', 'Iduser', 'Idorder', 'OrderfileUrl', 'OrderfileNote', 'OrderfileUploaddate', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idorderfile', 'iduser', 'idorder', 'orderfileUrl', 'orderfileNote', 'orderfileUploaddate', ),
-        BasePeer::TYPE_COLNAME => array (OrderfilePeer::IDORDERFILE, OrderfilePeer::IDUSER, OrderfilePeer::IDORDER, OrderfilePeer::ORDERFILE_URL, OrderfilePeer::ORDERFILE_NOTE, OrderfilePeer::ORDERFILE_UPLOADDATE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDORDERFILE', 'IDUSER', 'IDORDER', 'ORDERFILE_URL', 'ORDERFILE_NOTE', 'ORDERFILE_UPLOADDATE', ),
-        BasePeer::TYPE_FIELDNAME => array ('idorderfile', 'iduser', 'idorder', 'orderfile_url', 'orderfile_note', 'orderfile_uploaddate', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Idorderfile', 'Idorder', 'OrderfileUrl', 'OrderfileNote', 'OrderfileUploaddate', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idorderfile', 'idorder', 'orderfileUrl', 'orderfileNote', 'orderfileUploaddate', ),
+        BasePeer::TYPE_COLNAME => array (OrderfilePeer::IDORDERFILE, OrderfilePeer::IDORDER, OrderfilePeer::ORDERFILE_URL, OrderfilePeer::ORDERFILE_NOTE, OrderfilePeer::ORDERFILE_UPLOADDATE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDORDERFILE', 'IDORDER', 'ORDERFILE_URL', 'ORDERFILE_NOTE', 'ORDERFILE_UPLOADDATE', ),
+        BasePeer::TYPE_FIELDNAME => array ('idorderfile', 'idorder', 'orderfile_url', 'orderfile_note', 'orderfile_uploaddate', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -84,12 +81,12 @@ abstract class BaseOrderfilePeer
      * e.g. OrderfilePeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idorderfile' => 0, 'Iduser' => 1, 'Idorder' => 2, 'OrderfileUrl' => 3, 'OrderfileNote' => 4, 'OrderfileUploaddate' => 5, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idorderfile' => 0, 'iduser' => 1, 'idorder' => 2, 'orderfileUrl' => 3, 'orderfileNote' => 4, 'orderfileUploaddate' => 5, ),
-        BasePeer::TYPE_COLNAME => array (OrderfilePeer::IDORDERFILE => 0, OrderfilePeer::IDUSER => 1, OrderfilePeer::IDORDER => 2, OrderfilePeer::ORDERFILE_URL => 3, OrderfilePeer::ORDERFILE_NOTE => 4, OrderfilePeer::ORDERFILE_UPLOADDATE => 5, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDORDERFILE' => 0, 'IDUSER' => 1, 'IDORDER' => 2, 'ORDERFILE_URL' => 3, 'ORDERFILE_NOTE' => 4, 'ORDERFILE_UPLOADDATE' => 5, ),
-        BasePeer::TYPE_FIELDNAME => array ('idorderfile' => 0, 'iduser' => 1, 'idorder' => 2, 'orderfile_url' => 3, 'orderfile_note' => 4, 'orderfile_uploaddate' => 5, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Idorderfile' => 0, 'Idorder' => 1, 'OrderfileUrl' => 2, 'OrderfileNote' => 3, 'OrderfileUploaddate' => 4, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idorderfile' => 0, 'idorder' => 1, 'orderfileUrl' => 2, 'orderfileNote' => 3, 'orderfileUploaddate' => 4, ),
+        BasePeer::TYPE_COLNAME => array (OrderfilePeer::IDORDERFILE => 0, OrderfilePeer::IDORDER => 1, OrderfilePeer::ORDERFILE_URL => 2, OrderfilePeer::ORDERFILE_NOTE => 3, OrderfilePeer::ORDERFILE_UPLOADDATE => 4, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDORDERFILE' => 0, 'IDORDER' => 1, 'ORDERFILE_URL' => 2, 'ORDERFILE_NOTE' => 3, 'ORDERFILE_UPLOADDATE' => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('idorderfile' => 0, 'idorder' => 1, 'orderfile_url' => 2, 'orderfile_note' => 3, 'orderfile_uploaddate' => 4, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -164,14 +161,12 @@ abstract class BaseOrderfilePeer
     {
         if (null === $alias) {
             $criteria->addSelectColumn(OrderfilePeer::IDORDERFILE);
-            $criteria->addSelectColumn(OrderfilePeer::IDUSER);
             $criteria->addSelectColumn(OrderfilePeer::IDORDER);
             $criteria->addSelectColumn(OrderfilePeer::ORDERFILE_URL);
             $criteria->addSelectColumn(OrderfilePeer::ORDERFILE_NOTE);
             $criteria->addSelectColumn(OrderfilePeer::ORDERFILE_UPLOADDATE);
         } else {
             $criteria->addSelectColumn($alias . '.idorderfile');
-            $criteria->addSelectColumn($alias . '.iduser');
             $criteria->addSelectColumn($alias . '.idorder');
             $criteria->addSelectColumn($alias . '.orderfile_url');
             $criteria->addSelectColumn($alias . '.orderfile_note');
@@ -478,57 +473,6 @@ abstract class BaseOrderfilePeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related User table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(OrderfilePeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            OrderfilePeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(OrderfilePeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(OrderfilePeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(OrderfilePeer::IDUSER, UserPeer::IDUSER, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
      * Returns the number of rows matching criteria, joining the related Order table
      *
      * @param      Criteria $criteria
@@ -576,73 +520,6 @@ abstract class BaseOrderfilePeer
         $stmt->closeCursor();
 
         return $count;
-    }
-
-
-    /**
-     * Selects a collection of Orderfile objects pre-filled with their User objects.
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Orderfile objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(OrderfilePeer::DATABASE_NAME);
-        }
-
-        OrderfilePeer::addSelectColumns($criteria);
-        $startcol = OrderfilePeer::NUM_HYDRATE_COLUMNS;
-        UserPeer::addSelectColumns($criteria);
-
-        $criteria->addJoin(OrderfilePeer::IDUSER, UserPeer::IDUSER, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = OrderfilePeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = OrderfilePeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = OrderfilePeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                OrderfilePeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = UserPeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = UserPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    UserPeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (Orderfile) to $obj2 (User)
-                $obj2->addOrderfile($obj1);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
     }
 
 
@@ -749,8 +626,6 @@ abstract class BaseOrderfilePeer
             $con = Propel::getConnection(OrderfilePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(OrderfilePeer::IDUSER, UserPeer::IDUSER, $join_behavior);
-
         $criteria->addJoin(OrderfilePeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
@@ -787,209 +662,11 @@ abstract class BaseOrderfilePeer
         OrderfilePeer::addSelectColumns($criteria);
         $startcol2 = OrderfilePeer::NUM_HYDRATE_COLUMNS;
 
-        UserPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
-
-        OrderPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + OrderPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(OrderfilePeer::IDUSER, UserPeer::IDUSER, $join_behavior);
-
-        $criteria->addJoin(OrderfilePeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = OrderfilePeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = OrderfilePeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = OrderfilePeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                OrderfilePeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-            // Add objects for joined User rows
-
-            $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-            if ($key2 !== null) {
-                $obj2 = UserPeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = UserPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    UserPeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 loaded
-
-                // Add the $obj1 (Orderfile) to the collection in $obj2 (User)
-                $obj2->addOrderfile($obj1);
-            } // if joined row not null
-
-            // Add objects for joined Order rows
-
-            $key3 = OrderPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-            if ($key3 !== null) {
-                $obj3 = OrderPeer::getInstanceFromPool($key3);
-                if (!$obj3) {
-
-                    $cls = OrderPeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    OrderPeer::addInstanceToPool($obj3, $key3);
-                } // if obj3 loaded
-
-                // Add the $obj1 (Orderfile) to the collection in $obj3 (Order)
-                $obj3->addOrderfile($obj1);
-            } // if joined row not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related User table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(OrderfilePeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            OrderfilePeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(OrderfilePeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(OrderfilePeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(OrderfilePeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Order table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptOrder(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(OrderfilePeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            OrderfilePeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(OrderfilePeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(OrderfilePeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(OrderfilePeer::IDUSER, UserPeer::IDUSER, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Selects a collection of Orderfile objects pre-filled with all related objects except User.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Orderfile objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(OrderfilePeer::DATABASE_NAME);
-        }
-
-        OrderfilePeer::addSelectColumns($criteria);
-        $startcol2 = OrderfilePeer::NUM_HYDRATE_COLUMNS;
-
         OrderPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + OrderPeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(OrderfilePeer::IDORDER, OrderPeer::IDORDER, $join_behavior);
 
-
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
@@ -1007,98 +684,23 @@ abstract class BaseOrderfilePeer
                 OrderfilePeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-                // Add objects for joined Order rows
+            // Add objects for joined Order rows
 
-                $key2 = OrderPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = OrderPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
+            $key2 = OrderPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            if ($key2 !== null) {
+                $obj2 = OrderPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
 
-                        $cls = OrderPeer::getOMClass();
+                    $cls = OrderPeer::getOMClass();
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol2);
                     OrderPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
+                } // if obj2 loaded
 
                 // Add the $obj1 (Orderfile) to the collection in $obj2 (Order)
                 $obj2->addOrderfile($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of Orderfile objects pre-filled with all related objects except Order.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Orderfile objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptOrder(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(OrderfilePeer::DATABASE_NAME);
-        }
-
-        OrderfilePeer::addSelectColumns($criteria);
-        $startcol2 = OrderfilePeer::NUM_HYDRATE_COLUMNS;
-
-        UserPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(OrderfilePeer::IDUSER, UserPeer::IDUSER, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = OrderfilePeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = OrderfilePeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = OrderfilePeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                OrderfilePeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined User rows
-
-                $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = UserPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = UserPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    UserPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Orderfile) to the collection in $obj2 (User)
-                $obj2->addOrderfile($obj1);
-
-            } // if joined row is not null
+            } // if joined row not null
 
             $results[] = $obj1;
         }

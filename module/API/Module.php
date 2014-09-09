@@ -18,7 +18,7 @@ use Zend\Mvc\MvcEvent;
 use API\REST\V1\Shared\CustomListener\ApiProblemListener;
 use API\REST\V1\Shared\CustomListener\TokenListener;
 use API\REST\V1\Shared\CustomListener\ResourceListener;
-use API\REST\V1\Shared\CustomListener\ContentTypeListener;
+use API\REST\V1\Shared\CustomListener\HeadersListener;
 
 /**
  * Class Module
@@ -51,8 +51,8 @@ class Module
         $resourceListener->attach($eventManager);
 
         //ContentTypeListener
-        $contentTypeListener = new ContentTypeListener();
-        $contentTypeListener->attach($eventManager);
+        $headersListener = new HeadersListener();
+        $headersListener->attach($eventManager);
 
     }
 

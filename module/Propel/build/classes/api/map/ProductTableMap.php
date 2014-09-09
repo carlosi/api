@@ -55,7 +55,6 @@ class ProductTableMap extends TableMap
     {
         $this->addRelation('Productmain', 'Productmain', RelationMap::MANY_TO_ONE, array('idproductmain' => 'idproductmain', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Orderitem', 'Orderitem', RelationMap::ONE_TO_MANY, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE', 'Orderitems');
-        $this->addRelation('Productphoto', 'Productphoto', RelationMap::ONE_TO_MANY, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE', 'Productphotos');
         $this->addRelation('Productproperty', 'Productproperty', RelationMap::ONE_TO_MANY, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE', 'Productpropertys');
         $this->addRelation('Quoteitem', 'Quoteitem', RelationMap::ONE_TO_MANY, array('idproduct' => 'idproduct', ), 'CASCADE', 'CASCADE', 'Quoteitems');
     } // buildRelations()

@@ -483,57 +483,6 @@ abstract class BaseQuoteitemPeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related Quote table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinQuote(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(QuoteitemPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            QuoteitemPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(QuoteitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(QuoteitemPeer::IDQUOTE, QuotePeer::IDQUOTE, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
      * Returns the number of rows matching criteria, joining the related Product table
      *
      * @param      Criteria $criteria
@@ -585,69 +534,53 @@ abstract class BaseQuoteitemPeer
 
 
     /**
-     * Selects a collection of Quoteitem objects pre-filled with their Quote objects.
-     * @param      Criteria  $criteria
+     * Returns the number of rows matching criteria, joining the related Quote table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Quoteitem objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     * @return int Number of matching rows.
      */
-    public static function doSelectJoinQuote(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinQuote(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
+        // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
 
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(QuoteitemPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
         }
 
-        QuoteitemPeer::addSelectColumns($criteria);
-        $startcol = QuoteitemPeer::NUM_HYDRATE_COLUMNS;
-        QuotePeer::addSelectColumns($criteria);
+        if (!$criteria->hasSelectClause()) {
+            QuoteitemPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(QuoteitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
 
         $criteria->addJoin(QuoteitemPeer::IDQUOTE, QuotePeer::IDQUOTE, $join_behavior);
 
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
+        $stmt = BasePeer::doCount($criteria, $con);
 
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = QuoteitemPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = QuoteitemPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = QuoteitemPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                QuoteitemPeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = QuotePeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = QuotePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = QuotePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    QuotePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (Quoteitem) to $obj2 (Quote)
-                $obj2->addQuoteitem($obj1);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
         }
         $stmt->closeCursor();
 
-        return $results;
+        return $count;
     }
 
 
@@ -719,6 +652,73 @@ abstract class BaseQuoteitemPeer
 
 
     /**
+     * Selects a collection of Quoteitem objects pre-filled with their Quote objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Quoteitem objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinQuote(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
+        }
+
+        QuoteitemPeer::addSelectColumns($criteria);
+        $startcol = QuoteitemPeer::NUM_HYDRATE_COLUMNS;
+        QuotePeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(QuoteitemPeer::IDQUOTE, QuotePeer::IDQUOTE, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = QuoteitemPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = QuoteitemPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = QuoteitemPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                QuoteitemPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = QuotePeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = QuotePeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = QuotePeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    QuotePeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Quoteitem) to $obj2 (Quote)
+                $obj2->addQuoteitem($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
      * Returns the number of rows matching criteria, joining all related tables
      *
      * @param      Criteria $criteria
@@ -754,9 +754,9 @@ abstract class BaseQuoteitemPeer
             $con = Propel::getConnection(QuoteitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(QuoteitemPeer::IDQUOTE, QuotePeer::IDQUOTE, $join_behavior);
-
         $criteria->addJoin(QuoteitemPeer::IDPRODUCT, ProductPeer::IDPRODUCT, $join_behavior);
+
+        $criteria->addJoin(QuoteitemPeer::IDQUOTE, QuotePeer::IDQUOTE, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -792,15 +792,15 @@ abstract class BaseQuoteitemPeer
         QuoteitemPeer::addSelectColumns($criteria);
         $startcol2 = QuoteitemPeer::NUM_HYDRATE_COLUMNS;
 
-        QuotePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + QuotePeer::NUM_HYDRATE_COLUMNS;
-
         ProductPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + ProductPeer::NUM_HYDRATE_COLUMNS;
+        $startcol3 = $startcol2 + ProductPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(QuoteitemPeer::IDQUOTE, QuotePeer::IDQUOTE, $join_behavior);
+        QuotePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + QuotePeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(QuoteitemPeer::IDPRODUCT, ProductPeer::IDPRODUCT, $join_behavior);
+
+        $criteria->addJoin(QuoteitemPeer::IDQUOTE, QuotePeer::IDQUOTE, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -819,39 +819,39 @@ abstract class BaseQuoteitemPeer
                 QuoteitemPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-            // Add objects for joined Quote rows
-
-            $key2 = QuotePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-            if ($key2 !== null) {
-                $obj2 = QuotePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = QuotePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    QuotePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 loaded
-
-                // Add the $obj1 (Quoteitem) to the collection in $obj2 (Quote)
-                $obj2->addQuoteitem($obj1);
-            } // if joined row not null
-
             // Add objects for joined Product rows
 
-            $key3 = ProductPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-            if ($key3 !== null) {
-                $obj3 = ProductPeer::getInstanceFromPool($key3);
-                if (!$obj3) {
+            $key2 = ProductPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            if ($key2 !== null) {
+                $obj2 = ProductPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
 
                     $cls = ProductPeer::getOMClass();
 
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    ProductPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 loaded
+
+                // Add the $obj1 (Quoteitem) to the collection in $obj2 (Product)
+                $obj2->addQuoteitem($obj1);
+            } // if joined row not null
+
+            // Add objects for joined Quote rows
+
+            $key3 = QuotePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            if ($key3 !== null) {
+                $obj3 = QuotePeer::getInstanceFromPool($key3);
+                if (!$obj3) {
+
+                    $cls = QuotePeer::getOMClass();
+
                     $obj3 = new $cls();
                     $obj3->hydrate($row, $startcol3);
-                    ProductPeer::addInstanceToPool($obj3, $key3);
+                    QuotePeer::addInstanceToPool($obj3, $key3);
                 } // if obj3 loaded
 
-                // Add the $obj1 (Quoteitem) to the collection in $obj3 (Product)
+                // Add the $obj1 (Quoteitem) to the collection in $obj3 (Quote)
                 $obj3->addQuoteitem($obj1);
             } // if joined row not null
 
@@ -860,57 +860,6 @@ abstract class BaseQuoteitemPeer
         $stmt->closeCursor();
 
         return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Quote table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptQuote(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(QuoteitemPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            QuoteitemPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(QuoteitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(QuoteitemPeer::IDPRODUCT, ProductPeer::IDPRODUCT, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
     }
 
 
@@ -966,76 +915,53 @@ abstract class BaseQuoteitemPeer
 
 
     /**
-     * Selects a collection of Quoteitem objects pre-filled with all related objects except Quote.
+     * Returns the number of rows matching criteria, joining the related Quote table
      *
-     * @param      Criteria  $criteria
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Quoteitem objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
+     * @return int Number of matching rows.
      */
-    public static function doSelectJoinAllExceptQuote(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinAllExceptQuote(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
+        // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
 
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(QuoteitemPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
         }
 
-        QuoteitemPeer::addSelectColumns($criteria);
-        $startcol2 = QuoteitemPeer::NUM_HYDRATE_COLUMNS;
+        if (!$criteria->hasSelectClause()) {
+            QuoteitemPeer::addSelectColumns($criteria);
+        }
 
-        ProductPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + ProductPeer::NUM_HYDRATE_COLUMNS;
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(QuoteitemPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
 
         $criteria->addJoin(QuoteitemPeer::IDPRODUCT, ProductPeer::IDPRODUCT, $join_behavior);
 
+        $stmt = BasePeer::doCount($criteria, $con);
 
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = QuoteitemPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = QuoteitemPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = QuoteitemPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                QuoteitemPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Product rows
-
-                $key2 = ProductPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = ProductPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = ProductPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    ProductPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Quoteitem) to the collection in $obj2 (Product)
-                $obj2->addQuoteitem($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
         }
         $stmt->closeCursor();
 
-        return $results;
+        return $count;
     }
 
 
@@ -1101,6 +1027,80 @@ abstract class BaseQuoteitemPeer
                 } // if $obj2 already loaded
 
                 // Add the $obj1 (Quoteitem) to the collection in $obj2 (Quote)
+                $obj2->addQuoteitem($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Quoteitem objects pre-filled with all related objects except Quote.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Quoteitem objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptQuote(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(QuoteitemPeer::DATABASE_NAME);
+        }
+
+        QuoteitemPeer::addSelectColumns($criteria);
+        $startcol2 = QuoteitemPeer::NUM_HYDRATE_COLUMNS;
+
+        ProductPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + ProductPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(QuoteitemPeer::IDPRODUCT, ProductPeer::IDPRODUCT, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = QuoteitemPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = QuoteitemPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = QuoteitemPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                QuoteitemPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Product rows
+
+                $key2 = ProductPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = ProductPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = ProductPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    ProductPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Quoteitem) to the collection in $obj2 (Product)
                 $obj2->addQuoteitem($obj1);
 
             } // if joined row is not null

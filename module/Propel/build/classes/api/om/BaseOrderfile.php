@@ -36,12 +36,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
     protected $idorderfile;
 
     /**
-     * The value for the iduser field.
-     * @var        int
-     */
-    protected $iduser;
-
-    /**
      * The value for the idorder field.
      * @var        int
      */
@@ -64,11 +58,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
      * @var        string
      */
     protected $orderfile_uploaddate;
-
-    /**
-     * @var        User
-     */
-    protected $aUser;
 
     /**
      * @var        Order
@@ -104,17 +93,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
     {
 
         return $this->idorderfile;
-    }
-
-    /**
-     * Get the [iduser] column value.
-     *
-     * @return int
-     */
-    public function getIduser()
-    {
-
-        return $this->iduser;
     }
 
     /**
@@ -210,31 +188,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
 
         return $this;
     } // setIdorderfile()
-
-    /**
-     * Set the value of [iduser] column.
-     *
-     * @param  int $v new value
-     * @return Orderfile The current object (for fluent API support)
-     */
-    public function setIduser($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->iduser !== $v) {
-            $this->iduser = $v;
-            $this->modifiedColumns[] = OrderfilePeer::IDUSER;
-        }
-
-        if ($this->aUser !== null && $this->aUser->getIduser() !== $v) {
-            $this->aUser = null;
-        }
-
-
-        return $this;
-    } // setIduser()
 
     /**
      * Set the value of [idorder] column.
@@ -359,11 +312,10 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
         try {
 
             $this->idorderfile = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->iduser = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->idorder = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->orderfile_url = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            $this->orderfile_note = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-            $this->orderfile_uploaddate = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->idorder = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->orderfile_url = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->orderfile_note = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+            $this->orderfile_uploaddate = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -373,7 +325,7 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 6; // 6 = OrderfilePeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = OrderfilePeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Orderfile object", $e);
@@ -396,9 +348,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIduser()) {
-            $this->aUser = null;
-        }
         if ($this->aOrder !== null && $this->idorder !== $this->aOrder->getIdorder()) {
             $this->aOrder = null;
         }
@@ -441,7 +390,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
             $this->aOrder = null;
         } // if (deep)
     }
@@ -561,13 +509,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
             if ($this->aOrder !== null) {
                 if ($this->aOrder->isModified() || $this->aOrder->isNew()) {
                     $affectedRows += $this->aOrder->save($con);
@@ -615,9 +556,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
         if ($this->isColumnModified(OrderfilePeer::IDORDERFILE)) {
             $modifiedColumns[':p' . $index++]  = '`idorderfile`';
         }
-        if ($this->isColumnModified(OrderfilePeer::IDUSER)) {
-            $modifiedColumns[':p' . $index++]  = '`iduser`';
-        }
         if ($this->isColumnModified(OrderfilePeer::IDORDER)) {
             $modifiedColumns[':p' . $index++]  = '`idorder`';
         }
@@ -643,9 +581,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
                 switch ($columnName) {
                     case '`idorderfile`':
                         $stmt->bindValue($identifier, $this->idorderfile, PDO::PARAM_INT);
-                        break;
-                    case '`iduser`':
-                        $stmt->bindValue($identifier, $this->iduser, PDO::PARAM_INT);
                         break;
                     case '`idorder`':
                         $stmt->bindValue($identifier, $this->idorder, PDO::PARAM_INT);
@@ -758,12 +693,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if (!$this->aUser->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
-                }
-            }
-
             if ($this->aOrder !== null) {
                 if (!$this->aOrder->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aOrder->getValidationFailures());
@@ -815,18 +744,15 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
                 return $this->getIdorderfile();
                 break;
             case 1:
-                return $this->getIduser();
-                break;
-            case 2:
                 return $this->getIdorder();
                 break;
-            case 3:
+            case 2:
                 return $this->getOrderfileUrl();
                 break;
-            case 4:
+            case 3:
                 return $this->getOrderfileNote();
                 break;
-            case 5:
+            case 4:
                 return $this->getOrderfileUploaddate();
                 break;
             default:
@@ -859,11 +785,10 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
         $keys = OrderfilePeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getIdorderfile(),
-            $keys[1] => $this->getIduser(),
-            $keys[2] => $this->getIdorder(),
-            $keys[3] => $this->getOrderfileUrl(),
-            $keys[4] => $this->getOrderfileNote(),
-            $keys[5] => $this->getOrderfileUploaddate(),
+            $keys[1] => $this->getIdorder(),
+            $keys[2] => $this->getOrderfileUrl(),
+            $keys[3] => $this->getOrderfileNote(),
+            $keys[4] => $this->getOrderfileUploaddate(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -871,9 +796,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aOrder) {
                 $result['Order'] = $this->aOrder->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
@@ -915,18 +837,15 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
                 $this->setIdorderfile($value);
                 break;
             case 1:
-                $this->setIduser($value);
-                break;
-            case 2:
                 $this->setIdorder($value);
                 break;
-            case 3:
+            case 2:
                 $this->setOrderfileUrl($value);
                 break;
-            case 4:
+            case 3:
                 $this->setOrderfileNote($value);
                 break;
-            case 5:
+            case 4:
                 $this->setOrderfileUploaddate($value);
                 break;
         } // switch()
@@ -954,11 +873,10 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
         $keys = OrderfilePeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setIdorderfile($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setIduser($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setIdorder($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setOrderfileUrl($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setOrderfileNote($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setOrderfileUploaddate($arr[$keys[5]]);
+        if (array_key_exists($keys[1], $arr)) $this->setIdorder($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setOrderfileUrl($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setOrderfileNote($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setOrderfileUploaddate($arr[$keys[4]]);
     }
 
     /**
@@ -971,7 +889,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
         $criteria = new Criteria(OrderfilePeer::DATABASE_NAME);
 
         if ($this->isColumnModified(OrderfilePeer::IDORDERFILE)) $criteria->add(OrderfilePeer::IDORDERFILE, $this->idorderfile);
-        if ($this->isColumnModified(OrderfilePeer::IDUSER)) $criteria->add(OrderfilePeer::IDUSER, $this->iduser);
         if ($this->isColumnModified(OrderfilePeer::IDORDER)) $criteria->add(OrderfilePeer::IDORDER, $this->idorder);
         if ($this->isColumnModified(OrderfilePeer::ORDERFILE_URL)) $criteria->add(OrderfilePeer::ORDERFILE_URL, $this->orderfile_url);
         if ($this->isColumnModified(OrderfilePeer::ORDERFILE_NOTE)) $criteria->add(OrderfilePeer::ORDERFILE_NOTE, $this->orderfile_note);
@@ -1039,7 +956,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setIduser($this->getIduser());
         $copyObj->setIdorder($this->getIdorder());
         $copyObj->setOrderfileUrl($this->getOrderfileUrl());
         $copyObj->setOrderfileNote($this->getOrderfileNote());
@@ -1103,58 +1019,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param                  User $v
-     * @return Orderfile The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setIduser(NULL);
-        } else {
-            $this->setIduser($v->getIduser());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addOrderfile($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addOrderfiles($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
      * Declares an association between this object and a Order object.
      *
      * @param                  Order $v
@@ -1212,7 +1076,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
     public function clear()
     {
         $this->idorderfile = null;
-        $this->iduser = null;
         $this->idorder = null;
         $this->orderfile_url = null;
         $this->orderfile_note = null;
@@ -1239,9 +1102,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aUser instanceof Persistent) {
-              $this->aUser->clearAllReferences($deep);
-            }
             if ($this->aOrder instanceof Persistent) {
               $this->aOrder->clearAllReferences($deep);
             }
@@ -1249,7 +1109,6 @@ abstract class BaseOrderfile extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aUser = null;
         $this->aOrder = null;
     }
 

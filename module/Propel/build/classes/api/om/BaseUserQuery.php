@@ -56,17 +56,9 @@
  * @method UserQuery rightJoinMlquestion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Mlquestion relation
  * @method UserQuery innerJoinMlquestion($relationAlias = null) Adds a INNER JOIN clause to the query using the Mlquestion relation
  *
- * @method UserQuery leftJoinOrdercomment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Ordercomment relation
- * @method UserQuery rightJoinOrdercomment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Ordercomment relation
- * @method UserQuery innerJoinOrdercomment($relationAlias = null) Adds a INNER JOIN clause to the query using the Ordercomment relation
- *
  * @method UserQuery leftJoinOrderconflictComment($relationAlias = null) Adds a LEFT JOIN clause to the query using the OrderconflictComment relation
  * @method UserQuery rightJoinOrderconflictComment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the OrderconflictComment relation
  * @method UserQuery innerJoinOrderconflictComment($relationAlias = null) Adds a INNER JOIN clause to the query using the OrderconflictComment relation
- *
- * @method UserQuery leftJoinOrderfile($relationAlias = null) Adds a LEFT JOIN clause to the query using the Orderfile relation
- * @method UserQuery rightJoinOrderfile($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Orderfile relation
- * @method UserQuery innerJoinOrderfile($relationAlias = null) Adds a INNER JOIN clause to the query using the Orderfile relation
  *
  * @method UserQuery leftJoinProductionordercomment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Productionordercomment relation
  * @method UserQuery rightJoinProductionordercomment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Productionordercomment relation
@@ -87,10 +79,6 @@
  * @method UserQuery leftJoinProspectioninterest($relationAlias = null) Adds a LEFT JOIN clause to the query using the Prospectioninterest relation
  * @method UserQuery rightJoinProspectioninterest($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Prospectioninterest relation
  * @method UserQuery innerJoinProspectioninterest($relationAlias = null) Adds a INNER JOIN clause to the query using the Prospectioninterest relation
- *
- * @method UserQuery leftJoinQuoutenote($relationAlias = null) Adds a LEFT JOIN clause to the query using the Quoutenote relation
- * @method UserQuery rightJoinQuoutenote($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Quoutenote relation
- * @method UserQuery innerJoinQuoutenote($relationAlias = null) Adds a INNER JOIN clause to the query using the Quoutenote relation
  *
  * @method UserQuery leftJoinStaff($relationAlias = null) Adds a LEFT JOIN clause to the query using the Staff relation
  * @method UserQuery rightJoinStaff($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Staff relation
@@ -1120,80 +1108,6 @@ abstract class BaseUserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Ordercomment object
-     *
-     * @param   Ordercomment|PropelObjectCollection $ordercomment  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 UserQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByOrdercomment($ordercomment, $comparison = null)
-    {
-        if ($ordercomment instanceof Ordercomment) {
-            return $this
-                ->addUsingAlias(UserPeer::IDUSER, $ordercomment->getIduser(), $comparison);
-        } elseif ($ordercomment instanceof PropelObjectCollection) {
-            return $this
-                ->useOrdercommentQuery()
-                ->filterByPrimaryKeys($ordercomment->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByOrdercomment() only accepts arguments of type Ordercomment or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Ordercomment relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return UserQuery The current query, for fluid interface
-     */
-    public function joinOrdercomment($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Ordercomment');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Ordercomment');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Ordercomment relation Ordercomment object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   OrdercommentQuery A secondary query class using the current class as primary query
-     */
-    public function useOrdercommentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinOrdercomment($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Ordercomment', 'OrdercommentQuery');
-    }
-
-    /**
      * Filter the query by a related OrderconflictComment object
      *
      * @param   OrderconflictComment|PropelObjectCollection $orderconflictComment  the related object to use as filter
@@ -1265,80 +1179,6 @@ abstract class BaseUserQuery extends ModelCriteria
         return $this
             ->joinOrderconflictComment($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'OrderconflictComment', 'OrderconflictCommentQuery');
-    }
-
-    /**
-     * Filter the query by a related Orderfile object
-     *
-     * @param   Orderfile|PropelObjectCollection $orderfile  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 UserQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByOrderfile($orderfile, $comparison = null)
-    {
-        if ($orderfile instanceof Orderfile) {
-            return $this
-                ->addUsingAlias(UserPeer::IDUSER, $orderfile->getIduser(), $comparison);
-        } elseif ($orderfile instanceof PropelObjectCollection) {
-            return $this
-                ->useOrderfileQuery()
-                ->filterByPrimaryKeys($orderfile->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByOrderfile() only accepts arguments of type Orderfile or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Orderfile relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return UserQuery The current query, for fluid interface
-     */
-    public function joinOrderfile($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Orderfile');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Orderfile');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Orderfile relation Orderfile object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   OrderfileQuery A secondary query class using the current class as primary query
-     */
-    public function useOrderfileQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinOrderfile($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Orderfile', 'OrderfileQuery');
     }
 
     /**
@@ -1709,80 +1549,6 @@ abstract class BaseUserQuery extends ModelCriteria
         return $this
             ->joinProspectioninterest($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Prospectioninterest', 'ProspectioninterestQuery');
-    }
-
-    /**
-     * Filter the query by a related Quoutenote object
-     *
-     * @param   Quoutenote|PropelObjectCollection $quoutenote  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 UserQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByQuoutenote($quoutenote, $comparison = null)
-    {
-        if ($quoutenote instanceof Quoutenote) {
-            return $this
-                ->addUsingAlias(UserPeer::IDUSER, $quoutenote->getIduser(), $comparison);
-        } elseif ($quoutenote instanceof PropelObjectCollection) {
-            return $this
-                ->useQuoutenoteQuery()
-                ->filterByPrimaryKeys($quoutenote->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByQuoutenote() only accepts arguments of type Quoutenote or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Quoutenote relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return UserQuery The current query, for fluid interface
-     */
-    public function joinQuoutenote($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Quoutenote');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Quoutenote');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Quoutenote relation Quoutenote object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   QuoutenoteQuery A secondary query class using the current class as primary query
-     */
-    public function useQuoutenoteQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinQuoutenote($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Quoutenote', 'QuoutenoteQuery');
     }
 
     /**

@@ -191,7 +191,7 @@ class Clienttax extends BaseClienttax
             'resume' => $getCollection['resume'],
             'client' => array(
                 '_links' => array(
-                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$clientQuery['idclient']),
+                    'self' => array('href' => URL_API.'/company/client/'.$clientQuery['idclient']),
                 ),
                 'idclient' => $clientQuery['idclient'],
                 'client_firstname' => $clientQuery['client_firstname'],

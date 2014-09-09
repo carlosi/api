@@ -14,7 +14,7 @@ class JSonResponse {
                 case 403:{
                     $responseBody = array(
                         'Error' => array(
-                            'HTTP Status' => 403 . ' Forbidden',
+                            'HTTP_Status' => 403 . ' Forbidden',
                             'Title' => 'Access denied',
                             'Details' => 'Sorry but you does not have permission over this resource',
                         ),
@@ -27,7 +27,7 @@ class JSonResponse {
                     if($messageArray!=null){
                         $responseBody = array(
                             'Error' => array(
-                                'HTTP Status' => 400 . ' Bad Request',
+                                'HTTP_Status' => 400 . ' Bad Request',
                                 'Title' => 'Resource data pre-validation error',
                                 'Details' => $messageArray,
                             ),

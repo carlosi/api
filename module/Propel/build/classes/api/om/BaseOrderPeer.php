@@ -44,8 +44,8 @@ abstract class BaseOrderPeer
     /** the column name for the created_at field */
     const CREATED_AT = 'order.created_at';
 
-    /** the column name for the order_capture field */
-    const ORDER_CAPTURE = 'order.order_capture';
+    /** the column name for the order_status field */
+    const ORDER_STATUS = 'order.order_status';
 
     /** the column name for the order_payment field */
     const ORDER_PAYMENT = 'order.order_payment';
@@ -56,17 +56,17 @@ abstract class BaseOrderPeer
     /** the column name for the order_delivery field */
     const ORDER_DELIVERY = 'order.order_delivery';
 
-    /** The enumerated values for the order_capture field */
-    const ORDER_CAPTURE_COMPLETE = 'complete';
-    const ORDER_CAPTURE_INCOMPLETE = 'incomplete';
+    /** The enumerated values for the order_status field */
+    const ORDER_STATUS_COMPLETE = 'COMPLETE';
+    const ORDER_STATUS_INCOMPLETE = 'INCOMPLETE';
 
     /** The enumerated values for the order_payment field */
-    const ORDER_PAYMENT_PAID = 'paid';
-    const ORDER_PAYMENT_UNPAID = 'unpaid';
+    const ORDER_PAYMENT_PAID = 'PAID';
+    const ORDER_PAYMENT_UNPAID = 'UNPAID';
 
     /** The enumerated values for the order_paymentmode field */
-    const ORDER_PAYMENTMODE_UNIQUE = 'unique';
-    const ORDER_PAYMENTMODE_PARTIAL = 'partial';
+    const ORDER_PAYMENTMODE_UNIQUE = 'UNIQUE';
+    const ORDER_PAYMENTMODE_PARTIAL = 'PARTIAL';
 
     /** The enumerated values for the order_delivery field */
     const ORDER_DELIVERY_LOCALMODE = 'LOCALMODE';
@@ -74,6 +74,7 @@ abstract class BaseOrderPeer
     const ORDER_DELIVERY_TRANSIT = 'TRANSIT';
     const ORDER_DELIVERY_FINISHED = 'FINISHED';
     const ORDER_DELIVERY_TRANSITTOBRANCH = 'TRANSITTOBRANCH';
+    const ORDER_DELIVERY_REFUND = 'REFUND';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -94,11 +95,11 @@ abstract class BaseOrderPeer
      * e.g. OrderPeer::$fieldNames[OrderPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Idorder', 'Idbranch', 'Idclient', 'CreatedAt', 'OrderCapture', 'OrderPayment', 'OrderPaymentmode', 'OrderDelivery', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idorder', 'idbranch', 'idclient', 'createdAt', 'orderCapture', 'orderPayment', 'orderPaymentmode', 'orderDelivery', ),
-        BasePeer::TYPE_COLNAME => array (OrderPeer::IDORDER, OrderPeer::IDBRANCH, OrderPeer::IDCLIENT, OrderPeer::CREATED_AT, OrderPeer::ORDER_CAPTURE, OrderPeer::ORDER_PAYMENT, OrderPeer::ORDER_PAYMENTMODE, OrderPeer::ORDER_DELIVERY, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDORDER', 'IDBRANCH', 'IDCLIENT', 'CREATED_AT', 'ORDER_CAPTURE', 'ORDER_PAYMENT', 'ORDER_PAYMENTMODE', 'ORDER_DELIVERY', ),
-        BasePeer::TYPE_FIELDNAME => array ('idorder', 'idbranch', 'idclient', 'created_at', 'order_capture', 'order_payment', 'order_paymentmode', 'order_delivery', ),
+        BasePeer::TYPE_PHPNAME => array ('Idorder', 'Idbranch', 'Idclient', 'CreatedAt', 'OrderStatus', 'OrderPayment', 'OrderPaymentmode', 'OrderDelivery', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idorder', 'idbranch', 'idclient', 'createdAt', 'orderStatus', 'orderPayment', 'orderPaymentmode', 'orderDelivery', ),
+        BasePeer::TYPE_COLNAME => array (OrderPeer::IDORDER, OrderPeer::IDBRANCH, OrderPeer::IDCLIENT, OrderPeer::CREATED_AT, OrderPeer::ORDER_STATUS, OrderPeer::ORDER_PAYMENT, OrderPeer::ORDER_PAYMENTMODE, OrderPeer::ORDER_DELIVERY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDORDER', 'IDBRANCH', 'IDCLIENT', 'CREATED_AT', 'ORDER_STATUS', 'ORDER_PAYMENT', 'ORDER_PAYMENTMODE', 'ORDER_DELIVERY', ),
+        BasePeer::TYPE_FIELDNAME => array ('idorder', 'idbranch', 'idclient', 'created_at', 'order_status', 'order_payment', 'order_paymentmode', 'order_delivery', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
@@ -109,19 +110,19 @@ abstract class BaseOrderPeer
      * e.g. OrderPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Idorder' => 0, 'Idbranch' => 1, 'Idclient' => 2, 'CreatedAt' => 3, 'OrderCapture' => 4, 'OrderPayment' => 5, 'OrderPaymentmode' => 6, 'OrderDelivery' => 7, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('idorder' => 0, 'idbranch' => 1, 'idclient' => 2, 'createdAt' => 3, 'orderCapture' => 4, 'orderPayment' => 5, 'orderPaymentmode' => 6, 'orderDelivery' => 7, ),
-        BasePeer::TYPE_COLNAME => array (OrderPeer::IDORDER => 0, OrderPeer::IDBRANCH => 1, OrderPeer::IDCLIENT => 2, OrderPeer::CREATED_AT => 3, OrderPeer::ORDER_CAPTURE => 4, OrderPeer::ORDER_PAYMENT => 5, OrderPeer::ORDER_PAYMENTMODE => 6, OrderPeer::ORDER_DELIVERY => 7, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDORDER' => 0, 'IDBRANCH' => 1, 'IDCLIENT' => 2, 'CREATED_AT' => 3, 'ORDER_CAPTURE' => 4, 'ORDER_PAYMENT' => 5, 'ORDER_PAYMENTMODE' => 6, 'ORDER_DELIVERY' => 7, ),
-        BasePeer::TYPE_FIELDNAME => array ('idorder' => 0, 'idbranch' => 1, 'idclient' => 2, 'created_at' => 3, 'order_capture' => 4, 'order_payment' => 5, 'order_paymentmode' => 6, 'order_delivery' => 7, ),
+        BasePeer::TYPE_PHPNAME => array ('Idorder' => 0, 'Idbranch' => 1, 'Idclient' => 2, 'CreatedAt' => 3, 'OrderStatus' => 4, 'OrderPayment' => 5, 'OrderPaymentmode' => 6, 'OrderDelivery' => 7, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('idorder' => 0, 'idbranch' => 1, 'idclient' => 2, 'createdAt' => 3, 'orderStatus' => 4, 'orderPayment' => 5, 'orderPaymentmode' => 6, 'orderDelivery' => 7, ),
+        BasePeer::TYPE_COLNAME => array (OrderPeer::IDORDER => 0, OrderPeer::IDBRANCH => 1, OrderPeer::IDCLIENT => 2, OrderPeer::CREATED_AT => 3, OrderPeer::ORDER_STATUS => 4, OrderPeer::ORDER_PAYMENT => 5, OrderPeer::ORDER_PAYMENTMODE => 6, OrderPeer::ORDER_DELIVERY => 7, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDORDER' => 0, 'IDBRANCH' => 1, 'IDCLIENT' => 2, 'CREATED_AT' => 3, 'ORDER_STATUS' => 4, 'ORDER_PAYMENT' => 5, 'ORDER_PAYMENTMODE' => 6, 'ORDER_DELIVERY' => 7, ),
+        BasePeer::TYPE_FIELDNAME => array ('idorder' => 0, 'idbranch' => 1, 'idclient' => 2, 'created_at' => 3, 'order_status' => 4, 'order_payment' => 5, 'order_paymentmode' => 6, 'order_delivery' => 7, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /** The enumerated values for this table */
     protected static $enumValueSets = array(
-        OrderPeer::ORDER_CAPTURE => array(
-            OrderPeer::ORDER_CAPTURE_COMPLETE,
-            OrderPeer::ORDER_CAPTURE_INCOMPLETE,
+        OrderPeer::ORDER_STATUS => array(
+            OrderPeer::ORDER_STATUS_COMPLETE,
+            OrderPeer::ORDER_STATUS_INCOMPLETE,
         ),
         OrderPeer::ORDER_PAYMENT => array(
             OrderPeer::ORDER_PAYMENT_PAID,
@@ -137,6 +138,7 @@ abstract class BaseOrderPeer
             OrderPeer::ORDER_DELIVERY_TRANSIT,
             OrderPeer::ORDER_DELIVERY_FINISHED,
             OrderPeer::ORDER_DELIVERY_TRANSITTOBRANCH,
+            OrderPeer::ORDER_DELIVERY_REFUND,
         ),
     );
 
@@ -260,7 +262,7 @@ abstract class BaseOrderPeer
             $criteria->addSelectColumn(OrderPeer::IDBRANCH);
             $criteria->addSelectColumn(OrderPeer::IDCLIENT);
             $criteria->addSelectColumn(OrderPeer::CREATED_AT);
-            $criteria->addSelectColumn(OrderPeer::ORDER_CAPTURE);
+            $criteria->addSelectColumn(OrderPeer::ORDER_STATUS);
             $criteria->addSelectColumn(OrderPeer::ORDER_PAYMENT);
             $criteria->addSelectColumn(OrderPeer::ORDER_PAYMENTMODE);
             $criteria->addSelectColumn(OrderPeer::ORDER_DELIVERY);
@@ -269,7 +271,7 @@ abstract class BaseOrderPeer
             $criteria->addSelectColumn($alias . '.idbranch');
             $criteria->addSelectColumn($alias . '.idclient');
             $criteria->addSelectColumn($alias . '.created_at');
-            $criteria->addSelectColumn($alias . '.order_capture');
+            $criteria->addSelectColumn($alias . '.order_status');
             $criteria->addSelectColumn($alias . '.order_payment');
             $criteria->addSelectColumn($alias . '.order_paymentmode');
             $criteria->addSelectColumn($alias . '.order_delivery');

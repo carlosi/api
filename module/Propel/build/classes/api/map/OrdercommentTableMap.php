@@ -40,7 +40,6 @@ class OrdercommentTableMap extends TableMap
         // columns
         $this->addPrimaryKey('idordercomment', 'Idordercomment', 'INTEGER', true, null, null);
         $this->addForeignKey('idorder', 'Idorder', 'INTEGER', 'order', 'idorder', true, null, null);
-        $this->addForeignKey('iduser', 'Iduser', 'INTEGER', 'user', 'iduser', true, null, null);
         $this->addColumn('ordercomment_note', 'OrdercommentNote', 'LONGVARCHAR', true, null, null);
         $this->addColumn('ordercomment_date', 'OrdercommentDate', 'TIMESTAMP', true, null, null);
         // validators
@@ -51,7 +50,6 @@ class OrdercommentTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE');
         $this->addRelation('Order', 'Order', RelationMap::MANY_TO_ONE, array('idorder' => 'idorder', ), 'CASCADE', 'CASCADE');
     } // buildRelations()
 

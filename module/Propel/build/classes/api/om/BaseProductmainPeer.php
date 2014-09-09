@@ -486,6 +486,9 @@ abstract class BaseProductmainPeer
         // Invalidate objects in ProductPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductPeer::clearInstancePool();
+        // Invalidate objects in ProductmainphotoPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ProductmainphotoPeer::clearInstancePool();
         // Invalidate objects in ProductmainpropertyPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductmainpropertyPeer::clearInstancePool();
@@ -1459,6 +1462,12 @@ abstract class BaseProductmainPeer
 
             $criteria->add(ProductPeer::IDPRODUCTMAIN, $obj->getIdproductmain());
             $affectedRows += ProductPeer::doDelete($criteria, $con);
+
+            // delete related Productmainphoto objects
+            $criteria = new Criteria(ProductmainphotoPeer::DATABASE_NAME);
+
+            $criteria->add(ProductmainphotoPeer::IDPRODUCTMAIN, $obj->getIdproductmain());
+            $affectedRows += ProductmainphotoPeer::doDelete($criteria, $con);
 
             // delete related Productmainproperty objects
             $criteria = new Criteria(ProductmainpropertyPeer::DATABASE_NAME);

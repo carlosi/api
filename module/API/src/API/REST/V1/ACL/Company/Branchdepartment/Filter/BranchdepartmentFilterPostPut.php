@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BranchFilterPostPut.php
+ * BranchdepartmentFilterPostPut.php
  * BuyBuy
  *
  * Created by Buybuy on 12/08/2014.
@@ -11,13 +11,13 @@
 namespace API\REST\V1\ACL\Company\Branchdepartment\Filter;
 
 // - ACL - //
-use API\REST\V1\ACL\Company\Branchdepartment\Filter\BranchFilter;
+use API\REST\V1\ACL\Company\Branchdepartment\Filter\BranchdepartmentFilter;
 
 /**
- * Class BranchFilterPostPut
- * @package API\REST\V1\ACL\Company\Branch\Filter
+ * Class BranchdepartmentFilterPostPut
+ * @package API\REST\V1\ACL\Company\Branchdepartment\Filter
  */
-class BranchdepartmentPostPut
+class BranchdepartmentFilterPostPut
 {
     /**
      * @param InputFilterInterface $inputFilter
@@ -34,8 +34,8 @@ class BranchdepartmentPostPut
      */
     public function getInputFilter($userLevel)
     {
-        $branchFilter = new BranchFilter();
-        $inputFilter = $branchFilter->getInputFilter();
+        $branchdepartmentFilter = new BranchdepartmentFilter();
+        $inputFilter = $branchdepartmentFilter->getInputFilter();
 
         switch ($userLevel){
 
@@ -52,30 +52,6 @@ class BranchdepartmentPostPut
             }
 
             case 3: {
-
-                $inputFilter->remove('branch_iso_codecountry');
-                $inputFilter->add(array(
-                    'name' => 'branch_iso_codecountry',
-                    'required' => false,
-                    'filters' => array(
-                        array('name' => 'StripTags'),
-                        array('name' => 'StringTrim')
-                    ),
-                    'validators' => array(
-                        array(
-                            'name' => 'Zend\Validator\InArray',
-                            'options' => array(
-                                'haystack' => array('MX','US','ES','AUS'),
-                                'messages' => array(
-                                    'notInArray' => 'is not a valid input. Valid inputs: MX | US | ES | AUS'
-                                ),
-                                'encoding' => 'UTF-8',
-                                'min'      => 1,
-                                'max'      => 45,
-                            ),
-                        ),
-                    ),
-                ));
 
                 break;
             }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BranchForm.php
+ * BranchdepartmentForm.php
  * BuyBuy
  *
  * Created by Buybuy on 12/08/2014.
@@ -14,8 +14,8 @@ namespace API\REST\V1\ACL\Company\Branchdepartment\Form;
 use Zend\Form\Form;
 
 /**
- * Class BranchForm
- * @package API\REST\V1\ACL\Company\Branch\Form
+ * Class BranchdepartmentForm
+ * @package API\REST\V1\ACL\Company\Branchdepartment\Form
  */
 class BranchdepartmentForm extends Form
 {
@@ -26,14 +26,14 @@ class BranchdepartmentForm extends Form
 
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idbranch',
+            'name' => 'idbranchdepartment',
             'options' => array(
                 'label' => 'Id Sucursal',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idcompany',
+            'name' => 'idbranch',
             'options' => array(
                 'label' => 'Id Compañía',
             ),
@@ -41,51 +41,9 @@ class BranchdepartmentForm extends Form
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'branch_name',
+            'name' => 'iddepartment',
             'options' => array(
                 'label' => 'Sucursal',
-            ),
-        ));
-        $this->add(array(
-            'type' => 'Hidden',
-            'name' => 'branch_iso_codecountry',
-            'options' => array(
-                'label' => 'País',
-            ),
-        ));
-        $this->add(array(
-            'type' => 'Hidden',
-            'name' => 'branch_address',
-            'options' => array(
-                'label' => 'Dirección',
-            ),
-        ));
-        $this->add(array(
-            'type' => 'Hidden',
-            'name' => 'branch_address2',
-            'options' => array(
-                'label' => 'Colonia',
-            ),
-        ));
-        $this->add(array(
-            'type' => 'Hidden',
-            'name' => 'branch_city',
-            'options' => array(
-                'label' => 'Ciudad',
-            ),
-        ));
-        $this->add(array(
-            'type' => 'Hidden',
-            'name' => 'branch_state',
-            'options' => array(
-                'label' => 'Estado',
-            ),
-        ));
-        $this->add(array(
-            'type' => 'Hidden',
-            'name' => 'branch_zipcode',
-            'options' => array(
-                'label' => 'Código postal',
             ),
         ));
     }

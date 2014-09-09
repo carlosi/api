@@ -6,13 +6,13 @@
  *
  *
  *
- * @method BranchUserAclQuery orderByIdbranchBranchUserAcl($order = Criteria::ASC) Order by the idbranch_user_acl column
+ * @method BranchUserAclQuery orderByIdbranchUserAcl($order = Criteria::ASC) Order by the idbranch_user_acl column
  * @method BranchUserAclQuery orderByIduser($order = Criteria::ASC) Order by the iduser column
  * @method BranchUserAclQuery orderByIdbranch($order = Criteria::ASC) Order by the idbranch column
  * @method BranchUserAclQuery orderByModuleName($order = Criteria::ASC) Order by the module_name column
  * @method BranchUserAclQuery orderByUserAccesslevel($order = Criteria::ASC) Order by the user_accesslevel column
  *
- * @method BranchUserAclQuery groupByIdbranchBranchUserAcl() Group by the idbranch_user_acl column
+ * @method BranchUserAclQuery groupByIdbranchUserAcl() Group by the idbranch_user_acl column
  * @method BranchUserAclQuery groupByIduser() Group by the iduser column
  * @method BranchUserAclQuery groupByIdbranch() Group by the idbranch column
  * @method BranchUserAclQuery groupByModuleName() Group by the module_name column
@@ -22,13 +22,13 @@
  * @method BranchUserAclQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method BranchUserAclQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method BranchUserAclQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method BranchUserAclQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method BranchUserAclQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
- *
  * @method BranchUserAclQuery leftJoinBranch($relationAlias = null) Adds a LEFT JOIN clause to the query using the Branch relation
  * @method BranchUserAclQuery rightJoinBranch($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Branch relation
  * @method BranchUserAclQuery innerJoinBranch($relationAlias = null) Adds a INNER JOIN clause to the query using the Branch relation
+ *
+ * @method BranchUserAclQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method BranchUserAclQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method BranchUserAclQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
  * @method BranchUserAcl findOne(PropelPDO $con = null) Return the first BranchUserAcl matching the query
  * @method BranchUserAcl findOneOrCreate(PropelPDO $con = null) Return the first BranchUserAcl matching the query, or a new BranchUserAcl object populated from the query conditions when no match is found
@@ -38,7 +38,7 @@
  * @method BranchUserAcl findOneByModuleName(string $module_name) Return the first BranchUserAcl filtered by the module_name column
  * @method BranchUserAcl findOneByUserAccesslevel(string $user_accesslevel) Return the first BranchUserAcl filtered by the user_accesslevel column
  *
- * @method array findByIdbranchBranchUserAcl(int $idbranch_user_acl) Return BranchUserAcl objects filtered by the idbranch_user_acl column
+ * @method array findByIdbranchUserAcl(int $idbranch_user_acl) Return BranchUserAcl objects filtered by the idbranch_user_acl column
  * @method array findByIduser(int $iduser) Return BranchUserAcl objects filtered by the iduser column
  * @method array findByIdbranch(int $idbranch) Return BranchUserAcl objects filtered by the idbranch column
  * @method array findByModuleName(string $module_name) Return BranchUserAcl objects filtered by the module_name column
@@ -133,7 +133,7 @@ abstract class BaseBranchUserAclQuery extends ModelCriteria
      * @return                 BranchUserAcl A model object, or null if the key is not found
      * @throws PropelException
      */
-     public function findOneByIdbranchBranchUserAcl($key, $con = null)
+     public function findOneByIdbranchUserAcl($key, $con = null)
      {
         return $this->findPk($key, $con);
      }
@@ -244,13 +244,13 @@ abstract class BaseBranchUserAclQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByIdbranchBranchUserAcl(1234); // WHERE idbranch_user_acl = 1234
-     * $query->filterByIdbranchBranchUserAcl(array(12, 34)); // WHERE idbranch_user_acl IN (12, 34)
-     * $query->filterByIdbranchBranchUserAcl(array('min' => 12)); // WHERE idbranch_user_acl >= 12
-     * $query->filterByIdbranchBranchUserAcl(array('max' => 12)); // WHERE idbranch_user_acl <= 12
+     * $query->filterByIdbranchUserAcl(1234); // WHERE idbranch_user_acl = 1234
+     * $query->filterByIdbranchUserAcl(array(12, 34)); // WHERE idbranch_user_acl IN (12, 34)
+     * $query->filterByIdbranchUserAcl(array('min' => 12)); // WHERE idbranch_user_acl >= 12
+     * $query->filterByIdbranchUserAcl(array('max' => 12)); // WHERE idbranch_user_acl <= 12
      * </code>
      *
-     * @param     mixed $idbranchBranchUserAcl The value to use as filter.
+     * @param     mixed $idbranchUserAcl The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -258,16 +258,16 @@ abstract class BaseBranchUserAclQuery extends ModelCriteria
      *
      * @return BranchUserAclQuery The current query, for fluid interface
      */
-    public function filterByIdbranchBranchUserAcl($idbranchBranchUserAcl = null, $comparison = null)
+    public function filterByIdbranchUserAcl($idbranchUserAcl = null, $comparison = null)
     {
-        if (is_array($idbranchBranchUserAcl)) {
+        if (is_array($idbranchUserAcl)) {
             $useMinMax = false;
-            if (isset($idbranchBranchUserAcl['min'])) {
-                $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $idbranchBranchUserAcl['min'], Criteria::GREATER_EQUAL);
+            if (isset($idbranchUserAcl['min'])) {
+                $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $idbranchUserAcl['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($idbranchBranchUserAcl['max'])) {
-                $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $idbranchBranchUserAcl['max'], Criteria::LESS_EQUAL);
+            if (isset($idbranchUserAcl['max'])) {
+                $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $idbranchUserAcl['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -278,7 +278,7 @@ abstract class BaseBranchUserAclQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $idbranchBranchUserAcl, $comparison);
+        return $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $idbranchUserAcl, $comparison);
     }
 
     /**
@@ -428,82 +428,6 @@ abstract class BaseBranchUserAclQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related User object
-     *
-     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 BranchUserAclQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByUser($user, $comparison = null)
-    {
-        if ($user instanceof User) {
-            return $this
-                ->addUsingAlias(BranchUserAclPeer::IDUSER, $user->getIduser(), $comparison);
-        } elseif ($user instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(BranchUserAclPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
-        } else {
-            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the User relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return BranchUserAclQuery The current query, for fluid interface
-     */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('User');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'User');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the User relation User object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   UserQuery A secondary query class using the current class as primary query
-     */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinUser($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
-    }
-
-    /**
      * Filter the query by a related Branch object
      *
      * @param   Branch|PropelObjectCollection $branch The related object(s) to use as filter
@@ -580,6 +504,82 @@ abstract class BaseBranchUserAclQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related User object
+     *
+     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 BranchUserAclQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByUser($user, $comparison = null)
+    {
+        if ($user instanceof User) {
+            return $this
+                ->addUsingAlias(BranchUserAclPeer::IDUSER, $user->getIduser(), $comparison);
+        } elseif ($user instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(BranchUserAclPeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
+        } else {
+            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the User relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return BranchUserAclQuery The current query, for fluid interface
+     */
+    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('User');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'User');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the User relation User object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   UserQuery A secondary query class using the current class as primary query
+     */
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   BranchUserAcl $branchUserAcl Object to remove from the list of results
@@ -589,7 +589,7 @@ abstract class BaseBranchUserAclQuery extends ModelCriteria
     public function prune($branchUserAcl = null)
     {
         if ($branchUserAcl) {
-            $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $branchUserAcl->getIdbranchBranchUserAcl(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(BranchUserAclPeer::IDBRANCH_USER_ACL, $branchUserAcl->getIdbranchUserAcl(), Criteria::NOT_EQUAL);
         }
 
         return $this;

@@ -42,16 +42,16 @@ abstract class BaseStaff extends BaseObject implements Persistent
     protected $iduser;
 
     /**
+     * The value for the staff_name field.
+     * @var        string
+     */
+    protected $staff_name;
+
+    /**
      * The value for the staff_firstname field.
      * @var        string
      */
     protected $staff_firstname;
-
-    /**
-     * The value for the staff_lastname field.
-     * @var        string
-     */
-    protected $staff_lastname;
 
     /**
      * The value for the staff_email field.
@@ -169,6 +169,17 @@ abstract class BaseStaff extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [staff_name] column value.
+     *
+     * @return string
+     */
+    public function getStaffName()
+    {
+
+        return $this->staff_name;
+    }
+
+    /**
      * Get the [staff_firstname] column value.
      *
      * @return string
@@ -177,17 +188,6 @@ abstract class BaseStaff extends BaseObject implements Persistent
     {
 
         return $this->staff_firstname;
-    }
-
-    /**
-     * Get the [staff_lastname] column value.
-     *
-     * @return string
-     */
-    public function getStaffLastname()
-    {
-
-        return $this->staff_lastname;
     }
 
     /**
@@ -314,6 +314,27 @@ abstract class BaseStaff extends BaseObject implements Persistent
     } // setIduser()
 
     /**
+     * Set the value of [staff_name] column.
+     *
+     * @param  string $v new value
+     * @return Staff The current object (for fluent API support)
+     */
+    public function setStaffName($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->staff_name !== $v) {
+            $this->staff_name = $v;
+            $this->modifiedColumns[] = StaffPeer::STAFF_NAME;
+        }
+
+
+        return $this;
+    } // setStaffName()
+
+    /**
      * Set the value of [staff_firstname] column.
      *
      * @param  string $v new value
@@ -333,27 +354,6 @@ abstract class BaseStaff extends BaseObject implements Persistent
 
         return $this;
     } // setStaffFirstname()
-
-    /**
-     * Set the value of [staff_lastname] column.
-     *
-     * @param  string $v new value
-     * @return Staff The current object (for fluent API support)
-     */
-    public function setStaffLastname($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->staff_lastname !== $v) {
-            $this->staff_lastname = $v;
-            $this->modifiedColumns[] = StaffPeer::STAFF_LASTNAME;
-        }
-
-
-        return $this;
-    } // setStaffLastname()
 
     /**
      * Set the value of [staff_email] column.
@@ -548,8 +548,8 @@ abstract class BaseStaff extends BaseObject implements Persistent
 
             $this->idstaff = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->iduser = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->staff_firstname = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-            $this->staff_lastname = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+            $this->staff_name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->staff_firstname = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->staff_email = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->staff_email2 = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
             $this->staff_phone = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
@@ -800,11 +800,11 @@ abstract class BaseStaff extends BaseObject implements Persistent
         if ($this->isColumnModified(StaffPeer::IDUSER)) {
             $modifiedColumns[':p' . $index++]  = '`iduser`';
         }
+        if ($this->isColumnModified(StaffPeer::STAFF_NAME)) {
+            $modifiedColumns[':p' . $index++]  = '`staff_name`';
+        }
         if ($this->isColumnModified(StaffPeer::STAFF_FIRSTNAME)) {
             $modifiedColumns[':p' . $index++]  = '`staff_firstname`';
-        }
-        if ($this->isColumnModified(StaffPeer::STAFF_LASTNAME)) {
-            $modifiedColumns[':p' . $index++]  = '`staff_lastname`';
         }
         if ($this->isColumnModified(StaffPeer::STAFF_EMAIL)) {
             $modifiedColumns[':p' . $index++]  = '`staff_email`';
@@ -844,11 +844,11 @@ abstract class BaseStaff extends BaseObject implements Persistent
                     case '`iduser`':
                         $stmt->bindValue($identifier, $this->iduser, PDO::PARAM_INT);
                         break;
+                    case '`staff_name`':
+                        $stmt->bindValue($identifier, $this->staff_name, PDO::PARAM_STR);
+                        break;
                     case '`staff_firstname`':
                         $stmt->bindValue($identifier, $this->staff_firstname, PDO::PARAM_STR);
-                        break;
-                    case '`staff_lastname`':
-                        $stmt->bindValue($identifier, $this->staff_lastname, PDO::PARAM_STR);
                         break;
                     case '`staff_email`':
                         $stmt->bindValue($identifier, $this->staff_email, PDO::PARAM_STR);
@@ -1024,10 +1024,10 @@ abstract class BaseStaff extends BaseObject implements Persistent
                 return $this->getIduser();
                 break;
             case 2:
-                return $this->getStaffFirstname();
+                return $this->getStaffName();
                 break;
             case 3:
-                return $this->getStaffLastname();
+                return $this->getStaffFirstname();
                 break;
             case 4:
                 return $this->getStaffEmail();
@@ -1081,8 +1081,8 @@ abstract class BaseStaff extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getIdstaff(),
             $keys[1] => $this->getIduser(),
-            $keys[2] => $this->getStaffFirstname(),
-            $keys[3] => $this->getStaffLastname(),
+            $keys[2] => $this->getStaffName(),
+            $keys[3] => $this->getStaffFirstname(),
             $keys[4] => $this->getStaffEmail(),
             $keys[5] => $this->getStaffEmail2(),
             $keys[6] => $this->getStaffPhone(),
@@ -1141,10 +1141,10 @@ abstract class BaseStaff extends BaseObject implements Persistent
                 $this->setIduser($value);
                 break;
             case 2:
-                $this->setStaffFirstname($value);
+                $this->setStaffName($value);
                 break;
             case 3:
-                $this->setStaffLastname($value);
+                $this->setStaffFirstname($value);
                 break;
             case 4:
                 $this->setStaffEmail($value);
@@ -1193,8 +1193,8 @@ abstract class BaseStaff extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setIdstaff($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setIduser($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setStaffFirstname($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setStaffLastname($arr[$keys[3]]);
+        if (array_key_exists($keys[2], $arr)) $this->setStaffName($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setStaffFirstname($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setStaffEmail($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setStaffEmail2($arr[$keys[5]]);
         if (array_key_exists($keys[6], $arr)) $this->setStaffPhone($arr[$keys[6]]);
@@ -1215,8 +1215,8 @@ abstract class BaseStaff extends BaseObject implements Persistent
 
         if ($this->isColumnModified(StaffPeer::IDSTAFF)) $criteria->add(StaffPeer::IDSTAFF, $this->idstaff);
         if ($this->isColumnModified(StaffPeer::IDUSER)) $criteria->add(StaffPeer::IDUSER, $this->iduser);
+        if ($this->isColumnModified(StaffPeer::STAFF_NAME)) $criteria->add(StaffPeer::STAFF_NAME, $this->staff_name);
         if ($this->isColumnModified(StaffPeer::STAFF_FIRSTNAME)) $criteria->add(StaffPeer::STAFF_FIRSTNAME, $this->staff_firstname);
-        if ($this->isColumnModified(StaffPeer::STAFF_LASTNAME)) $criteria->add(StaffPeer::STAFF_LASTNAME, $this->staff_lastname);
         if ($this->isColumnModified(StaffPeer::STAFF_EMAIL)) $criteria->add(StaffPeer::STAFF_EMAIL, $this->staff_email);
         if ($this->isColumnModified(StaffPeer::STAFF_EMAIL2)) $criteria->add(StaffPeer::STAFF_EMAIL2, $this->staff_email2);
         if ($this->isColumnModified(StaffPeer::STAFF_PHONE)) $criteria->add(StaffPeer::STAFF_PHONE, $this->staff_phone);
@@ -1288,8 +1288,8 @@ abstract class BaseStaff extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setIduser($this->getIduser());
+        $copyObj->setStaffName($this->getStaffName());
         $copyObj->setStaffFirstname($this->getStaffFirstname());
-        $copyObj->setStaffLastname($this->getStaffLastname());
         $copyObj->setStaffEmail($this->getStaffEmail());
         $copyObj->setStaffEmail2($this->getStaffEmail2());
         $copyObj->setStaffPhone($this->getStaffPhone());
@@ -1414,8 +1414,8 @@ abstract class BaseStaff extends BaseObject implements Persistent
     {
         $this->idstaff = null;
         $this->iduser = null;
+        $this->staff_name = null;
         $this->staff_firstname = null;
-        $this->staff_lastname = null;
         $this->staff_email = null;
         $this->staff_email2 = null;
         $this->staff_phone = null;

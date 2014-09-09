@@ -42,20 +42,20 @@ class OrderTableMap extends TableMap
         $this->addForeignKey('idbranch', 'Idbranch', 'INTEGER', 'branch', 'idbranch', true, null, null);
         $this->addForeignKey('idclient', 'Idclient', 'INTEGER', 'client', 'idclient', true, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'DATE', true, null, null);
-        $this->addColumn('order_capture', 'OrderCapture', 'CHAR', true, null, 'incomplete');
-        $this->getColumn('order_capture', false)->setValueSet(array (
-  0 => 'complete',
-  1 => 'incomplete',
+        $this->addColumn('order_status', 'OrderStatus', 'CHAR', true, null, null);
+        $this->getColumn('order_status', false)->setValueSet(array (
+  0 => 'COMPLETE',
+  1 => 'INCOMPLETE',
 ));
         $this->addColumn('order_payment', 'OrderPayment', 'CHAR', true, null, null);
         $this->getColumn('order_payment', false)->setValueSet(array (
-  0 => 'paid',
-  1 => 'unpaid',
+  0 => 'PAID',
+  1 => 'UNPAID',
 ));
-        $this->addColumn('order_paymentmode', 'OrderPaymentmode', 'CHAR', true, null, 'unique');
+        $this->addColumn('order_paymentmode', 'OrderPaymentmode', 'CHAR', true, null, 'UNIQUE');
         $this->getColumn('order_paymentmode', false)->setValueSet(array (
-  0 => 'unique',
-  1 => 'partial',
+  0 => 'UNIQUE',
+  1 => 'PARTIAL',
 ));
         $this->addColumn('order_delivery', 'OrderDelivery', 'CHAR', true, null, 'SHIPMODE');
         $this->getColumn('order_delivery', false)->setValueSet(array (
@@ -64,6 +64,7 @@ class OrderTableMap extends TableMap
   2 => 'TRANSIT',
   3 => 'FINISHED',
   4 => 'TRANSITTOBRANCH',
+  5 => 'REFUND',
 ));
         // validators
     } // initialize()

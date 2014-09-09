@@ -425,9 +425,6 @@ abstract class BaseProductPeer
         // Invalidate objects in OrderitemPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         OrderitemPeer::clearInstancePool();
-        // Invalidate objects in ProductphotoPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ProductphotoPeer::clearInstancePool();
         // Invalidate objects in ProductpropertyPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ProductpropertyPeer::clearInstancePool();
@@ -1011,12 +1008,6 @@ abstract class BaseProductPeer
 
             $criteria->add(OrderitemPeer::IDPRODUCT, $obj->getIdproduct());
             $affectedRows += OrderitemPeer::doDelete($criteria, $con);
-
-            // delete related Productphoto objects
-            $criteria = new Criteria(ProductphotoPeer::DATABASE_NAME);
-
-            $criteria->add(ProductphotoPeer::IDPRODUCT, $obj->getIdproduct());
-            $affectedRows += ProductphotoPeer::doDelete($criteria, $con);
 
             // delete related Productproperty objects
             $criteria = new Criteria(ProductpropertyPeer::DATABASE_NAME);

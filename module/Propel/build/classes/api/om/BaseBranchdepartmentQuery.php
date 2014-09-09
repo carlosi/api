@@ -343,11 +343,11 @@ abstract class BaseBranchdepartmentQuery extends ModelCriteria
         if (is_array($iddepartment)) {
             $useMinMax = false;
             if (isset($iddepartment['min'])) {
-                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartment['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTMENT, $iddepartment['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($iddepartment['max'])) {
-                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartment['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTMENT, $iddepartment['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -358,7 +358,7 @@ abstract class BaseBranchdepartmentQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $iddepartment, $comparison);
+        return $this->addUsingAlias(BranchdepartmentPeer::IDDEPARTMENT, $iddepartment, $comparison);
     }
 
     /**
@@ -374,14 +374,14 @@ abstract class BaseBranchdepartmentQuery extends ModelCriteria
     {
         if ($department instanceof Department) {
             return $this
-                ->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $department->getIddepartment(), $comparison);
+                ->addUsingAlias(BranchdepartmentPeer::IDDEPARTMENT, $department->getIddepartment(), $comparison);
         } elseif ($department instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(BranchdepartmentPeer::IDDEPARTAMENT, $department->toKeyValue('PrimaryKey', 'Iddepartment'), $comparison);
+                ->addUsingAlias(BranchdepartmentPeer::IDDEPARTMENT, $department->toKeyValue('PrimaryKey', 'Iddepartment'), $comparison);
         } else {
             throw new PropelException('filterByDepartment() only accepts arguments of type Department or PropelCollection');
         }

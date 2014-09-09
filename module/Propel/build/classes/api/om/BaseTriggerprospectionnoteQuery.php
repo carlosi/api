@@ -22,13 +22,13 @@
  * @method TriggerprospectionnoteQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method TriggerprospectionnoteQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method TriggerprospectionnoteQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method TriggerprospectionnoteQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method TriggerprospectionnoteQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
- *
  * @method TriggerprospectionnoteQuery leftJoinTriggerprospection($relationAlias = null) Adds a LEFT JOIN clause to the query using the Triggerprospection relation
  * @method TriggerprospectionnoteQuery rightJoinTriggerprospection($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Triggerprospection relation
  * @method TriggerprospectionnoteQuery innerJoinTriggerprospection($relationAlias = null) Adds a INNER JOIN clause to the query using the Triggerprospection relation
+ *
+ * @method TriggerprospectionnoteQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method TriggerprospectionnoteQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method TriggerprospectionnoteQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
  * @method Triggerprospectionnote findOne(PropelPDO $con = null) Return the first Triggerprospectionnote matching the query
  * @method Triggerprospectionnote findOneOrCreate(PropelPDO $con = null) Return the first Triggerprospectionnote matching the query, or a new Triggerprospectionnote object populated from the query conditions when no match is found
@@ -442,82 +442,6 @@ abstract class BaseTriggerprospectionnoteQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related User object
-     *
-     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 TriggerprospectionnoteQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByUser($user, $comparison = null)
-    {
-        if ($user instanceof User) {
-            return $this
-                ->addUsingAlias(TriggerprospectionnotePeer::IDUSER, $user->getIduser(), $comparison);
-        } elseif ($user instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(TriggerprospectionnotePeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
-        } else {
-            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the User relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return TriggerprospectionnoteQuery The current query, for fluid interface
-     */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('User');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'User');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the User relation User object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   UserQuery A secondary query class using the current class as primary query
-     */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinUser($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
-    }
-
-    /**
      * Filter the query by a related Triggerprospection object
      *
      * @param   Triggerprospection|PropelObjectCollection $triggerprospection The related object(s) to use as filter
@@ -591,6 +515,82 @@ abstract class BaseTriggerprospectionnoteQuery extends ModelCriteria
         return $this
             ->joinTriggerprospection($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Triggerprospection', 'TriggerprospectionQuery');
+    }
+
+    /**
+     * Filter the query by a related User object
+     *
+     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 TriggerprospectionnoteQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByUser($user, $comparison = null)
+    {
+        if ($user instanceof User) {
+            return $this
+                ->addUsingAlias(TriggerprospectionnotePeer::IDUSER, $user->getIduser(), $comparison);
+        } elseif ($user instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(TriggerprospectionnotePeer::IDUSER, $user->toKeyValue('PrimaryKey', 'Iduser'), $comparison);
+        } else {
+            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the User relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return TriggerprospectionnoteQuery The current query, for fluid interface
+     */
+    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('User');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'User');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the User relation User object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   UserQuery A secondary query class using the current class as primary query
+     */
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
     }
 
     /**

@@ -70,15 +70,12 @@ class UserTableMap extends TableMap
         $this->addRelation('Departmentmember', 'Departmentmember', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Departmentmembers');
         $this->addRelation('Loguser', 'Loguser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Logusers');
         $this->addRelation('Mlquestion', 'Mlquestion', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Mlquestions');
-        $this->addRelation('Ordercomment', 'Ordercomment', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Ordercomments');
         $this->addRelation('OrderconflictComment', 'OrderconflictComment', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'OrderconflictComments');
-        $this->addRelation('Orderfile', 'Orderfile', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Orderfiles');
         $this->addRelation('Productionordercomment', 'Productionordercomment', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Productionordercomments');
         $this->addRelation('Productionuser', 'Productionuser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Productionusers');
         $this->addRelation('Projectactivitypost', 'Projectactivitypost', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Projectactivityposts');
         $this->addRelation('Projectactivityuser', 'Projectactivityuser', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Projectactivityusers');
         $this->addRelation('Prospectioninterest', 'Prospectioninterest', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Prospectioninterests');
-        $this->addRelation('Quoutenote', 'Quoutenote', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Quoutenotes');
         $this->addRelation('Staff', 'Staff', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Staffs');
         $this->addRelation('Token', 'Token', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Tokens');
         $this->addRelation('Triggerprospectionnote', 'Triggerprospectionnote', RelationMap::ONE_TO_MANY, array('iduser' => 'iduser', ), 'CASCADE', 'CASCADE', 'Triggerprospectionnotes');

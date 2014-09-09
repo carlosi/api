@@ -42,12 +42,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
     protected $idorder;
 
     /**
-     * The value for the iduser field.
-     * @var        int
-     */
-    protected $iduser;
-
-    /**
      * The value for the ordercomment_note field.
      * @var        string
      */
@@ -58,11 +52,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
      * @var        string
      */
     protected $ordercomment_date;
-
-    /**
-     * @var        User
-     */
-    protected $aUser;
 
     /**
      * @var        Order
@@ -109,17 +98,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
     {
 
         return $this->idorder;
-    }
-
-    /**
-     * Get the [iduser] column value.
-     *
-     * @return int
-     */
-    public function getIduser()
-    {
-
-        return $this->iduser;
     }
 
     /**
@@ -220,31 +198,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
     } // setIdorder()
 
     /**
-     * Set the value of [iduser] column.
-     *
-     * @param  int $v new value
-     * @return Ordercomment The current object (for fluent API support)
-     */
-    public function setIduser($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->iduser !== $v) {
-            $this->iduser = $v;
-            $this->modifiedColumns[] = OrdercommentPeer::IDUSER;
-        }
-
-        if ($this->aUser !== null && $this->aUser->getIduser() !== $v) {
-            $this->aUser = null;
-        }
-
-
-        return $this;
-    } // setIduser()
-
-    /**
      * Set the value of [ordercomment_note] column.
      *
      * @param  string $v new value
@@ -322,9 +275,8 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
 
             $this->idordercomment = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->idorder = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->iduser = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->ordercomment_note = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            $this->ordercomment_date = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+            $this->ordercomment_note = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->ordercomment_date = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -334,7 +286,7 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 5; // 5 = OrdercommentPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = OrdercommentPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Ordercomment object", $e);
@@ -359,9 +311,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
 
         if ($this->aOrder !== null && $this->idorder !== $this->aOrder->getIdorder()) {
             $this->aOrder = null;
-        }
-        if ($this->aUser !== null && $this->iduser !== $this->aUser->getIduser()) {
-            $this->aUser = null;
         }
     } // ensureConsistency
 
@@ -402,7 +351,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
             $this->aOrder = null;
         } // if (deep)
     }
@@ -522,13 +470,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
             if ($this->aOrder !== null) {
                 if ($this->aOrder->isModified() || $this->aOrder->isNew()) {
                     $affectedRows += $this->aOrder->save($con);
@@ -579,9 +520,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
         if ($this->isColumnModified(OrdercommentPeer::IDORDER)) {
             $modifiedColumns[':p' . $index++]  = '`idorder`';
         }
-        if ($this->isColumnModified(OrdercommentPeer::IDUSER)) {
-            $modifiedColumns[':p' . $index++]  = '`iduser`';
-        }
         if ($this->isColumnModified(OrdercommentPeer::ORDERCOMMENT_NOTE)) {
             $modifiedColumns[':p' . $index++]  = '`ordercomment_note`';
         }
@@ -604,9 +542,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
                         break;
                     case '`idorder`':
                         $stmt->bindValue($identifier, $this->idorder, PDO::PARAM_INT);
-                        break;
-                    case '`iduser`':
-                        $stmt->bindValue($identifier, $this->iduser, PDO::PARAM_INT);
                         break;
                     case '`ordercomment_note`':
                         $stmt->bindValue($identifier, $this->ordercomment_note, PDO::PARAM_STR);
@@ -713,12 +648,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if (!$this->aUser->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
-                }
-            }
-
             if ($this->aOrder !== null) {
                 if (!$this->aOrder->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aOrder->getValidationFailures());
@@ -773,12 +702,9 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
                 return $this->getIdorder();
                 break;
             case 2:
-                return $this->getIduser();
-                break;
-            case 3:
                 return $this->getOrdercommentNote();
                 break;
-            case 4:
+            case 3:
                 return $this->getOrdercommentDate();
                 break;
             default:
@@ -812,9 +738,8 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getIdordercomment(),
             $keys[1] => $this->getIdorder(),
-            $keys[2] => $this->getIduser(),
-            $keys[3] => $this->getOrdercommentNote(),
-            $keys[4] => $this->getOrdercommentDate(),
+            $keys[2] => $this->getOrdercommentNote(),
+            $keys[3] => $this->getOrdercommentDate(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -822,9 +747,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aOrder) {
                 $result['Order'] = $this->aOrder->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
@@ -869,12 +791,9 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
                 $this->setIdorder($value);
                 break;
             case 2:
-                $this->setIduser($value);
-                break;
-            case 3:
                 $this->setOrdercommentNote($value);
                 break;
-            case 4:
+            case 3:
                 $this->setOrdercommentDate($value);
                 break;
         } // switch()
@@ -903,9 +822,8 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setIdordercomment($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setIdorder($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setIduser($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setOrdercommentNote($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setOrdercommentDate($arr[$keys[4]]);
+        if (array_key_exists($keys[2], $arr)) $this->setOrdercommentNote($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setOrdercommentDate($arr[$keys[3]]);
     }
 
     /**
@@ -919,7 +837,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
 
         if ($this->isColumnModified(OrdercommentPeer::IDORDERCOMMENT)) $criteria->add(OrdercommentPeer::IDORDERCOMMENT, $this->idordercomment);
         if ($this->isColumnModified(OrdercommentPeer::IDORDER)) $criteria->add(OrdercommentPeer::IDORDER, $this->idorder);
-        if ($this->isColumnModified(OrdercommentPeer::IDUSER)) $criteria->add(OrdercommentPeer::IDUSER, $this->iduser);
         if ($this->isColumnModified(OrdercommentPeer::ORDERCOMMENT_NOTE)) $criteria->add(OrdercommentPeer::ORDERCOMMENT_NOTE, $this->ordercomment_note);
         if ($this->isColumnModified(OrdercommentPeer::ORDERCOMMENT_DATE)) $criteria->add(OrdercommentPeer::ORDERCOMMENT_DATE, $this->ordercomment_date);
 
@@ -986,7 +903,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setIdorder($this->getIdorder());
-        $copyObj->setIduser($this->getIduser());
         $copyObj->setOrdercommentNote($this->getOrdercommentNote());
         $copyObj->setOrdercommentDate($this->getOrdercommentDate());
 
@@ -1048,58 +964,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param                  User $v
-     * @return Ordercomment The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setIduser(NULL);
-        } else {
-            $this->setIduser($v->getIduser());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addOrdercomment($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aUser === null && ($this->iduser !== null) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->iduser, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addOrdercomments($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
      * Declares an association between this object and a Order object.
      *
      * @param                  Order $v
@@ -1158,7 +1022,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
     {
         $this->idordercomment = null;
         $this->idorder = null;
-        $this->iduser = null;
         $this->ordercomment_note = null;
         $this->ordercomment_date = null;
         $this->alreadyInSave = false;
@@ -1183,9 +1046,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aUser instanceof Persistent) {
-              $this->aUser->clearAllReferences($deep);
-            }
             if ($this->aOrder instanceof Persistent) {
               $this->aOrder->clearAllReferences($deep);
             }
@@ -1193,7 +1053,6 @@ abstract class BaseOrdercomment extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aUser = null;
         $this->aOrder = null;
     }
 

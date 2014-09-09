@@ -57,11 +57,11 @@ class ClientTableMap extends TableMap
   2 => 'suspended',
   3 => 'fraud',
 ));
-        $this->addColumn('client_type', 'ClientType', 'CHAR', true, null, 'normal');
+        $this->addColumn('client_type', 'ClientType', 'CHAR', false, null, 'NORMAL');
         $this->getColumn('client_type', false)->setValueSet(array (
-  0 => 'normal',
-  1 => 'generalpublic',
-  2 => 'inventorymanager',
+  0 => 'NORMAL',
+  1 => 'GENERALPUBLIC',
+  2 => 'INVENTORYMANAGER',
 ));
         // validators
     } // initialize()

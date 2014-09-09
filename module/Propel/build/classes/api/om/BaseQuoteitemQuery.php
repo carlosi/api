@@ -26,13 +26,13 @@
  * @method QuoteitemQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method QuoteitemQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method QuoteitemQuery leftJoinQuote($relationAlias = null) Adds a LEFT JOIN clause to the query using the Quote relation
- * @method QuoteitemQuery rightJoinQuote($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Quote relation
- * @method QuoteitemQuery innerJoinQuote($relationAlias = null) Adds a INNER JOIN clause to the query using the Quote relation
- *
  * @method QuoteitemQuery leftJoinProduct($relationAlias = null) Adds a LEFT JOIN clause to the query using the Product relation
  * @method QuoteitemQuery rightJoinProduct($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Product relation
  * @method QuoteitemQuery innerJoinProduct($relationAlias = null) Adds a INNER JOIN clause to the query using the Product relation
+ *
+ * @method QuoteitemQuery leftJoinQuote($relationAlias = null) Adds a LEFT JOIN clause to the query using the Quote relation
+ * @method QuoteitemQuery rightJoinQuote($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Quote relation
+ * @method QuoteitemQuery innerJoinQuote($relationAlias = null) Adds a INNER JOIN clause to the query using the Quote relation
  *
  * @method Quoteitem findOne(PropelPDO $con = null) Return the first Quoteitem matching the query
  * @method Quoteitem findOneOrCreate(PropelPDO $con = null) Return the first Quoteitem matching the query, or a new Quoteitem object populated from the query conditions when no match is found
@@ -533,82 +533,6 @@ abstract class BaseQuoteitemQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Quote object
-     *
-     * @param   Quote|PropelObjectCollection $quote The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 QuoteitemQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByQuote($quote, $comparison = null)
-    {
-        if ($quote instanceof Quote) {
-            return $this
-                ->addUsingAlias(QuoteitemPeer::IDQUOTE, $quote->getIdquote(), $comparison);
-        } elseif ($quote instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(QuoteitemPeer::IDQUOTE, $quote->toKeyValue('PrimaryKey', 'Idquote'), $comparison);
-        } else {
-            throw new PropelException('filterByQuote() only accepts arguments of type Quote or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Quote relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return QuoteitemQuery The current query, for fluid interface
-     */
-    public function joinQuote($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Quote');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Quote');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Quote relation Quote object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   QuoteQuery A secondary query class using the current class as primary query
-     */
-    public function useQuoteQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinQuote($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Quote', 'QuoteQuery');
-    }
-
-    /**
      * Filter the query by a related Product object
      *
      * @param   Product|PropelObjectCollection $product The related object(s) to use as filter
@@ -682,6 +606,82 @@ abstract class BaseQuoteitemQuery extends ModelCriteria
         return $this
             ->joinProduct($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Product', 'ProductQuery');
+    }
+
+    /**
+     * Filter the query by a related Quote object
+     *
+     * @param   Quote|PropelObjectCollection $quote The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 QuoteitemQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByQuote($quote, $comparison = null)
+    {
+        if ($quote instanceof Quote) {
+            return $this
+                ->addUsingAlias(QuoteitemPeer::IDQUOTE, $quote->getIdquote(), $comparison);
+        } elseif ($quote instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(QuoteitemPeer::IDQUOTE, $quote->toKeyValue('PrimaryKey', 'Idquote'), $comparison);
+        } else {
+            throw new PropelException('filterByQuote() only accepts arguments of type Quote or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Quote relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return QuoteitemQuery The current query, for fluid interface
+     */
+    public function joinQuote($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Quote');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Quote');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Quote relation Quote object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   QuoteQuery A secondary query class using the current class as primary query
+     */
+    public function useQuoteQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinQuote($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Quote', 'QuoteQuery');
     }
 
     /**
