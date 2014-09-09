@@ -198,7 +198,7 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $e->setViewModel($jsonModel)->stopPropagation();
                             }
                         }
-                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst($resourcenameChild)));
+                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
                         break;
                     }
                     define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
@@ -892,7 +892,7 @@ class ResourceListener implements ListenerAggregateInterface {
                             $e->setViewModel($jsonModel)->stopPropagation();
 
                         }
-                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst($resourcenameChild)));
+                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
                         break;
                     }
                     define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
