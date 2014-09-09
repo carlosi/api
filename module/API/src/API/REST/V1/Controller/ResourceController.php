@@ -1226,6 +1226,32 @@ class ResourceController extends AbstractRestfulController
             // Obtenemos el idbranchdepartment que se desea modificar
             $idresourceRelational = (key($resourceRelationalArray));
 
+            if(!isset($idresourceRelational)){
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP_Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid id',
+                    ),
+                );
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+            }
             //Instanciamos nuestra Branchdepartment
             $resourceRelational = ResourceManager::getResource($resourceNameRelational);
 
@@ -1260,7 +1286,8 @@ class ResourceController extends AbstractRestfulController
                         return new JsonModel($bodyResponse);
                         break;
                         }
-                    }                }
+                    }
+                }
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
