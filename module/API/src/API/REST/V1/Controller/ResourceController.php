@@ -7,12 +7,12 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
- namespace API\REST\V1\Controller;
+namespace API\REST\V1\Controller;
 
 // - ZF2 - //
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;  
+use Zend\View\Model\JsonModel;
 
 // - Shared - //
 use API\REST\V1\Shared\Functions\HttpRequest;
@@ -93,7 +93,7 @@ class ResourceController extends AbstractRestfulController
 
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
-        
+
         //Obtenemos el IdUser propietario del token
         $idUser = ResourceManager::getIDUser($token);
 
@@ -132,7 +132,7 @@ class ResourceController extends AbstractRestfulController
 
             // Instanciamos nuestro filtro resourceFilterPostPut
             $resourceFilterPostPut = ResourceManager::getResourceFilterPostPut($resourceName);
-            
+
             //Le ponemos el filtro a nuestro formulario
             $FilterPostPut = $resourceFilterPostPut;
             $FormPostPut->setInputFilter($FilterPostPut->getInputFilter($userLevel));
@@ -149,7 +149,7 @@ class ResourceController extends AbstractRestfulController
                 foreach ($dataArray as $dataKey => $dataValue){
                     if(!is_null($dataValue)){
                         $responseArray[$dataKey] = $dataArray[$dataKey];
-                    }               
+                    }
                 }
 
                 // Ingresamos al objeto del recurso directamente en la clase de Propel
@@ -170,11 +170,11 @@ class ResourceController extends AbstractRestfulController
                         break;
                     }
                     default: {
-                        return new JsonModel($issave['bodyResponse']);
-                        break;
+                    return new JsonModel($issave['bodyResponse']);
+                    break;
                     }
                 }
-            //Si el formulario no fue valido
+                //Si el formulario no fue valido
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
@@ -199,16 +199,31 @@ class ResourceController extends AbstractRestfulController
                         break;
                     }
                     default: {
-                    return new JsonModel(JSonResponse::getResponseBody(400, $messageArray));
+                    return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
                     break;
                     }
                 }
             }
-        //Si el usuario no tiene permisos sobre el recurso
+            //Si el usuario no tiene permisos sobre el recurso
         }else{
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            return new JsonModel(JSonResponse::getResponseBody(403));
-        }
+            $bodyResponse = ArrayResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{
+                    // Create the config object
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }        }
     }
 
     /**
@@ -547,7 +562,7 @@ class ResourceController extends AbstractRestfulController
         }else{
             $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            $bodyResponse = JSonResponse::getResponseBody(403);
+            $bodyResponse = ArrayResponse::getResponseBody(403);
             switch(TYPE_RESPONSE){
                 case "xml":{
                     $writer = new \Zend\Config\Writer\Xml();
@@ -612,16 +627,32 @@ class ResourceController extends AbstractRestfulController
                     break;
                 }
                 default: {
-                    return new JsonModel($functionUpdate);
-                    break;
+                return new JsonModel($functionUpdate);
+                break;
                 }
             }
 
-        //Si el usuario no tiene permisos sobre el recurso
+            //Si el usuario no tiene permisos sobre el recurso
         }else{
             $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            return new JsonModel(JSonResponse::getResponseBody(403));
+            $bodyResponse = ArrayResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{
+                    // Create the config object
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }
         }
     }
 
@@ -630,10 +661,10 @@ class ResourceController extends AbstractRestfulController
      * @return mixed|JsonModel
      */
     public function delete($id) {
-        
+
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
-        
+
         //Obtenemos el IdUser propietario del token
         $idUser = ResourceManager::getIDUser($token);
 
@@ -642,25 +673,25 @@ class ResourceController extends AbstractRestfulController
 
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
-        
+
         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
         $module = ResourceManager::getModule($resourceName);
-        
+
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
-        
+
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
-             //Instanciamos nuestro recurso
-             $resource = ResourceManager::getResource($resourceName);
-        
-             //Verificamos si el id que se quiere eliminar pertenece a la compañia
-             if($resource->isIdValid($id,$idCompany)){
-                 if($resource->deleteEntity($id,$userLevel)){
-                     //Modifiamos el Header de nuestra respuesta
+            //Instanciamos nuestro recurso
+            $resource = ResourceManager::getResource($resourceName);
+
+            //Verificamos si el id que se quiere eliminar pertenece a la compañia
+            if($resource->isIdValid($id,$idCompany)){
+                if($resource->deleteEntity($id,$userLevel)){
+                    //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //NOT CONTENT
-                 }else{
+                }else{
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
@@ -671,28 +702,66 @@ class ResourceController extends AbstractRestfulController
                             'Details' => 'Invalid id',
                         ),
                     );
-                    return new JsonModel($bodyResponse);
+                    switch(TYPE_RESPONSE){
+                        case "xml":{
+                            // Create the config object
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                        }
+                    }
                 }
-             }else{
-                 //Modifiamos el Header de nuestra respuesta
+            }else{
+                //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 403 . ' Forbidden',
-                        'Title' => 'Access denied',
-                        'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
-                    ),
-                );
-                return new JsonModel($bodyResponse);
-             }
-
+                $bodyResponse = ArrayResponse::getResponseBody(403);
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        // Create the config object
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+            }
         }else{
             $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            return new JsonModel(JSonResponse::getResponseBody(403));
+            $bodyResponse = ArrayResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{
+                    // Create the config object
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }
         }
-
     }
 
     /**
@@ -839,7 +908,21 @@ class ResourceController extends AbstractRestfulController
                             }
                         }
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        return new JsonModel(JSonResponse::getResponseBody(400, $messageArray));
+                        switch(TYPE_RESPONSE){
+                            case "xml":{;
+                                $writer = new \Zend\Config\Writer\Xml();
+                                return $response->setContent($writer->toString(ArrayResponse::getResponseBody(400, $messageArray)));
+                                break;
+                            }
+                            case "json":{
+                                return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
+                                break;
+                            }
+                            default: {
+                            return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
+                            break;
+                            }
+                        }
                     }
                 }else{
                     //Modifiamos el Header de nuestra respuesta
@@ -895,10 +978,25 @@ class ResourceController extends AbstractRestfulController
                     }
                 }
             }
-        //Si el usuario no tiene permisos sobre el recurso
+            //Si el usuario no tiene permisos sobre el recurso
         }else{
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            return new JsonModel(JSonResponse::getResponseBody(403));
+            $bodyResponse = ArrayResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{;
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }
         }
     }
     /////////// End create Resource Relational ///////////
@@ -1033,11 +1131,26 @@ class ResourceController extends AbstractRestfulController
                     }
                 }
             }
-        //Si el usuario no tiene permisos sobre el recurso
+            //Si el usuario no tiene permisos sobre el recurso
         }else{
             $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            return new JsonModel(JSonResponse::getResponseBody(403));
+            $bodyResponse = ArrayResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{;
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }
         }
     }
     /////////// Start update Resource Relational ///////////
@@ -1179,7 +1292,22 @@ class ResourceController extends AbstractRestfulController
         }else{
             $response = $this->getResponse();
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            return new JsonModel(JSonResponse::getResponseBody(403));
+            $bodyResponse = ArrayResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{;
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }
         }
 
     }
