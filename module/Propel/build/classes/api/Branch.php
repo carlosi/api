@@ -5,12 +5,13 @@ use API\REST\V1\Shared\Functions\HttpResponse;
 use API\REST\V1\Shared\Functions\HttpRequest;
 use API\REST\V1\Shared\Functions\ArrayManage;
 use API\REST\V1\Shared\Functions\ResourceManager;
-use API\REST\V1\Shared\Functions\JSonResponse;
+use API\REST\V1\Shared\Functions\ArrayResponse;
 
 //// Form ////
 use API\REST\V1\ACL\Company\Company\Form\CompanyFormGET;
 use API\REST\V1\ACL\Company\Branch\Form\BranchFormGET;
 use API\REST\V1\ACL\Company\Branch\Form\BranchFormPostPut;
+use API\REST\V1\ACL\Company\Branch\Form\BranchFormToShowUpdate;
 
 //// Filter ////
 use API\REST\V1\ACL\Company\Branch\Filter\BranchFilterPostPut;
@@ -28,7 +29,7 @@ use API\REST\V1\ACL\Company\Branch\Filter\BranchFilterPostPut;
  */
 class Branch extends BaseBranch
 {
-    public function isIdValid($idResource,$idCompany){
+    public function isIdValidResource($idResource,$idCompany){
         return BranchQuery::create()->filterByIdbranch($idResource)->filterByIdcompany($idCompany)->exists();
     }
 
@@ -469,6 +470,7 @@ class Branch extends BaseBranch
 
             //Instanciamos nuestra branchQuery
             $branchPKQuery = $branchQuery->findPk($id);
+            $branchFormToShowUpdate = BranchFormToShowUpdate::init($userLevel);
 
             //Si se quiere modificar el bankaccount_name
             if(isset($data['branch_name']) && $data['branch_name'] != null){
@@ -581,17 +583,24 @@ class Branch extends BaseBranch
                         }
                     }
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = JSonResponse::getResponseBody(400, $messageArray);
+                    $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
                     return $bodyResponse;
                 }
             //Si el formulario no fue valido
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $messageArray = array();
+                foreach ($branchFormToShowUpdate->getElements() as $key => $value){
+                    //Obtenemos el nombre de la columna
+                    $message = $key;
+                    array_push($messageArray, $message);
+                }
                 $bodyResponse = array(
                     'Error' => array(
                         'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'No changes were found',
+                        'Columns_to_do_changes' => $messageArray,
                     ),
                 );
                 return $bodyResponse;

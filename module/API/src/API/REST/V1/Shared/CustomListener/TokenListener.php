@@ -76,6 +76,8 @@ class TokenListener implements ListenerAggregateInterface {
                     if(SessionManager::TokenIsValid($token)){
 
                     }else{
+                        define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
+
                         $response = $e->getResponse();
                         $response->setStatusCode(Response::STATUS_CODE_401);
                         $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
@@ -112,6 +114,7 @@ class TokenListener implements ListenerAggregateInterface {
                         }
                     }
                 }else{
+                    define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
                     $response = $e->getResponse();
                     $response->setStatusCode(Response::STATUS_CODE_499);
                     $body = array(

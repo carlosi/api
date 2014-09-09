@@ -17,7 +17,7 @@ use API\REST\V1\ACL\Company\Branch\Form\BranchForm;
  * Class BranchFormPostPut
  * @package API\REST\V1\ACL\Company\Branch\Form
  */
-class BranchFormPostPut{
+class BranchFormToShowUpdate{
 
     /**
      * @param $userLevel
@@ -30,6 +30,9 @@ class BranchFormPostPut{
         switch ($userLevel){
 
             case 5: {
+
+                $branchForm->remove('idbranch');
+                $branchForm->remove('idcompany');
 
                 break;
             }

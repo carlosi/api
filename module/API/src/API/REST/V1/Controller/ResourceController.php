@@ -226,6 +226,149 @@ class ResourceController extends AbstractRestfulController
             }        }
     }
 
+    public function get($id){
+
+        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+        $token = $this->getToken();
+
+        //Obtenemos el IdUser propietario del token
+        $idUser = ResourceManager::getIDUser($token);
+
+        //Obtenemos el IdCompany al que pertenece el usuario
+        $idCompany = ResourceManager::getIDCompany($token);
+
+        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
+        $resourceName = ucfirst(RESOURCE);
+
+        if(RESOURCE_CHILD!=null){
+            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+            $resourceName = NAME_RESOURCE_CHILD;
+            $module = MODULE_RESOURCE_CHILD;
+        }else{
+            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
+            $module = MODULE_RESOURCE;
+        }
+
+        //Obtenemnos el nivel de acceso del usuario para el recurso
+        $userLevel = ResourceManager::getUserLevels($idUser, $module);
+
+        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
+        if($userLevel!=0){
+
+            //Instanciamos nuestro recurso
+            $resource = ResourceManager::getResource($resourceName);
+
+            $isIdValid = $resource->isIdValidResource($id,$idCompany);
+
+            if($isIdValid){
+
+                if(RESOURCE_CHILD !=null && ID_RESOURCE_CHILD !=null){
+                    //Obtenemos nuestra entidad child
+                    $isIdChildValid = $resource->isIdChildValid($id,ID_RESOURCE_CHILD);
+                    if($isIdChildValid){
+                        $entity = $resource->getEntity(ID_RESOURCE_CHILD);
+                    }else{
+                        //Modifiamos el Header de nuestra respuesta
+                        $response = $this->getResponse();
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        $bodyResponse = array(
+                            'Error' => array(
+                                'HTTP_Status' => 400 . ' Bad Request',
+                                'Title' => 'The request data is invalid',
+                                'Details' => 'Invalid '.RESOURCE_CHILD.' id',
+                            ),
+                        );
+                        switch(TYPE_RESPONSE){
+                            case "xml":{;
+                                $writer = new \Zend\Config\Writer\Xml();
+                                return $response->setContent($writer->toString($bodyResponse));
+                                break;
+                            }
+                            case "json":{
+                                return new JsonModel($bodyResponse);
+                                break;
+                            }
+                            default: {
+                            return new JsonModel($bodyResponse);
+                            break;
+                            }
+                        }
+                    }
+                }else{
+                    //Obtenemos nuestra entidad padre
+                    $entity = $resource->getEntity($id);
+                }
+
+                //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
+                $bodyResponse = $resource->getEntityResponse($entity,$userLevel);
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        // Create the config object
+                        $response = $this->getResponse();
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+
+            }else{
+                //Modifiamos el Header de nuestra respuesta
+                $response = $this->getResponse();
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP_Status' => 400 . ' Bad Request',
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid '.RESOURCE.' id',
+                    ),
+                );
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($bodyResponse);
+                    break;
+                    }
+                }
+            }
+        }else{
+            $response = $this->getResponse();
+            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
+            $bodyResponse = ArrayResponse::getResponseBody(403);
+            switch(TYPE_RESPONSE){
+                case "xml":{
+                    $writer = new \Zend\Config\Writer\Xml();
+                    return $response->setContent($writer->toString($bodyResponse));
+                    break;
+                }
+                case "json":{
+                    return new JsonModel($bodyResponse);
+                    break;
+                }
+                default: {
+                return new JsonModel($bodyResponse);
+                break;
+                }
+            }
+        }
+
+    }
+
     /**
      * @return mixed|JsonModel
      */
@@ -264,7 +407,7 @@ class ResourceController extends AbstractRestfulController
 
             if(RESOURCE_CHILD !=null){
 
-                if(!$resource->isIdValid(ID_RESOURCE,$idCompany)){
+                if(!$resource->isIdValidResource(ID_RESOURCE,$idCompany)){
 
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
@@ -439,149 +582,6 @@ class ResourceController extends AbstractRestfulController
         }
     }
 
-    public function get($id){
-
-        //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
-        $token = $this->getToken();
-
-        //Obtenemos el IdUser propietario del token
-        $idUser = ResourceManager::getIDUser($token);
-
-        //Obtenemos el IdCompany al que pertenece el usuario
-        $idCompany = ResourceManager::getIDCompany($token);
-
-        // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
-        $resourceName = ucfirst(RESOURCE);
-
-        if(RESOURCE_CHILD!=null){
-            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-            $resourceName = NAME_RESOURCE_CHILD;
-            $module = MODULE_RESOURCE_CHILD;
-        }else{
-            // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
-            $module = MODULE_RESOURCE;
-        }
-
-        //Obtenemnos el nivel de acceso del usuario para el recurso
-        $userLevel = ResourceManager::getUserLevels($idUser, $module);
-
-        //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
-        if($userLevel!=0){
-
-            //Instanciamos nuestro recurso
-            $resource = ResourceManager::getResource($resourceName);
-
-            $isIdValid = $resource->isIdValid($id,$idCompany);
-
-            if($isIdValid){
-
-                if(RESOURCE_CHILD !=null && ID_RESOURCE_CHILD !=null){
-                    //Obtenemos nuestra entidad child
-                    $isIdChildValid = $resource->isIdChildValid($id,ID_RESOURCE_CHILD);
-                    if($isIdChildValid){
-                        $entity = $resource->getEntity(ID_RESOURCE_CHILD);
-                    }else{
-                        //Modifiamos el Header de nuestra respuesta
-                        $response = $this->getResponse();
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'The request data is invalid',
-                                'Details' => 'Invalid '.RESOURCE_CHILD.' id',
-                            ),
-                        );
-                        switch(TYPE_RESPONSE){
-                            case "xml":{;
-                                $writer = new \Zend\Config\Writer\Xml();
-                                return $response->setContent($writer->toString($bodyResponse));
-                                break;
-                            }
-                            case "json":{
-                                return new JsonModel($bodyResponse);
-                                break;
-                            }
-                            default: {
-                            return new JsonModel($bodyResponse);
-                            break;
-                            }
-                        }
-                    }
-                }else{
-                    //Obtenemos nuestra entidad padre
-                    $entity = $resource->getEntity($id);
-                }
-
-                //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
-                $bodyResponse = $resource->getEntityResponse($entity,$userLevel);
-                switch(TYPE_RESPONSE){
-                    case "xml":{
-                        // Create the config object
-                        $response = $this->getResponse();
-                        $writer = new \Zend\Config\Writer\Xml();
-                        return $response->setContent($writer->toString($bodyResponse));
-                        break;
-                    }
-                    case "json":{
-                        return new JsonModel($bodyResponse);
-                        break;
-                    }
-                    default: {
-                    return new JsonModel($bodyResponse);
-                    break;
-                    }
-                }
-
-            }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response = $this->getResponse();
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid '.RESOURCE.' id',
-                    ),
-                );
-                switch(TYPE_RESPONSE){
-                    case "xml":{;
-                        $writer = new \Zend\Config\Writer\Xml();
-                        return $response->setContent($writer->toString($bodyResponse));
-                        break;
-                    }
-                    case "json":{
-                        return new JsonModel($bodyResponse);
-                        break;
-                    }
-                    default: {
-                    return new JsonModel($bodyResponse);
-                    break;
-                    }
-                }
-            }
-        }else{
-            $response = $this->getResponse();
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            $bodyResponse = ArrayResponse::getResponseBody(403);
-            switch(TYPE_RESPONSE){
-                case "xml":{
-                    $writer = new \Zend\Config\Writer\Xml();
-                    return $response->setContent($writer->toString($bodyResponse));
-                    break;
-                }
-                case "json":{
-                    return new JsonModel($bodyResponse);
-                    break;
-                }
-                default: {
-                return new JsonModel($bodyResponse);
-                break;
-                }
-            }
-        }
-
-    }
-
     /**
      * @param mixed $data
      * @return mixed|JsonModel
@@ -686,7 +686,7 @@ class ResourceController extends AbstractRestfulController
             $resource = ResourceManager::getResource($resourceName);
 
             //Verificamos si el id que se quiere eliminar pertenece a la compañia
-            if($resource->isIdValid($id,$idCompany)){
+            if($resource->isIdValidResource($id,$idCompany)){
                 if($resource->deleteEntity($id,$userLevel)){
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
