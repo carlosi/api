@@ -198,9 +198,10 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $e->setViewModel($jsonModel)->stopPropagation();
                             }
                         }
+                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst($resourcenameChild)));
+                        break;
                     }
-                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst($resourcenameChild)));
-                    break;
+                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }else{
                     $response->setStatusCode(Response::STATUS_CODE_404);
                     $statusCode = $response->getStatusCode();
@@ -332,7 +333,7 @@ class ResourceListener implements ListenerAggregateInterface {
                                         }
                                     }
                                 }
-
+                                define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE_CHILD)));
                                 break;
                             }
                             default :{
@@ -370,7 +371,7 @@ class ResourceListener implements ListenerAggregateInterface {
                                 }
                             }
                         }
-                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst($resourcenameChild)));
+                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
                         break;
                     }else{
                         $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
@@ -421,8 +422,8 @@ class ResourceListener implements ListenerAggregateInterface {
                             }
                         }
                     }
+                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }
-                define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 break;
             }
             case 'PUT':{
@@ -705,10 +706,8 @@ class ResourceListener implements ListenerAggregateInterface {
                             }
                         }
                     }
+                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }
-
-                define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
-
                 break;
             }
             case 'DELETE':{
@@ -896,9 +895,8 @@ class ResourceListener implements ListenerAggregateInterface {
                         define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst($resourcenameChild)));
                         break;
                     }
-
+                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }
-                define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 break;
             }
             break;
