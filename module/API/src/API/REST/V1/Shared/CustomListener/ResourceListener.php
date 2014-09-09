@@ -82,10 +82,10 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
+                        'HTTP_Status' => $statusCode,
                         'Title' => 'Method not allowed',
                         'Details' => 'To access the login you need to use the POST method',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -131,10 +131,10 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP Status' => $statusCode,
+                                    'HTTP_Status' => $statusCode,
                                     'Title' => 'Conflict' ,
                                     'Details' => 'The request could not be processed because resource '.RESOURCE.' need an id',
-                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs/'.RESOURCE
+                                    'More_Info' => URL_API_DOCS.RESOURCE
                                 );
                                 $jsonModel = new JsonModel($body);
                                 $jsonModel->setTerminal(true);
@@ -171,10 +171,10 @@ class ResourceListener implements ListenerAggregateInterface {
                                     $statusCode = $response->getStatusCode();
 
                                     $body = array(
-                                        'HTTP Status' => $statusCode,
+                                        'HTTP_Status' => $statusCode,
                                         'Title' => 'Conflict' ,
                                         'Details' => 'The request could not be processed because resource '.RESOURCE.' need an id',
-                                        'More Info' => 'http://rest.api.buybuy.com.mx/docs/'.RESOURCE
+                                        'More_Info' => URL_API_DOCS.RESOURCE
                                     );
                                     $jsonModel = new JsonModel($body);
                                     $jsonModel->setTerminal(true);
@@ -187,10 +187,10 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP Status' => $statusCode,
+                                    'HTTP_Status' => $statusCode,
                                     'Title' => 'Not Found' ,
                                     'Details' => 'Resource not found',
-                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                    'More_Info' => URL_API_DOCS
                                 );
                                 $jsonModel = new JsonModel($body);
                                 $jsonModel->setTerminal(true);
@@ -206,10 +206,10 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
+                        'HTTP_Status' => $statusCode,
                         'Title' => 'Not Found' ,
                         'Details' => 'Resource not found',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -230,10 +230,10 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
+                        'HTTP_Status' => $statusCode,
                         'Title' => 'Method not allowed',
                         'Details' => 'To access the documentation you need to use the GET method',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -277,10 +277,10 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP Status' => $statusCode,
+                                    'HTTP_Status' => $statusCode,
                                     'Title' => 'Not Found' ,
                                     'Details' => 'Resource not found',
-                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                    'More_Info' => URL_API_DOCS
                                 );
                                 $jsonModel = new JsonModel($body);
                                 $jsonModel->setTerminal(true);
@@ -434,10 +434,10 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
+                        'HTTP_Status' => $statusCode,
                         'Title' => 'Method not allowed',
                         'Details' => 'To access the login you need to use the POST method',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -450,10 +450,10 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
+                        'HTTP_Status' => $statusCode,
                         'Title' => 'Method not allowed',
                         'Details' => 'To access the documentation you need to use the GET method',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -497,10 +497,10 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP Status' => $statusCode,
+                                    'HTTP_Status' => $statusCode,
                                     'Title' => 'Not Found' ,
                                     'Details' => 'Resource not found',
-                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                    'More_Info' => URL_API_DOCS
                                 );
                                 $jsonModel = new JsonModel($body);
                                 $jsonModel->setTerminal(true);
@@ -645,11 +645,11 @@ class ResourceListener implements ListenerAggregateInterface {
                         $statusCode = $response->getStatusCode();
 
                         $body = array(
-                            'HTTP Status' => $statusCode,
+                            'HTTP_Status' => $statusCode,
                             'Method' => 'PUT' ,
                             'Title' => 'The request id is null' ,
                             'Details' => 'The request id can´t be null',
-                            'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                            'More_Info' => URL_API_DOCS
                         );
                         $jsonModel = new JsonModel($body);
                         $jsonModel->setTerminal(true);
@@ -719,10 +719,10 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
+                        'HTTP_Status' => $statusCode,
                         'Title' => 'Method not allowed',
                         'Details' => 'To access the login you need to use the POST method',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -735,10 +735,10 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
+                        'HTTP_Status' => $statusCode,
                         'Title' => 'Method not allowed',
                         'Details' => 'To access the documentation you need to use the GET method',
-                        'More_Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => URL_API_DOCS
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -781,10 +781,10 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP Status' => $statusCode,
+                                    'HTTP_Status' => $statusCode,
                                     'Title' => 'Not Found' ,
                                     'Details' => 'Resource not found',
-                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                    'More_Info' => URL_API_DOCS
                                 );
                                 $jsonModel = new JsonModel($body);
                                 $jsonModel->setTerminal(true);
@@ -882,10 +882,10 @@ class ResourceListener implements ListenerAggregateInterface {
                             $statusCode = $response->getStatusCode();
 
                             $body = array(
-                                'HTTP Status' => $statusCode,
+                                'HTTP_Status' => $statusCode,
                                 'Title' => 'The request id is null' ,
                                 'Details' => 'The request id can´t be null',
-                                'More_Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                'More_Info' => URL_API_DOCS
                             );
                             $jsonModel = new JsonModel($body);
                             $jsonModel->setTerminal(true);
