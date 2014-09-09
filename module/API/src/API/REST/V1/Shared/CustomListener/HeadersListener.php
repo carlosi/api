@@ -180,13 +180,15 @@ class HeadersListener implements ListenerAggregateInterface {
                             break;
                         }
                         default :{
+                            define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
+
                             $response = new Response();
                             $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
                             $body = array(
                                 'HTTP_Status' => '400' ,
                                 'Title' => 'Bad Request' ,
                                 'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                'More Info' => URL_API_DOCS
+                                'More_Info' => URL_API_DOCS
                             );
 
                             switch($typeResponse){
@@ -218,51 +220,67 @@ class HeadersListener implements ListenerAggregateInterface {
             }
         }
         if($requestMethod == 'DELETE'){
+
             $resourceChild = $e->getRouteMatch()->getParam('resourceChild');
             $idChild = $e->getRouteMatch()->getParam('idChild');
             $typeResponse = $e->getRouteMatch()->getParam('typeResponse');
 
-            if($idChild != null){
+            switch($resourceChild){
+                case "department" :{
+                    if($requestMethod == 'POST'){
+                        $resourceChild = $e->getRouteMatch()->getParam('resourceChild');
+                        $idChild = $e->getRouteMatch()->getParam('idChild');
+                        $typeResponse = $e->getRouteMatch()->getParam('typeResponse');
 
-                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                $e->getRouteMatch()->setParam('action', 'deleteResourceRelational');
+                        if($idChild != null){
 
-            }else{
+                            $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                            $e->getRouteMatch()->setParam('action', 'deleteResourceRelational');
 
-                define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
-                $response = $e->getResponse();
-                $response->setStatusCode(Response::STATUS_CODE_400);
+                        }else{
 
-                $body = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'Bad Request',
-                        'Details' => 'The id department is required',
-                    ),
-                );
+                            define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
+                            $response = $e->getResponse();
+                            $response->setStatusCode(Response::STATUS_CODE_400);
 
-                switch($typeResponse){
-                    case "xml":{
-                        // Create the config object
-                        $writer = new \Zend\Config\Writer\Xml();
-                        return $response->setContent($writer->toString($body));
-                        $e->stopPropagation();
-                        break;
+                            $body = array(
+                                'Error' => array(
+                                    'HTTP_Status' => 400 . ' Bad Request',
+                                    'Title' => 'Bad Request',
+                                    'Details' => 'The id department is required',
+                                ),
+                            );
+
+                            switch($typeResponse){
+                                case "xml":{
+                                    // Create the config object
+                                    $writer = new \Zend\Config\Writer\Xml();
+                                    return $response->setContent($writer->toString($body));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                $jsonModel = new JsonModel($body);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                                }
+                            }
+                        }
                     }
-                    case "json":{
-                        $jsonModel = new JsonModel($body);
-                        $jsonModel->setTerminal(true);
-                        $e->setResult($jsonModel);
-                        $e->setViewModel($jsonModel)->stopPropagation();
-                        break;
-                    }
-                    default: {
-                    $jsonModel = new JsonModel($body);
-                    $jsonModel->setTerminal(true);
-                    $e->setResult($jsonModel);
-                    $e->setViewModel($jsonModel)->stopPropagation();
                     break;
-                    }
+                }
+                default :{
+
+                    break;
                 }
             }
         }

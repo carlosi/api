@@ -5,7 +5,7 @@ namespace API\REST\V1\Shared\Functions;
 use Zend\View\Model\JsonModel;
 
 
-class JSonResponse {
+class ArrayResponse {
 	
 	public static function getResponseBody($code=null, array $messageArray= null){
             

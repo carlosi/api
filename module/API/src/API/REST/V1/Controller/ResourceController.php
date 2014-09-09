@@ -17,7 +17,7 @@ use Zend\View\Model\JsonModel;
 // - Shared - //
 use API\REST\V1\Shared\Functions\HttpRequest;
 use API\REST\V1\Shared\Functions\ResourceManager;
-use API\REST\V1\Shared\Functions\JSonResponse;
+use API\REST\V1\Shared\Functions\ArrayResponse;
 use API\REST\V1\Shared\Functions\ArrayManage;
 // - Propel - //
 use Client;
@@ -187,8 +187,22 @@ class ResourceController extends AbstractRestfulController
                         array_push($messageArray, $message);
                     }
                 }
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                return new JsonModel(JSonResponse::getResponseBody(400, $messageArray));
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        // Create the config object
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString(ArrayResponse::getResponseBody(400, $messageArray)));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
+                        break;
+                    }
+                    default: {
+                    return new JsonModel(JSonResponse::getResponseBody(400, $messageArray));
+                    break;
+                    }
+                }
             }
         //Si el usuario no tiene permisos sobre el recurso
         }else{
@@ -1099,7 +1113,6 @@ class ResourceController extends AbstractRestfulController
             // Obtenemos el idbranchdepartment que se desea modificar
             $idresourceRelational = (key($resourceRelationalArray));
 
-            var_dump($idresourceRelational);
             //Instanciamos nuestra Branchdepartment
             $resourceRelational = ResourceManager::getResource($resourceNameRelational);
 
@@ -1120,8 +1133,21 @@ class ResourceController extends AbstractRestfulController
                             'Details' => 'Invalid id',
                         ),
                     );
-                    return new JsonModel($bodyResponse);
-                }
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                        }
+                    }                }
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response = $this->getResponse();
@@ -1130,7 +1156,7 @@ class ResourceController extends AbstractRestfulController
                     'Error' => array(
                         'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'The request data is invalid',
-                        'Details' => 'Entity not found',
+                        'Details' => 'Invalid id '.RESOURCE_CHILD,
                     ),
                 );
                 switch(TYPE_RESPONSE){
