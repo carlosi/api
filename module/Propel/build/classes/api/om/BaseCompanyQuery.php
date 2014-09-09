@@ -36,6 +36,10 @@
  * @method CompanyQuery rightJoinContactgroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Contactgroup relation
  * @method CompanyQuery innerJoinContactgroup($relationAlias = null) Adds a INNER JOIN clause to the query using the Contactgroup relation
  *
+ * @method CompanyQuery leftJoinDepartment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Department relation
+ * @method CompanyQuery rightJoinDepartment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Department relation
+ * @method CompanyQuery innerJoinDepartment($relationAlias = null) Adds a INNER JOIN clause to the query using the Department relation
+ *
  * @method CompanyQuery leftJoinExpensecategory($relationAlias = null) Adds a LEFT JOIN clause to the query using the Expensecategory relation
  * @method CompanyQuery rightJoinExpensecategory($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Expensecategory relation
  * @method CompanyQuery innerJoinExpensecategory($relationAlias = null) Adds a INNER JOIN clause to the query using the Expensecategory relation
@@ -706,6 +710,80 @@ abstract class BaseCompanyQuery extends ModelCriteria
         return $this
             ->joinContactgroup($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Contactgroup', 'ContactgroupQuery');
+    }
+
+    /**
+     * Filter the query by a related Department object
+     *
+     * @param   Department|PropelObjectCollection $department  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 CompanyQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDepartment($department, $comparison = null)
+    {
+        if ($department instanceof Department) {
+            return $this
+                ->addUsingAlias(CompanyPeer::IDCOMPANY, $department->getIdcompany(), $comparison);
+        } elseif ($department instanceof PropelObjectCollection) {
+            return $this
+                ->useDepartmentQuery()
+                ->filterByPrimaryKeys($department->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDepartment() only accepts arguments of type Department or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Department relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return CompanyQuery The current query, for fluid interface
+     */
+    public function joinDepartment($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Department');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Department');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Department relation Department object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   DepartmentQuery A secondary query class using the current class as primary query
+     */
+    public function useDepartmentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDepartment($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Department', 'DepartmentQuery');
     }
 
     /**

@@ -39,6 +39,7 @@ class DepartmentTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('iddepartment', 'Iddepartment', 'INTEGER', true, null, null);
+        $this->addForeignKey('idcompany', 'Idcompany', 'INTEGER', 'company', 'idcompany', true, null, null);
         $this->addColumn('department_name', 'DepartmentName', 'VARCHAR', true, 245, null);
         $this->addColumn('department_type', 'DepartmentType', 'CHAR', true, null, 'local');
         $this->getColumn('department_type', false)->setValueSet(array (
@@ -53,6 +54,7 @@ class DepartmentTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Company', 'Company', RelationMap::MANY_TO_ONE, array('idcompany' => 'idcompany', ), null, null);
         $this->addRelation('Branchdepartment', 'Branchdepartment', RelationMap::ONE_TO_MANY, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE', 'Branchdepartments');
         $this->addRelation('Departmentleader', 'Departmentleader', RelationMap::ONE_TO_MANY, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE', 'Departmentleaders');
         $this->addRelation('Departmentmember', 'Departmentmember', RelationMap::ONE_TO_MANY, array('iddepartment' => 'iddepartment', ), 'CASCADE', 'CASCADE', 'Departmentmembers');

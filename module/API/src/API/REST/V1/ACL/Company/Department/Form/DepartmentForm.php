@@ -28,7 +28,14 @@ class DepartmentForm extends Form
             'type' => 'Hidden',
             'name' => 'iddepartment',
             'options' => array(
-                'label' => 'iddepartment'
+                'label' => 'id department'
+            ),
+        ));
+        $this->add(array(
+            'type' => 'Hidden',
+            'name' => 'idcompany',
+            'options' => array(
+                'label' => 'id company'
             ),
         ));
         $this->add(array(

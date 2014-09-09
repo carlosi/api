@@ -72,6 +72,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
     protected $collContactgroupsPartial;
 
     /**
+     * @var        PropelObjectCollection|Department[] Collection to store aggregation of Department objects.
+     */
+    protected $collDepartments;
+    protected $collDepartmentsPartial;
+
+    /**
      * @var        PropelObjectCollection|Expensecategory[] Collection to store aggregation of Expensecategory objects.
      */
     protected $collExpensecategorys;
@@ -162,6 +168,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $contactgroupsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $departmentsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -384,6 +396,8 @@ abstract class BaseCompany extends BaseObject implements Persistent
 
             $this->collContactgroups = null;
 
+            $this->collDepartments = null;
+
             $this->collExpensecategorys = null;
 
             $this->collMarketingchannels = null;
@@ -601,6 +615,23 @@ abstract class BaseCompany extends BaseObject implements Persistent
 
             if ($this->collContactgroups !== null) {
                 foreach ($this->collContactgroups as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->departmentsScheduledForDeletion !== null) {
+                if (!$this->departmentsScheduledForDeletion->isEmpty()) {
+                    DepartmentQuery::create()
+                        ->filterByPrimaryKeys($this->departmentsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->departmentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDepartments !== null) {
+                foreach ($this->collDepartments as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -914,6 +945,14 @@ abstract class BaseCompany extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collDepartments !== null) {
+                    foreach ($this->collDepartments as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collExpensecategorys !== null) {
                     foreach ($this->collExpensecategorys as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1063,6 +1102,9 @@ abstract class BaseCompany extends BaseObject implements Persistent
             }
             if (null !== $this->collContactgroups) {
                 $result['Contactgroups'] = $this->collContactgroups->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collDepartments) {
+                $result['Departments'] = $this->collDepartments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collExpensecategorys) {
                 $result['Expensecategorys'] = $this->collExpensecategorys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1266,6 +1308,12 @@ abstract class BaseCompany extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getDepartments() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDepartment($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getExpensecategorys() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addExpensecategory($relObj->copy($deepCopy));
@@ -1383,6 +1431,9 @@ abstract class BaseCompany extends BaseObject implements Persistent
         }
         if ('Contactgroup' == $relationName) {
             $this->initContactgroups();
+        }
+        if ('Department' == $relationName) {
+            $this->initDepartments();
         }
         if ('Expensecategory' == $relationName) {
             $this->initExpensecategorys();
@@ -2527,6 +2578,231 @@ abstract class BaseCompany extends BaseObject implements Persistent
             }
             $this->contactgroupsScheduledForDeletion[]= clone $contactgroup;
             $contactgroup->setCompany(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collDepartments collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Company The current object (for fluent API support)
+     * @see        addDepartments()
+     */
+    public function clearDepartments()
+    {
+        $this->collDepartments = null; // important to set this to null since that means it is uninitialized
+        $this->collDepartmentsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collDepartments collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialDepartments($v = true)
+    {
+        $this->collDepartmentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDepartments collection.
+     *
+     * By default this just sets the collDepartments collection to an empty array (like clearcollDepartments());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDepartments($overrideExisting = true)
+    {
+        if (null !== $this->collDepartments && !$overrideExisting) {
+            return;
+        }
+        $this->collDepartments = new PropelObjectCollection();
+        $this->collDepartments->setModel('Department');
+    }
+
+    /**
+     * Gets an array of Department objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Company is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Department[] List of Department objects
+     * @throws PropelException
+     */
+    public function getDepartments($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collDepartmentsPartial && !$this->isNew();
+        if (null === $this->collDepartments || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDepartments) {
+                // return empty collection
+                $this->initDepartments();
+            } else {
+                $collDepartments = DepartmentQuery::create(null, $criteria)
+                    ->filterByCompany($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collDepartmentsPartial && count($collDepartments)) {
+                      $this->initDepartments(false);
+
+                      foreach ($collDepartments as $obj) {
+                        if (false == $this->collDepartments->contains($obj)) {
+                          $this->collDepartments->append($obj);
+                        }
+                      }
+
+                      $this->collDepartmentsPartial = true;
+                    }
+
+                    $collDepartments->getInternalIterator()->rewind();
+
+                    return $collDepartments;
+                }
+
+                if ($partial && $this->collDepartments) {
+                    foreach ($this->collDepartments as $obj) {
+                        if ($obj->isNew()) {
+                            $collDepartments[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDepartments = $collDepartments;
+                $this->collDepartmentsPartial = false;
+            }
+        }
+
+        return $this->collDepartments;
+    }
+
+    /**
+     * Sets a collection of Department objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $departments A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Company The current object (for fluent API support)
+     */
+    public function setDepartments(PropelCollection $departments, PropelPDO $con = null)
+    {
+        $departmentsToDelete = $this->getDepartments(new Criteria(), $con)->diff($departments);
+
+
+        $this->departmentsScheduledForDeletion = $departmentsToDelete;
+
+        foreach ($departmentsToDelete as $departmentRemoved) {
+            $departmentRemoved->setCompany(null);
+        }
+
+        $this->collDepartments = null;
+        foreach ($departments as $department) {
+            $this->addDepartment($department);
+        }
+
+        $this->collDepartments = $departments;
+        $this->collDepartmentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Department objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Department objects.
+     * @throws PropelException
+     */
+    public function countDepartments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collDepartmentsPartial && !$this->isNew();
+        if (null === $this->collDepartments || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDepartments) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDepartments());
+            }
+            $query = DepartmentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCompany($this)
+                ->count($con);
+        }
+
+        return count($this->collDepartments);
+    }
+
+    /**
+     * Method called to associate a Department object to this object
+     * through the Department foreign key attribute.
+     *
+     * @param    Department $l Department
+     * @return Company The current object (for fluent API support)
+     */
+    public function addDepartment(Department $l)
+    {
+        if ($this->collDepartments === null) {
+            $this->initDepartments();
+            $this->collDepartmentsPartial = true;
+        }
+
+        if (!in_array($l, $this->collDepartments->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDepartment($l);
+
+            if ($this->departmentsScheduledForDeletion and $this->departmentsScheduledForDeletion->contains($l)) {
+                $this->departmentsScheduledForDeletion->remove($this->departmentsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Department $department The department object to add.
+     */
+    protected function doAddDepartment($department)
+    {
+        $this->collDepartments[]= $department;
+        $department->setCompany($this);
+    }
+
+    /**
+     * @param	Department $department The department object to remove.
+     * @return Company The current object (for fluent API support)
+     */
+    public function removeDepartment($department)
+    {
+        if ($this->getDepartments()->contains($department)) {
+            $this->collDepartments->remove($this->collDepartments->search($department));
+            if (null === $this->departmentsScheduledForDeletion) {
+                $this->departmentsScheduledForDeletion = clone $this->collDepartments;
+                $this->departmentsScheduledForDeletion->clear();
+            }
+            $this->departmentsScheduledForDeletion[]= clone $department;
+            $department->setCompany(null);
         }
 
         return $this;
@@ -4211,6 +4487,11 @@ abstract class BaseCompany extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collDepartments) {
+                foreach ($this->collDepartments as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collExpensecategorys) {
                 foreach ($this->collExpensecategorys as $o) {
                     $o->clearAllReferences($deep);
@@ -4270,6 +4551,10 @@ abstract class BaseCompany extends BaseObject implements Persistent
             $this->collContactgroups->clearIterator();
         }
         $this->collContactgroups = null;
+        if ($this->collDepartments instanceof PropelCollection) {
+            $this->collDepartments->clearIterator();
+        }
+        $this->collDepartments = null;
         if ($this->collExpensecategorys instanceof PropelCollection) {
             $this->collExpensecategorys->clearIterator();
         }

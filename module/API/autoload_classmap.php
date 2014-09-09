@@ -58,6 +58,7 @@ $className = array(
   'API\REST\V1\ACL\Company\Department\Form\DepartmentForm'                                         => __DIR__ . '/src/API/REST/V1/ACL/Company/Department/Form/DepartmentForm.php',
   'API\REST\V1\ACL\Company\Department\Form\DepartmentFormGET'                                      => __DIR__ . '/src/API/REST/V1/ACL/Company/Department/Form/DepartmentFormGET.php',
   'API\REST\V1\ACL\Company\Department\Form\DepartmentFormPostPut'                                  => __DIR__ . '/src/API/REST/V1/ACL/Company/Department/Form/DepartmentFormPostPut.php',
+  'API\REST\V1\ACL\Company\Department\Form\DepartmentFormToShowUpdate'                             => __DIR__ . '/src/API/REST/V1/ACL/Company/Department/Form/DepartmentFormToShowUpdate.php',
   'API\REST\V1\ACL\Company\Departmentleader\Filter\DepartmentleaderFilter'                         => __DIR__ . '/src/API/REST/V1/ACL/Company/Departmentleader/Filter/DepartmentleaderFilter.php',
   'API\REST\V1\ACL\Company\Departmentleader\Filter\DepartmentleaderFilterPostPut'                  => __DIR__ . '/src/API/REST/V1/ACL/Company/Departmentleader/Filter/DepartmentleaderFilterPostPut.php',
   'API\REST\V1\ACL\Company\Departmentleader\Form\DepartmentleaderForm'                             => __DIR__ . '/src/API/REST/V1/ACL/Company/Departmentleader/Form/DepartmentleaderForm.php',

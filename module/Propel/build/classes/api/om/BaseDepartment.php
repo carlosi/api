@@ -36,6 +36,12 @@ abstract class BaseDepartment extends BaseObject implements Persistent
     protected $iddepartment;
 
     /**
+     * The value for the idcompany field.
+     * @var        int
+     */
+    protected $idcompany;
+
+    /**
      * The value for the department_name field.
      * @var        string
      */
@@ -47,6 +53,11 @@ abstract class BaseDepartment extends BaseObject implements Persistent
      * @var        string
      */
     protected $department_type;
+
+    /**
+     * @var        Company
+     */
+    protected $aCompany;
 
     /**
      * @var        PropelObjectCollection|Branchdepartment[] Collection to store aggregation of Branchdepartment objects.
@@ -149,6 +160,17 @@ abstract class BaseDepartment extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [idcompany] column value.
+     *
+     * @return int
+     */
+    public function getIdcompany()
+    {
+
+        return $this->idcompany;
+    }
+
+    /**
      * Get the [department_name] column value.
      *
      * @return string
@@ -190,6 +212,31 @@ abstract class BaseDepartment extends BaseObject implements Persistent
 
         return $this;
     } // setIddepartment()
+
+    /**
+     * Set the value of [idcompany] column.
+     *
+     * @param  int $v new value
+     * @return Department The current object (for fluent API support)
+     */
+    public function setIdcompany($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->idcompany !== $v) {
+            $this->idcompany = $v;
+            $this->modifiedColumns[] = DepartmentPeer::IDCOMPANY;
+        }
+
+        if ($this->aCompany !== null && $this->aCompany->getIdcompany() !== $v) {
+            $this->aCompany = null;
+        }
+
+
+        return $this;
+    } // setIdcompany()
 
     /**
      * Set the value of [department_name] column.
@@ -270,8 +317,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         try {
 
             $this->iddepartment = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->department_name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-            $this->department_type = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->idcompany = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->department_name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->department_type = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -281,7 +329,7 @@ abstract class BaseDepartment extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 3; // 3 = DepartmentPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = DepartmentPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Department object", $e);
@@ -304,6 +352,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
+        if ($this->aCompany !== null && $this->idcompany !== $this->aCompany->getIdcompany()) {
+            $this->aCompany = null;
+        }
     } // ensureConsistency
 
     /**
@@ -343,6 +394,7 @@ abstract class BaseDepartment extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aCompany = null;
             $this->collBranchdepartments = null;
 
             $this->collDepartmentleaders = null;
@@ -464,6 +516,18 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aCompany !== null) {
+                if ($this->aCompany->isModified() || $this->aCompany->isNew()) {
+                    $affectedRows += $this->aCompany->save($con);
+                }
+                $this->setCompany($this->aCompany);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -572,6 +636,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         if ($this->isColumnModified(DepartmentPeer::IDDEPARTMENT)) {
             $modifiedColumns[':p' . $index++]  = '`iddepartment`';
         }
+        if ($this->isColumnModified(DepartmentPeer::IDCOMPANY)) {
+            $modifiedColumns[':p' . $index++]  = '`idcompany`';
+        }
         if ($this->isColumnModified(DepartmentPeer::DEPARTMENT_NAME)) {
             $modifiedColumns[':p' . $index++]  = '`department_name`';
         }
@@ -591,6 +658,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
                 switch ($columnName) {
                     case '`iddepartment`':
                         $stmt->bindValue($identifier, $this->iddepartment, PDO::PARAM_INT);
+                        break;
+                    case '`idcompany`':
+                        $stmt->bindValue($identifier, $this->idcompany, PDO::PARAM_INT);
                         break;
                     case '`department_name`':
                         $stmt->bindValue($identifier, $this->department_name, PDO::PARAM_STR);
@@ -692,6 +762,18 @@ abstract class BaseDepartment extends BaseObject implements Persistent
             $failureMap = array();
 
 
+            // We call the validate method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aCompany !== null) {
+                if (!$this->aCompany->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aCompany->getValidationFailures());
+                }
+            }
+
+
             if (($retval = DepartmentPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
@@ -768,9 +850,12 @@ abstract class BaseDepartment extends BaseObject implements Persistent
                 return $this->getIddepartment();
                 break;
             case 1:
-                return $this->getDepartmentName();
+                return $this->getIdcompany();
                 break;
             case 2:
+                return $this->getDepartmentName();
+                break;
+            case 3:
                 return $this->getDepartmentType();
                 break;
             default:
@@ -803,8 +888,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         $keys = DepartmentPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getIddepartment(),
-            $keys[1] => $this->getDepartmentName(),
-            $keys[2] => $this->getDepartmentType(),
+            $keys[1] => $this->getIdcompany(),
+            $keys[2] => $this->getDepartmentName(),
+            $keys[3] => $this->getDepartmentType(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -812,6 +898,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->aCompany) {
+                $result['Company'] = $this->aCompany->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
             if (null !== $this->collBranchdepartments) {
                 $result['Branchdepartments'] = $this->collBranchdepartments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -862,9 +951,12 @@ abstract class BaseDepartment extends BaseObject implements Persistent
                 $this->setIddepartment($value);
                 break;
             case 1:
-                $this->setDepartmentName($value);
+                $this->setIdcompany($value);
                 break;
             case 2:
+                $this->setDepartmentName($value);
+                break;
+            case 3:
                 $this->setDepartmentType($value);
                 break;
         } // switch()
@@ -892,8 +984,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         $keys = DepartmentPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setIddepartment($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setDepartmentName($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setDepartmentType($arr[$keys[2]]);
+        if (array_key_exists($keys[1], $arr)) $this->setIdcompany($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setDepartmentName($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setDepartmentType($arr[$keys[3]]);
     }
 
     /**
@@ -906,6 +999,7 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         $criteria = new Criteria(DepartmentPeer::DATABASE_NAME);
 
         if ($this->isColumnModified(DepartmentPeer::IDDEPARTMENT)) $criteria->add(DepartmentPeer::IDDEPARTMENT, $this->iddepartment);
+        if ($this->isColumnModified(DepartmentPeer::IDCOMPANY)) $criteria->add(DepartmentPeer::IDCOMPANY, $this->idcompany);
         if ($this->isColumnModified(DepartmentPeer::DEPARTMENT_NAME)) $criteria->add(DepartmentPeer::DEPARTMENT_NAME, $this->department_name);
         if ($this->isColumnModified(DepartmentPeer::DEPARTMENT_TYPE)) $criteria->add(DepartmentPeer::DEPARTMENT_TYPE, $this->department_type);
 
@@ -971,6 +1065,7 @@ abstract class BaseDepartment extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
+        $copyObj->setIdcompany($this->getIdcompany());
         $copyObj->setDepartmentName($this->getDepartmentName());
         $copyObj->setDepartmentType($this->getDepartmentType());
 
@@ -1053,6 +1148,58 @@ abstract class BaseDepartment extends BaseObject implements Persistent
         }
 
         return self::$peer;
+    }
+
+    /**
+     * Declares an association between this object and a Company object.
+     *
+     * @param                  Company $v
+     * @return Department The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setCompany(Company $v = null)
+    {
+        if ($v === null) {
+            $this->setIdcompany(NULL);
+        } else {
+            $this->setIdcompany($v->getIdcompany());
+        }
+
+        $this->aCompany = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Company object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDepartment($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Company object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Company The associated Company object.
+     * @throws PropelException
+     */
+    public function getCompany(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aCompany === null && ($this->idcompany !== null) && $doQuery) {
+            $this->aCompany = CompanyQuery::create()->findPk($this->idcompany, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aCompany->addDepartments($this);
+             */
+        }
+
+        return $this->aCompany;
     }
 
 
@@ -2086,6 +2233,7 @@ abstract class BaseDepartment extends BaseObject implements Persistent
     public function clear()
     {
         $this->iddepartment = null;
+        $this->idcompany = null;
         $this->department_name = null;
         $this->department_type = null;
         $this->alreadyInSave = false;
@@ -2131,6 +2279,9 @@ abstract class BaseDepartment extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->aCompany instanceof Persistent) {
+              $this->aCompany->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
@@ -2151,6 +2302,7 @@ abstract class BaseDepartment extends BaseObject implements Persistent
             $this->collProjects->clearIterator();
         }
         $this->collProjects = null;
+        $this->aCompany = null;
     }
 
     /**

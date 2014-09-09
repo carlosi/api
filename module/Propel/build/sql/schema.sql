@@ -545,9 +545,14 @@ DROP TABLE IF EXISTS `department`;
 CREATE TABLE `department`
 (
     `iddepartment` INTEGER NOT NULL AUTO_INCREMENT,
+    `idcompany` INTEGER NOT NULL,
     `department_name` VARCHAR(245) NOT NULL,
     `department_type` enum('global','local') DEFAULT 'local' NOT NULL,
-    PRIMARY KEY (`iddepartment`)
+    PRIMARY KEY (`iddepartment`),
+    INDEX `idcompany` (`idcompany`),
+    CONSTRAINT `idcompany_department`
+        FOREIGN KEY (`idcompany`)
+        REFERENCES `company` (`idcompany`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

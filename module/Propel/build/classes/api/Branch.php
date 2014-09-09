@@ -212,7 +212,7 @@ class Branch extends BaseBranch
         $response = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/branch/".$entity->getIdbranch(),
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/branch/".$entity->getIdbranch(),
                 ),
             ),
         );
@@ -242,7 +242,7 @@ class Branch extends BaseBranch
         $response["company"] = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/company/".$company->getIdcompany(),
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/company/".$company->getIdcompany(),
                 ),
             ),
             "idcompany" => $company->getIdcompany(),
@@ -472,7 +472,7 @@ class Branch extends BaseBranch
             $branchPKQuery = $branchQuery->findPk($id);
             $branchFormToShowUpdate = BranchFormToShowUpdate::init($userLevel);
 
-            //Si se quiere modificar el bankaccount_name
+            //Si se quiere modificar el branch_name
             if(isset($data['branch_name']) && $data['branch_name'] != null){
                 //Remplzamos los datos de la branch por lo que se van a modificar
                 foreach ($data as $key => $value){

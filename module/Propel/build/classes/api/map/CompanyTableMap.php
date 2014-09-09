@@ -53,6 +53,7 @@ class CompanyTableMap extends TableMap
         $this->addRelation('Client', 'Client', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Clients');
         $this->addRelation('Companyaddress', 'Companyaddress', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Companyaddresss');
         $this->addRelation('Contactgroup', 'Contactgroup', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Contactgroups');
+        $this->addRelation('Department', 'Department', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), null, null, 'Departments');
         $this->addRelation('Expensecategory', 'Expensecategory', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Expensecategorys');
         $this->addRelation('Marketingchannel', 'Marketingchannel', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Marketingchannels');
         $this->addRelation('Mxtaxinfo', 'Mxtaxinfo', RelationMap::ONE_TO_MANY, array('idcompany' => 'idcompany', ), 'CASCADE', 'CASCADE', 'Mxtaxinfos');

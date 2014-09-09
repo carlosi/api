@@ -1,38 +1,36 @@
 <?php
 
 /**
- * BranchFormToShowUpdate.php
+ * DepartmentFormToShowUpdate.php
  * BuyBuy
  *
  * Created by Buybuy on 12/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\Company\Branch\Form;
+namespace API\REST\V1\ACL\Company\Department\Form;
 
-// - ACL -- //
-use API\REST\V1\ACL\Company\Branch\Form\BranchForm;
+// - ACL - //
+use API\REST\V1\ACL\Company\Department\Form\DepartmentForm;
 
 /**
- * Class BranchFormToShowUpdate
- * @package API\REST\V1\ACL\Company\Branch\Form
+ * Class DepartmentFormToShowUpdate
+ * @package API\REST\V1\ACL\Company\Department\Form
  */
-class BranchFormToShowUpdate{
+class DepartmentFormToShowUpdate{
 
     /**
      * @param $userLevel
-     * @return BranchForm
+     * @return DepartmentForm
      */
     public static function init($userLevel){
 
-        $branchForm = new BranchForm();
+        $DepartmentForm = new DepartmentForm();
 
         switch ($userLevel){
 
             case 5: {
 
-                $branchForm->remove('idbranch');
-                $branchForm->remove('idcompany');
 
                 break;
             }
@@ -57,7 +55,7 @@ class BranchFormToShowUpdate{
             }
         }
 
-        return $branchForm;
+        return $DepartmentForm;
     }
 
 }

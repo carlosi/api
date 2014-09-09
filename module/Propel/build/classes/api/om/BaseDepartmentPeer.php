@@ -24,16 +24,19 @@ abstract class BaseDepartmentPeer
     const TM_CLASS = 'DepartmentTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /** the column name for the iddepartment field */
     const IDDEPARTMENT = 'department.iddepartment';
+
+    /** the column name for the idcompany field */
+    const IDCOMPANY = 'department.idcompany';
 
     /** the column name for the department_name field */
     const DEPARTMENT_NAME = 'department.department_name';
@@ -64,12 +67,12 @@ abstract class BaseDepartmentPeer
      * e.g. DepartmentPeer::$fieldNames[DepartmentPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Iddepartment', 'DepartmentName', 'DepartmentType', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment', 'departmentName', 'departmentType', ),
-        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT, DepartmentPeer::DEPARTMENT_NAME, DepartmentPeer::DEPARTMENT_TYPE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT', 'DEPARTMENT_NAME', 'DEPARTMENT_TYPE', ),
-        BasePeer::TYPE_FIELDNAME => array ('iddepartment', 'department_name', 'department_type', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, )
+        BasePeer::TYPE_PHPNAME => array ('Iddepartment', 'Idcompany', 'DepartmentName', 'DepartmentType', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment', 'idcompany', 'departmentName', 'departmentType', ),
+        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT, DepartmentPeer::IDCOMPANY, DepartmentPeer::DEPARTMENT_NAME, DepartmentPeer::DEPARTMENT_TYPE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT', 'IDCOMPANY', 'DEPARTMENT_NAME', 'DEPARTMENT_TYPE', ),
+        BasePeer::TYPE_FIELDNAME => array ('iddepartment', 'idcompany', 'department_name', 'department_type', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -79,12 +82,12 @@ abstract class BaseDepartmentPeer
      * e.g. DepartmentPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Iddepartment' => 0, 'DepartmentName' => 1, 'DepartmentType' => 2, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment' => 0, 'departmentName' => 1, 'departmentType' => 2, ),
-        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT => 0, DepartmentPeer::DEPARTMENT_NAME => 1, DepartmentPeer::DEPARTMENT_TYPE => 2, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT' => 0, 'DEPARTMENT_NAME' => 1, 'DEPARTMENT_TYPE' => 2, ),
-        BasePeer::TYPE_FIELDNAME => array ('iddepartment' => 0, 'department_name' => 1, 'department_type' => 2, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, )
+        BasePeer::TYPE_PHPNAME => array ('Iddepartment' => 0, 'Idcompany' => 1, 'DepartmentName' => 2, 'DepartmentType' => 3, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('iddepartment' => 0, 'idcompany' => 1, 'departmentName' => 2, 'departmentType' => 3, ),
+        BasePeer::TYPE_COLNAME => array (DepartmentPeer::IDDEPARTMENT => 0, DepartmentPeer::IDCOMPANY => 1, DepartmentPeer::DEPARTMENT_NAME => 2, DepartmentPeer::DEPARTMENT_TYPE => 3, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('IDDEPARTMENT' => 0, 'IDCOMPANY' => 1, 'DEPARTMENT_NAME' => 2, 'DEPARTMENT_TYPE' => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('iddepartment' => 0, 'idcompany' => 1, 'department_name' => 2, 'department_type' => 3, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /** The enumerated values for this table */
@@ -212,10 +215,12 @@ abstract class BaseDepartmentPeer
     {
         if (null === $alias) {
             $criteria->addSelectColumn(DepartmentPeer::IDDEPARTMENT);
+            $criteria->addSelectColumn(DepartmentPeer::IDCOMPANY);
             $criteria->addSelectColumn(DepartmentPeer::DEPARTMENT_NAME);
             $criteria->addSelectColumn(DepartmentPeer::DEPARTMENT_TYPE);
         } else {
             $criteria->addSelectColumn($alias . '.iddepartment');
+            $criteria->addSelectColumn($alias . '.idcompany');
             $criteria->addSelectColumn($alias . '.department_name');
             $criteria->addSelectColumn($alias . '.department_type');
         }
@@ -528,6 +533,244 @@ abstract class BaseDepartmentPeer
         }
 
         return array($obj, $col);
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related Company table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinCompany(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(DepartmentPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            DepartmentPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(DepartmentPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(DepartmentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(DepartmentPeer::IDCOMPANY, CompanyPeer::IDCOMPANY, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Selects a collection of Department objects pre-filled with their Company objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Department objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinCompany(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(DepartmentPeer::DATABASE_NAME);
+        }
+
+        DepartmentPeer::addSelectColumns($criteria);
+        $startcol = DepartmentPeer::NUM_HYDRATE_COLUMNS;
+        CompanyPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(DepartmentPeer::IDCOMPANY, CompanyPeer::IDCOMPANY, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = DepartmentPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = DepartmentPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = DepartmentPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                DepartmentPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = CompanyPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = CompanyPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = CompanyPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    CompanyPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Department) to $obj2 (Company)
+                $obj2->addDepartment($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining all related tables
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(DepartmentPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            DepartmentPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(DepartmentPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(DepartmentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(DepartmentPeer::IDCOMPANY, CompanyPeer::IDCOMPANY, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+    /**
+     * Selects a collection of Department objects pre-filled with all related objects.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Department objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(DepartmentPeer::DATABASE_NAME);
+        }
+
+        DepartmentPeer::addSelectColumns($criteria);
+        $startcol2 = DepartmentPeer::NUM_HYDRATE_COLUMNS;
+
+        CompanyPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + CompanyPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(DepartmentPeer::IDCOMPANY, CompanyPeer::IDCOMPANY, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = DepartmentPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = DepartmentPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = DepartmentPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                DepartmentPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+            // Add objects for joined Company rows
+
+            $key2 = CompanyPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            if ($key2 !== null) {
+                $obj2 = CompanyPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = CompanyPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    CompanyPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 loaded
+
+                // Add the $obj1 (Department) to the collection in $obj2 (Company)
+                $obj2->addDepartment($obj1);
+            } // if joined row not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
     }
 
     /**

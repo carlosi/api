@@ -412,8 +412,15 @@
   </table>
   <table name="department" phpName="Department" idMethod="native">
     <column name="iddepartment" phpName="Iddepartment" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="idcompany" phpName="Idcompany" type="INTEGER" required="true"/>
     <column name="department_name" phpName="DepartmentName" type="VARCHAR" size="245" required="true"/>
     <column name="department_type" phpName="DepartmentType" type="CHAR" sqlType="enum('global','local')" required="true" defaultValue="local"/>
+    <foreign-key foreignTable="company" name="idcompany_department" onDelete="RESTRICT" onUpdate="RESTRICT">
+      <reference local="idcompany" foreign="idcompany"/>
+    </foreign-key>
+    <index name="idcompany">
+      <index-column name="idcompany"/>
+    </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
