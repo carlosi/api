@@ -371,7 +371,11 @@ class ResourceListener implements ListenerAggregateInterface {
                                 }
                             }
                         }
-                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
+                        $moduleResource = MODULE_RESOURCE;
+                        if(!isset($moduleResource)){
+                            define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
+                        }
+
                         break;
                     }else{
                         $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
