@@ -78,13 +78,12 @@ class ResourceListener implements ListenerAggregateInterface {
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
                     $response = new Response();
-                    $response->setStatusCode(Response::STATUS_CODE_400);
+                    $response->setStatusCode(Response::STATUS_CODE_405);
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
                         'HTTP Status' => $statusCode,
-                        'Method' => 'GET' ,
-                        'Title' => 'Bad Request' ,
+                        'Title' => 'Method not allowed',
                         'Details' => 'To access the login you need to use the POST method',
                         'More Info' => 'http://rest.api.buybuy.com.mx/docs'
                     );
@@ -227,13 +226,12 @@ class ResourceListener implements ListenerAggregateInterface {
                     break;
                 }
                 if($routeName == "documentation"){
-                    $response->setStatusCode(Response::STATUS_CODE_400);
+                    $response->setStatusCode(Response::STATUS_CODE_405);
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
                         'HTTP Status' => $statusCode,
-                        'Method' => 'POST' ,
-                        'Title' => 'Bad Request' ,
+                        'Title' => 'Method not allowed',
                         'Details' => 'To access the documentation you need to use the GET method',
                         'More Info' => 'http://rest.api.buybuy.com.mx/docs'
                     );
@@ -432,13 +430,12 @@ class ResourceListener implements ListenerAggregateInterface {
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
                     $response = new Response();
-                    $response->setStatusCode(Response::STATUS_CODE_400);
+                    $response->setStatusCode(Response::STATUS_CODE_405);
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
                         'HTTP Status' => $statusCode,
-                        'Method' => 'PUT' ,
-                        'Title' => 'Bad Request' ,
+                        'Title' => 'Method not allowed',
                         'Details' => 'To access the login you need to use the POST method',
                         'More Info' => 'http://rest.api.buybuy.com.mx/docs'
                     );
@@ -449,13 +446,12 @@ class ResourceListener implements ListenerAggregateInterface {
                     break;
                 }
                 if($routeName == "documentation"){
-                    $response->setStatusCode(Response::STATUS_CODE_400);
+                    $response->setStatusCode(Response::STATUS_CODE_405);
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
                         'HTTP Status' => $statusCode,
-                        'Method' => 'POST' ,
-                        'Title' => 'Bad Request' ,
+                        'Title' => 'Method not allowed',
                         'Details' => 'To access the documentation you need to use the GET method',
                         'More Info' => 'http://rest.api.buybuy.com.mx/docs'
                     );
@@ -719,13 +715,12 @@ class ResourceListener implements ListenerAggregateInterface {
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
-                    $response->setStatusCode(Response::STATUS_CODE_400);
+                    $response->setStatusCode(Response::STATUS_CODE_405);
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
                         'HTTP Status' => $statusCode,
-                        'Method' => 'DELETE' ,
-                        'Title' => 'Bad Request' ,
+                        'Title' => 'Method not allowed',
                         'Details' => 'To access the login you need to use the POST method',
                         'More Info' => 'http://rest.api.buybuy.com.mx/docs'
                     );
@@ -736,15 +731,14 @@ class ResourceListener implements ListenerAggregateInterface {
                     break;
                 }
                 if($routeName == "documentation"){
-                    $response->setStatusCode(Response::STATUS_CODE_400);
+                    $response->setStatusCode(Response::STATUS_CODE_405);
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
                         'HTTP Status' => $statusCode,
-                        'Method' => 'POST' ,
-                        'Title' => 'Bad Request' ,
+                        'Title' => 'Method not allowed',
                         'Details' => 'To access the documentation you need to use the GET method',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'More_Info' => 'http://rest.api.buybuy.com.mx/docs'
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -889,10 +883,9 @@ class ResourceListener implements ListenerAggregateInterface {
 
                             $body = array(
                                 'HTTP Status' => $statusCode,
-                                'Method' => 'PUT' ,
                                 'Title' => 'The request id is null' ,
                                 'Details' => 'The request id can´t be null',
-                                'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                'More_Info' => 'http://rest.api.buybuy.com.mx/docs'
                             );
                             $jsonModel = new JsonModel($body);
                             $jsonModel->setTerminal(true);
