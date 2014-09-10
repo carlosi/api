@@ -284,7 +284,7 @@ class Branch extends BaseBranch
                             $branchQuery->addAnd('branch.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }
                     }else{
-                        $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
+                        $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
                     }
                 }
 
@@ -300,7 +300,7 @@ class Branch extends BaseBranch
                     }
                 }
                 if(isset($filter['gt'])){
-                    $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
+                    $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
                 }
                 if(isset($filter['lt'])){
                     $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN);
@@ -310,18 +310,18 @@ class Branch extends BaseBranch
                         ->add(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['to'], \Criteria::LESS_EQUAL);
                 }
                 if(isset($filter['like'])){
-                    $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
+                    $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
                 }
             }
         }
 
         //Order y Dir
         if($order !=null || $dir !=null){
-            $branchQuery ->orderBy($order, $dir);
+            $branchQuery->orderBy($order, $dir);
         }
 
         // Obtenemos el filtrado por medio del idcompany del recurso.
-        $result = $branchQuery ->filterByIdCompany($idcompany)->paginate($page,$limit);
+        $result = $branchQuery->filterByIdCompany($idcompany)->paginate($page,$limit);
 
 
         $links = array(

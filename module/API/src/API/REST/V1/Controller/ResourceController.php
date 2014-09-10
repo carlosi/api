@@ -153,7 +153,7 @@ class ResourceController extends AbstractRestfulController
                 }
 
                 // Ingresamos al objeto del recurso directamente en la clase de Propel
-                $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel);
+                $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, $data);
 
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode($issave['statusCode']); //BAD REQUEST
