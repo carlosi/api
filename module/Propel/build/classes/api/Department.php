@@ -38,88 +38,27 @@ class Department extends BaseDepartment
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param $data
      * @return array
      */
     public function saveResouce($dataArray,$idCompany,$userLevel, $data){
-
         if($dataArray['department_type'] == 'local'){
-            if(!$this->departmentnameExist($dataArray["department_name"], $idCompany)){
-
-                foreach ($dataArray as $dataKey => $dataValue){
-                    $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
-                }
-                $this->setIdcompany($idCompany);
-                $this->save();
-
-                //Las columnas permitidas de nuestros foreign keys
-                $allowedCompanyColumns = array();
-                $company = null;
-
-                //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
-                if(array_key_exists("idcompany", $dataArray)){
-
-                    //Instanciamos nuestro objeto Company
-                    $company = $this->getCompany();
-
-                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                    $companyForm   = CompanyFormGET::init($userLevel);
-
-                    foreach ($companyForm->getElements() as $element){
-                        if($element->getOption('value_options')!=null){
-                            $allowedCompanyColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                        }else{
-                            $allowedCompanyColumns[$element->getAttribute('name')] = $element->getOption('label');
-                        }
-                    }
-                }
-                //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
-                //1. El objeto department "this"
-                //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
-                //3. Las columnas permitidas e los foreignKeys
-                //4. el objeto company que va ir como __embebed = "company"
-                $bodyResponse = $this->createBodyResponse($this,array('idcompany'),array('company' => $allowedCompanyColumns),array($company));
-                $this->save();
-                return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
-
-            }else{
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'Resource data pre-validation error',
-                        'Details' => "department_name ". "'".$dataArray["department_name"]."'". " already exists",
-                    ),
-                );
-                return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
-            }
-        }
-        if($dataArray['department_type'] == 'global'){
             // Obtenemos el idbranch
             $idbranch = isset($data['idbranch']) ? $data['idbranch'] : null;
-            // Si el idbranch tiene un valor
-            if($idbranch){
-                // Instanciamos BranchQuery
-                $branchQuery = new BranchQuery();
-                $branchesByIdCompany = $branchQuery->filterByIdCompany($idCompany)->find();
+            // Instanciamos BranchQuery
+            $branchQuery = new BranchQuery();
+            if($idbranch != null){
                 // Si existe el idbranch dependiendo de la company a la que pertenece el usuario
                 $existsBranch = $branchQuery->filterByIdbranch($data['idbranch'])->filterByIdcompany($idCompany)->exists();
                 if($existsBranch){
                     // Si department_name no existe
                     if(!$this->departmentnameExist($dataArray["department_name"], $idCompany)){
+
                         foreach ($dataArray as $dataKey => $dataValue){
                             $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
                         }
                         $this->setIdcompany($idCompany);
                         $this->save();
-
-                        $idbranchArray = array();
-                        $branchesCollection = $branchesByIdCompany->getArrayCopy();
-                        foreach($branchesCollection as $key => $value){
-                            // Agregamos el departamento que acaba de crear en branchdepartment en todas las branches de la company.
-                            $branchdepartment = new Branchdepartment();
-                            $branchdepartment->setIdbranch($value->getIdbranch())
-                                ->setIddepartment($this->getIddepartment())
-                                ->save();
-                        }
 
                         //Las columnas permitidas de nuestros foreign keys
                         $allowedCompanyColumns = array();
@@ -144,23 +83,21 @@ class Department extends BaseDepartment
                         }
                         //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
                         //1. El objeto department "this"
-                        //2. Los elementos que van a ir como _embebed para removerlos (en este caso idcompany),
+                        //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
                         //3. Las columnas permitidas e los foreignKeys
                         //4. el objeto company que va ir como __embebed = "company"
                         $bodyResponse = $this->createBodyResponse($this,array('idcompany'),array('company' => $allowedCompanyColumns),array($company));
-
-                        $branchnameArray = array();
+                        $branchesByIdCompany = $branchQuery->filterByIdCompany($idCompany)->find();
+                        $branchesCollection = $branchesByIdCompany->getArrayCopy();
                         foreach($branchesCollection as $key => $value){
-                            $branchnameArray[$key] = $value->getBranchname();
-
-                            var_dump($branchnameArray);
-                            $bodyResponse['branch'] = array(
+                            $key = "branch";
+                            $bodyResponse[$key] = array(
                                 "_links" => array(
                                     "self" => array(
-                                        "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/'.$branch->getPrimaryKey()
+                                        "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/'.$value->getIdbranch()
                                     ),
                                 ),
-
+                                "branch_name" => $value->getBranchname()
                             );
                         }
                         $this->save();
@@ -188,16 +125,131 @@ class Department extends BaseDepartment
                     return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
                 }
             }else{
+                // Si department_name no existe
+                if(!$this->departmentnameExist($dataArray["department_name"], $idCompany)){
+
+                    foreach ($dataArray as $dataKey => $dataValue){
+                        $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
+                    }
+                    $this->setIdcompany($idCompany);
+                    $this->save();
+
+                    //Las columnas permitidas de nuestros foreign keys
+                    $allowedCompanyColumns = array();
+                    $company = null;
+
+                    //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
+                    if(array_key_exists("idcompany", $dataArray)){
+
+                        //Instanciamos nuestro objeto Company
+                        $company = $this->getCompany();
+
+                        //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                        $companyForm   = CompanyFormGET::init($userLevel);
+
+                        foreach ($companyForm->getElements() as $element){
+                            if($element->getOption('value_options')!=null){
+                                $allowedCompanyColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                            }else{
+                                $allowedCompanyColumns[$element->getAttribute('name')] = $element->getOption('label');
+                            }
+                        }
+                    }
+                    //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
+                    //1. El objeto department "this"
+                    //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
+                    //3. Las columnas permitidas e los foreignKeys
+                    //4. el objeto company que va ir como __embebed = "company"
+                    $bodyResponse = $this->createBodyResponse($this,array('idcompany'),array('company' => $allowedCompanyColumns),array($company));
+                    $this->save();
+                    return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+
+                }else{
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'Resource data pre-validation error',
+                            'Details' => "department_name ". "'".$dataArray["department_name"]."'". " already exists",
+                        ),
+                    );
+                    return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+                }
+            }
+        }
+        if($dataArray['department_type'] == 'global'){
+            // Instanciamos BranchQuery
+            $branchQuery = new BranchQuery();
+            $branchesByIdCompany = $branchQuery->filterByIdCompany($idCompany)->find();
+            // Si department_name no existe
+            if(!$this->departmentnameExist($dataArray["department_name"], $idCompany)){
+                foreach ($dataArray as $dataKey => $dataValue){
+                    $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
+                }
+                $this->setIdcompany($idCompany);
+                $this->save();
+
+                $idbranchArray = array();
+                $branchesCollection = $branchesByIdCompany->getArrayCopy();
+                foreach($branchesCollection as $key => $value){
+                    // Agregamos el departamento que acaba de crear en branchdepartment en todas las branches de la company.
+                    $branchdepartment = new Branchdepartment();
+                    $branchdepartment->setIdbranch($value->getIdbranch())
+                        ->setIddepartment($this->getIddepartment())
+                        ->save();
+                }
+
+                //Las columnas permitidas de nuestros foreign keys
+                $allowedCompanyColumns = array();
+                $company = null;
+
+                //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
+                if(array_key_exists("idcompany", $dataArray)){
+
+                    //Instanciamos nuestro objeto Company
+                    $company = $this->getCompany();
+
+                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                    $companyForm   = CompanyFormGET::init($userLevel);
+
+                    foreach ($companyForm->getElements() as $element){
+                        if($element->getOption('value_options')!=null){
+                            $allowedCompanyColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                        }else{
+                            $allowedCompanyColumns[$element->getAttribute('name')] = $element->getOption('label');
+                        }
+                    }
+                }
+                //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
+                //1. El objeto department "this"
+                //2. Los elementos que van a ir como _embebed para removerlos (en este caso idcompany),
+                //3. Las columnas permitidas e los foreignKeys
+                //4. el objeto company que va ir como __embebed = "company"
+                $bodyResponse = $this->createBodyResponse($this,array('idcompany'),array('company' => $allowedCompanyColumns),array($company));
+
+                foreach($branchesCollection as $key => $value){
+                    $bodyResponse['branch'.$key] = array(
+                        "_links" => array(
+                            "self" => array(
+                                "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/'.$value->getIdbranch()
+                            ),
+                        ),
+                        "branch_name" => $value->getBranchname()
+                    );
+                }
+                $this->save();
+                return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+
+            }else{
                 $bodyResponse = array(
                     'Error' => array(
                         'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'Resource data pre-validation error',
-                        'Details' => "idbranch cant't be null",
-                        'More_Info' => URL_API_DOCS.'/department',
+                        'Details' => "department_name ". "'".$dataArray["department_name"]."'". " already exists",
                     ),
                 );
                 return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
             }
+
         }
     }
 

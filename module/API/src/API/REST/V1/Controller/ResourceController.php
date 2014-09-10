@@ -127,6 +127,16 @@ class ResourceController extends AbstractRestfulController
             // Instanciamos nuestro formulario resourceFormPostPut
             $resourceFormPostPut = ResourceManager::getResourceFormPostPut($resourceName);
             $FormPostPut = $resourceFormPostPut::init($userLevel);
+
+            $resource = ResourceManager::getResource($resourceName);
+            $resourceArray = $resource->toArray(BasePeer::TYPE_FIELDNAME);
+            // Le ponemos los datos a por defecto de nuestro recurso a nuestro formulario
+            foreach ($resourceArray as $key => $value){
+                if(!is_null($value) && is_null($dataArray[$key])){
+                    $dataArray[$key] = $value;
+                }
+            }
+
             //Le ponemos los datos a nuestro formulario
             $FormPostPut->setData($dataArray);
 
@@ -139,9 +149,6 @@ class ResourceController extends AbstractRestfulController
             //Si los valores son validos
             if($FormPostPut->isValid()){
 
-                $resource = ResourceManager::getResource($resourceName);
-                $resourceArray = $resource->toArray(BasePeer::TYPE_FIELDNAME);
-
                 $responseArray = array();
                 foreach ($FormPostPut->getElements() as $keyElement => $valueElement){
                     $responseArray[$keyElement] = $resourceArray[$keyElement];
@@ -153,6 +160,7 @@ class ResourceController extends AbstractRestfulController
                 }
 
                 // Ingresamos al objeto del recurso directamente en la clase de Propel
+                // $data solo es alternativo, lo utiliza algunos objetos solamente, como department.
                 $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, $data);
 
                 //Modifiamos el Header de nuestra respuesta

@@ -97,6 +97,26 @@ class DepartmentFilter implements InputFilterAwareInterface
                 ),
             ));
 
+            // Department_type: DataType = ENUM, NN = true
+            $inputFilter->add(array(
+                'name' => 'Department_type',
+                'required' => false,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim')
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Zend\Validator\InArray',
+                        'options' => array(
+                            'haystack' => array('local','global'),
+                            'messages' => array(
+                                'notInArray' => 'is not a valid input. Valid inputs: local | global'
+                            ),
+                        ),
+                    ),
+                ),
+            ));
             $this->inputFilter = $inputFilter;
         }
 
