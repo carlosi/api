@@ -177,6 +177,27 @@ class ApiProblemListener implements ListenerAggregateInterface
                                 );
                             }
                         }
+                        if($request->getMethod() == "PUT"){
+
+                            $getContentType = $requestHeaders->get('Content-Type')->getMediaType();
+                            $getContentBody = $request->getContent($getContentType);
+
+                            // Validate that the Body ​​are of type json
+                            $decodeJson = json_decode($getContentBody);
+                            if($decodeJson == null){
+
+                                $response->setStatusCode(Response::STATUS_CODE_400);
+                                $responseHeaders->addHeaderLine('Message', 'Sintax Error');
+                                $statusCode = $response->getStatusCode();
+
+                                $body = array(
+                                    'HTTP Status' => $statusCode,
+                                    'Title' => 'Bad Request' ,
+                                    'Details' => 'JSON Sintax Error',
+                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                );
+                            }
+                        }
                     }
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);

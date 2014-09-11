@@ -97,6 +97,7 @@ class Department extends BaseDepartment
                                         "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/'.$value->getIdbranch()
                                     ),
                                 ),
+                                "idbranch" => $value->getIdbranch(),
                                 "branch_name" => $value->getBranchname()
                             );
                         }
@@ -188,9 +189,8 @@ class Department extends BaseDepartment
                 $this->setIdcompany($idCompany);
                 $this->save();
 
-                $idbranchArray = array();
                 $branchesCollection = $branchesByIdCompany->getArrayCopy();
-                foreach($branchesCollection as $key => $value){
+                foreach($branchesCollection as $value){
                     // Agregamos el departamento que acaba de crear en branchdepartment en todas las branches de la company.
                     $branchdepartment = new Branchdepartment();
                     $branchdepartment->setIdbranch($value->getIdbranch())
@@ -618,100 +618,384 @@ class Department extends BaseDepartment
 
     /////////// Start update ///////////
     public function updateResource($id, $data, $idCompany, $userLevel, $request, $response){
+        // Obtenemos el idbranch
+        $idbranch = isset($data['idbranch']) ? $data['idbranch'] : null;
+        // Instanciamos BranchQuery
+        $branchQuery = new BranchQuery();
+        if($idbranch != null){
+            // Si existe el idbranch dependiendo de la company a la que pertenece el usuario
+            $existsBranch = $branchQuery->filterByIdbranch($data['idbranch'])->filterByIdcompany($idCompany)->exists();
+            if($existsBranch){
+                $departmentQuery = new DepartmentQuery();
 
-        //Instanciamos nuestra branchQuery
-        $departmentQuery = DepartmentQuery::create();
+                //Verificamos que el Id department que se quiere modificar exista y que pretenece a la compañia
+                if($departmentQuery->filterByIdCompany($idCompany)->filterByIddepartment($id)->exists()){
 
-        //Verificamos que el Id department que se quiere modificar exista y que pretenece a la compañia
-        if($departmentQuery->create()->filterByIdCompany($idCompany)->filterByIddepartment($id)->exists()){
+                    //Instanciamos nuestra DepartmentQuery
+                    $departmentPKQuery = $departmentQuery->findPk($id);
+                    $departmentFormToShowUpdate = DepartmentFormToShowUpdate::init($userLevel);
 
-            //Instanciamos nuestra DepartmentQuery
-            $departmentPKQuery = $departmentQuery->findPk($id);
-            $departmentFormToShowUpdate = DepartmentFormToShowUpdate::init($userLevel);
+                    //Si se quiere modificar el department_name
+                    if((isset($data['department_name']) && $data['department_name'] != null) || $idbranch != null){
 
-            //Si se quiere modificar el department_name
-            if(isset($data['department_name']) && $data['department_name'] != null){
-                //Remplzamos los datos de la branch por lo que se van a modificar
-                foreach ($data as $key => $value){
-                    $departmentPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
-                }
-
-                $departmentArray = HttpRequest::resourceData($data, $request, $response, 'Department');
-
-                // Instanciamos nuestro formulario resourceFormPostPut
-                $departmentFormPostPut = DepartmentFormPostPut::init($userLevel);
-                //Le ponemos los datos a nuestro formulario
-                $departmentFormPostPut->setData($departmentArray);
-
-                // Instanciamos nuestro filtro resourceFilterPostPut
-                $departmentFilterPostPut = new DepartmentFilterPostPut();
-
-                //Le ponemos el filtro a nuestro formulario
-                $departmentFormPostPut->setInputFilter($departmentFilterPostPut->getInputFilter($userLevel));
-                //Si los valores son validos
-                if($departmentFormPostPut->isValid()){
-
-                    //Si hay valores por modificar
-                    if($departmentPKQuery->isModified()){
-
-                        //Verificamos que bankaccount_name no exista ya en nuestra base de datos.
-                        if($departmentQuery->filterByIdCompany($idCompany)->filterByDepartmentName($data['department_name'])->find()->count()==0){
-
-                            $departmentPKQuery->save();
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
-
-                            //Le damos formato a nuestra respuesta
-                            $bodyResponse = array(
-                                "_links" => array(
-                                    'self' => URL_API.'/'.MODULE.'/department/'.$departmentPKQuery->getIddepartment(),
-                                ),
-                            );
-
-                            foreach ($departmentPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
-                                $bodyResponse[$key] = $value;
+                        $departmentQueryArray = $departmentPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
+                        // Le ponemos los datos a por defecto de nuestro recurso a nuestro formulario
+                        if(!$idbranch){
+                            if(isset($data['department_name'])){
+                                $departmentArray = HttpRequest::resourceData($data, $request, $response, 'Department');
+                            }else{
+                                $departmentArray['department_name'] = $departmentQueryArray['department_name'];
                             }
-
-                            //Eliminamos los campos que hacen referencia a otras tablas
-                            unset($bodyResponse['idcompany']);
-
-                            //Agregamos el campo embedded a nuestro arreglo
-                            $objectCompany = $departmentPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
-
-                            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                            $companyForm = CompanyFormGET::init($userLevel);
-
-                            $companyArray = array();
-                            foreach ($companyForm->getElements() as $key=>$value){
-                                $companyArray[$key] = $objectCompany[$key];
-                            }
-                            $bodyResponse['company'] = array(
-                                '_links' => array(
-                                    'self' => array('href' => URL_API.'/company/'.$departmentPKQuery->getIdCompany()),
-                                ),
-                            );
-
-                            //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
-                            foreach ($companyArray as $key=>$value){
-                                $bodyResponse['company'][$key] = $value;
-                            }
-
-                            $bodyResponse['company'] = array(
-                                'idcompany' => $bodyResponse['company']['idcompany'],
-                                'company_name' => $bodyResponse['company']['company_name'],
-                            );
-
-                            return $bodyResponse;
-
                         }else{
+                            unset($data['idbranch']);
+                            if(isset($data['department_name'])){
+                                $departmentArray = HttpRequest::resourceData($data, $request, $response, 'Department');
+                            }else{
+                                $departmentArray['department_name'] = $departmentQueryArray['department_name'];
+                            }
+                        }
+                        $departmentArray['department_type'] = $departmentQueryArray['department_type'];
 
+                        foreach ($data as $key => $value){
+                            $departmentPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+                        }
+
+                        // Instanciamos nuestro formulario resourceFormPostPut
+                        $departmentFormPostPut = DepartmentFormPostPut::init($userLevel);
+                        //Le ponemos los datos a nuestro formulario
+                        $departmentFormPostPut->setData($departmentArray);
+
+                        // Instanciamos nuestro filtro resourceFilterPostPut
+                        $departmentFilterPostPut = new DepartmentFilterPostPut();
+
+                        //Le ponemos el filtro a nuestro formulario
+                        $departmentFormPostPut->setInputFilter($departmentFilterPostPut->getInputFilter($userLevel));
+                        //Si los valores son validos
+                        if($departmentFormPostPut->isValid()){
+                            if($idbranch){
+                                $branchdepartmentQuery = new BranchdepartmentQuery();
+                                $branchdepartmentByIdDepartment = $branchdepartmentQuery->filterByIddepartment($id)->find();
+                                $branchdepartmentCollection = $branchdepartmentByIdDepartment->getArrayCopy();
+
+                                $iddepartmentBybranchdepartmentArray = array();
+                                foreach($branchdepartmentCollection as $key => $value){
+                                    $iddepartmentBybranchdepartmentArray[$value->getIdbranchdepartment()] = $value->getIddepartment();
+                                }
+
+                                foreach($iddepartmentBybranchdepartmentArray as $key => $value){
+                                    // Agregamos el departamento que acaba de crear en branchdepartment en todas las branches de la company.
+                                    $branchdepartmentQuery->findOneByIdbranchdepartment($key)->setIdbranch($idbranch)->save();
+                                }
+                                //Modifiamos el Header de nuestra respuesta
+                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+
+                                //Le damos formato a nuestra respuesta
+                                $bodyResponse = array(
+                                    "_links" => array(
+                                        'self' => URL_API.'/'.MODULE.'/department/'.$departmentPKQuery->getIddepartment(),
+                                    ),
+                                );
+
+                                foreach ($departmentPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                                    $bodyResponse[$key] = $value;
+                                }
+
+                                //Eliminamos los campos que hacen referencia a otras tablas
+                                unset($bodyResponse['idcompany']);
+
+                                //Agregamos el campo embedded a nuestro arreglo
+                                $objectCompany = $departmentPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                                //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                                $companyForm = CompanyFormGET::init($userLevel);
+
+                                $companyArray = array();
+                                foreach ($companyForm->getElements() as $key=>$value){
+                                    $companyArray[$key] = $objectCompany[$key];
+                                }
+                                $bodyResponse['company'] = array(
+                                    '_links' => array(
+                                        'self' => array('href' => URL_API.'/company/'.$departmentPKQuery->getIdCompany()),
+                                    ),
+                                );
+
+                                //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                                foreach ($companyArray as $key=>$value){
+                                    $bodyResponse['company'][$key] = $value;
+                                }
+
+                                $bodyResponse['company'] = array(
+                                    'idcompany' => $bodyResponse['company']['idcompany'],
+                                    'company_name' => $bodyResponse['company']['company_name'],
+                                );
+                                $branchesByIdCompany = $branchQuery->filterByIdCompany($idCompany)->find();
+                                $branchesCollection = $branchesByIdCompany->getArrayCopy();
+                                foreach($branchesCollection as $key => $value){
+                                    $key = "branch";
+                                    $bodyResponse[$key] = array(
+                                        "_links" => array(
+                                            "self" => array(
+                                                "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/'.$value->getIdbranch()
+                                            ),
+                                        ),
+                                        "idbranch" => $value->getIdbranch(),
+                                        "branch_name" => $value->getBranchname()
+                                    );
+                                }
+
+                                return $bodyResponse;
+
+                            }
+                            //Si hay valores por modificar
+                            if($departmentPKQuery->isModified()){
+
+                                //Verificamos que department_name no exista ya en nuestra base de datos.
+                                if($departmentQuery->filterByIdCompany($idCompany)->filterByDepartmentName($data['department_name'])->find()->count()==0){
+
+                                    $departmentPKQuery->save();
+
+                                    //Modifiamos el Header de nuestra respuesta
+                                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+
+                                    //Le damos formato a nuestra respuesta
+                                    $bodyResponse = array(
+                                        "_links" => array(
+                                            'self' => URL_API.'/'.MODULE.'/department/'.$departmentPKQuery->getIddepartment(),
+                                        ),
+                                    );
+
+                                    foreach ($departmentPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                                        $bodyResponse[$key] = $value;
+                                    }
+
+                                    //Eliminamos los campos que hacen referencia a otras tablas
+                                    unset($bodyResponse['idcompany']);
+
+                                    //Agregamos el campo embedded a nuestro arreglo
+                                    $objectCompany = $departmentPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                                    $companyForm = CompanyFormGET::init($userLevel);
+
+                                    $companyArray = array();
+                                    foreach ($companyForm->getElements() as $key=>$value){
+                                        $companyArray[$key] = $objectCompany[$key];
+                                    }
+                                    $bodyResponse['company'] = array(
+                                        '_links' => array(
+                                            'self' => array('href' => URL_API.'/company/'.$departmentPKQuery->getIdCompany()),
+                                        ),
+                                    );
+
+                                    //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                                    foreach ($companyArray as $key=>$value){
+                                        $bodyResponse['company'][$key] = $value;
+                                    }
+
+                                    $bodyResponse['company'] = array(
+                                        'idcompany' => $bodyResponse['company']['idcompany'],
+                                        'company_name' => $bodyResponse['company']['company_name'],
+                                    );
+
+                                    return $bodyResponse;
+
+                                }else{
+
+                                    //Modifiamos el Header de nuestra respuesta
+                                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                                    $bodyResponse = array(
+                                        'Error' => array(
+                                            'HTTP_Status' => 400 . ' Bad Request',
+                                            'Title' => 'Resource data pre-validation error',
+                                            'Details' => "department_name ". "'".$departmentArray['department_name']."'". " already exists",
+                                        ),
+                                    );
+                                    return $bodyResponse;
+                                }
+                            }else{
+                                //Modifiamos el Header de nuestra respuesta
+                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                                $bodyResponse = array(
+                                    'Error' => array(
+                                        'HTTP_Status' => 400 . ' Bad Request',
+                                        'Title' => 'No changes were found',
+                                    ),
+                                );
+                                return $bodyResponse;
+                            }
+                        }else{
+                            //Modifiamos el Header de nuestra respuesta
+                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                            //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
+                            $messageArray = array();
+                            foreach ($departmentFormPostPut->getMessages() as $key => $value){
+                                foreach($value as $val){
+                                    //Obtenemos el valor de la columna con error
+                                    $message = $key.' '.$val;
+                                    array_push($messageArray, $message);
+                                }
+                            }
+                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                            $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
+                            return $bodyResponse;
+                        }
+                    //Si el formulario no fue valido
+                    }else{
+                        echo "Entro";
+                        //Modifiamos el Header de nuestra respuesta
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        $messageArray = array();
+                        foreach ($branchFormToShowUpdate->getElements() as $key => $value){
+                            //Obtenemos el nombre de la columna
+                            $message = $key;
+                            array_push($messageArray, $message);
+                        }
+                        $bodyResponse = array(
+                            'Error' => array(
+                                'HTTP_Status' => 400 . ' Bad Request',
+                                'Title' => 'No changes were found',
+                                'Columns_to_do_changes' => $messageArray,
+                            ),
+                        );
+                        return $bodyResponse;
+                    }
+                }else{
+
+                    //Modifiamos el Header de nuestra respuesta
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid idbranch',
+                        ),
+                    );
+                    return $bodyResponse;
+                }
+            }else{
+                $bodyResponse = array(
+                    'Error' => array(
+                        'HTTP_Status' => 400 . ' Bad Request',
+                        'Title' => 'Resource data pre-validation error',
+                        'Details' => "idbranch ". "'".$data["idbranch"]."'". " not exists in your branches",
+                        'More_Info' => URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch',
+                    ),
+                );
+                return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+            }
+        }else{
+            //Instanciamos nuestra branchQuery
+            $departmentQuery = new DepartmentQuery();
+
+            //Verificamos que el Id department que se quiere modificar exista y que pretenece a la compañia
+            if($departmentQuery->filterByIdCompany($idCompany)->filterByIddepartment($id)->exists()){
+
+                //Instanciamos nuestra DepartmentQuery
+                $departmentPKQuery = $departmentQuery->findPk($id);
+                $departmentFormToShowUpdate = DepartmentFormToShowUpdate::init($userLevel);
+
+                //Si se quiere modificar el department_name
+                if(isset($data['department_name']) && $data['department_name'] != null){
+
+                    foreach ($data as $key => $value){
+                        $departmentPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+                    }
+                    //Remplzamos los datos de la branch por lo que se van a modificar
+                    foreach ($data as $key => $value){
+                        $departmentPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+                    }
+
+                    $departmentArray = HttpRequest::resourceData($data, $request, $response, 'Department');
+
+                    $departmentQueryArray = $departmentPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
+                    // Le ponemos los datos a por defecto de nuestro recurso a nuestro formulario
+                    $departmentArray['department_type'] = $departmentQueryArray['department_type'];
+
+                    // Instanciamos nuestro formulario resourceFormPostPut
+                    $departmentFormPostPut = DepartmentFormPostPut::init($userLevel);
+                    //Le ponemos los datos a nuestro formulario
+                    $departmentFormPostPut->setData($departmentArray);
+
+                    // Instanciamos nuestro filtro resourceFilterPostPut
+                    $departmentFilterPostPut = new DepartmentFilterPostPut();
+
+                    //Le ponemos el filtro a nuestro formulario
+                    $departmentFormPostPut->setInputFilter($departmentFilterPostPut->getInputFilter($userLevel));
+                    //Si los valores son validos
+                    if($departmentFormPostPut->isValid()){
+
+                        //Si hay valores por modificar
+                        if($departmentPKQuery->isModified()){
+
+                            //Verificamos que department_name no exista ya en nuestra base de datos.
+                            if($departmentQuery->filterByIdCompany($idCompany)->filterByDepartmentName($data['department_name'])->find()->count()==0){
+
+                                $departmentPKQuery->save();
+                                //Modifiamos el Header de nuestra respuesta
+                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+
+                                //Le damos formato a nuestra respuesta
+                                $bodyResponse = array(
+                                    "_links" => array(
+                                        'self' => URL_API.'/'.MODULE.'/department/'.$departmentPKQuery->getIddepartment(),
+                                    ),
+                                );
+
+                                foreach ($departmentPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                                    $bodyResponse[$key] = $value;
+                                }
+
+                                //Eliminamos los campos que hacen referencia a otras tablas
+                                unset($bodyResponse['idcompany']);
+
+                                //Agregamos el campo embedded a nuestro arreglo
+                                $objectCompany = $departmentPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                                //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                                $companyForm = CompanyFormGET::init($userLevel);
+
+                                $companyArray = array();
+                                foreach ($companyForm->getElements() as $key=>$value){
+                                    $companyArray[$key] = $objectCompany[$key];
+                                }
+                                $bodyResponse['company'] = array(
+                                    '_links' => array(
+                                        'self' => array('href' => URL_API.'/company/'.$departmentPKQuery->getIdCompany()),
+                                    ),
+                                );
+
+                                //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                                foreach ($companyArray as $key=>$value){
+                                    $bodyResponse['company'][$key] = $value;
+                                }
+
+                                $bodyResponse['company'] = array(
+                                    'idcompany' => $bodyResponse['company']['idcompany'],
+                                    'company_name' => $bodyResponse['company']['company_name'],
+                                );
+
+                                return $bodyResponse;
+
+                            }else{
+
+                                //Modifiamos el Header de nuestra respuesta
+                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                                $bodyResponse = array(
+                                    'Error' => array(
+                                        'HTTP_Status' => 400 . ' Bad Request',
+                                        'Title' => 'Resource data pre-validation error',
+                                        'Details' => "department_name ". "'".$departmentArray['department_name']."'". " already exists",
+                                    ),
+                                );
+                                return $bodyResponse;
+                            }
+                        }else{
                             //Modifiamos el Header de nuestra respuesta
                             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                             $bodyResponse = array(
                                 'Error' => array(
                                     'HTTP_Status' => 400 . ' Bad Request',
-                                    'Title' => 'Resource data pre-validation error',
-                                    'Details' => "department_name ". "'".$departmentArray['department_name']."'". " already exists",
+                                    'Title' => 'No changes were found',
                                 ),
                             );
                             return $bodyResponse;
@@ -719,61 +1003,51 @@ class Department extends BaseDepartment
                     }else{
                         //Modifiamos el Header de nuestra respuesta
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'No changes were found',
-                            ),
-                        );
+                        //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
+                        $messageArray = array();
+                        foreach ($departmentFormPostPut->getMessages() as $key => $value){
+                            foreach($value as $val){
+                                //Obtenemos el valor de la columna con error
+                                $message = $key.' '.$val;
+                                array_push($messageArray, $message);
+                            }
+                        }
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                        $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
                         return $bodyResponse;
                     }
+                    //Si el formulario no fue valido
                 }else{
                     //Modifiamos el Header de nuestra respuesta
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                     $messageArray = array();
-                    foreach ($FormPostPut->getMessages() as $key => $value){
-                        foreach($value as $val){
-                            //Obtenemos el valor de la columna con error
-                            $message = $key.' '.$val;
-                            array_push($messageArray, $message);
-                        }
+                    foreach ($departmentFormToShowUpdate->getElements() as $key => $value){
+                        //Obtenemos el nombre de la columna
+                        $message = $key;
+                        array_push($messageArray, $message);
                     }
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'No changes were found',
+                            'Columns_to_do_changes' => $messageArray,
+                        ),
+                    );
                     return $bodyResponse;
                 }
-                //Si el formulario no fue valido
             }else{
+
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $messageArray = array();
-                foreach ($branchFormToShowUpdate->getElements() as $key => $value){
-                    //Obtenemos el nombre de la columna
-                    $message = $key;
-                    array_push($messageArray, $message);
-                }
                 $bodyResponse = array(
                     'Error' => array(
                         'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'No changes were found',
-                        'Columns_to_do_changes' => $messageArray,
+                        'Title' => 'The request data is invalid',
+                        'Details' => 'Invalid idbranch',
                     ),
                 );
                 return $bodyResponse;
             }
-        }else{
-
-            //Modifiamos el Header de nuestra respuesta
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 400 . ' Bad Request',
-                    'Title' => 'The request data is invalid',
-                    'Details' => 'Invalid idbranch',
-                ),
-            );
-            return $bodyResponse;
         }
     }
     /////////// End update ///////////

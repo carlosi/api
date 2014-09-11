@@ -30,27 +30,34 @@ class DepartmentFormToShowUpdate{
         switch ($userLevel){
 
             case 5: {
-
+                $DepartmentForm->remove('iddepartment');
+                $DepartmentForm->remove('idcompany');
 
                 break;
             }
 
             case 4: {
-
+                $DepartmentForm->remove('iddepartment');
+                $DepartmentForm->remove('idcompany');
 
                 break;
             }
 
             case 3: {
-
+                $DepartmentForm->remove('iddepartment');
+                $DepartmentForm->remove('idcompany');
                 break;
             }
 
             case 2: {
+                $DepartmentForm->remove('iddepartment');
+                $DepartmentForm->remove('idcompany');
                 break;
             }
 
             case 1: {
+                $DepartmentForm->remove('iddepartment');
+                $DepartmentForm->remove('idcompany');
                 break;
             }
         }
