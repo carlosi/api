@@ -909,7 +909,9 @@ class Department extends BaseDepartment
 
                     $departmentQueryArray = $departmentPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
                     // Le ponemos los datos a por defecto de nuestro recurso a nuestro formulario
-                    $departmentArray['department_type'] = $departmentQueryArray['department_type'];
+                    if(!isset($data['department_name']) || $data['department_name'] == null){
+                        $departmentArray['department_type'] = $departmentQueryArray['department_type'];
+                    }
 
                     // Instanciamos nuestro formulario resourceFormPostPut
                     $departmentFormPostPut = DepartmentFormPostPut::init($userLevel);
@@ -923,7 +925,6 @@ class Department extends BaseDepartment
                     $departmentFormPostPut->setInputFilter($departmentFilterPostPut->getInputFilter($userLevel));
                     //Si los valores son validos
                     if($departmentFormPostPut->isValid()){
-
                         //Si hay valores por modificar
                         if($departmentPKQuery->isModified()){
 
@@ -931,6 +932,11 @@ class Department extends BaseDepartment
                             if($departmentQuery->filterByIdCompany($idCompany)->filterByDepartmentName($data['department_name'])->find()->count()==0){
 
                                 $departmentPKQuery->save();
+                                if($data['department_type'] == 'global'){
+                                    // Hacer Query a branchdepartment y validar si el id department
+                                    // ya se encuentra disponible para todas sus idbranch
+                                    // sino, entonces crearlas
+                                }
                                 //Modifiamos el Header de nuestra respuesta
                                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
 
@@ -973,7 +979,24 @@ class Department extends BaseDepartment
                                     'idcompany' => $bodyResponse['company']['idcompany'],
                                     'company_name' => $bodyResponse['company']['company_name'],
                                 );
-
+                                $branchQuery = new BranchQuery();
+                                $branchesByIdCompany = $branchQuery->filterByIdCompany($idCompany)->find();
+                                $branchesCollection = $branchesByIdCompany->getArrayCopy();
+                                if($data['department_type'] == 'global'){
+                                    // Hacer Query a branchdepartment y validar si el id department
+                                    // ya se encuentra disponible para todas sus idbranch
+                                    // sino, entonces crearlas y dar una respuesta al usuario
+                                    foreach($branchesCollection as $key => $value){
+                                        $bodyResponse['branch'.$key] = array(
+                                            "_links" => array(
+                                                "self" => array(
+                                                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/'.$value->getIdbranch()
+                                                ),
+                                            ),
+                                            "branch_name" => $value->getBranchname()
+                                        );
+                                    }
+                                }
                                 return $bodyResponse;
 
                             }else{
