@@ -91,6 +91,12 @@ class ResourceController extends AbstractRestfulController
      */
     public function create($data) {
 
+        if(ID_RESOURCE_CHILD != null){
+
+            return $this->createResourceRelationalAction($data);
+
+        }
+
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
 
@@ -123,20 +129,80 @@ class ResourceController extends AbstractRestfulController
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
 
-            $dataArray = HttpRequest::resourceData($data, $request, $response, $resourceName);
             // Instanciamos nuestro formulario resourceFormPostPut
             $resourceFormPostPut = ResourceManager::getResourceFormPostPut($resourceName);
             $FormPostPut = $resourceFormPostPut::init($userLevel);
 
             $resource = ResourceManager::getResource($resourceName);
-            $resourceArray = $resource->toArray(BasePeer::TYPE_FIELDNAME);
-            // Le ponemos los datos a por defecto de nuestro recurso a nuestro formulario
-            foreach ($resourceArray as $key => $value){
-                if(!is_null($value) && is_null($dataArray[$key])){
-                    $dataArray[$key] = $value;
+
+            // La funcion resourceData retorna un array de los datos que son enviados por el body
+            $dataArray = HttpRequest::resourceData($data, $request, $response, $resourceName);
+
+            // Si $dataArray nos retorna un error
+            if(isset($dataArray['Error'])){
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $writer = new \Zend\Config\Writer\Xml();
+                        return $response->setContent($writer->toString($dataArray));
+                        break;
+                    }
+                    case "json":{
+                        return new JsonModel($dataArray);
+                        break;
+                    }
+                    default: {
+                    return new JsonModel($dataArray);
+                    break;
+                    }
                 }
             }
 
+            if(RESOURCE_CHILD!=null){
+                $isIdValid = $resource->isIdValidResource(ID_RESOURCE,$idCompany);
+                if($isIdValid){
+                    // En caso de enviar el id de un recurso por la url y este id es requerido,
+                    // lo insertamos en nuestro $data para complementar las columnas de los resourceChild
+                    // Ejemplo: clientaddress, requiere idclient, y para no mandarlo por body de nuevo,
+                    // cachamos el id de la url y lo agregamos a nuestro $dataArray.
+                    $idResourceName = "id".RESOURCE;
+                    $dataArray[$idResourceName] = (int)ID_RESOURCE;
+                }else{
+                    //Modifiamos el Header de nuestra respuesta
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid id'.RESOURCE.': '.ID_RESOURCE,
+                        ),
+                    );
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                        }
+                    }
+                }
+            }
+
+            $resourceArray = $resource->toArray(BasePeer::TYPE_FIELDNAME);
+            if(isset($data)){
+                // Le ponemos los datos a por defecto de nuestro recurso a nuestro formulario
+                foreach ($resourceArray as $key => $value){
+                    if(!is_null($value) && is_null($dataArray[$key])){
+                        $dataArray[$key] = $value;
+                    }
+                }
+            }
             //Le ponemos los datos a nuestro formulario
             $FormPostPut->setData($dataArray);
 
@@ -146,6 +212,7 @@ class ResourceController extends AbstractRestfulController
             //Le ponemos el filtro a nuestro formulario
             $FilterPostPut = $resourceFilterPostPut;
             $FormPostPut->setInputFilter($FilterPostPut->getInputFilter($userLevel));
+
             //Si los valores son validos
             if($FormPostPut->isValid()){
 
@@ -272,7 +339,7 @@ class ResourceController extends AbstractRestfulController
 
                 if(RESOURCE_CHILD !=null && ID_RESOURCE_CHILD !=null){
                     //Obtenemos nuestra entidad child
-                    $isIdChildValid = $resource->isIdChildValid($id,ID_RESOURCE_CHILD);
+                    $isIdChildValid = $resource->isIdValidResurceChild($id,ID_RESOURCE_CHILD);
                     if($isIdChildValid){
                         $entity = $resource->getEntity(ID_RESOURCE_CHILD);
                     }else{
@@ -306,7 +373,6 @@ class ResourceController extends AbstractRestfulController
                     //Obtenemos nuestra entidad padre
                     $entity = $resource->getEntity($id);
                 }
-
                 //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
                 $bodyResponse = $resource->getEntityResponse($entity,$userLevel);
                 switch(TYPE_RESPONSE){
@@ -381,6 +447,7 @@ class ResourceController extends AbstractRestfulController
      * @return mixed|JsonModel
      */
     public function getList() {
+
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
 
@@ -469,11 +536,8 @@ class ResourceController extends AbstractRestfulController
             $filters = $this->params()->fromQuery('filter') ? $this->params()->fromQuery('filter') : null;
             if($filters != null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
 
-            if(RESOURCE_CHILD!=null){
-                $getCollection = $resource->getCollection(ID_RESOURCE,$idCompany, $page, $limit, $filters, $order,$dir);
-            }else{
-                $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
-            }
+            $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
+
 
             if(!empty($getCollection['data'])){
                 // Si el recurso que solicitan es Company
@@ -596,6 +660,11 @@ class ResourceController extends AbstractRestfulController
      */
     public function update($id, $data) {
 
+        if(ID_RESOURCE_CHILD != null){
+
+            return $this->updateResourceRelationalAction($data);
+
+        }
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
 
@@ -669,6 +738,12 @@ class ResourceController extends AbstractRestfulController
      * @return mixed|JsonModel
      */
     public function delete($id) {
+
+        if(ID_RESOURCE_CHILD != null){
+
+            return $this->deleteResourceRelationalAction($id);
+
+        }
 
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
@@ -779,7 +854,7 @@ class ResourceController extends AbstractRestfulController
         return $this->getList();
     }
 
-    /////////// Start create Resource Relational ///////////
+    /////////// Start create Resource Relational or Resource Allocation  ///////////
     /**
      * @return mixed|JsonModel
      */
@@ -817,10 +892,6 @@ class ResourceController extends AbstractRestfulController
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
 
-            // Obtenemos el id de nuestro recursoChild
-            $idChild = $this->getEvent()->getRouteMatch()->getParam('idChild');
-            // Obtenemos el id de nuestro recurso
-            $idResource = $this->getEvent()->getRouteMatch()->getParam('id');
             // Obtenemos el nombre de nuestro recurso
             $resourcename = RESOURCE;
             // Obtenemos el nombre de nuestro recursoChild
@@ -828,13 +899,13 @@ class ResourceController extends AbstractRestfulController
 
             $resource = ResourceManager::getResource($resourceName);
 
-            if($resource->isIdValidResource($idResource,$idCompany)){
-                if($resource->isIdValidResurceChild($idChild)){
+            if($resource->isIdValidResource(ID_RESOURCE,$idCompany)){
+                if($resource->isIdValidResurceChild(ID_RESOURCE_CHILD)){
 
                     // Creamos un array para almacenar los ids que nos mandan desde la URL
                     $data = array();
-                    $data['id'.$resourcename] = $idResource;
-                    $data['id'.$resourcenameChild] = $idChild;
+                    $data['id'.$resourcename] = ID_RESOURCE;
+                    $data['id'.$resourcenameChild] = ID_RESOURCE_CHILD;
 
                     // Instanciamos el Formulario "resourceForm"
                     $resourceForm = ResourceManager::getResourceForm($resourceName);
@@ -1007,14 +1078,13 @@ class ResourceController extends AbstractRestfulController
             }
         }
     }
-    /////////// End create Resource Relational ///////////
+    /////////// End create Resource Relational or Resource Allocation  ///////////
 
-    /////////// End update Resource Relational ///////////
+    /////////// End update Resource Relational or Resource Allocation  ///////////
     /**
-     * @param mixed $data
      * @return mixed|JsonModel
      */
-    public function updateResourceRelationalAction() {
+    public function updateResourceRelationalAction($data) {
 
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
@@ -1048,10 +1118,6 @@ class ResourceController extends AbstractRestfulController
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
 
-            // Obtenemos el id de nuestro recursoChild
-            $idChild = $this->getEvent()->getRouteMatch()->getParam('idChild');
-            // Obtenemos el id de nuestro recurso
-            $idResource = $this->getEvent()->getRouteMatch()->getParam('id');
             // Obtenemos el nombre de nuestro recurso
             $resourcename = RESOURCE;
             // Obtenemos el nombre de nuestro recursoChild
@@ -1059,13 +1125,12 @@ class ResourceController extends AbstractRestfulController
 
             $resource = ResourceManager::getResource($resourceName);
 
-            if($resource->isIdValidResource($idResource,$idCompany)){
-                if($resource->isIdValidResurceChild($idChild)){
+            if($resource->isIdValidResource(ID_RESOURCE,$idCompany)){
+                if($resource->isIdValidResurceChild(ID_RESOURCE,ID_RESOURCE_CHILD)){
 
                     // Creamos un array para almacenar los ids que nos mandan desde la URL
-                    $data = array();
-                    $data['id'.$resourcename] = $idResource;
-                    $data['id'.$resourcenameChild] = $idChild;
+                    $data['id'.RESOURCE] = ID_RESOURCE;
+                    $data['id'.strtolower(NAME_RESOURCE_CHILD)] = ID_RESOURCE_CHILD;
 
                     $functionUpdate = $resource->updateResource($data, $idCompany, $userLevel, $request, $response);
 
@@ -1093,7 +1158,7 @@ class ResourceController extends AbstractRestfulController
                         'Error' => array(
                             'HTTP_Status' => 400 . ' Bad Request',
                             'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid id '.RESOURCE_CHILD,
+                            'Details' => 'Invalid id'.strtolower(NAME_RESOURCE_CHILD),
                         ),
                     );
                     switch(TYPE_RESPONSE){
@@ -1120,7 +1185,7 @@ class ResourceController extends AbstractRestfulController
                     'Error' => array(
                         'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id '.RESOURCE,
+                        'Details' => 'Invalid id'.RESOURCE,
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1161,14 +1226,13 @@ class ResourceController extends AbstractRestfulController
             }
         }
     }
-    /////////// Start update Resource Relational ///////////
+    /////////// Start update Resource Relational or Resource Allocation  ///////////
 
-    /////////// Start delete Resource Relational ///////////
+    /////////// Start delete Resource Relational or Resource Unallocation  ///////////
     /**
-     * @param mixed $id
      * @return mixed|JsonModel
      */
-    public function deleteResourceRelationalAction() {
+    public function deleteResourceRelationalAction($id) {
 
         //Obtenemos el token por medio de nuestra funcion getToken. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
         $token = $this->getToken();
@@ -1202,10 +1266,6 @@ class ResourceController extends AbstractRestfulController
         //verificamos si el usuario tiene permisos de cualquier tipo. NOTA: nivel 0 significa que no tiene permisos de nada sobre recurso
         if($userLevel!=0){
 
-            // Obtenemos el id de nuestro recursoChild
-            $idChild = $this->getEvent()->getRouteMatch()->getParam('idChild');
-            // Obtenemos el id de nuestro recurso
-            $idResource = $this->getEvent()->getRouteMatch()->getParam('id');
             // Obtenemos el nombre de nuestro recurso
             $resourcename = RESOURCE;
             // Obtenemos el nombre de nuestro recursoChild
@@ -1221,17 +1281,19 @@ class ResourceController extends AbstractRestfulController
             $idResourceRelationalName = 'id'.$resourcenameRelational;
             // Creamos un array para almacenar los ids que nos mandan desde la URL
             $data = array();
-            $data[$idResourceName] = $idResource;
-            $data[$idResourceChildName] = $idChild;
+            $data[$idResourceName] = ID_RESOURCE;
+            $data[$idResourceChildName] = ID_RESOURCE_CHILD;
 
-            //Instanciamos nuestra BranchdepartmentQuery
+            //Instanciamos nuestra ResourceChildQuery
             $resourceQueryRelational = ResourceManager::getResourceQuery($resourceNameRelational);
+
             $filterByIdResource = "filterById".RESOURCE;
-            $filterByIdResourceChild = "filterById".RESOURCE_CHILD;
+            $filterByIdResourceChild = "filterById".LOWER_NAME_RESOURCE_CHILD;
+
             $resourceRelationalData = $resourceQueryRelational->$filterByIdResource($data[$idResourceName])->$filterByIdResourceChild($data[$idResourceChildName])->find();
             $resourceRelationalArray = $resourceRelationalData->getArrayCopy($idResourceRelationalName);
 
-            // Obtenemos el idbranchdepartment que se desea modificar
+            // Obtenemos el idresourcechild que se desea modificar
             $idresourceRelational = (key($resourceRelationalArray));
 
             if(!isset($idresourceRelational)){
@@ -1241,7 +1303,7 @@ class ResourceController extends AbstractRestfulController
                     'Error' => array(
                         'HTTP_Status' => 400 . ' Bad Request',
                         'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id',
+                        'Details' => 'Invalid id'.LOWER_NAME_RESOURCE_CHILD,
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1260,11 +1322,11 @@ class ResourceController extends AbstractRestfulController
                     }
                 }
             }
-            //Instanciamos nuestra Branchdepartment
+            //Instanciamos nuestra ResourceChild
             $resourceRelational = ResourceManager::getResource($resourceNameRelational);
 
             //Verificamos si el id que se quiere eliminar pertenece a la compañia
-            if($resourceRelational->isIdValidResource($idResource,$idCompany)){
+            if($resourceRelational->isIdValidResource(ID_RESOURCE,$idCompany)){
                 if($resourceRelational->deleteEntity($idresourceRelational,$userLevel)){
                     //Modifiamos el Header de nuestra respuesta
                     $response = $this->getResponse();
@@ -1346,5 +1408,5 @@ class ResourceController extends AbstractRestfulController
         }
 
     }
-    /////////// End delete Resource Relational ///////////
+    /////////// End delete Resource Relational or Resource Unallocation  ///////////
 }

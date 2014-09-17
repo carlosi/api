@@ -575,7 +575,7 @@ class Branch extends BaseBranch
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                     $messageArray = array();
-                    foreach ($FormPostPut->getMessages() as $key => $value){
+                    foreach ($branchFormPostPut->getMessages() as $key => $value){
                         foreach($value as $val){
                             //Obtenemos el valor de la columna con error
                             $message = $key.' '.$val;

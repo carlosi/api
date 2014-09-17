@@ -97,9 +97,9 @@ class DepartmentFilter implements InputFilterAwareInterface
                 ),
             ));
 
-            // Department_type: DataType = ENUM, NN = true
+            // department_type: DataType = ENUM, NN = true
             $inputFilter->add(array(
-                'name' => 'Department_type',
+                'name' => 'department_type',
                 'required' => false,
                 'filters' => array(
                     array('name' => 'StripTags'),

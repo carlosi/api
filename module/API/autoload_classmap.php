@@ -33,6 +33,7 @@ $className = array(
   'API\REST\V1\ACL\Company\Clientaddress\Form\ClientaddressForm'                                   => __DIR__ . '/src/API/REST/V1/ACL/Company/Clientaddress/Form/ClientaddressForm.php',
   'API\REST\V1\ACL\Company\Clientaddress\Form\ClientaddressFormGET'                                => __DIR__ . '/src/API/REST/V1/ACL/Company/Clientaddress/Form/ClientaddressFormGET.php',
   'API\REST\V1\ACL\Company\Clientaddress\Form\ClientaddressFormPostPut'                            => __DIR__ . '/src/API/REST/V1/ACL/Company/Clientaddress/Form/ClientaddressFormPostPut.php',
+  'API\REST\V1\ACL\Company\Clientaddress\Form\ClientaddressFormToShowUpdate'                       => __DIR__ . '/src/API/REST/V1/ACL/Company/Clientaddress/Form/ClientaddressFormToShowUpdate.php',
   'API\REST\V1\ACL\Company\Clientcomment\Filter\ClientcommentFilter'                               => __DIR__ . '/src/API/REST/V1/ACL/Company/Clientcomment/Filter/ClientcommentFilter.php',
   'API\REST\V1\ACL\Company\Clientcomment\Filter\ClientcommentFilterPostPut'                        => __DIR__ . '/src/API/REST/V1/ACL/Company/Clientcomment/Filter/ClientcommentFilterPostPut.php',
   'API\REST\V1\ACL\Company\Clientcomment\Form\ClientcommentForm'                                   => __DIR__ . '/src/API/REST/V1/ACL/Company/Clientcomment/Form/ClientcommentForm.php',

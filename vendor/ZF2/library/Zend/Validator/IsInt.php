@@ -28,8 +28,7 @@ class IsInt extends AbstractValidator
 
     public function isValid($value)
     {
-
-        if(intval($value) > 1){
+        if(is_int($value)){
             return true;
         }else{
             $this->error(self::NOT_INT);

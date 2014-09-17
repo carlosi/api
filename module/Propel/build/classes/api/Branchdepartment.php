@@ -280,7 +280,7 @@ class Branchdepartment extends BaseBranchdepartment
      * @param $dir
      * @return array
      */
-    public function getCollection($idResource,$idCompany, $page, $limit, $filters, $order, $dir){
+    public function getCollection($idCompany, $page, $limit, $filters, $order, $dir){
         $branchdepartmentQuery = new BranchdepartmentQuery();
 
         //Los Filtros
@@ -337,7 +337,7 @@ class Branchdepartment extends BaseBranchdepartment
         }
 
         // Obtenemos el filtrado por medio del idcompany del recurso.
-        $result =  $branchdepartmentQuery->useBranchQuery()->filterByIdcompany($idCompany)->filterByIdbranch($idResource)->endUse()->paginate($page,$limit);
+        $result =  $branchdepartmentQuery->useBranchQuery()->filterByIdcompany($idCompany)->filterByIdbranch(ID_RESOURCE)->endUse()->paginate($page,$limit);
 
         $links = array(
             'self' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'/department?page='.$result->getPage()),

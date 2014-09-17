@@ -53,12 +53,12 @@ class HttpRequest
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
                         'Error' => array(
-                            'HTTP Status' => 400 . ' Bad Request',
+                            'HTTP_Status' => 400 . ' Bad Request',
                             'Title' => 'The body is empty',
                             'Details' => "The body can`t be empty'",
                         ),
                     );
-                    return new JsonModel($bodyResponse);
+                    return $bodyResponse;
                 }
                 break;
             }
@@ -79,12 +79,12 @@ class HttpRequest
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
                         'Error' => array(
-                            'HTTP Status' => 400 . ' Bad Request',
+                            'HTTP_Status' => 400 . ' Bad Request',
                             'Title' => 'The body is empty',
                             'Details' => "The body can`t be empty'",
                         ),
                     );
-                    return new JsonModel($bodyResponse);
+                    return $bodyResponse;
                 }
                 break;
             }

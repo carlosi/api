@@ -66,13 +66,213 @@ class ResourceListener implements ListenerAggregateInterface {
 
         $response = $e->getResponse();
         $request  = $e->getRequest();
+        $typeResponse = $e->getRouteMatch()->getParam('typeResponse');
         define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
         define('RESOURCE_CHILD', $e->getRouteMatch()->getParam('resourceChild'));
-        $typeResponse = $e->getRouteMatch()->getParam('typeResponse');
-        $idChild = $e->getRouteMatch()->getParam('idChild');
+        define('ID_RESOURCE', $e->getRouteMatch()->getParam('id'));
+        define('ID_RESOURCE_CHILD', $e->getRouteMatch()->getParam('idChild'));
 
         $method = $request->getMethod();
         switch($method){
+
+            case 'POST':{
+
+                $routeName = $e->getRouteMatch()->getMatchedRouteName();
+                if($routeName == "login"){
+                    // Entra directo al LoginController (API\REST\V1\Login\Controller\LoginController)
+                    break;
+                }
+                if($routeName == "documentation"){
+                    $response->setStatusCode(Response::STATUS_CODE_405);
+                    $statusCode = $response->getStatusCode();
+
+                    $body = array(
+                        'HTTP_Status' => $statusCode,
+                        'Title' => 'Method not allowed',
+                        'Details' => 'To access the documentation you need to use the GET method',
+                        'More_Info' => URL_API_DOCS
+                    );
+                    $jsonModel = new JsonModel($body);
+                    $jsonModel->setTerminal(true);
+                    $e->setResult($jsonModel);
+                    $e->setViewModel($jsonModel)->stopPropagation();
+                    break;
+                }
+
+                if(RESOURCE != null){
+                    $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
+
+                    switch($requestContentType){
+                        case "application/x-www-form-urlencoded" :{
+
+                            break;
+                        }
+                        case 'application/json':{
+
+                            break;
+                        }
+                        default :{
+
+                            $response = new Response();
+                            $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
+                            $body = array(
+                                'HTTP_Status' => '400' ,
+                                'Title' => 'Bad Request' ,
+                                'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
+                                'More_Info' => URL_API_DOCS
+                            );
+
+                            switch($typeResponse){
+                                case "xml":{
+                                    // Create the config object
+                                    $writer = new \Zend\Config\Writer\Xml();
+                                    return $response->setContent($writer->toString($body));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if(RESOURCE_CHILD != null){
+                        $resourcenameChild = RESOURCE_CHILD;
+                        // La inicial de nuestro string la hacemos mayuscula
+                        $resourceName = ucfirst(RESOURCE);
+                        $resourceNameChild = ucfirst($resourcenameChild);
+                        // Verificamos que exista el recurso
+                        $moduleResource = ResourceManager::getModule($resourceName);
+                        $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+
+                        // Si sí existe el recurso
+                        if($moduleResourceChild){
+                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                            $resourceNameChild = ucfirst($resourcenameChild);
+
+                            // Si el resource y el resourceChild pertenecen al mismo módulo
+                            if($moduleResource == $moduleResourceChild){
+                                $resourcenameChild = RESOURCE_CHILD;
+                                $resourceNameChild = ucfirst($resourcenameChild);
+                                switch($resourcenameChild){
+                                    case "department" :{
+                                        if(ID_RESOURCE_CHILD != null){
+
+                                            return;
+
+                                        }else{
+
+                                            $response = $e->getResponse();
+                                            $response->setStatusCode(Response::STATUS_CODE_400);
+
+                                            $body = array(
+                                                'Error' => array(
+                                                    'HTTP_Status' => 400 . ' Bad Request',
+                                                    'Title' => 'Bad Request',
+                                                    'Details' => 'The id department is required',
+                                                ),
+                                            );
+
+                                            switch($typeResponse){
+                                                case "xml":{
+                                                    // Create the config object
+                                                    $writer = new \Zend\Config\Writer\Xml();
+                                                    return $response->setContent($writer->toString($body));
+                                                    $e->stopPropagation();
+                                                    break;
+                                                }
+                                                case "json":{
+                                                    $jsonModel = new JsonModel($body);
+                                                    $jsonModel->setTerminal(true);
+                                                    $e->setResult($jsonModel);
+                                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                                    break;
+                                                }
+                                                default: {
+                                                $jsonModel = new JsonModel($body);
+                                                $jsonModel->setTerminal(true);
+                                                $e->setResult($jsonModel);
+                                                $e->setViewModel($jsonModel)->stopPropagation();
+                                                break;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                                define('MODULE_RESOURCE', $moduleResource);
+                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                            }else{
+
+                                // Entrará en casos como clienttax ya que este recurso pertenece a SATMexico
+
+                                $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                                $resourceNameChild = ucfirst($resourcenameChild);
+                                define('MODULE_RESOURCE', $moduleResource);
+                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                            }
+                        }else{
+                            // Entró porque haremos una concatenación del resource con el resourceChild
+                            // Ejemplo: clientaddress, clientfile, etc
+                            // La inicial de nuestro string la hacemos mayuscula
+                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                            $resourceNameChild = ucfirst($resourcenameChild);
+
+                            // Verificamos que exista el recurso
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+                            // Si sí existe el recurso
+                            if($moduleResourceChild){
+
+                                define('MODULE_RESOURCE', $moduleResource);
+                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+
+                            }else{
+                                $response->setStatusCode(Response::STATUS_CODE_404);
+                                $statusCode = $response->getStatusCode();
+
+                                $body = array(
+                                    'HTTP_Status' => $statusCode,
+                                    'Title' => 'Not Found' ,
+                                    'Details' => 'Resource not found',
+                                    'More_Info' => URL_API_DOCS
+                                );
+                                $jsonModel = new JsonModel($body);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                            }
+                        }
+
+                        break;
+                    }else{
+                        $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                        $resourceNameChild = ucfirst($resourcenameChild);
+                        define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                        define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                    }
+                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
+                }
+
+                break;
+            }
             case 'GET':{
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
@@ -99,27 +299,29 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
 
                 if(RESOURCE != null){
-                    $id = $e->getRouteMatch()->getParam('id');
                     if(RESOURCE_CHILD != null){
                         // La inicial de nuestro string la hacemos mayuscula
                         $resourcenameChild = RESOURCE_CHILD;
                         $resourceNameChild = ucfirst($resourcenameChild);
                         // Verificamos que exista el recurso
-                        $hasResourceChild = ResourceManager::getModule($resourceNameChild);
+                        $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+
                         // Si sí existe el recurso
-                        if($hasResourceChild){
-                            if($id != null){
+                        if($moduleResourceChild){
+
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+
+                            if(ID_RESOURCE != null){
 
                                 $resourcenameChild = RESOURCE.RESOURCE_CHILD;
                                 $resourceNameChild = ucfirst($resourcenameChild);
 
                                 define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
                                 define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                define('MODULE_RESOURCE_CHILD', $hasResourceChild);
-                                define('ID_RESOURCE', $id);
-                                define('ID_RESOURCE_CHILD', $e->getRouteMatch()->getParam('idChild'));
+                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
 
-                                if(ID_RESOURCE_CHILD!=null){
+                                if(ID_RESOURCE_CHILD == null){
                                     $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
                                     $e->getRouteMatch()->setParam('function', 'getList');
                                 }else{
@@ -148,16 +350,14 @@ class ResourceListener implements ListenerAggregateInterface {
                             $resourceNameChild = ucfirst($resourcenameChild);
 
                             // Verificamos que exista el recurso
-                            $hasResourceChild = ResourceManager::getModule($resourceNameChild);
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
                             // Si sí existe el recurso
-                            if($hasResourceChild){
-                                if($id != null){
+                            if($moduleResourceChild){
+                                if(ID_RESOURCE != null){
 
                                     define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
                                     define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                    define('MODULE_RESOURCE_CHILD', $hasResourceChild);
-                                    define('ID_RESOURCE', $id);
-                                    define('ID_RESOURCE_CHILD', $e->getRouteMatch()->getParam('idChild'));
+                                    define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
 
                                     if(ID_RESOURCE_CHILD!=null){
                                         $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
@@ -219,217 +419,6 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
                 break;
             }
-            case 'POST':{
-
-                $routeName = $e->getRouteMatch()->getMatchedRouteName();
-                if($routeName == "login"){
-                    // Entra directo al LoginController (API\REST\V1\Login\Controller\LoginController)
-                    break;
-                }
-                if($routeName == "documentation"){
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
-
-                    $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'To access the documentation you need to use the GET method',
-                        'More_Info' => URL_API_DOCS
-                    );
-                    $jsonModel = new JsonModel($body);
-                    $jsonModel->setTerminal(true);
-                    $e->setResult($jsonModel);
-                    $e->setViewModel($jsonModel)->stopPropagation();
-                    break;
-                }
-
-                if(RESOURCE != null){
-                    if(RESOURCE_CHILD != null){
-                        $resourcenameChild = RESOURCE_CHILD;
-                        // La inicial de nuestro string la hacemos mayuscula
-                        $resourceNameChild = ucfirst($resourcenameChild);
-                        // Verificamos que exista el recurso
-                        $hasResourceChild = ResourceManager::getModule($resourceNameChild);
-                        // Si sí existe el recurso
-                        if($hasResourceChild){
-                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-                            $resourceNameChild = ucfirst($resourcenameChild);
-
-                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                            define('MODULE_RESOURCE_CHILD', $hasResourceChild);
-
-                        }else{
-                            // La inicial de nuestro string la hacemos mayuscula
-                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-                            $resourceNameChild = ucfirst($resourcenameChild);
-
-                            // Verificamos que exista el recurso
-                            $hasResourceChild = ResourceManager::getModule($resourceNameChild);
-                            // Si sí existe el recurso
-                            if($hasResourceChild){
-
-                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                define('MODULE_RESOURCE_CHILD', $hasResourceChild);
-
-                            }else{
-                                $response->setStatusCode(Response::STATUS_CODE_404);
-                                $statusCode = $response->getStatusCode();
-
-                                $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Not Found' ,
-                                    'Details' => 'Resource not found',
-                                    'More_Info' => URL_API_DOCS
-                                );
-                                $jsonModel = new JsonModel($body);
-                                $jsonModel->setTerminal(true);
-                                $e->setResult($jsonModel);
-                                $e->setViewModel($jsonModel)->stopPropagation();
-                            }
-                        }
-                        switch(RESOURCE_CHILD){
-                            case "department" :{
-                                if($idChild != null){
-
-                                    $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                    $e->getRouteMatch()->setParam('action', 'createResourceRelational');
-
-                                }else{
-
-                                    $response = $e->getResponse();
-                                    $response->setStatusCode(Response::STATUS_CODE_400);
-
-                                    $body = array(
-                                        'Error' => array(
-                                            'HTTP_Status' => 400 . ' Bad Request',
-                                            'Title' => 'Bad Request',
-                                            'Details' => 'The id department is required',
-                                        ),
-                                    );
-
-                                    switch($typeResponse){
-                                        case "xml":{
-                                            // Create the config object
-                                            $writer = new \Zend\Config\Writer\Xml();
-                                            return $response->setContent($writer->toString($body));
-                                            $e->stopPropagation();
-                                            break;
-                                        }
-                                        case "json":{
-                                            $jsonModel = new JsonModel($body);
-                                            $jsonModel->setTerminal(true);
-                                            $e->setResult($jsonModel);
-                                            $e->setViewModel($jsonModel)->stopPropagation();
-                                            break;
-                                        }
-                                        default: {
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                        }
-                                    }
-                                }
-                                define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE_CHILD)));
-                                break;
-                            }
-                            default :{
-
-                                $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
-                                $body = array(
-                                    'HTTP_Status' => '400' ,
-                                    'Title' => 'Bad Request' ,
-                                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                    'More_Info' => URL_API_DOCS
-                                );
-
-                                switch($typeResponse){
-                                    case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
-                                        $e->stopPropagation();
-                                        break;
-                                    }
-                                    case "json":{
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                    }
-                                    default: {
-                                    $jsonModel = new JsonModel($body);
-                                    $jsonModel->setTerminal(true);
-                                    $e->setResult($jsonModel);
-                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                    break;
-                                    }
-                                }
-                            }
-                        }
-                        $moduleResource = MODULE_RESOURCE;
-                        if(!isset($moduleResource)){
-                            define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
-                        }
-
-                        break;
-                    }else{
-                        $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
-
-                        switch($requestContentType){
-                            case "application/x-www-form-urlencoded" :{
-
-                                break;
-                            }
-                            case 'application/json':{
-
-                                break;
-                            }
-                            default :{
-
-                                $response = new Response();
-                                $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
-                                $body = array(
-                                    'HTTP_Status' => '400' ,
-                                    'Title' => 'Bad Request' ,
-                                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                    'More_Info' => URL_API_DOCS
-                                );
-
-                                switch($typeResponse){
-                                    case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
-                                        $e->stopPropagation();
-                                        break;
-                                    }
-                                    case "json":{
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                    }
-                                    default: {
-                                    $jsonModel = new JsonModel($body);
-                                    $jsonModel->setTerminal(true);
-                                    $e->setResult($jsonModel);
-                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                    break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
-                }
-                break;
-            }
             case 'PUT':{
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
@@ -468,136 +457,138 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
 
                 if(RESOURCE != null){
-                    if(RESOURCE_CHILD != null){
-                        // La inicial de nuestro string la hacemos mayuscula
-                        $resourcenameChild = RESOURCE_CHILD;
-                        $resourceNameChild = ucfirst($resourcenameChild);
-                        // Verificamos que exista el recurso
-                        $hasResourceChild = ResourceManager::getModule($resourceNameChild);
-                        // Si sí existe el recurso
-                        if($hasResourceChild){
-                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-                            $resourceNameChild = ucfirst($resourcenameChild);
+                    $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
 
-                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                            define('MODULE_RESOURCE_CHILD', $hasResourceChild);
+                    switch($requestContentType){
+                        case "application/x-www-form-urlencoded" :{
 
-                        }else{
-                            // La inicial de nuestro string la hacemos mayuscula
-                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-                            $resourceNameChild = ucfirst($resourcenameChild);
-
-                            // Verificamos que exista el recurso
-                            $hasResourceChild = ResourceManager::getModule($resourceNameChild);
-                            // Si sí existe el recurso
-                            if($hasResourceChild){
-
-                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                define('MODULE_RESOURCE_CHILD', $hasResourceChild);
-
-                            }else{
-                                $response->setStatusCode(Response::STATUS_CODE_404);
-                                $statusCode = $response->getStatusCode();
-
-                                $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Not Found' ,
-                                    'Details' => 'Resource not found',
-                                    'More_Info' => URL_API_DOCS
-                                );
-                                $jsonModel = new JsonModel($body);
-                                $jsonModel->setTerminal(true);
-                                $e->setResult($jsonModel);
-                                $e->setViewModel($jsonModel)->stopPropagation();
-                            }
+                            break;
                         }
-                        switch(RESOURCE_CHILD){
-                            case "department" :{
+                        case 'application/json':{
 
-                                if($idChild != null){
+                            break;
+                        }
+                        default :{
 
-                                    $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                    $e->getRouteMatch()->setParam('action', 'updateResourceRelational');
+                            $response = new Response();
+                            $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
+                            $body = array(
+                                'HTTP_Status' => '400' ,
+                                'Title' => 'Bad Request' ,
+                                'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
+                                'More_Info' => URL_API_DOCS
+                            );
 
-                                }else{
-
-                                    $response->setStatusCode(Response::STATUS_CODE_400);
-
-                                    $body = array(
-                                        'Error' => array(
-                                            'HTTP_Status' => 400 . ' Bad Request',
-                                            'Title' => 'Bad Request',
-                                            'Details' => 'The id department is required',
-                                        ),
-                                    );
-
-                                    switch($typeResponse){
-                                        case "xml":{
-                                            // Create the config object
-                                            $writer = new \Zend\Config\Writer\Xml();
-                                            return $response->setContent($writer->toString($body));
-                                            $e->stopPropagation();
-                                            break;
-                                        }
-                                        case "json":{
-                                            $jsonModel = new JsonModel($body);
-                                            $jsonModel->setTerminal(true);
-                                            $e->setResult($jsonModel);
-                                            $e->setViewModel($jsonModel)->stopPropagation();
-                                            break;
-                                        }
-                                        default: {
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                        }
-                                    }
+                            switch($typeResponse){
+                                case "xml":{
+                                    // Create the config object
+                                    $writer = new \Zend\Config\Writer\Xml();
+                                    return $response->setContent($writer->toString($body));
+                                    $e->stopPropagation();
+                                    break;
                                 }
-                                break;
-                            }
-                            default :{
-
-                                $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
-                                $body = array(
-                                    'HTTP_Status' => '400' ,
-                                    'Title' => 'Bad Request' ,
-                                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                    'More_Info' => URL_API_DOCS
-                                );
-
-                                switch($typeResponse){
-                                    case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
-                                        $e->stopPropagation();
-                                        break;
-                                    }
-                                    case "json":{
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                    }
-                                    default: {
+                                case "json":{
                                     $jsonModel = new JsonModel($body);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
                                     break;
-                                    }
+                                }
+                                default: {
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
                                 }
                             }
                         }
-                        if($idChild != null){
+                    }
+                    if(RESOURCE_CHILD != null){
+                        $resourcenameChild = RESOURCE_CHILD;
+                        // La inicial de nuestro string la hacemos mayuscula
+                        $resourceName = ucfirst(RESOURCE);
+                        $resourceNameChild = ucfirst($resourcenameChild);
+                        // Verificamos que exista el recurso
+                        $moduleResource = ResourceManager::getModule($resourceName);
+                        $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
-                            $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                            $e->getRouteMatch()->setParam('action', 'updateResourceRelational');
+                        // Si sí existe el recurso
+                        if($moduleResourceChild){
+                            // Si el resource y el resourceChild pertenecen al mismo módulo
+                            if($moduleResource == $moduleResourceChild){
+                                switch($resourcenameChild){
+                                    case "department" :{
+                                        define('MODULE_RESOURCE', $moduleResource);
+                                        define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                        define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                        define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+
+                                        if(ID_RESOURCE_CHILD != null){
+
+                                            return;
+
+                                        }else{
+
+                                            $response = $e->getResponse();
+                                            $response->setStatusCode(Response::STATUS_CODE_400);
+
+                                            $body = array(
+                                                'Error' => array(
+                                                    'HTTP_Status' => 400 . ' Bad Request',
+                                                    'Title' => 'Bad Request',
+                                                    'Details' => 'The id department is required',
+                                                ),
+                                            );
+
+                                            switch($typeResponse){
+                                                case "xml":{
+                                                    // Create the config object
+                                                    $writer = new \Zend\Config\Writer\Xml();
+                                                    return $response->setContent($writer->toString($body));
+                                                    $e->stopPropagation();
+                                                    break;
+                                                }
+                                                case "json":{
+                                                    $jsonModel = new JsonModel($body);
+                                                    $jsonModel->setTerminal(true);
+                                                    $e->setResult($jsonModel);
+                                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                                    break;
+                                                }
+                                                default: {
+                                                $jsonModel = new JsonModel($body);
+                                                $jsonModel->setTerminal(true);
+                                                $e->setResult($jsonModel);
+                                                $e->setViewModel($jsonModel)->stopPropagation();
+                                                break;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }else{
+
+                                // Si resource y resorceChild son de modulos diferentes
+                                // Tomar el modulo de recourceChild, dandole prioridad para trabajar.
+
+                            }
+                        }else{
+                            // Si resourceChild no es un recurso
+
+                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                            $resourceNameChild = ucfirst($resourcenameChild);
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+
+                            define('MODULE_RESOURCE', $moduleResource);
+                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                            define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                        }
+                        if(ID_RESOURCE_CHILD != null){
+
+                            return;
 
                         }else{
 
@@ -608,7 +599,7 @@ class ResourceListener implements ListenerAggregateInterface {
                                 'Error' => array(
                                     'HTTP_Status' => 400 . ' Bad Request',
                                     'Title' => 'Bad Request',
-                                    'Details' => 'The id department is required',
+                                    'Details' => 'The id'.LOWER_NAME_RESOURCE_CHILD.' is required',
                                 ),
                             );
 
@@ -636,14 +627,11 @@ class ResourceListener implements ListenerAggregateInterface {
                                 }
                             }
                         }
-                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst($resourcenameChild)));
                         break;
                     }
 
-                    // getting id of route
-                    $id = $e->getRouteMatch()->getParam('id');
                     // If request id is null
-                    if($id == null){
+                    if(ID_RESOURCE == null){
 
                         $response = new Response();
                         $response->setStatusCode(Response::STATUS_CODE_400);
@@ -653,7 +641,7 @@ class ResourceListener implements ListenerAggregateInterface {
                             'HTTP_Status' => $statusCode,
                             'Method' => 'PUT' ,
                             'Title' => 'The request id is null' ,
-                            'Details' => 'The request id can´t be null',
+                            'Details' => 'The request id'.RESOURCE.' can´t be null',
                             'More_Info' => URL_API_DOCS
                         );
                         $jsonModel = new JsonModel($body);
@@ -751,19 +739,21 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
                 if(RESOURCE != null){
                     if(RESOURCE_CHILD != null){
-                        // La inicial de nuestro string la hacemos mayuscula
                         $resourcenameChild = RESOURCE_CHILD;
+                        // La inicial de nuestro string la hacemos mayuscula
+                        $resourceName = ucfirst(RESOURCE);
                         $resourceNameChild = ucfirst($resourcenameChild);
                         // Verificamos que exista el recurso
-                        $hasResourceChild = ResourceManager::getModule($resourceNameChild);
+                        $moduleResource = ResourceManager::getModule($resourceName);
+                        $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
                         // Si sí existe el recurso
-                        if($hasResourceChild){
-                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                        if($moduleResourceChild){
+                            $resourcenameChild = RESOURCE_CHILD;
                             $resourceNameChild = ucfirst($resourcenameChild);
-
+                            define('MODULE_RESOURCE', $moduleResource);
                             define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
                             define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                            define('MODULE_RESOURCE_CHILD', $hasResourceChild);
+                            define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
 
                         }else{
                             // La inicial de nuestro string la hacemos mayuscula
@@ -771,37 +761,19 @@ class ResourceListener implements ListenerAggregateInterface {
                             $resourceNameChild = ucfirst($resourcenameChild);
 
                             // Verificamos que exista el recurso
-                            $hasResourceChild = ResourceManager::getModule($resourceNameChild);
-                            // Si sí existe el recurso
-                            if($hasResourceChild){
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+                            define('MODULE_RESOURCE', $moduleResource);
+                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                            define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
 
-                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                define('MODULE_RESOURCE_CHILD', $hasResourceChild);
-
-                            }else{
-                                $response->setStatusCode(Response::STATUS_CODE_404);
-                                $statusCode = $response->getStatusCode();
-
-                                $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Not Found' ,
-                                    'Details' => 'Resource not found',
-                                    'More_Info' => URL_API_DOCS
-                                );
-                                $jsonModel = new JsonModel($body);
-                                $jsonModel->setTerminal(true);
-                                $e->setResult($jsonModel);
-                                $e->setViewModel($jsonModel)->stopPropagation();
-                            }
                         }
                         switch(RESOURCE_CHILD){
                             case "department" :{
 
-                                if($idChild != null){
+                                if(ID_RESOURCE_CHILD != null){
 
-                                    $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                    $e->getRouteMatch()->setParam('action', 'deleteResourceRelational');
+                                    return;
 
                                 }else{
 
@@ -841,45 +813,9 @@ class ResourceListener implements ListenerAggregateInterface {
                                 }
                                 break;
                             }
-                            default :{
-
-                                $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
-                                $body = array(
-                                    'HTTP_Status' => '400' ,
-                                    'Title' => 'Bad Request' ,
-                                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                    'More_Info' => URL_API_DOCS
-                                );
-
-                                switch($typeResponse){
-                                    case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
-                                        $e->stopPropagation();
-                                        break;
-                                    }
-                                    case "json":{
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                    }
-                                    default: {
-                                    $jsonModel = new JsonModel($body);
-                                    $jsonModel->setTerminal(true);
-                                    $e->setResult($jsonModel);
-                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                    break;
-                                    }
-                                }
-                            }
                         }
-                        // getting id of route
-                        $id = $e->getRouteMatch()->getParam('id');
                         // If request id is null
-                        if($id == null){
+                        if(ID_RESOURCE == null){
 
                             $response->setStatusCode(Response::STATUS_CODE_400);
                             $statusCode = $response->getStatusCode();
@@ -896,10 +832,14 @@ class ResourceListener implements ListenerAggregateInterface {
                             $e->setViewModel($jsonModel)->stopPropagation();
 
                         }
-                        define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
                         break;
+                    }else{
+                        $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                        $resourceNameChild = ucfirst($resourcenameChild);
+                        define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                        define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                        define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
                     }
-                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }
                 break;
             }
