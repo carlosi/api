@@ -6,9 +6,9 @@
  * Time: 16:54
  */
 
-namespace resourceAlternative;
-
-
 class ResourceAlternative {
 
+    public function getCollection(){
+        echo "Entro Collection Alternative Propel";
+    }
 } 

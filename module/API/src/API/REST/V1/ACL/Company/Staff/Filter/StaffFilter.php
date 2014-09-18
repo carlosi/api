@@ -96,6 +96,26 @@ class StaffFilter implements InputFilterAwareInterface
                 ),
             ));
 
+            // staff_name: DataType = VARCHAR(45), NN = false
+            $inputFilter->add(array(
+                'name' => 'staff_firstname',
+                'required' => false,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim')
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min' => '1',
+                            'max' => '45',
+                        ),
+                    ),
+                ),
+            ));
+
             // staff_email: DataType = VARCHAR(45), NN = false
             $inputFilter->add(array(
                 'name' => 'staff_email',

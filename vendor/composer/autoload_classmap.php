@@ -1176,4 +1176,5 @@ return array(
     'sfYamlDumper' => $vendorDir . '/propel/propel1/runtime/lib/parser/yaml/sfYamlDumper.php',
     'sfYamlInline' => $vendorDir . '/propel/propel1/runtime/lib/parser/yaml/sfYamlInline.php',
     'sfYamlParser' => $vendorDir . '/propel/propel1/runtime/lib/parser/yaml/sfYamlParser.php',
+    'ResourceAlternative' => $baseDir . '/module/Propel/build/classes/api/resourceAlternative/ResourceAlternative.php',
 );

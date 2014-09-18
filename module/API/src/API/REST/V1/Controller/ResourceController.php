@@ -23,6 +23,7 @@ use API\REST\V1\Shared\Functions\ArrayManage;
 use Client;
 use ClientQuery;
 use BasePeer;
+use ResourceAlternative;
 
 /**
  * Class APIController
@@ -1761,16 +1762,12 @@ class ResourceController extends AbstractRestfulController
 
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
-        // almacenamos el resourceNameChild (En este paso ya tenemos Staff, etc...)
+        // almacenamos el resourceNameChild e una variable (En este paso ya tenemos Staff, etc...)
         $resourceNameChild = NAME_RESOURCE_CHILD;
 
-        var_dump($resourceName);
-        var_dump($resourceNameChild);
-        var_dump(MODULE_RESOURCE);
-        var_dump(MODULE_RESOURCE_CHILD);
-
+        // Si el recurso y el recursoChild pertenecen al mismo modulo
         if(MODULE_RESOURCE == MODULE_RESOURCE_CHILD){
-            $module == MODULE_RESOURCE;
+            $module = MODULE_RESOURCE;
             //Obtenemnos el nivel de acceso del usuario para el recurso
             $userLevel = ResourceManager::getUserLevels($idUser, $module);
 
@@ -1779,65 +1776,59 @@ class ResourceController extends AbstractRestfulController
 
                 // Instanciamos nuestro Recurso
                 $resource = ResourceManager::getResource($resourceName);
+                if(!$resource->isIdValidResource(ID_RESOURCE,$idCompany)){
 
-                if(RESOURCE_CHILD !=null){
-
-                    if(!$resource->isIdValidResource(ID_RESOURCE,$idCompany)){
-
-                        //Modifiamos el Header de nuestra respuesta
-                        $response = $this->getResponse();
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'The request data is invalid',
-                                'Details' => 'Invalid '.RESOURCE.' id',
-                            ),
-                        );
-                        switch(TYPE_RESPONSE){
-                            case "xml":{;
-                                $writer = new \Zend\Config\Writer\Xml();
-                                return $response->setContent($writer->toString($bodyResponse));
-                                break;
-                            }
-                            case "json":{
-                                return new JsonModel($bodyResponse);
-                                break;
-                            }
-                            default: {
+                    //Modifiamos el Header de nuestra respuesta
+                    $response = $this->getResponse();
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'The request data is invalid',
+                            'Details' => 'Invalid id'.RESOURCE,
+                        ),
+                    );
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
                             return new JsonModel($bodyResponse);
                             break;
-                            }
+                        }
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
                         }
                     }
                 }
-                // Instanciamos nuestro formulario resourceFormPostPut
-                $resourceFormGET = ResourceManager::getResourceFormGET($resourceName);
-                $resourceFormGET = $resourceFormGET::init($userLevel);
 
+                // Instanciamos nuestro Recurso Alternativo (Ejemplo: Staff, etc...)
+                $resourceChild = ResourceManager::getResource($resourceNameChild);
+
+                // Instanciamos nuestro formulario resourceAlternativeFormPostPut
+                $resourceChildFormGET = ResourceManager::getResourceFormGET($resourceNameChild);
+                $resourceChildFormGET = $resourceChildFormGET::init($userLevel);
 
                 //Guardamos en un arrglo los campos a los que el usuario va poder tener acceso de acuerdo a su nivel
                 $allowedColumns = array();
-                foreach ($resourceFormGET->getElements() as $key=>$value){
+                foreach ($resourceChildFormGET->getElements() as $key=>$value){
                     array_push($allowedColumns, $key);
                 }
                 //Verificamos que si nos envian filtros por GET si no ponemos valores por default
                 $limit = (int) $this->params()->fromQuery('limit') ? (int)$this->params()->fromQuery('limit')  : 10;
                 if($limit > 100) $limit = 100; //Si el limit es mayor a 100 lo establece en 100 como maximo valor permitido
                 $dir = $this->params()->fromQuery('dir') ? $this->params()->fromQuery('dir')  : 'asc';
-                $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.RESOURCE;
-                if(RESOURCE_CHILD!=null){
-                    $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.LOWER_NAME_RESOURCE_CHILD;
-                    if(class_exists(ucfirst(RESOURCE_CHILD))){
-                        $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.LOWER_NAME_RESOURCE_CHILD;
-                    }
-                }
+                $order = in_array($this->params()->fromQuery('order'), $allowedColumns) ? $this->params()->fromQuery('order')  : 'id'.LOWER_NAME_RESOURCE_CHILD;
                 $page = (int) $this->params()->fromQuery('page') ? (int)$this->params()->fromQuery('page')  : 1;
                 $filters = $this->params()->fromQuery('filter') ? $this->params()->fromQuery('filter') : null;
                 if($filters != null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
 
-                $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
-
+                $ResourceAlternative = new ResourceAlternative();
+                var_dump($ResourceAlternative);
+                $getCollection = $ResourceAlternative->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
 
                 if(!empty($getCollection['data'])){
                     // Si el recurso que solicitan es Company

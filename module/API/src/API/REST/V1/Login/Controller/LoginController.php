@@ -135,6 +135,6 @@ class LoginController extends AbstractActionController
                 );
                 return new JsonModel($bodyResponse);
             
-            
+
     }
 }
