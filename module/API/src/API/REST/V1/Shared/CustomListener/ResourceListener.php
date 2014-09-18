@@ -117,6 +117,73 @@ class ResourceListener implements ListenerAggregateInterface {
                     }
                 }
 
+                ////// Start Resource Relational //////
+
+                $resourcenameChild = RESOURCE_CHILD;
+                // La inicial de nuestro string la hacemos mayuscula
+                $resourceNameChild = ucfirst($resourcenameChild);
+                // Verificamos que exista el recurso
+                $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
+                $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+                if($moduleResource == $moduleResourceChild){
+                    switch($resourcenameChild){
+                        case "department" :{
+                            // Start resourceRelational
+                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                            // La inicial de nuestro string la hacemos mayuscula
+                            $resourceNameChild = ucfirst($resourcenameChild);
+
+                            define('MODULE_RESOURCE', $moduleResource);
+                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                            define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                            if(ID_RESOURCE_CHILD != null){
+
+                                return;
+
+                            }else{
+
+                                $response = $e->getResponse();
+                                $response->setStatusCode(Response::STATUS_CODE_400);
+
+                                $body = array(
+                                    'Error' => array(
+                                        'HTTP_Status' => 400 . ' Bad Request',
+                                        'Title' => 'Bad Request',
+                                        'Details' => 'The id department is required',
+                                    ),
+                                );
+
+                                switch($typeResponse){
+                                    case "xml":{
+                                        // Create the config object
+                                        $writer = new \Zend\Config\Writer\Xml();
+                                        return $response->setContent($writer->toString($body));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $jsonModel = new JsonModel($body);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                ////// End Resource Relational //////
+
                 if(RESOURCE != null){
                     $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
 
@@ -172,7 +239,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         $resourceName = ucfirst(RESOURCE);
                         $resourceNameChild = ucfirst($resourcenameChild);
                         // Verificamos que exista el recurso
-                        $moduleResource = $e->getRouteMatch()->getMatchedRouteName();
+                        $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
                         $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
                         // Si sí existe el recurso
@@ -182,58 +249,9 @@ class ResourceListener implements ListenerAggregateInterface {
 
                             // Si el resource y el resourceChild pertenecen al mismo módulo
                             if($moduleResource == $moduleResourceChild){
-                                $resourcenameChild = RESOURCE_CHILD;
-                                $resourceNameChild = ucfirst($resourcenameChild);
-                                switch($resourcenameChild){
-                                    case "department" :{
-                                        if(ID_RESOURCE_CHILD != null){
 
-                                            return;
+                                // Si el module de resource y el module de resourceChild son iguales
 
-                                        }else{
-
-                                            $response = $e->getResponse();
-                                            $response->setStatusCode(Response::STATUS_CODE_400);
-
-                                            $body = array(
-                                                'Error' => array(
-                                                    'HTTP_Status' => 400 . ' Bad Request',
-                                                    'Title' => 'Bad Request',
-                                                    'Details' => 'The id department is required',
-                                                ),
-                                            );
-
-                                            switch($typeResponse){
-                                                case "xml":{
-                                                    // Create the config object
-                                                    $writer = new \Zend\Config\Writer\Xml();
-                                                    return $response->setContent($writer->toString($body));
-                                                    $e->stopPropagation();
-                                                    break;
-                                                }
-                                                case "json":{
-                                                    $jsonModel = new JsonModel($body);
-                                                    $jsonModel->setTerminal(true);
-                                                    $e->setResult($jsonModel);
-                                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                                    break;
-                                                }
-                                                default: {
-                                                $jsonModel = new JsonModel($body);
-                                                $jsonModel->setTerminal(true);
-                                                $e->setResult($jsonModel);
-                                                $e->setViewModel($jsonModel)->stopPropagation();
-                                                break;
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    }
-                                }
-                                define('MODULE_RESOURCE', $moduleResource);
-                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
                             }else{
 
                                 // Entrará en casos como clienttax ya que este recurso pertenece a SATMexico
@@ -653,6 +671,44 @@ class ResourceListener implements ListenerAggregateInterface {
                     }
                 }
 
+                ////// Start Resource Relational //////
+
+                if(RESOURCE_CHILD == 'department'){
+                    $response->setStatusCode(Response::STATUS_CODE_405);
+                    $statusCode = $response->getStatusCode();
+
+                    $body = array(
+                        'HTTP_Status' => $statusCode,
+                        'Title' => 'Method not allowed',
+                        'Details' => 'Methods allowed: GET, POST, DELETE',
+                        'More_Info' => URL_API_DOCS
+                    );
+                    switch($typeResponse){
+                        case "xml":{
+                            // Create the config object
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($body));
+                            $e->stopPropagation();
+                            break;
+                        }
+                        case "json":{
+                            $jsonModel = new JsonModel($body);
+                            $jsonModel->setTerminal(true);
+                            $e->setResult($jsonModel);
+                            $e->setViewModel($jsonModel)->stopPropagation();
+                            break;
+                        }
+                        default: {
+                        $jsonModel = new JsonModel($body);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel)->stopPropagation();
+                        break;
+                        }
+                    }
+                }
+                ////// End Resource Relational //////
+
                 if(RESOURCE != null){
                     $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
 
@@ -707,7 +763,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         $resourceName = ucfirst(RESOURCE);
                         $resourceNameChild = ucfirst($resourcenameChild);
                         // Verificamos que exista el recurso
-                        $moduleResource = $e->getRouteMatch()->getMatchedRouteName();
+                        $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
                         $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
                         // Si sí existe el recurso
@@ -1028,7 +1084,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         $resourceName = ucfirst(RESOURCE);
                         $resourceNameChild = ucfirst($resourcenameChild);
                         // Verificamos que exista el recurso
-                        $moduleResource = $e->getRouteMatch()->getMatchedRouteName();
+                        $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
                         $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
                         // Si sí existe el recurso
                         if($moduleResourceChild){

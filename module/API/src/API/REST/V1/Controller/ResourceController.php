@@ -752,6 +752,7 @@ class ResourceController extends AbstractRestfulController
             // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
             $module = MODULE_RESOURCE;
         }
+
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
 
@@ -768,6 +769,14 @@ class ResourceController extends AbstractRestfulController
 
                     // Almacenamos en nuestro array $data el id del resource que nos mandan desde la url.
                     $data['id'.RESOURCE] = ID_RESOURCE;
+
+                    ////// Start Resource Relational //////
+
+                    if(RESOURCE_CHILD == 'department'){
+                        $data['iddepartment'] = ID_RESOURCE_CHILD;
+                    }
+
+                    ////// End Resource Relational //////
 
                     // Instanciamos el Formulario "resourceForm"
                     $resourceForm = ResourceManager::getResourceForm($resourceName);
