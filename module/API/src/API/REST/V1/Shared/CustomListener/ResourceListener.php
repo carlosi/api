@@ -115,6 +115,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                         }
                     }
+                    break;
                 }
 
                 ////// Start Resource Relational //////
@@ -183,6 +184,7 @@ class ResourceListener implements ListenerAggregateInterface {
                             }
                         }
                     }
+                    break;
                 }
                 ////// End Resource Relational //////
 
@@ -400,6 +402,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                         }
                     }
+                    break;
                 }
                 if($routeName == "documentation"){
                     // Entra directo al IndexController de Documentation (API\REST\V1\Documentation\Controller\IndexController)
@@ -696,6 +699,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                         }
                     }
+                    break;
                 }
                 if($routeName == "documentation"){
                     $response->setStatusCode(Response::STATUS_CODE_405);
@@ -730,6 +734,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                         }
                     }
+                    break;
                 }
 
                 ////// Start Resource Relational //////
@@ -767,6 +772,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                         }
                     }
+                    break;
                 }
                 ////// End Resource Relational //////
 
@@ -1103,6 +1109,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                         }
                     }
+                    break;
                 }
                 if($routeName == "documentation"){
                     $response->setStatusCode(Response::STATUS_CODE_405);
@@ -1137,6 +1144,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                         }
                     }
+                    break;
                 }
                 if(RESOURCE != null){
                     if(RESOURCE_CHILD != null){
