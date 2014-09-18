@@ -25,7 +25,6 @@ class Branchdepartment extends BaseBranchdepartment
      * @param $idResourceChild
      * @return bool
      */
-    // Esta funcion podría llamarse isIdValidRelational
     public function isIdValidResurceChild($idResource,$idResourceChild){
         return BranchdepartmentQuery::create()->filterByIdbranch($idResource)
             ->filterByIddepartment($idResourceChild)->exists();
