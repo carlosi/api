@@ -405,128 +405,188 @@ class ResourceListener implements ListenerAggregateInterface {
                     // Entra directo al IndexController de Documentation (API\REST\V1\Documentation\Controller\IndexController)
                     break;
                 }
-
+                // Si resource es diferente de null
                 if(RESOURCE != null){
                     if(RESOURCE_CHILD != null){
                         // Almacenamos RESOURCE.RESOURCE_CHILD en una variable
-                        $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                        $resourcenameChild = RESOURCE_CHILD;
                         // La inicial de nuestro string la hacemos mayuscula
                         $resourceNameChild = ucfirst($resourcenameChild);
-                        // Almacenamos el modulo al que pertenece resourceChild
+                        // Almacenamos el modulo al que pertenece resource
                         $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
+                        // Verificamos que exista el recurso resourceChild, si sí, almacenamos el modulo al que pertenece.
                         $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
-                        // Si resourceChild pertenece a un modulo (Esto significa que resourceChild es un recurso)
+                        // Si resourceChild pertenece a un modulo (Esto significa que resourceChild sí es un recurso)
                         if($moduleResourceChild){
                             // Si el resource y el resourceChild pertenecen al mismo módulo
                             if($moduleResource == $moduleResourceChild){
-                                // Almacenamos RESOURCE.RESOURCE_CHILD en una variable
-                                $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-                                // La inicial de nuestro string la hacemos mayuscula
-                                $resourceNameChild = ucfirst($resourcenameChild);
+                                switch(RESOURCE_CHILD){
+                                    case "department" :{
+                                        $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                                        // La inicial de nuestro string la hacemos mayuscula
+                                        $resourceNameChild = ucfirst($resourcenameChild);
+                                        // Verificamos que exista el recurso resourceChild, si sí, almacenamos el modulo al que pertenece.
+                                        $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
-                                // Si el id del recurso es diferente de null
-                                if(ID_RESOURCE != null){
+                                        // Si no existe el modulo de resourceChild el resourceChild no existe
+                                        if($moduleResourceChild){
+                                            define('MODULE_RESOURCE', $moduleResource);
+                                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                            define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                                            if(ID_RESOURCE_CHILD != null){
 
-                                    define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                                    define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                    define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                                                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                                $e->getRouteMatch()->setParam('action', 'getResourceChild');
+                                                return;
 
-                                    // Si el idresourceChind es diferente de null
-                                    if(ID_RESOURCE_CHILD != null){
-                                        $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                        $e->getRouteMatch()->setParam('action', 'getResourceChild');
-                                    }else{
-                                        $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                        $e->getRouteMatch()->setParam('action', 'getListResourceChild');
+                                            }else{
+
+                                                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                                $e->getRouteMatch()->setParam('action', 'getListResourceChild');
+                                                return;
+
+                                            }
+                                        }else{
+                                            //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
+                                            $response->setStatusCode(Response::STATUS_CODE_404);
+                                            $statusCode = $response->getStatusCode();
+
+                                            $body = array(
+                                                'HTTP_Status' => $statusCode,
+                                                'Title' => 'Not Found' ,
+                                                'Details' => 'Resource not found',
+                                                'More_Info' => URL_API_DOCS
+                                            );
+                                            switch($typeResponse){
+                                                case "xml":{
+                                                    // Create the config object
+                                                    $writer = new \Zend\Config\Writer\Xml();
+                                                    return $response->setContent($writer->toString($body));
+                                                    $e->stopPropagation();
+                                                    break;
+                                                }
+                                                case "json":{
+                                                    $jsonModel = new JsonModel($body);
+                                                    $jsonModel->setTerminal(true);
+                                                    $e->setResult($jsonModel);
+                                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                                    break;
+                                                }
+                                                default: {
+                                                $jsonModel = new JsonModel($body);
+                                                $jsonModel->setTerminal(true);
+                                                $e->setResult($jsonModel);
+                                                $e->setViewModel($jsonModel)->stopPropagation();
+                                                break;
+                                                }
+                                            }
+                                        }
+                                        break;
                                     }
-                                }else{
-                                    $response->setStatusCode(Response::STATUS_CODE_409);
-                                    $statusCode = $response->getStatusCode();
+                                    case "staff" :{
+                                        switch(RESOURCE){
+                                            case "branch":{
 
-                                    $body = array(
-                                        'HTTP_Status' => $statusCode,
-                                        'Title' => 'Conflict' ,
-                                        'Details' => 'The request could not be processed because resource '.RESOURCE.' need an id',
-                                        'More_Info' => URL_API_DOCS.RESOURCE
-                                    );
-                                    $jsonModel = new JsonModel($body);
-                                    $jsonModel->setTerminal(true);
-                                    $e->setResult($jsonModel);
-                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                                $resourcename = RESOURCE;
+                                                // La inicial de nuestro string la hacemos mayuscula
+                                                $resourceName = ucfirst($resourcename);
+                                                // Almacenamos el modulo al que pertenece resource.
+                                                $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
+
+                                                $resourcenameChild = RESOURCE_CHILD;
+                                                // La inicial de nuestro string la hacemos mayuscula
+                                                $resourceNameChild = ucfirst($resourcenameChild);
+                                                // Almacenamos el modulo al que pertenece resourceChild.
+                                                $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+
+                                                define('MODULE_RESOURCE', $moduleResource);
+                                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+
+                                                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                                $e->getRouteMatch()->setParam('action', 'getListResourceAlternative');
+                                                return;
+
+                                            break;
+                                            }
+
+                                            default:{
+                                                //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
+                                                $response->setStatusCode(Response::STATUS_CODE_404);
+                                                $statusCode = $response->getStatusCode();
+
+                                                $body = array(
+                                                    'HTTP_Status' => $statusCode,
+                                                    'Title' => 'Not Found' ,
+                                                    'Details' => 'Resource not found',
+                                                    'More_Info' => URL_API_DOCS
+                                                );
+                                                switch($typeResponse){
+                                                    case "xml":{
+                                                        // Create the config object
+                                                        $writer = new \Zend\Config\Writer\Xml();
+                                                        return $response->setContent($writer->toString($body));
+                                                        $e->stopPropagation();
+                                                        break;
+                                                    }
+                                                    case "json":{
+                                                        $jsonModel = new JsonModel($body);
+                                                        $jsonModel->setTerminal(true);
+                                                        $e->setResult($jsonModel);
+                                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                                        break;
+                                                    }
+                                                    default: {
+                                                    $jsonModel = new JsonModel($body);
+                                                    $jsonModel->setTerminal(true);
+                                                    $e->setResult($jsonModel);
+                                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                                    break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
                                 }
                             }else{
 
-                                // Aun no esta bien definido esta respuesta.
-                                // Entrará en casos como clienttax ya que este recurso pertenece a SATMexico
+                                // Si resource y resourceChild no pertenecen al mismo módulo
 
-                                $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-                                $resourceNameChild = ucfirst($resourcenameChild);
+                            }
+                        }else{
+
+                            // Almacenamos RESOURCE.RESOURCE_CHILD en una variable
+                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                            // La inicial de nuestro string la hacemos mayuscula
+                            $resourceNameChild = ucfirst($resourcenameChild);
+                            // Verificamos que exista el recurso resourceChild, si sí, almacenamos el modulo al que pertenece.
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+
+                            // Si no existe el modulo de resourceChild el resourceChild no existe
+                            if($moduleResourceChild){
                                 define('MODULE_RESOURCE', $moduleResource);
                                 define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
                                 define('NAME_RESOURCE_CHILD', $resourceNameChild);
                                 define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
-                            }
-                        }else{
+                                if(ID_RESOURCE_CHILD != null){
 
-                            // La inicial de nuestro string la hacemos mayuscula
-                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
-                            $resourceNameChild = ucfirst($resourcenameChild);
+                                    $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                    $e->getRouteMatch()->setParam('action', 'getResourceChild');
+                                    return;
 
-                            // Verificamos que exista el recurso
-                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
-                            // Si sí existe el recurso
-                            if($moduleResourceChild){
-                                if(ID_RESOURCE != null){
-
-                                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE.RESOURCE_CHILD)));
-                                    define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
-                                    define('NAME_RESOURCE_CHILD', $resourceNameChild);
-                                    define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
-
-                                    if(ID_RESOURCE_CHILD!=null){
-                                        $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                        $e->getRouteMatch()->setParam('function', 'getResourceChild');
-                                    }else{
-                                        $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                        $e->getRouteMatch()->setParam('action', 'getListResourceChild');
-                                    }
                                 }else{
-                                    $response->setStatusCode(Response::STATUS_CODE_409);
-                                    $statusCode = $response->getStatusCode();
 
-                                    $body = array(
-                                        'HTTP_Status' => $statusCode,
-                                        'Title' => 'Conflict' ,
-                                        'Details' => 'The request could not be processed because resource '.RESOURCE.' need an id',
-                                        'More_Info' => URL_API_DOCS.RESOURCE
-                                    );
-                                    switch($typeResponse){
-                                        case "xml":{
-                                            // Create the config object
-                                            $writer = new \Zend\Config\Writer\Xml();
-                                            return $response->setContent($writer->toString($body));
-                                            $e->stopPropagation();
-                                            break;
-                                        }
-                                        case "json":{
-                                            $jsonModel = new JsonModel($body);
-                                            $jsonModel->setTerminal(true);
-                                            $e->setResult($jsonModel);
-                                            $e->setViewModel($jsonModel)->stopPropagation();
-                                            break;
-                                        }
-                                        default: {
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                        }
-                                    }
+                                    $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                    $e->getRouteMatch()->setParam('action', 'getListResourceChild');
+                                    return;
+
                                 }
                             }else{
-
+                                //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
                                 $response->setStatusCode(Response::STATUS_CODE_404);
                                 $statusCode = $response->getStatusCode();
 
@@ -561,9 +621,8 @@ class ResourceListener implements ListenerAggregateInterface {
                                 }
                             }
                         }
-                        break;
                     }
-                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
+                    define('MODULE_RESOURCE', ucfirst($e->getRouteMatch()->getMatchedRouteName()));
                 }else{
                     $response->setStatusCode(Response::STATUS_CODE_404);
                     $statusCode = $response->getStatusCode();
