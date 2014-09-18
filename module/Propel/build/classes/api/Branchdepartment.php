@@ -21,23 +21,23 @@ class Branchdepartment extends BaseBranchdepartment
     }
 
     /**
-     * @param $idResourceChild
-     * @return bool
-     */
-    public function isIdValidResurceChild($idResourceChild){
-        return DepartmentQuery::create()
-            ->filterByIddepartment($idResourceChild)
-            ->exists();
-    }
-
-    /**
      * @param $idResource
      * @param $idResourceChild
      * @return bool
      */
-    public function isIdChildValid($idResource,$idResourceChild){
+    public function isIdRelationalValid($idResource,$idResourceChild){
         return BranchdepartmentQuery::create()->filterByIdbranch($idResource)
             ->filterByIddepartment($idResourceChild)->exists();
+    }
+
+    /**
+     * @param $idResourceChild
+     * @return bool
+     */
+    public function isIdValidResurceAlternative($idResourceChild){
+        return DepartmentQuery::create()
+            ->filterByIddepartment($idResourceChild)
+            ->exists();
     }
 
     /////////// Start create ///////////
@@ -340,11 +340,11 @@ class Branchdepartment extends BaseBranchdepartment
         $result =  $branchdepartmentQuery->useBranchQuery()->filterByIdcompany($idCompany)->filterByIdbranch(ID_RESOURCE)->endUse()->paginate($page,$limit);
 
         $links = array(
-            'self' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'/department?page='.$result->getPage()),
-            'prev' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department?page='.$result->getPreviousPage()),
-            'next' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department?page='.$result->getNextPage()),
-            'first' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department'),
-            'last' => array('href' => URL_API.'/'.MODULE.'/branch/'.$idResource.'department?page='.$result->getLastPage()),
+            'self' => array('href' => URL_API.'/'.MODULE.'/branch/'.ID_RESOURCE.'/department?page='.$result->getPage()),
+            'prev' => array('href' => URL_API.'/'.MODULE.'/branch/'.ID_RESOURCE.'/department?page='.$result->getPreviousPage()),
+            'next' => array('href' => URL_API.'/'.MODULE.'/branch/'.ID_RESOURCE.'/department?page='.$result->getNextPage()),
+            'first' => array('href' => URL_API.'/'.MODULE.'/branch/'.ID_RESOURCE.'/department'),
+            'last' => array('href' => URL_API.'/'.MODULE.'/branch/'.ID_RESOURCE.'/department?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){

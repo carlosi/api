@@ -28,14 +28,14 @@ class CompanyForm extends Form
             'type' => 'Hidden',
             'name' => 'idcompany',
             'options' => array(
-                'label' => 'Id Compañía',
+                'label' => 'id company',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'company_name',
             'options' => array(
-                'label' => 'Nombre de compañia',
+                'label' => 'company name',
             ),
             
         ));

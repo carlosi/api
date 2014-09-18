@@ -28,14 +28,14 @@ class BranchForm extends Form
             'type' => 'Hidden',
             'name' => 'idbranch',
             'options' => array(
-                'label' => 'Id Sucursal',
+                'label' => 'id branch',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idcompany',
             'options' => array(
-                'label' => 'Id Compañía',
+                'label' => 'id company',
             ),
 
         ));
@@ -43,49 +43,49 @@ class BranchForm extends Form
             'type' => 'Hidden',
             'name' => 'branch_name',
             'options' => array(
-                'label' => 'Sucursal',
+                'label' => 'branch name',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_iso_codecountry',
             'options' => array(
-                'label' => 'País',
+                'label' => 'code country',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_address',
             'options' => array(
-                'label' => 'Dirección',
+                'label' => 'address',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_address2',
             'options' => array(
-                'label' => 'Colonia',
+                'label' => 'address 2',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_city',
             'options' => array(
-                'label' => 'Ciudad',
+                'label' => 'city',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_state',
             'options' => array(
-                'label' => 'Estado',
+                'label' => 'state',
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'branch_zipcode',
             'options' => array(
-                'label' => 'Código postal',
+                'label' => 'zip code',
             ),
         ));
     }
