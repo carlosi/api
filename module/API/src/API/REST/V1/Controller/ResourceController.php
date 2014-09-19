@@ -1776,6 +1776,7 @@ class ResourceController extends AbstractRestfulController
 
                 // Instanciamos nuestro Recurso
                 $resource = ResourceManager::getResource($resourceName);
+                // Validamos que exista el idResource y que pertenezca a la compañia
                 if(!$resource->isIdValidResource(ID_RESOURCE,$idCompany)){
 
                     //Modifiamos el Header de nuestra respuesta
@@ -1805,9 +1806,6 @@ class ResourceController extends AbstractRestfulController
                     }
                 }
 
-                // Instanciamos nuestro Recurso Alternativo (Ejemplo: Staff, etc...)
-                $resourceChild = ResourceManager::getResource($resourceNameChild);
-
                 // Instanciamos nuestro formulario resourceAlternativeFormPostPut
                 $resourceChildFormGET = ResourceManager::getResourceFormGET($resourceNameChild);
                 $resourceChildFormGET = $resourceChildFormGET::init($userLevel);
@@ -1817,6 +1815,7 @@ class ResourceController extends AbstractRestfulController
                 foreach ($resourceChildFormGET->getElements() as $key=>$value){
                     array_push($allowedColumns, $key);
                 }
+
                 //Verificamos que si nos envian filtros por GET si no ponemos valores por default
                 $limit = (int) $this->params()->fromQuery('limit') ? (int)$this->params()->fromQuery('limit')  : 10;
                 if($limit > 100) $limit = 100; //Si el limit es mayor a 100 lo establece en 100 como maximo valor permitido
@@ -1826,75 +1825,47 @@ class ResourceController extends AbstractRestfulController
                 $filters = $this->params()->fromQuery('filter') ? $this->params()->fromQuery('filter') : null;
                 if($filters != null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
 
+                // Instanciamos nuestro Recurso Alternativo (Ejemplo: StaffQuery, etc...)
+                $resourceAlternativeQuery = ResourceManager::getResourceQuery($resourceNameChild);
+                // Instanciamos la classe ResourceAlternative para ingresar a sus funciones
                 $ResourceAlternative = new ResourceAlternative();
-                var_dump($ResourceAlternative);
-                $getCollection = $ResourceAlternative->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
+                // Obtenemos la colección del recurso alternatvo
+                $getCollectionAlternative = $ResourceAlternative->getCollectionAlternative($resourceAlternativeQuery, $idCompany, $page, $limit, $filters, $order, $dir);
 
-                if(!empty($getCollection['data'])){
-                    // Si el recurso que solicitan es Company
-                    if(RESOURCE == 'company'){
-                        // Solamente el idcompany == 1 podrá listar todas la Compañias existentes
-                        if($idCompany == 1){
-                            return new JsonModel($getCollection);
-                        }else{
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
-                            $bodyResponse = array(
-                                'Error' => array(
-                                    'HTTP_Status' => 403 . ' Forbidden',
-                                    'Title' => 'Access denied',
-                                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
-                                ),
-                            );
-                            switch(TYPE_RESPONSE){
-                                case "xml":{
-                                    // Create the config object
-                                    $response = $this->getResponse();
-                                    $writer = new \Zend\Config\Writer\Xml();
-                                    return $response->setContent($writer->toString($bodyResponse));
-                                    break;
-                                }
-                                case "json":{
-                                    return new JsonModel($bodyResponse);
-                                    break;
-                                }
-                                default: {
-                                return new JsonModel($bodyResponse);
-                                break;
-                                }
-                            }
+                // Si sí existen registros en la base de datos
+                if(!empty($getCollectionAlternative['data'])){
+
+                    $bodyResponse = $ResourceAlternative->getCollectionResponse($getCollectionAlternative, $userLevel);
+                    switch(TYPE_RESPONSE){
+                        case "xml":{
+                            // Create the config object
+                            $response = $this->getResponse();
+                            $writer = new \Zend\Config\Writer\Xml();
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
                         }
-                    }else{
-
-                        $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
-                        switch(TYPE_RESPONSE){
-                            case "xml":{
-                                // Create the config object
-                                $response = $this->getResponse();
-                                $writer = new \Zend\Config\Writer\Xml();
-                                return $response->setContent($writer->toString($bodyResponse));
-                                break;
-                            }
-                            case "json":{
-                                return new JsonModel($bodyResponse);
-                                break;
-                            }
-                            default: {
+                        case "json":{
                             return new JsonModel($bodyResponse);
                             break;
-                            }
                         }
-                        return new JsonModel($Response);
+                        default: {
+                        return new JsonModel($bodyResponse);
+                        break;
+                        }
                     }
+                    return new JsonModel($Response);
+
                 }else{
 
                     //Modifiamos el Header de nuestra respuesta
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //No Content
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'No Content',
-                            'Details' => 'The server successfully processed the request, but is not returning any content.',
+                        RESOURCE_CHILD => array(
+                            'Error' => array(
+                                'HTTP_Status' => 400 . ' Bad Request',
+                                'Title' => 'No Content',
+                                'Details' => 'The server successfully processed the request, but is not returning any content.',
+                            ),
                         ),
                     );
                     switch(TYPE_RESPONSE){
