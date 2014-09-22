@@ -233,10 +233,10 @@ class Branch extends BaseBranch
                 }
             }
         }
-        $response["ACL"]["company"]=array(
-            "idcompany" =>  $companyForm->get("idcompany")->getOption('label'),
-            "company_name" =>  $companyForm->get("company_name")->getOption('label'),
-        );
+//        $response["ACL"]["company"]=array(
+//            "idcompany" =>  $companyForm->get("idcompany")->getOption('label'),
+//            "company_name" =>  $companyForm->get("company_name")->getOption('label'),
+//        );
 
         $company = $entity->getCompany();
         $response["company"] = array(
@@ -448,7 +448,7 @@ class Branch extends BaseBranch
         );
         switch(TYPE_RESPONSE){
             case "xml" :{
-                    $response['branches'] = array(
+                $response['branches'] = array(
                     'branch' => $branchArray
                 );
                 break;
@@ -472,32 +472,87 @@ class Branch extends BaseBranch
             $branchPKQuery = $branchQuery->findPk($id);
             $branchFormToShowUpdate = BranchFormToShowUpdate::init($userLevel);
 
-            //Si se quiere modificar el branch_name
-            if(isset($data['branch_name']) && $data['branch_name'] != null){
-                //Remplzamos los datos de la branch por lo que se van a modificar
-                foreach ($data as $key => $value){
-                    $branchPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
-                }
+            // Si branch_name tiene un valor, lo almacenamos, de lo contrario lo dejamos como null
+            $data['branch_name'] = isset($data['branch_name'])?$data['branch_name']:$branchPKQuery->getBranchName();
 
-                $branchArray = HttpRequest::resourceData($data, $request, $response, 'Branch');
+            //Remplzamos los datos de la branch por lo que se van a modificar
+            foreach ($data as $key => $value){
+                $branchPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+            }
 
-                // Instanciamos nuestro formulario resourceFormPostPut
-                $branchFormPostPut = BranchFormPostPut::init($userLevel);
-                //Le ponemos los datos a nuestro formulario
-                $branchFormPostPut->setData($branchArray);
+            $branchDataArray = $branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
+            $branchArray = HttpRequest::resourceUpdateData($data, $request, $response, 'Branch', $branchDataArray);
 
-                // Instanciamos nuestro filtro resourceFilterPostPut
-                $branchFilterPostPut = new BranchFilterPostPut();
+            unset($branchArray['idbranch']);
+            unset($branchArray['idcompany']);
 
-                //Le ponemos el filtro a nuestro formulario
-                $branchFormPostPut->setInputFilter($branchFilterPostPut->getInputFilter($userLevel));
-                //Si los valores son validos
-                if($branchFormPostPut->isValid()){
+            // Instanciamos nuestro formulario resourceFormPostPut
+            $branchFormPostPut = BranchFormPostPut::init($userLevel);
 
-                    //Si hay valores por modificar
-                    if($branchPKQuery->isModified()){
+            //Le ponemos los datos a nuestro formulario
+            $branchFormPostPut->setData($branchArray);
 
-                        //Verificamos que bankaccount_name no exista ya en nuestra base de datos.
+            // Instanciamos nuestro filtro resourceFilterPostPut
+            $branchFilterPostPut = new BranchFilterPostPut();
+
+            //Le ponemos el filtro a nuestro formulario
+            $branchFormPostPut->setInputFilter($branchFilterPostPut->getInputFilter($userLevel));
+            //Si los valores son validos
+            if($branchFormPostPut->isValid()){
+
+                //Si hay valores por modificar
+                if($branchPKQuery->isModified()){
+                    if($data['branch_name'] == $branchArray['branch_name']){
+
+                        $branchPKQuery->save();
+                        //Modifiamos el Header de nuestra respuesta
+                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+
+                        //Le damos formato a nuestra respuesta
+                        $bodyResponse = array(
+                            "_links" => array(
+                                'self' => URL_API.'/'.MODULE.'/branch/'.$branchPKQuery->getIdbranch(),
+                            ),
+                        );
+
+                        foreach ($branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                            $bodyResponse[$key] = $value;
+                        }
+
+                        //Eliminamos los campos que hacen referencia a otras tablas
+                        unset($bodyResponse['idcompany']);
+
+                        //Agregamos el campo embedded a nuestro arreglo
+                        $objectCompany = $branchPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                        //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                        $companyForm = CompanyFormGET::init($userLevel);
+
+                        $companyArray = array();
+                        foreach ($companyForm->getElements() as $key=>$value){
+                            $companyArray[$key] = $objectCompany[$key];
+                        }
+                        $bodyResponse['company'] = array(
+                            '_links' => array(
+                                'self' => array('href' => URL_API.'/company/'.$branchPKQuery->getIdCompany()),
+                            ),
+                        );
+
+                        //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                        foreach ($companyArray as $key=>$value){
+                            $bodyResponse['company'][$key] = $value;
+                        }
+
+                        $bodyResponse['company'] = array(
+                            'idcompany' => $bodyResponse['company']['idcompany'],
+                            'company_name' => $bodyResponse['company']['company_name'],
+                        );
+
+                        return $bodyResponse;
+
+                    }else{
+
+                        //Verificamos que branch_name no exista ya en nuestra base de datos.
                         if($branchQuery->filterByIdCompany($idCompany)->filterByBranchName($data['branch_name'])->find()->count()==0){
 
                             $branchPKQuery->save();
@@ -559,50 +614,39 @@ class Branch extends BaseBranch
                             );
                             return $bodyResponse;
                         }
-                    }else{
-                        //Modifiamos el Header de nuestra respuesta
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'No changes were found',
-                            ),
-                        );
-                        return $bodyResponse;
                     }
                 }else{
                     //Modifiamos el Header de nuestra respuesta
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                     $messageArray = array();
-                    foreach ($branchFormPostPut->getMessages() as $key => $value){
-                        foreach($value as $val){
-                            //Obtenemos el valor de la columna con error
-                            $message = $key.' '.$val;
-                            array_push($messageArray, $message);
-                        }
+                    foreach ($branchFormToShowUpdate->getElements() as $key => $value){
+                        //Obtenemos el nombre de la columna
+                        $message = $key;
+                        array_push($messageArray, $message);
                     }
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
+                    $bodyResponse = array(
+                        'Error' => array(
+                            'HTTP_Status' => 400 . ' Bad Request',
+                            'Title' => 'No changes were found',
+                            'Columns_to_do_changes' => $messageArray,
+                        ),
+                    );
                     return $bodyResponse;
                 }
-            //Si el formulario no fue valido
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                 $messageArray = array();
-                foreach ($branchFormToShowUpdate->getElements() as $key => $value){
-                    //Obtenemos el nombre de la columna
-                    $message = $key;
-                    array_push($messageArray, $message);
+                foreach ($branchFormPostPut->getMessages() as $key => $value){
+                    foreach($value as $val){
+                        //Obtenemos el valor de la columna con error
+                        $message = $key.' '.$val;
+                        array_push($messageArray, $message);
+                    }
                 }
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'No changes were found',
-                        'Columns_to_do_changes' => $messageArray,
-                    ),
-                );
+                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
                 return $bodyResponse;
             }
         }else{
