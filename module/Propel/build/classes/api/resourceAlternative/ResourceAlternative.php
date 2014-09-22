@@ -430,7 +430,7 @@ class ResourceAlternative {
                                     'department_name' => $row['department_name'],
                                 ),
                             );
-
+                            // Agregamos a nuestra respuesta los datos de departmentmember del idUser
                             foreach($resourceAlternativeArray as $key => $value){
                                 $resourceAlternativeArray[$key]['departmentmember'] = $departmentResponse;
                             }
@@ -439,58 +439,81 @@ class ResourceAlternative {
 
                         // Start Departmentleader //
 
-                        // instanciamos el objeto DepartmentmemberQuery
-                        $deparmentleaderQuery = DepartmentleaderQuery::create()->filterByIduser($idUser)->findOne();
-                        $deparmentleaderArray = $deparmentleaderQuery->toArray(BasePeer::TYPE_FIELDNAME);
+                        // instanciamos el objeto DepartmentleaderQuery
+                        $departmentleaderQuery = DepartmentleaderQuery::create()->filterByIduser($idUser)->find();
 
-                        // Si el usuario pertenece a departmentleader
-                        if($deparmentleaderQuery){
-                            // Instanciamos el objeto de CompanyQuery
-                            $departmentQuery = $deparmentleaderQuery->getDepartment()->toArray(BasePeer::TYPE_FIELDNAME);
-
-                            //Instanciamos nuestro formulario departmentGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                            $departmentFormGET = DepartmentFormGET::init($userLevel);
-
-                            $departmentArray = array();
-                            foreach ($departmentFormGET->getElements() as $key=>$value){
-                                $departmentArray[$key] = $departmentQuery[$key];
+                        if(count($departmentleaderQuery->getArrayCopy()) == 1){
+                            $departmentLeaderArray = $departmentleaderQuery->getArrayCopy();
+                            $departmentLeaderArrays = array();
+                            foreach($departmentLeaderArray as $key => $value){
+                                // Guardamos en un array el objeto del departmentleader al que pertenece el idUser
+                                $departmentLeaderArrays[$key] = $value->toArray(BasePeer::TYPE_FIELDNAME);
                             }
-
-                            //Agregamos los datos de department a nuestro arreglo $row['departmentleader']
-                            foreach ($departmentArray as $key=>$value){
-                                $row[$key] = $value;
+                            $departmentleaderQuery = DepartmentleaderQuery::create()->filterByIduser($idUser)->findOne();
+                        }elseif(count($departmentleaderQuery->getArrayCopy()) >= 2){
+                            $departmentLeaderArray = $departmentleaderQuery->getArrayCopy();
+                            $departmentLeaderArrays = array();
+                            foreach($departmentLeaderArray as $key => $value){
+                                // Guardamos en un array los objetos de cada departmentleader al que pertenece el idUser
+                                $departmentLeaderArrays[$key] = $value->toArray(BasePeer::TYPE_FIELDNAME);
                             }
+                            // Instanciamos el objeto de DepartmentleaderQuery con un findOne()
+                            // para poder instanciar mas abajo al objeto Department y traer sus datos para mostrarlos en la vista
+                            $departmentleaderQuery = DepartmentleaderQuery::create()->filterByIduser($idUser)->findOne();
+                        }
 
-                            //Instanciamos nuestro formulario departmentGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                            $departmentleaderFormGET = DepartmentleaderFormGET::init($userLevel);
+                        //Instanciamos nuestro formulario departmentleaderGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                        $departmentleaderFormGET = DepartmentleaderFormGET::init($userLevel);
 
-                            $departmentleaderArray = array();
-                            foreach ($departmentleaderFormGET->getElements() as $key=>$value){
-                                $departmentleaderArray[$key] = $deparmentleaderArray[$key];
-                            }
-
-                            //Agregamos los datos de user a nuestro arreglo $row['department']
-                            foreach ($deparmentleaderArray as $key=>$value){
-                                $row[$key] = $value;
-                            }
-                            $departmentResponse = array(
-                                'departmentleader_title' => $row['departmentleader_title'],
-                                'department' => array(
-                                    '_links' => array(
-                                        'self' => array('href' => URL_API.'/company/department/'.$deparmentmemberQuery->getIddepartment()),
-                                    ),
-                                    'iddepartment' => $row['iddepartment'],
-                                    'department_name' => $row['department_name'],
-                                ),
-                            );
-
-                            foreach($resourceAlternativeArray as $key => $value){
-                                $resourceAlternativeArray[$key]['departmentleader'] = $departmentResponse;
+                        // Almacenamos en un array los departmentleader a los que pertenece el idUser
+                        $departmentleaderArray = array();
+                        foreach ($departmentleaderFormGET->getElements() as $key=>$value){
+                            for($i=0;$i>=count($departmentLeaderArrays);$i++){
+                                $departmentleaderArray[$i][$key] = $departmentLeaderArrays[$i][$key];
                             }
                         }
+
+                        // Instanciamos el objeto de Department y traemos los datos en un array
+                        // dependiendo del departamento al que pertenece el idUser.
+                        $departmentQuery = $departmentleaderQuery->getDepartment()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                        //Instanciamos nuestro formulario departmentGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                        $departmentFormGET = DepartmentFormGET::init($userLevel);
+
+                        $departmentArray = array();
+                        foreach ($departmentFormGET->getElements() as $key=>$value){
+                            $departmentArray[$key] = $departmentQuery[$key];
+                        }
+
+                        //Agregamos los datos de department a nuestro arreglo $row['department']
+                        foreach ($departmentArray as $key=>$value){
+                            $row[$key] = $value;
+                        }
+
+                        // Agregamos en un array los departmentleader_title a los que pertenece el idUser
+                        $departmentleadertitleArray = array();
+                        foreach($departmentLeaderArrays as $key => $value){
+                            $departmentleadertitleArray[$key] = $departmentLeaderArrays[$key]['departmentleader_title'];
+                        }
+                        $departmentResponse = array(
+                            'departmentleader_title' => array(
+                                $departmentleadertitleArray
+                            ),
+                            'department' => array(
+                                '_links' => array(
+                                    'self' => array('href' => URL_API.'/company/department/'.$departmentleaderQuery->getIddepartment()),
+                                ),
+                                'iddepartment' => $row['iddepartment'],
+                                'department_name' => $row['department_name'],
+                            ),
+                        );
+                        // Agregamos a nuestra respuesta los datos de departmentleader del idUser
+                        foreach($resourceAlternativeArray as $key => $value){
+                            $resourceAlternativeArray[$key]['departmentleader'] = $departmentResponse;
+                        }
+
                         // End Departmentleader //
                         //// End Department ////
-
 
                         $response = array(
                             '_links' => $getCollectionAlternative['links'],
