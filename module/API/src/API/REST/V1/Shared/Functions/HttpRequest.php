@@ -44,7 +44,9 @@ class HttpRequest
                 if($data != null){
                     $dataArray = array();
                     foreach($elementsForm as $key=>$value){
-                        $dataArray[$key] = $request->getPost()->$key ? $request->getPost()->$key : null;
+                        if(isset($data[$key])){
+                            $dataArray[$key] = $data[$key] ? $data[$key] : null;
+                        }
                     }
                     return $dataArray;
 
