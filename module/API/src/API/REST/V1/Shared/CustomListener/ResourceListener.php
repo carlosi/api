@@ -77,6 +77,50 @@ class ResourceListener implements ListenerAggregateInterface {
 
             case 'POST':{
 
+                ////// Start Resource Limit //////
+
+                switch(RESOURCE){
+                    case "branch":{
+                        switch(RESOURCE_CHILD){
+                            case "staff":{
+                                $response->setStatusCode(Response::STATUS_CODE_405);
+                                $statusCode = $response->getStatusCode();
+                                $body = array(
+                                    'HTTP_Status' => $statusCode,
+                                    'Title' => 'Method not allowed',
+                                    'Details' => 'To access this resources you need to use the GET method',
+                                    'More_Info' => URL_API_DOCS
+                                );
+                                switch($typeResponse){
+                                    case "xml":{
+                                        // Create the config object
+                                        $writer = new \Zend\Config\Writer\Xml();
+                                        return $response->setContent($writer->toString($body));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $jsonModel = new JsonModel($body);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                ////// End Resource Limit //////
+
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
                     // Entra directo al LoginController (API\REST\V1\Login\Controller\LoginController)
@@ -127,6 +171,7 @@ class ResourceListener implements ListenerAggregateInterface {
                     // Verificamos que exista el recurso
                     $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
                     $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+                    // Si el resource y el resourceChild pertenecen al mismo módulo
                     if($moduleResource == $moduleResourceChild){
                         switch($resourcenameChild){
                             case "department" :{
@@ -664,6 +709,49 @@ class ResourceListener implements ListenerAggregateInterface {
             }
             case 'PUT':{
 
+                ////// Start Resource Limit //////
+
+                switch(RESOURCE){
+                    case "branch":{
+                        switch(RESOURCE_CHILD){
+                            case "staff":{
+                                $response->setStatusCode(Response::STATUS_CODE_405);
+                                $statusCode = $response->getStatusCode();
+                                $body = array(
+                                    'HTTP_Status' => $statusCode,
+                                    'Title' => 'Method not allowed',
+                                    'Details' => 'To access this resources you need to use the GET method',
+                                    'More_Info' => URL_API_DOCS
+                                );
+                                switch($typeResponse){
+                                    case "xml":{
+                                        // Create the config object
+                                        $writer = new \Zend\Config\Writer\Xml();
+                                        return $response->setContent($writer->toString($body));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $jsonModel = new JsonModel($body);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                ////// End Resource Limite //////
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
                     $response = new Response();
@@ -1074,6 +1162,50 @@ class ResourceListener implements ListenerAggregateInterface {
                 break;
             }
             case 'DELETE':{
+
+                ////// Start Resource Limit //////
+
+                switch(RESOURCE){
+                    case "branch":{
+                        switch(RESOURCE_CHILD){
+                            case "staff":{
+                                $response->setStatusCode(Response::STATUS_CODE_405);
+                                $statusCode = $response->getStatusCode();
+                                $body = array(
+                                    'HTTP_Status' => $statusCode,
+                                    'Title' => 'Method not allowed',
+                                    'Details' => 'To access this resources you need to use the GET method',
+                                    'More_Info' => URL_API_DOCS
+                                );
+                                switch($typeResponse){
+                                    case "xml":{
+                                        // Create the config object
+                                        $writer = new \Zend\Config\Writer\Xml();
+                                        return $response->setContent($writer->toString($body));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $jsonModel = new JsonModel($body);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $jsonModel = new JsonModel($body);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                ////// End Resource Limite //////
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){

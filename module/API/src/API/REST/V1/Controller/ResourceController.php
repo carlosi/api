@@ -132,7 +132,7 @@ class ResourceController extends AbstractRestfulController
             $resource = ResourceManager::getResource($resourceName);
 
             // La funcion resourceData retorna un array de los datos que son enviados por el body
-            $dataArray = HttpRequest::resourceData($data, $request, $response, $resourceName);
+            $dataArray = HttpRequest::resourceCreateData($data, $request, $response, $resourceName);
 
             // Si $dataArray nos retorna un error
             if(isset($dataArray['Error'])){

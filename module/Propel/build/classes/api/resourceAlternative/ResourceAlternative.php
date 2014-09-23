@@ -398,6 +398,7 @@ class ResourceAlternative {
                         );
                         //// End Branch ////
 
+                        /**
                         //// Start Department ////
                         // Start Departmentmember //
 
@@ -515,6 +516,7 @@ class ResourceAlternative {
                         // End Departmentleader //
                         //// End Department ////
 
+                         **/
                         $response = array(
                             '_links' => $getCollectionAlternative['links'],
                             'ACL'    => $acl,
