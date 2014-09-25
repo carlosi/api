@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Module.php
  * BuyBuy

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * TokenListener.php
  * BuyBuy
@@ -37,7 +36,6 @@ class TokenListener implements ListenerAggregateInterface {
      * @param EventManagerInterface $events
      */
     public function attach(EventManagerInterface $events){
-
         $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, array($this, 'onDispatch'), 950);
 
     }
@@ -128,6 +126,7 @@ class TokenListener implements ListenerAggregateInterface {
                         case "xml":{
                             // Create the config object
                             $writer = new \Zend\Config\Writer\Xml();
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                             return $response->setContent($writer->toString($body));
                             $e->stopPropagation();
                             break;

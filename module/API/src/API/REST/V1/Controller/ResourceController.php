@@ -31,7 +31,6 @@ use ResourceAlternative;
  */
 class ResourceController extends AbstractRestfulController
 {
-
     /**
      * @var arra
      */

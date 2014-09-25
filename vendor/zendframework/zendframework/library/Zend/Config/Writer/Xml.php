@@ -27,7 +27,8 @@ class Xml extends AbstractWriter
         $writer->setIndent(true);
         $writer->setIndentString(str_repeat(' ', 4));
 
-        $writer->startDocument('1.0', 'UTF-8');
+        $writer->startDocument('1.0','UTF-8');
+
         $writer->startElement(RESOURCE);
 
         foreach ($config as $sectionName => $data) {

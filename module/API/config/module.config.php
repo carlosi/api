@@ -48,7 +48,7 @@ return array(
                     'constraints' => array(
                         'version' => '1',
                         'typeResponse' => 'xml|json',
-                        'resource' => 'company|user|client|branch|department',
+                        'resource' => 'company|user|staff|client|branch|department',
                         'resourceChild' => 'staff|address|file|comment|department|leader|member',
                         'id' => '[0-9]+',
                         'idChild' => '[0-9]+',
@@ -255,7 +255,7 @@ return array(
             __DIR__ . '/../view',
         ),
         'strategies' => array(
-        		'ViewJsonStrategy',
+        	'ViewJsonStrategy',
         ),
         
     ),

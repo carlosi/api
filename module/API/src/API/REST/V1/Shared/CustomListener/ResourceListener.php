@@ -77,7 +77,7 @@ class ResourceListener implements ListenerAggregateInterface {
 
             case 'POST':{
 
-                ////// Start Resource Limit //////
+                ////// Start Resource Not Allowed //////
 
                 switch(RESOURCE){
                     case "branch":{
@@ -119,7 +119,7 @@ class ResourceListener implements ListenerAggregateInterface {
                     }
                 }
 
-                ////// End Resource Limit //////
+                ////// End Resource Not Allowed //////
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
@@ -709,7 +709,7 @@ class ResourceListener implements ListenerAggregateInterface {
             }
             case 'PUT':{
 
-                ////// Start Resource Limit //////
+                ////// Start Resource Not Allowed //////
 
                 switch(RESOURCE){
                     case "branch":{
@@ -750,8 +750,8 @@ class ResourceListener implements ListenerAggregateInterface {
                         }
                     }
                 }
+                ////// End Resource Not Allowed //////
 
-                ////// End Resource Limite //////
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
                     $response = new Response();
@@ -1163,7 +1163,7 @@ class ResourceListener implements ListenerAggregateInterface {
             }
             case 'DELETE':{
 
-                ////// Start Resource Limit //////
+                ////// Start Resource Not Allowed //////
 
                 switch(RESOURCE){
                     case "branch":{
@@ -1205,7 +1205,7 @@ class ResourceListener implements ListenerAggregateInterface {
                     }
                 }
 
-                ////// End Resource Limite //////
+                ////// End Resource Not Allowed //////
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){

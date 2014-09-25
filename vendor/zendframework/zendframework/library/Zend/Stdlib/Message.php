@@ -86,6 +86,7 @@ class Message implements MessageInterface
     public function setContent($value)
     {
         $this->content = $value;
+
         return $this;
     }
 

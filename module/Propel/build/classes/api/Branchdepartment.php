@@ -264,7 +264,6 @@ class Branchdepartment extends BaseBranchdepartment
             }
         }
 
-        //var_dump($response);
         return $response;
     }
     /////////// Start get ///////////
@@ -400,6 +399,8 @@ class Branchdepartment extends BaseBranchdepartment
                 $row[$key] = $department[$key];
             }
 
+            // Eliminamos idcompany
+            unset($row['idcompany']);
             array_push($departmentArray, $row);
         }
 
@@ -413,6 +414,8 @@ class Branchdepartment extends BaseBranchdepartment
                 $acl[$element->getAttribute('name')] = $element->getOption('label');
             }
         }
+        // eliminamos el idcompany
+        unset($acl['idcompany']);
         // End ACL //
 
         $response = array(
