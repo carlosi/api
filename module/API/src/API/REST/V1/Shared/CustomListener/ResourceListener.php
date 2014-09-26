@@ -78,18 +78,18 @@ class ResourceListener implements ListenerAggregateInterface {
             case 'POST':{
 
                 ////// Start Resource Not Allowed //////
-
                 switch(RESOURCE){
                     case "branch":{
                         switch(RESOURCE_CHILD){
                             case "staff":{
                                 $response->setStatusCode(Response::STATUS_CODE_405);
-                                $statusCode = $response->getStatusCode();
                                 $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Method not allowed',
-                                    'Details' => 'To access this resources you need to use the GET method',
-                                    'More_Info' => URL_API_DOCS
+                                    'error' => array(
+                                        'status_code' => 405 . ' Method not allowed',
+                                        'title' => 'Method POST is not allowed',
+                                        'details' => 'To access this resources you need to use the GET method.',
+                                        'more_info' => URL_API_DOCS
+                                    ),
                                 );
                                 switch($typeResponse){
                                     case "xml":{
@@ -128,13 +128,14 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
                 if($routeName == "documentation"){
                     $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'To access the documentation you need to use the GET method',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 405 . ' Method not allowed',
+                            'title' => 'Method POST is not allowed',
+                            'details' => 'To access the documentation you need to use the GET method.',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -194,10 +195,11 @@ class ResourceListener implements ListenerAggregateInterface {
                                     $response->setStatusCode(Response::STATUS_CODE_400);
 
                                     $body = array(
-                                        'Error' => array(
-                                            'HTTP_Status' => 400 . ' Bad Request',
-                                            'Title' => 'Bad Request',
-                                            'Details' => 'The id department is required',
+                                        'error' => array(
+                                            'status_code' => 400 . ' Bad Request',
+                                            'title' => 'The id department is required',
+                                            'details' => 'The id department can´t be null.',
+                                            'more_info' => URL_API_DOCS
                                         ),
                                     );
 
@@ -233,6 +235,7 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
                 ////// End Resource Relational //////
 
+                ////// Start Resource //////
                 if(RESOURCE != null){
                     $requestContentType = $e->getRequest()->getHeaders('ContentType')->getMediaType();
 
@@ -250,10 +253,12 @@ class ResourceListener implements ListenerAggregateInterface {
                             $response = new Response();
                             $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
                             $body = array(
-                                'HTTP_Status' => '400' ,
-                                'Title' => 'Bad Request' ,
-                                'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                'More_Info' => URL_API_DOCS
+                                'error' => array(
+                                    'status_code' => 400 .' Bad Request' ,
+                                    'title' => 'The Content-Type is required' ,
+                                    'details' => 'Not received Content-Type Header. Please add a Content-Type Header.',
+                                    'more_info' => URL_API_DOCS
+                                ),
                             );
 
                             switch($typeResponse){
@@ -331,13 +336,14 @@ class ResourceListener implements ListenerAggregateInterface {
 
                             }else{
                                 $response->setStatusCode(Response::STATUS_CODE_404);
-                                $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Not Found' ,
-                                    'Details' => 'Resource not found',
-                                    'More_Info' => URL_API_DOCS
+                                    'error' => array(
+                                        'status_code' => 404 . ' Not Found',
+                                        'title' => 'Resource not found' ,
+                                        'details' => 'The requested resource could not be found.',
+                                        'more_tnfo' => URL_API_DOCS
+                                    ),
                                 );
                                 switch($typeResponse){
                                     case "xml":{
@@ -375,13 +381,14 @@ class ResourceListener implements ListenerAggregateInterface {
                     define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }else{
                     $response->setStatusCode(Response::STATUS_CODE_404);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Not Found' ,
-                        'Details' => 'Resource not found',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 404 . ' Not Found',
+                            'title' => 'Resource not found' ,
+                            'details' => 'The requested resource could not be found.',
+                            'more_tnfo' => URL_API_DOCS
+                        )
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -407,6 +414,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         }
                     }
                 }
+                ////// End Resource //////
 
                 break;
             }
@@ -416,13 +424,14 @@ class ResourceListener implements ListenerAggregateInterface {
                 if($routeName == "login"){
                     $response = new Response();
                     $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'To access the login you need to use the POST method',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 405 . ' Method not allowed',
+                            'title' => 'Method GET is not allowed',
+                            'details' => 'To access the login you need to use the POST method',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -502,10 +511,12 @@ class ResourceListener implements ListenerAggregateInterface {
                                             $statusCode = $response->getStatusCode();
 
                                             $body = array(
-                                                'HTTP_Status' => $statusCode,
-                                                'Title' => 'Not Found' ,
-                                                'Details' => 'Resource not found',
-                                                'More_Info' => URL_API_DOCS
+                                                'error' => array(
+                                                    'status_code' => 404 . ' Not Found',
+                                                    'title' => 'Resource not found' ,
+                                                    'details' => 'The requested resource could not be found.',
+                                                    'more_tnfo' => URL_API_DOCS
+                                                ),
                                             );
                                             switch($typeResponse){
                                                 case "xml":{
@@ -564,13 +575,14 @@ class ResourceListener implements ListenerAggregateInterface {
                                             default:{
                                                 //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
                                                 $response->setStatusCode(Response::STATUS_CODE_404);
-                                                $statusCode = $response->getStatusCode();
 
                                                 $body = array(
-                                                    'HTTP_Status' => $statusCode,
-                                                    'Title' => 'Not Found' ,
-                                                    'Details' => 'Resource not found',
-                                                    'More_Info' => URL_API_DOCS
+                                                    'error' => array(
+                                                        'status_code' => 404 . ' Not Found',
+                                                        'title' => 'Resource not found' ,
+                                                        'details' => 'The requested resource could not be found.',
+                                                        'more_tnfo' => URL_API_DOCS
+                                                    ),
                                                 );
                                                 switch($typeResponse){
                                                     case "xml":{
@@ -636,13 +648,14 @@ class ResourceListener implements ListenerAggregateInterface {
                             }else{
                                 //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
                                 $response->setStatusCode(Response::STATUS_CODE_404);
-                                $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Not Found' ,
-                                    'Details' => 'Resource not found',
-                                    'More_Info' => URL_API_DOCS
+                                    'error' => array(
+                                        'status_code' => 404 . ' Not Found',
+                                        'title' => 'Resource not found' ,
+                                        'details' => 'The requested resource could not be found.',
+                                        'more_tnfo' => URL_API_DOCS
+                                    ),
                                 );
                                 switch($typeResponse){
                                     case "xml":{
@@ -673,13 +686,14 @@ class ResourceListener implements ListenerAggregateInterface {
                     define('MODULE_RESOURCE', ucfirst($e->getRouteMatch()->getMatchedRouteName()));
                 }else{
                     $response->setStatusCode(Response::STATUS_CODE_404);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Not Found' ,
-                        'Details' => 'Resource not found',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 404 . ' Not Found',
+                            'title' => 'Resource not found' ,
+                            'details' => 'The requested resource could not be found.',
+                            'more_tnfo' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -718,10 +732,12 @@ class ResourceListener implements ListenerAggregateInterface {
                                 $response->setStatusCode(Response::STATUS_CODE_405);
                                 $statusCode = $response->getStatusCode();
                                 $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Method not allowed',
-                                    'Details' => 'To access this resources you need to use the GET method',
-                                    'More_Info' => URL_API_DOCS
+                                    'error' => array(
+                                        'status_code' => 405 . ' Method not allowed',
+                                        'title' => 'Method PUT is not allowed',
+                                        'details' => 'To access this resources you need to use the GET method',
+                                        'more_info' => URL_API_DOCS
+                                    ),
                                 );
                                 switch($typeResponse){
                                     case "xml":{
@@ -756,13 +772,14 @@ class ResourceListener implements ListenerAggregateInterface {
                 if($routeName == "login"){
                     $response = new Response();
                     $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'To access the login you need to use the POST method',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 405 . 'Method not allowed',
+                            'title' => 'Method PUT is not allowed',
+                            'details' => 'To access the login you need to use the POST method',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -791,13 +808,14 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
                 if($routeName == "documentation"){
                     $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'To access the documentation you need to use the GET method',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                                'status_code' => 405 . ' Method not allowed',
+                            'title' => 'Method PUT is not allowed',
+                            'details' => 'To access the documentation you need to use the GET method',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -829,13 +847,14 @@ class ResourceListener implements ListenerAggregateInterface {
 
                 if(RESOURCE_CHILD == 'department'){
                     $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'Methods allowed: GET, POST, DELETE',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 405 . ' Method not allowed',
+                            'title' => 'Method PUT is not allowed',
+                            'details' => 'Methods allowed: GET, POST, DELETE',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -881,10 +900,12 @@ class ResourceListener implements ListenerAggregateInterface {
                             $response = new Response();
                             $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
                             $body = array(
-                                'HTTP_Status' => '400' ,
-                                'Title' => 'Bad Request' ,
-                                'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                'More_Info' => URL_API_DOCS
+                                'error' => array(
+                                    'status_code' => 400 .' Bad Request' ,
+                                    'title' => 'The Content-Type is required' ,
+                                    'details' => 'Not received Content-Type Header. Please add a Content-Type Header.',
+                                    'more_info' => URL_API_DOCS
+                                ),
                             );
 
                             switch($typeResponse){
@@ -942,10 +963,11 @@ class ResourceListener implements ListenerAggregateInterface {
                                             $response->setStatusCode(Response::STATUS_CODE_400);
 
                                             $body = array(
-                                                'Error' => array(
-                                                    'HTTP_Status' => 400 . ' Bad Request',
-                                                    'Title' => 'Bad Request',
-                                                    'Details' => 'The id department is required',
+                                                'error' => array(
+                                                    'status_code' => 400 . ' Bad Request',
+                                                    'title' => 'The id department is required',
+                                                    'details' => 'The id department can´t be null.',
+                                                    'more_info' => URL_API_DOCS
                                                 ),
                                             );
 
@@ -1004,10 +1026,11 @@ class ResourceListener implements ListenerAggregateInterface {
                             $response->setStatusCode(Response::STATUS_CODE_400);
 
                             $body = array(
-                                'Error' => array(
-                                    'HTTP_Status' => 400 . ' Bad Request',
-                                    'Title' => 'Bad Request',
-                                    'Details' => 'The id'.RESOURCE_CHILD.' is required',
+                                'error' => array(
+                                    'status_code' => 400 . ' Bad Request',
+                                    'title' => 'The id is required',
+                                    'details' => 'The id'.RESOURCE_CHILD.' can´t be null.',
+                                    'more_info' => URL_API_DOCS
                                 ),
                             );
 
@@ -1046,11 +1069,12 @@ class ResourceListener implements ListenerAggregateInterface {
                         $statusCode = $response->getStatusCode();
 
                         $body = array(
-                            'HTTP_Status' => $statusCode,
-                            'Method' => 'PUT' ,
-                            'Title' => 'The request id is null' ,
-                            'Details' => 'The request id'.RESOURCE.' can´t be null',
-                            'More_Info' => URL_API_DOCS
+                            'error' => array(
+                                'status_code' => $statusCode . ' Bad Request',
+                                'title' => 'The id is required' ,
+                                'details' => 'The request id'.RESOURCE.' can´t be null',
+                                'more_info' => URL_API_DOCS
+                            ),
                         );
                         switch($typeResponse){
                             case "xml":{
@@ -1092,10 +1116,12 @@ class ResourceListener implements ListenerAggregateInterface {
 
                                 $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
                                 $body = array(
-                                    'HTTP_Status' => '400' ,
-                                    'Title' => 'Bad Request' ,
-                                    'Details' => 'Not received Content-Type Header. Please add a Content-Type Header',
-                                    'More_Info' => URL_API_DOCS
+                                    'error' => array(
+                                        'status_code' => 400 .' Bad Request' ,
+                                        'title' => 'The Content-Type is required' ,
+                                        'details' => 'Not received Content-Type Header. Please add a Content-Type Header.',
+                                        'more_info' => URL_API_DOCS
+                                    ),
                                 );
 
                                 switch($typeResponse){
@@ -1127,13 +1153,14 @@ class ResourceListener implements ListenerAggregateInterface {
                     define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }else{
                     $response->setStatusCode(Response::STATUS_CODE_404);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Not Found' ,
-                        'Details' => 'Resource not found',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 404 . ' Not Found',
+                            'title' => 'Resource not found' ,
+                            'details' => 'The requested resource could not be found.',
+                            'more_tnfo' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -1170,12 +1197,13 @@ class ResourceListener implements ListenerAggregateInterface {
                         switch(RESOURCE_CHILD){
                             case "staff":{
                                 $response->setStatusCode(Response::STATUS_CODE_405);
-                                $statusCode = $response->getStatusCode();
                                 $body = array(
-                                    'HTTP_Status' => $statusCode,
-                                    'Title' => 'Method not allowed',
-                                    'Details' => 'To access this resources you need to use the GET method',
-                                    'More_Info' => URL_API_DOCS
+                                    'error' => array(
+                                        'status_code' => 405 . ' Method not allowed',
+                                        'title' => 'Method POST is not allowed',
+                                        'details' => 'To access this resources you need to use the GET method.',
+                                        'more_info' => URL_API_DOCS
+                                    ),
                                 );
                                 switch($typeResponse){
                                     case "xml":{
@@ -1210,13 +1238,14 @@ class ResourceListener implements ListenerAggregateInterface {
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
                     $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'To access the login you need to use the POST method',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 405 . ' Method not allowed',
+                            'title' => 'Method DELETE is not allowed',
+                            'details' => 'To access the login you need to use the POST method.',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -1245,13 +1274,14 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
                 if($routeName == "documentation"){
                     $response->setStatusCode(Response::STATUS_CODE_405);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Method not allowed',
-                        'Details' => 'To access the documentation you need to use the GET method',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 405 . ' Method not allowed',
+                            'title' => 'Method DELETE is not allowed',
+                            'details' => 'o access the documentation you need to use the GET method.',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -1321,10 +1351,11 @@ class ResourceListener implements ListenerAggregateInterface {
                                     $response->setStatusCode(Response::STATUS_CODE_400);
 
                                     $body = array(
-                                        'Error' => array(
-                                            'HTTP_Status' => 400 . ' Bad Request',
-                                            'Title' => 'Bad Request',
-                                            'Details' => 'The id department is required',
+                                        'error' => array(
+                                            'status_code' => 400 . ' Bad Request',
+                                            'title' => 'The id department is required',
+                                            'details' => 'The id department can´t be null.',
+                                            'more_info' => URL_API_DOCS
                                         ),
                                     );
 
@@ -1359,13 +1390,14 @@ class ResourceListener implements ListenerAggregateInterface {
                         if(ID_RESOURCE == null){
 
                             $response->setStatusCode(Response::STATUS_CODE_400);
-                            $statusCode = $response->getStatusCode();
 
                             $body = array(
-                                'HTTP_Status' => $statusCode,
-                                'Title' => 'The request id is null' ,
-                                'Details' => 'The request id can´t be null',
-                                'More_Info' => URL_API_DOCS
+                                'error' => array(
+                                    'status_code' => 400 . ' Bad Request',
+                                    'title' => 'The id is required' ,
+                                    'details' => 'The request id'.RESOURCE.' can´t be null',
+                                    'more_info' => URL_API_DOCS
+                                ),
                             );
                             switch($typeResponse){
                                 case "xml":{
@@ -1395,13 +1427,14 @@ class ResourceListener implements ListenerAggregateInterface {
                     }
                 }else{
                     $response->setStatusCode(Response::STATUS_CODE_404);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Title' => 'Not Found' ,
-                        'Details' => 'Resource not found',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => 404 . ' Not Found',
+                            'title' => 'Resource not found' ,
+                            'details' => 'The requested resource could not be found.',
+                            'more_tnfo' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{
@@ -1435,11 +1468,12 @@ class ResourceListener implements ListenerAggregateInterface {
                     $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP_Status' => $statusCode,
-                        'Method' => 'PUT' ,
-                        'Title' => 'The request id is null' ,
-                        'Details' => 'The request id'.RESOURCE.' can´t be null',
-                        'More_Info' => URL_API_DOCS
+                        'error' => array(
+                            'status_code' => $statusCode . ' Bad Request',
+                            'title' => 'The id is required' ,
+                            'details' => 'The request id'.RESOURCE.' can´t be null',
+                            'more_info' => URL_API_DOCS
+                        ),
                     );
                     switch($typeResponse){
                         case "xml":{

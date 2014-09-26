@@ -111,18 +111,27 @@ class ApiProblemListener implements ListenerAggregateInterface
 
             // Obtenemos el StatusCode
             $responseStatusCode = $response->getStatusCode();
-
             switch($responseStatusCode){
                 case '404':{
 
+                    ////// Start Version Not Allowed //////
+                    /*
+                    if(API_VERSION != 1){
+
+                        header('Location: http://api.rest.buybuy.com.mx/v1/xml/company/branch/');
+                    }
+                    */
+                    ////// End Version Not Allowed //////
+
                     $response->setStatusCode(Response::STATUS_CODE_404);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode,
-                        'Title' => 'Not Found' ,
-                        'Details' => 'Resource not found',
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'error' => array(
+                            'status_code' => 404 . ' Not Found',
+                            'title' => 'Resource not found' ,
+                            'details' => 'The requested resource could not be found.',
+                            'more_info' => 'http://rest.api.buybuy.com.mx/documentation',
+                        ),
                     );
                     $jsonModel = new JsonModel($body);
                     $jsonModel->setTerminal(true);
@@ -133,12 +142,14 @@ class ApiProblemListener implements ListenerAggregateInterface
                 case '500':{
 
                     $response->setStatusCode(Response::STATUS_CODE_500);
-                    $statusCode = $response->getStatusCode();
 
                     $body = array(
-                        'HTTP Status' => $statusCode ,
-                        'Title' => 'Internal Server Error' ,
-                        'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                        'error' => array(
+                            'status_code' => 500 . ' Internal Server Error',
+                            'title' => 'Internal Server Error' ,
+                            'details' => 'Internal Server Error',
+                            'more_info' => 'http://rest.api.buybuy.com.mx/documentation'
+                        ),
                     );
 
                     if($requestHeaders->get('Content-Type') == null){
@@ -147,12 +158,14 @@ class ApiProblemListener implements ListenerAggregateInterface
 
                         if($request->getMethod() == "GET"){
                             $response->setStatusCode(Response::STATUS_CODE_500);
-                            $statusCode = $response->getStatusCode();
 
                             $body = array(
-                                'HTTP Status' => $statusCode ,
-                                'Title' => 'Internal Server Error' ,
-                                'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                'error' => array(
+                                    'status_code' => 500 . ' Internal Server Error',
+                                    'title' => 'Internal Server Error' ,
+                                    'details' => 'Internal Server Error',
+                                    'more_info' => 'http://rest.api.buybuy.com.mx/documentation'
+                                ),
                             );
                         }
 
@@ -167,13 +180,14 @@ class ApiProblemListener implements ListenerAggregateInterface
 
                                 $response->setStatusCode(Response::STATUS_CODE_400);
                                 $responseHeaders->addHeaderLine('Message', 'Sintax Error');
-                                $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP Status' => $statusCode,
-                                    'Title' => 'Bad Request' ,
-                                    'Details' => 'JSON Sintax Error',
-                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                    'error' => array(
+                                        'status_code' => 400 . ' Bad Request',
+                                        'title' => 'Sintax error' ,
+                                        'details' => 'The request was a invalid. The body has a syntax error json',
+                                        'more_info' => 'http://rest.api.buybuy.com.mx/documentation'
+                                    ),
                                 );
                             }
                         }
@@ -188,13 +202,14 @@ class ApiProblemListener implements ListenerAggregateInterface
 
                                 $response->setStatusCode(Response::STATUS_CODE_400);
                                 $responseHeaders->addHeaderLine('Message', 'Sintax Error');
-                                $statusCode = $response->getStatusCode();
 
                                 $body = array(
-                                    'HTTP Status' => $statusCode,
-                                    'Title' => 'Bad Request' ,
-                                    'Details' => 'JSON Sintax Error',
-                                    'More Info' => 'http://rest.api.buybuy.com.mx/docs'
+                                    'error' => array(
+                                        'status_code' => 400 . ' Bad Request',
+                                        'title' => 'Sintax error' ,
+                                        'details' => 'The request was a invalid. The body has a syntax error json',
+                                        'more_info' => 'http://rest.api.buybuy.com.mx/documentation'
+                                    ),
                                 );
                             }
                         }

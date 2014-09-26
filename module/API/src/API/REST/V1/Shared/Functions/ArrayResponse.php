@@ -4,60 +4,86 @@ namespace API\REST\V1\Shared\Functions;
 
 use Zend\View\Model\JsonModel;
 
+class ArrayResponse{
 
-class ArrayResponse {
-	
-	public static function getResponseBody($code=null, array $messageArray= null){
-            
+    public static function getResponse($code, $title = null, $message = null, $response=null){
+
             switch ($code){
-                
-                case 403:{
-                    $responseBody = array(
-                        'Error' => array(
-                            'HTTP_Status' => 403 . ' Forbidden',
-                            'Title' => 'Access denied',
-                            'Details' => 'Sorry but you does not have permission over this resource',
-                        ),
-                    );
-                    break;
-                }
-                
+
                 case 400:{
+                    if(isset($response)){
+                        $response->setStatusCode(400); //BAD REQUEST
+                    }
                     //Resource data pre-validation error
-                    if($messageArray!=null){
-                        $responseBody = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'Resource data pre-validation error',
-                                'Details' => $messageArray,
+                    if($message!=null){
+                        $body = array(
+                            'error' => array(
+                                'status_code' => 400 . ' Bad Request',
+                                'title' => isset($title) ? $title : 'Resource data pre-validation error',
+                                'details' => $message,
+                                'more_info' => URL_API_DOCS
                             ),
                         );
                     }else{
-                        //.. $mesageArray = null
+                        $body = array(
+                            'error' => array(
+                                'status_code' => 400 . ' Bad Request',
+                                'title' => 'Bad Request',
+                                'details' => 'The request cannot be fulfilled due to bad syntax.',
+                                'more_info' => URL_API_DOCS
+                            ),
+                        );
+                        break;
                     }
                     break;
                 }
-
+                case 403:{
+                    if(isset($response)){
+                        $response->setStatusCode(403); //Forbidden
+                    }
+                    //Resource data pre-validation error
+                    if($message!=null){
+                        $body = array(
+                            'error' => array(
+                                'status_code' => 403,
+                                'title' => 'Forbidden' ,
+                                'details' => 'The request was a valid request, but the server is refusing to respond to it.',
+                                'more_info' => URL_API_DOCS
+                            ),
+                        );
+                    }else{
+                        $body = array(
+                            'error' => array(
+                                'status_code' => 403,
+                                'title' => 'Forbidden' ,
+                                'details' => 'The request was a valid request, but the server is refusing to respond to it.',
+                                'more_info' => URL_API_DOCS
+                            ),
+                        );
+                        break;
+                    }
+                    break;
+                }
                 default:{
                         $status			= "error";
                         $description            = "Code Unknown";
                         break;
                 }
             }
-            
-            return $responseBody;
+
+            return $body;
 
 	}
-	
+
 	public function getCode($code=null){
-		
+
 		$description 	= null;
 		$status		= null;
-		
+
 		switch ($code){
 			case 200:{
 				$status			= "success";
-				$description            = "OK";	
+				$description            = "OK";
 				break;
 			}
 			case 201:{
@@ -71,17 +97,17 @@ class ArrayResponse {
 				break;
 			}
 		}
-		
+
 		return array(
-			"status"		=> $status,	
+			"status"		=> $status,
 			"code" 			=> $code,
 			"description"           => $description,
 		);
-		
-	}
-	
 
-	
+	}
+
+
+
 }
 
 ?>

@@ -17,8 +17,9 @@ use Zend\View\Model\JsonModel;
 // - Shared - //
 use API\REST\V1\Shared\Functions\HttpRequest;
 use API\REST\V1\Shared\Functions\ResourceManager;
-use API\REST\V1\Shared\Functions\ArrayResponse;
+use API\REST\V1\Shared\Functions\HttpResponseManager;
 use API\REST\V1\Shared\Functions\ArrayManage;
+use API\REST\V1\Shared\Functions\ArrayResponse;
 // - Propel - //
 use Client;
 use ClientQuery;
@@ -73,16 +74,6 @@ class ResourceController extends AbstractRestfulController
 
         $response->getHeaders()
             ->addHeaderLine('Allow', implode(',', $this->_getOptions()));
-
-        //Retornamos la respuesta
-        $body = array(
-            'Success' => array(
-                'HTTP_Status' => '200' ,
-                'Allow' => implode(',', $this->_getOptions()),
-                'More Info' => URL_API_DOCS.'/'.table
-            ),
-        );
-        return new JsonModel($body);
     }
 
     /**
@@ -134,7 +125,7 @@ class ResourceController extends AbstractRestfulController
             $dataArray = HttpRequest::resourceCreateData($data, $request, $response, $resourceName);
 
             // Si $dataArray nos retorna un error
-            if(isset($dataArray['Error'])){
+            if(isset($dataArray['error'])){
                 switch(TYPE_RESPONSE){
                     case "xml":{;
                         $writer = new \Zend\Config\Writer\Xml();
@@ -209,8 +200,6 @@ class ResourceController extends AbstractRestfulController
                 }
                 //Si el formulario no fue valido
             }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                 $messageArray = array();
                 foreach ($FormPostPut->getMessages() as $key => $value){
@@ -220,19 +209,21 @@ class ResourceController extends AbstractRestfulController
                         array_push($messageArray, $message);
                     }
                 }
+
                 switch(TYPE_RESPONSE){
                     case "xml":{
                         // Create the config object
                         $writer = new \Zend\Config\Writer\Xml();
-                        return $response->setContent($writer->toString(ArrayResponse::getResponseBody(400, $messageArray)));
+                        $bodyResponse = ArrayResponse::getResponse(400, null, $messageArray, $response);
+                        return $response->setContent($writer->toString($bodyResponse));
                         break;
                     }
                     case "json":{
-                        return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
+                        return new JsonModel($bodyResponse);
                         break;
                     }
                     default: {
-                    return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
+                    return new JsonModel($bodyResponse);
                     break;
                     }
                 }
@@ -240,7 +231,7 @@ class ResourceController extends AbstractRestfulController
             //Si el usuario no tiene permisos sobre el recurso
         }else{
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            $bodyResponse = ArrayResponse::getResponseBody(403);
+            $bodyResponse = ArrayResponse::getResponse(403, null, null, $response);
             switch(TYPE_RESPONSE){
                 case "xml":{
                     // Create the config object
@@ -314,10 +305,11 @@ class ResourceController extends AbstractRestfulController
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid '.RESOURCE.' id',
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'The request data is invalid',
+                        'details' => 'Invalid '.RESOURCE.' id',
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -422,10 +414,11 @@ class ResourceController extends AbstractRestfulController
                         //Modifiamos el Header de nuestra respuesta
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
                         $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 403 . ' Forbidden',
-                                'Title' => 'Access denied',
-                                'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                            'error' => array(
+                                'status_code' => 403 . ' Forbidden',
+                                'title' => 'Access denied',
+                                'details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                                'more_info' => URL_API_DOCS
                             ),
                         );
                         switch(TYPE_RESPONSE){
@@ -473,10 +466,11 @@ class ResourceController extends AbstractRestfulController
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //No Content
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'No Content',
-                        'Details' => 'The server successfully processed the request, but is not returning any content.',
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'No Content',
+                        'details' => 'The server successfully processed the request, but is not returning any content.',
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -501,10 +495,11 @@ class ResourceController extends AbstractRestfulController
             //Modifiamos el Header de nuestra respuesta
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
             $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 403 . ' Forbidden',
-                    'Title' => 'Access denied',
-                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                'error' => array(
+                    'status_code' => 403 . ' Forbidden',
+                    'title' => 'Access denied',
+                    'details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                    'more_info' => URL_API_DOCS
                 ),
             );
             switch(TYPE_RESPONSE){
@@ -654,10 +649,11 @@ class ResourceController extends AbstractRestfulController
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid id',
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The request data is invalid',
+                            'details' => 'Invalid id',
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     switch(TYPE_RESPONSE){
@@ -682,10 +678,11 @@ class ResourceController extends AbstractRestfulController
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id'.RESOURCE,
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'The request data is invalid',
+                        'details' => 'Invalid id'.RESOURCE,
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -883,10 +880,11 @@ class ResourceController extends AbstractRestfulController
                         $response = $this->getResponse();
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                         $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'The request data is invalid',
-                                'Details' => 'Invalid id '.RESOURCE_CHILD,
+                            'error' => array(
+                                'status_code' => 400 . ' Bad Request',
+                                'title' => 'The request data is invalid',
+                                'details' => 'Invalid id '.RESOURCE_CHILD,
+                                'more_info' => URL_API_DOCS
                             ),
                         );
                         switch(TYPE_RESPONSE){
@@ -1012,10 +1010,11 @@ class ResourceController extends AbstractRestfulController
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id '.RESOURCE,
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'The request data is invalid',
+                        'details' => 'Invalid id '.RESOURCE,
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1104,10 +1103,11 @@ class ResourceController extends AbstractRestfulController
                         $response = $this->getResponse();
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                         $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'The request data is invalid',
-                                'Details' => 'Invalid '.RESOURCE_CHILD.' id',
+                            'error' => array(
+                                'status_code' => 400 . ' Bad Request',
+                                'title' => 'The request data is invalid',
+                                'details' => 'Invalid '.RESOURCE_CHILD.' id',
+                                'more_info' => URL_API_DOCS
                             ),
                         );
                         switch(TYPE_RESPONSE){
@@ -1155,10 +1155,11 @@ class ResourceController extends AbstractRestfulController
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid '.RESOURCE.' id',
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'The request data is invalid',
+                        'details' => 'Invalid '.RESOURCE.' id',
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1245,10 +1246,11 @@ class ResourceController extends AbstractRestfulController
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid '.RESOURCE.' id',
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The request data is invalid',
+                            'details' => 'Invalid '.RESOURCE.' id',
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     switch(TYPE_RESPONSE){
@@ -1306,10 +1308,11 @@ class ResourceController extends AbstractRestfulController
                         //Modifiamos el Header de nuestra respuesta
                         $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
                         $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 403 . ' Forbidden',
-                                'Title' => 'Access denied',
-                                'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                            'error' => array(
+                                'status_code' => 403 . ' Forbidden',
+                                'title' => 'Access denied',
+                                'details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                                'more_info' => URL_API_DOCS
                             ),
                         );
                         switch(TYPE_RESPONSE){
@@ -1357,10 +1360,11 @@ class ResourceController extends AbstractRestfulController
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //No Content
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'No Content',
-                        'Details' => 'The server successfully processed the request, but is not returning any content.',
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'No Content',
+                        'details' => 'The server successfully processed the request, but is not returning any content.',
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1385,10 +1389,11 @@ class ResourceController extends AbstractRestfulController
             //Modifiamos el Header de nuestra respuesta
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
             $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 403 . ' Forbidden',
-                    'Title' => 'Access denied',
-                    'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                'error' => array(
+                    'status_code' => 403 . ' Forbidden',
+                    'title' => 'Access denied',
+                    'details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                    'more_info' => URL_API_DOCS
                 ),
             );
             switch(TYPE_RESPONSE){
@@ -1487,10 +1492,11 @@ class ResourceController extends AbstractRestfulController
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid id'.RESOURCE_CHILD,
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The request data is invalid',
+                            'details' => 'Invalid id'.RESOURCE_CHILD,
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     switch(TYPE_RESPONSE){
@@ -1514,10 +1520,11 @@ class ResourceController extends AbstractRestfulController
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id'.RESOURCE,
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'The request data is invalid',
+                        'details' => 'Invalid id'.RESOURCE,
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1632,10 +1639,11 @@ class ResourceController extends AbstractRestfulController
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id'.LOWER_NAME_RESOURCE_CHILD,
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'The request data is invalid',
+                        'details' => 'Invalid id'.LOWER_NAME_RESOURCE_CHILD,
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1668,10 +1676,11 @@ class ResourceController extends AbstractRestfulController
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid id',
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The request data is invalid',
+                            'details' => 'Invalid id',
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     switch(TYPE_RESPONSE){
@@ -1695,10 +1704,11 @@ class ResourceController extends AbstractRestfulController
                 $response = $this->getResponse();
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid id '.RESOURCE_CHILD,
+                    'error' => array(
+                        'status_code' => 400 . ' Bad Request',
+                        'title' => 'The request data is invalid',
+                        'details' => 'Invalid id '.RESOURCE_CHILD,
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){
@@ -1783,10 +1793,11 @@ class ResourceController extends AbstractRestfulController
                     $response = $this->getResponse();
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid id'.RESOURCE,
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The request data is invalid',
+                            'details' => 'Invalid id'.RESOURCE,
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     switch(TYPE_RESPONSE){
@@ -1861,10 +1872,11 @@ class ResourceController extends AbstractRestfulController
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //No Content
                     $bodyResponse = array(
                         RESOURCE_CHILD => array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'No Content',
-                                'Details' => 'The server successfully processed the request, but is not returning any content.',
+                            'error' => array(
+                                'status_code' => 400 . ' Bad Request',
+                                'title' => 'No Content',
+                                'details' => 'The server successfully processed the request, but is not returning any content.',
+                                'more_info' => URL_API_DOCS
                             ),
                         ),
                     );
@@ -1890,10 +1902,11 @@ class ResourceController extends AbstractRestfulController
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
                 $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 403 . ' Forbidden',
-                        'Title' => 'Access denied',
-                        'Details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                    'error' => array(
+                        'status_code' => 403 . ' Forbidden',
+                        'title' => 'Access denied',
+                        'details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
+                        'more_info' => URL_API_DOCS
                     ),
                 );
                 switch(TYPE_RESPONSE){

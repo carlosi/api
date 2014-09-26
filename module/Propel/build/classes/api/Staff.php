@@ -32,8 +32,8 @@ class Staff extends BaseStaff
         foreach ($dataArray as $dataKey => $dataValue){
             $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
         }
-        echo
         $this->save();
+        echo "Entro";
 
         //Las columnas permitidas de nuestros foreign keys
         $allowedUserColumns = array();

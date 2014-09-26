@@ -28,21 +28,21 @@ class StaffForm extends Form
             'type' => 'Hidden',
             'name' => 'idstaff',
             'options' => array(
-                'label' => 'Id Personal'
+                'label' => 'Id staff'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iduser',
             'options' => array(
-                'label' => 'Id Usuario'
+                'label' => 'Id User'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'staff_name',
             'options' => array(
-                'label' => 'Personal'
+                'label' => 'Name'
             ),
         ));
         $this->add(array(
@@ -56,7 +56,7 @@ class StaffForm extends Form
             'type' => 'Hidden',
             'name' => 'staff_email2',
             'options' => array(
-                'label' => 'Email secundario'
+                'label' => 'Additional Mail'
             ),
         ));
         $this->add(array(

@@ -13,6 +13,9 @@ namespace API\REST\V1\Shared\Functions;
 // - ZF2 - //
 use Zend\Http\Response;
 
+// Functions //
+use API\REST\V1\Shared\Functions\ArrayResponse;
+
 /**
  * Class HttpRequest
  * @package API\REST\V1\Shared\Functions
@@ -53,10 +56,11 @@ class HttpRequest
                     //Modifiamos el Header de nuestra respuesta
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The body is empty',
-                            'Details' => "The body can`t be empty'",
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The body is empty',
+                            'details' => "The body can`t be empty'",
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     return $bodyResponse;
@@ -77,15 +81,7 @@ class HttpRequest
                     return $dataArray;
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The body is empty',
-                            'Details' => "The body can`t be empty'",
-                        ),
-                    );
-                    return $bodyResponse;
+                    return ArrayResponse::getResponse(400, 'The body is empty', 'The body can`t be empty', $response);
                 }
                 break;
             }
@@ -119,10 +115,11 @@ class HttpRequest
                     //Modifiamos el Header de nuestra respuesta
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The body is empty',
-                            'Details' => "The body can`t be empty'",
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The body is empty',
+                            'details' => "The body can`t be empty'",
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     return $bodyResponse;
@@ -145,10 +142,11 @@ class HttpRequest
                     //Modifiamos el Header de nuestra respuesta
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The body is empty',
-                            'Details' => "The body can`t be empty'",
+                        'error' => array(
+                            'status_code' => 400 . ' Bad Request',
+                            'title' => 'The body is empty',
+                            'details' => "The body can`t be empty'",
+                            'more_info' => URL_API_DOCS
                         ),
                     );
                     return $bodyResponse;

@@ -63,7 +63,7 @@ class TokenListener implements ListenerAggregateInterface {
         define('API_VERSION', $e->getRouteMatch()->getParam('version'));
         define('MODULE', $e->getRouteMatch()->getMatchedRouteName());
         define('TYPE_RESPONSE', $e->getRouteMatch()->getParam('typeResponse'));
-        define('URL_API_DOCS', 'http://api.rest.buybuy.com.mx/docs');
+        define('URL_API_DOCS', 'http://api.rest.buybuy.com.mx/documentation');
         define('URL_API', 'http://api.rest.buybuy.com.mx');
 
         if($e->getRouteMatch()->getMatchedRouteName() != 'login'){
@@ -81,10 +81,10 @@ class TokenListener implements ListenerAggregateInterface {
                         $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
 
                         $body = array(
-                            'HTTP_Status' => '401' ,
-                            'Title' => 'Unauthorized' ,
-                            'Details' => 'Invalid or expired token',
-                            'More_Info' => URL_API_DOCS
+                            'status_code' => '401' ,
+                            'title' => 'Unauthorized' ,
+                            'details' => 'Invalid or expired token',
+                            'more_info' => URL_API_DOCS
                         );
 
                         switch(TYPE_RESPONSE){
@@ -116,10 +116,10 @@ class TokenListener implements ListenerAggregateInterface {
                     $response = $e->getResponse();
                     $response->setStatusCode(Response::STATUS_CODE_499);
                     $body = array(
-                        'HTTP_Status' => '499' ,
-                        'Title' => 'Token required' ,
-                        'Details' => 'Token is required',
-                        'More_Info' => URL_API_DOCS
+                        'status_code' => '499' ,
+                        'title' => 'Token required' ,
+                        'details' => 'Token is required',
+                        'more_info' => URL_API_DOCS
                     );
 
                     switch(TYPE_RESPONSE){
