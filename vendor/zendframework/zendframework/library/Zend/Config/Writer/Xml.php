@@ -11,6 +11,7 @@ namespace Zend\Config\Writer;
 
 use XMLWriter;
 use Zend\Config\Exception;
+use Zend\Http\Request;
 
 class Xml extends AbstractWriter
 {
@@ -29,7 +30,13 @@ class Xml extends AbstractWriter
 
         $writer->startDocument('1.0','UTF-8');
 
-        $writer->startElement(RESOURCE);
+        // Inicia Codigo agregado por Carlos Esparza
+        if(defined('RESOURCE')){
+            $writer->startElement(RESOURCE);
+        }else{
+            $writer->startElement('resource');
+        }
+        // Termina Codigo agregado por Carlos Esparza
 
         foreach ($config as $sectionName => $data) {
             if (!is_array($data)) {

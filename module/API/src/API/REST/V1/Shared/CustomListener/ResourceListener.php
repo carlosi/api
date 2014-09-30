@@ -17,9 +17,10 @@ use Zend\EventManager\ListenerAggregateInterface;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Response;
 
-// - Shared - //
+// - Functions - //
 use API\REST\V1\Shared\Functions\HttpRequest;
 use API\REST\V1\Shared\Functions\ResourceManager;
+use API\REST\V1\Shared\Functions\ArrayResponse;
 
 /**
  * Class HeadersListener
@@ -65,12 +66,15 @@ class ResourceListener implements ListenerAggregateInterface {
     public function onDispatch(MvcEvent $e){
 
         $response = $e->getResponse();
+        $responseHeaders = $response->getHeaders();
         $request  = $e->getRequest();
         $typeResponse = $e->getRouteMatch()->getParam('typeResponse');
         define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
         define('RESOURCE_CHILD', $e->getRouteMatch()->getParam('resourceChild'));
         define('ID_RESOURCE', $e->getRouteMatch()->getParam('id'));
         define('ID_RESOURCE_CHILD', $e->getRouteMatch()->getParam('idChild'));
+
+        $writer = new \Zend\Config\Writer\Xml();
 
         $method = $request->getMethod();
         switch($method){
@@ -82,36 +86,29 @@ class ResourceListener implements ListenerAggregateInterface {
                     case "branch":{
                         switch(RESOURCE_CHILD){
                             case "staff":{
-                                $response->setStatusCode(Response::STATUS_CODE_405);
-                                $body = array(
-                                    'error' => array(
-                                        'status_code' => 405 . ' Method not allowed',
-                                        'title' => 'Method POST is not allowed',
-                                        'details' => 'To access this resources you need to use the GET method.',
-                                        'more_info' => URL_API_DOCS
-                                    ),
-                                );
-                                switch($typeResponse){
+                                $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access this resources you need to use the GET method.', 'Method POST is not allowed');
+                                switch(TYPE_RESPONSE){
                                     case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
                                         $e->stopPropagation();
                                         break;
                                     }
                                     case "json":{
-                                        $jsonModel = new JsonModel($body);
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
                                         $jsonModel->setTerminal(true);
                                         $e->setResult($jsonModel);
                                         $e->setViewModel($jsonModel)->stopPropagation();
                                         break;
                                     }
                                     default: {
-                                    $jsonModel = new JsonModel($body);
-                                    $jsonModel->setTerminal(true);
-                                    $e->setResult($jsonModel);
-                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                    break;
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
                                     }
                                 }
                             }
@@ -127,37 +124,29 @@ class ResourceListener implements ListenerAggregateInterface {
                     break;
                 }
                 if($routeName == "documentation"){
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 405 . ' Method not allowed',
-                            'title' => 'Method POST is not allowed',
-                            'details' => 'To access the documentation you need to use the GET method.',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access the documentation you need to use the GET method.', 'Method POST is not allowed');
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
-                        $jsonModel->setTerminal(true);
-                        $e->setResult($jsonModel);
-                        $e->setViewModel($jsonModel)->stopPropagation();
-                        break;
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
+                            $jsonModel->setTerminal(true);
+                            $e->setResult($jsonModel);
+                            $e->setViewModel($jsonModel)->stopPropagation();
+                            break;
                         }
                     }
                     break;
@@ -191,39 +180,29 @@ class ResourceListener implements ListenerAggregateInterface {
 
                                 }else{
 
-                                    $response = $e->getResponse();
-                                    $response->setStatusCode(Response::STATUS_CODE_400);
-
-                                    $body = array(
-                                        'error' => array(
-                                            'status_code' => 400 . ' Bad Request',
-                                            'title' => 'The id department is required',
-                                            'details' => 'The id department can´t be null.',
-                                            'more_info' => URL_API_DOCS
-                                        ),
-                                    );
-
-                                    switch($typeResponse){
+                                    $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id department can´t be null.', 'The id department is required');
+                                    switch(TYPE_RESPONSE){
                                         case "xml":{
-                                            // Create the config object
-                                            $writer = new \Zend\Config\Writer\Xml();
-                                            return $response->setContent($writer->toString($body));
+                                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                            return $response->setContent($writer->toString($bodyResponse));
                                             $e->stopPropagation();
                                             break;
                                         }
                                         case "json":{
-                                            $jsonModel = new JsonModel($body);
+                                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                            $jsonModel = new JsonModel($bodyResponse);
                                             $jsonModel->setTerminal(true);
                                             $e->setResult($jsonModel);
                                             $e->setViewModel($jsonModel)->stopPropagation();
                                             break;
                                         }
                                         default: {
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
+                                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                            $jsonModel = new JsonModel($bodyResponse);
+                                            $jsonModel->setTerminal(true);
+                                            $e->setResult($jsonModel);
+                                            $e->setViewModel($jsonModel)->stopPropagation();
+                                            break;
                                         }
                                     }
                                 }
@@ -250,34 +229,25 @@ class ResourceListener implements ListenerAggregateInterface {
                         }
                         default :{
 
-                            $response = new Response();
-                            $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
-                            $body = array(
-                                'error' => array(
-                                    'status_code' => 400 .' Bad Request' ,
-                                    'title' => 'The Content-Type is required' ,
-                                    'details' => 'Not received Content-Type Header. Please add a Content-Type Header.',
-                                    'more_info' => URL_API_DOCS
-                                ),
-                            );
-
-                            switch($typeResponse){
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'Not received Content-Type Header. Please add a Content-Type Header.', 'The Content-Type is required');
+                            switch(TYPE_RESPONSE){
                                 case "xml":{
-                                    // Create the config object
-                                    $writer = new \Zend\Config\Writer\Xml();
-                                    return $response->setContent($writer->toString($body));
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
                                     $e->stopPropagation();
                                     break;
                                 }
                                 case "json":{
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
                                     break;
                                 }
                                 default: {
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
@@ -335,33 +305,26 @@ class ResourceListener implements ListenerAggregateInterface {
                                 define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
 
                             }else{
-                                $response->setStatusCode(Response::STATUS_CODE_404);
 
-                                $body = array(
-                                    'error' => array(
-                                        'status_code' => 404 . ' Not Found',
-                                        'title' => 'Resource not found' ,
-                                        'details' => 'The requested resource could not be found.',
-                                        'more_tnfo' => URL_API_DOCS
-                                    ),
-                                );
-                                switch($typeResponse){
+                                $bodyResponse = ArrayResponse::getResponse(404, $response);
+                                switch(TYPE_RESPONSE){
                                     case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
                                         $e->stopPropagation();
                                         break;
                                     }
                                     case "json":{
-                                        $jsonModel = new JsonModel($body);
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
                                         $jsonModel->setTerminal(true);
                                         $e->setResult($jsonModel);
                                         $e->setViewModel($jsonModel)->stopPropagation();
                                         break;
                                     }
                                     default: {
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
@@ -379,41 +342,8 @@ class ResourceListener implements ListenerAggregateInterface {
                         define('NAME_RESOURCE_CHILD', $resourceNameChild);
                     }
                     define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
-                }else{
-                    $response->setStatusCode(Response::STATUS_CODE_404);
+                }// No creamos un else porque el ApiProplemListener.php se encarga de dar respuesta 404, a recursos que no existen como ejemplo: Branchaddres, Branchfile, etc.
 
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 404 . ' Not Found',
-                            'title' => 'Resource not found' ,
-                            'details' => 'The requested resource could not be found.',
-                            'more_tnfo' => URL_API_DOCS
-                        )
-                    );
-                    switch($typeResponse){
-                        case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
-                            $e->stopPropagation();
-                            break;
-                        }
-                        case "json":{
-                            $jsonModel = new JsonModel($body);
-                            $jsonModel->setTerminal(true);
-                            $e->setResult($jsonModel);
-                            $e->setViewModel($jsonModel)->stopPropagation();
-                            break;
-                        }
-                        default: {
-                        $jsonModel = new JsonModel($body);
-                        $jsonModel->setTerminal(true);
-                        $e->setResult($jsonModel);
-                        $e->setViewModel($jsonModel)->stopPropagation();
-                        break;
-                        }
-                    }
-                }
                 ////// End Resource //////
 
                 break;
@@ -422,41 +352,7 @@ class ResourceListener implements ListenerAggregateInterface {
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
-                    $response = new Response();
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 405 . ' Method not allowed',
-                            'title' => 'Method GET is not allowed',
-                            'details' => 'To access the login you need to use the POST method',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
-                        case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
-                            $e->stopPropagation();
-                            break;
-                        }
-                        case "json":{
-                            $jsonModel = new JsonModel($body);
-                            $jsonModel->setTerminal(true);
-                            $e->setResult($jsonModel);
-                            $e->setViewModel($jsonModel)->stopPropagation();
-                            break;
-                        }
-                        default: {
-                        $jsonModel = new JsonModel($body);
-                        $jsonModel->setTerminal(true);
-                        $e->setResult($jsonModel);
-                        $e->setViewModel($jsonModel)->stopPropagation();
-                        break;
-                        }
-                    }
-                    break;
+                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access the login you need to use the POST method', 'Method GET is not allowed');
                 }
                 if($routeName == "documentation"){
                     // Entra directo al IndexController de Documentation (API\REST\V1\Documentation\Controller\IndexController)
@@ -486,60 +382,20 @@ class ResourceListener implements ListenerAggregateInterface {
                                         // Verificamos que exista el recurso resourceChild, si sí, almacenamos el modulo al que pertenece.
                                         $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
-                                        // Si no existe el modulo de resourceChild el resourceChild no existe
+                                        // Si existe el modulo de resourceChild (En este caso si existe. El módulo de department     es Company).
                                         if($moduleResourceChild){
                                             define('MODULE_RESOURCE', $moduleResource);
                                             define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
                                             define('NAME_RESOURCE_CHILD', $resourceNameChild);
                                             define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
                                             if(ID_RESOURCE_CHILD != null){
-
                                                 $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
                                                 $e->getRouteMatch()->setParam('action', 'getResourceChild');
                                                 return;
-
                                             }else{
-
                                                 $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
                                                 $e->getRouteMatch()->setParam('action', 'getListResourceChild');
                                                 return;
-
-                                            }
-                                        }else{
-                                            //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
-                                            $response->setStatusCode(Response::STATUS_CODE_404);
-                                            $statusCode = $response->getStatusCode();
-
-                                            $body = array(
-                                                'error' => array(
-                                                    'status_code' => 404 . ' Not Found',
-                                                    'title' => 'Resource not found' ,
-                                                    'details' => 'The requested resource could not be found.',
-                                                    'more_tnfo' => URL_API_DOCS
-                                                ),
-                                            );
-                                            switch($typeResponse){
-                                                case "xml":{
-                                                    // Create the config object
-                                                    $writer = new \Zend\Config\Writer\Xml();
-                                                    return $response->setContent($writer->toString($body));
-                                                    $e->stopPropagation();
-                                                    break;
-                                                }
-                                                case "json":{
-                                                    $jsonModel = new JsonModel($body);
-                                                    $jsonModel->setTerminal(true);
-                                                    $e->setResult($jsonModel);
-                                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                                    break;
-                                                }
-                                                default: {
-                                                $jsonModel = new JsonModel($body);
-                                                $jsonModel->setTerminal(true);
-                                                $e->setResult($jsonModel);
-                                                $e->setViewModel($jsonModel)->stopPropagation();
-                                                break;
-                                                }
                                             }
                                         }
                                         break;
@@ -571,43 +427,9 @@ class ResourceListener implements ListenerAggregateInterface {
 
                                             break;
                                             }
-
-                                            default:{
-                                                //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
-                                                $response->setStatusCode(Response::STATUS_CODE_404);
-
-                                                $body = array(
-                                                    'error' => array(
-                                                        'status_code' => 404 . ' Not Found',
-                                                        'title' => 'Resource not found' ,
-                                                        'details' => 'The requested resource could not be found.',
-                                                        'more_tnfo' => URL_API_DOCS
-                                                    ),
-                                                );
-                                                switch($typeResponse){
-                                                    case "xml":{
-                                                        // Create the config object
-                                                        $writer = new \Zend\Config\Writer\Xml();
-                                                        return $response->setContent($writer->toString($body));
-                                                        $e->stopPropagation();
-                                                        break;
-                                                    }
-                                                    case "json":{
-                                                        $jsonModel = new JsonModel($body);
-                                                        $jsonModel->setTerminal(true);
-                                                        $e->setResult($jsonModel);
-                                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                                        break;
-                                                    }
-                                                    default: {
-                                                    $jsonModel = new JsonModel($body);
-                                                    $jsonModel->setTerminal(true);
-                                                    $e->setResult($jsonModel);
-                                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                                    break;
-                                                    }
-                                                }
-                                            }
+                                            // No creamos un default para este switch porque es redundante...
+                                            // el ApiProblemListener.php se encarga de la respuesta 404 de rutas
+                                            // que no existen como: Branchaddress, Branchfile, etc...
                                         }
                                         break;
                                     }
@@ -646,77 +468,36 @@ class ResourceListener implements ListenerAggregateInterface {
 
                                 }
                             }else{
-                                //// Si no existe el resourceChild (Ejemplo: Branchaddress, Branchfile, etc...)
-                                $response->setStatusCode(Response::STATUS_CODE_404);
-
-                                $body = array(
-                                    'error' => array(
-                                        'status_code' => 404 . ' Not Found',
-                                        'title' => 'Resource not found' ,
-                                        'details' => 'The requested resource could not be found.',
-                                        'more_tnfo' => URL_API_DOCS
-                                    ),
-                                );
-                                switch($typeResponse){
-                                    case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
-                                        $e->stopPropagation();
-                                        break;
-                                    }
-                                    case "json":{
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
-                                    }
-                                    default: {
-                                    $jsonModel = new JsonModel($body);
-                                    $jsonModel->setTerminal(true);
-                                    $e->setResult($jsonModel);
-                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                    break;
-                                    }
-                                }
+                                // Si el resource mas el resourceChild no existe, ejemplo: Branchfile, Brancg address.
+                                $bodyResponse = ArrayResponse::getResponse(404, $response);
                             }
                         }
                     }
                     define('MODULE_RESOURCE', ucfirst($e->getRouteMatch()->getMatchedRouteName()));
-                }else{
-                    $response->setStatusCode(Response::STATUS_CODE_404);
+                }// No creamos un else porque el ApiProplemListener.php se encarga de dar respuesta 404, a recursos que no existen.
 
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 404 . ' Not Found',
-                            'title' => 'Resource not found' ,
-                            'details' => 'The requested resource could not be found.',
-                            'more_tnfo' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
-                        case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
-                            $e->stopPropagation();
-                            break;
-                        }
-                        case "json":{
-                            $jsonModel = new JsonModel($body);
-                            $jsonModel->setTerminal(true);
-                            $e->setResult($jsonModel);
-                            $e->setViewModel($jsonModel)->stopPropagation();
-                            break;
-                        }
-                        default: {
-                        $jsonModel = new JsonModel($body);
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                        return $response->setContent($writer->toString($bodyResponse));
+                        $e->stopPropagation();
+                        break;
+                    }
+                    case "json":{
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
                         break;
-                        }
+                    }
+                    default: {
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel)->stopPropagation();
+                        break;
                     }
                 }
                 break;
@@ -729,33 +510,25 @@ class ResourceListener implements ListenerAggregateInterface {
                     case "branch":{
                         switch(RESOURCE_CHILD){
                             case "staff":{
-                                $response->setStatusCode(Response::STATUS_CODE_405);
-                                $statusCode = $response->getStatusCode();
-                                $body = array(
-                                    'error' => array(
-                                        'status_code' => 405 . ' Method not allowed',
-                                        'title' => 'Method PUT is not allowed',
-                                        'details' => 'To access this resources you need to use the GET method',
-                                        'more_info' => URL_API_DOCS
-                                    ),
-                                );
-                                switch($typeResponse){
+                                $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access this resources you need to use the GET method', 'Method PUT is not allowed');
+                                switch(TYPE_RESPONSE){
                                     case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
                                         $e->stopPropagation();
                                         break;
                                     }
                                     case "json":{
-                                        $jsonModel = new JsonModel($body);
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
                                         $jsonModel->setTerminal(true);
                                         $e->setResult($jsonModel);
                                         $e->setViewModel($jsonModel)->stopPropagation();
                                         break;
                                     }
                                     default: {
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
@@ -770,34 +543,25 @@ class ResourceListener implements ListenerAggregateInterface {
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
-                    $response = new Response();
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 405 . 'Method not allowed',
-                            'title' => 'Method PUT is not allowed',
-                            'details' => 'To access the login you need to use the POST method',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access the login you need to use the POST method.', 'Method PUT is not allowed');
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -807,33 +571,25 @@ class ResourceListener implements ListenerAggregateInterface {
                     break;
                 }
                 if($routeName == "documentation"){
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-
-                    $body = array(
-                        'error' => array(
-                                'status_code' => 405 . ' Method not allowed',
-                            'title' => 'Method PUT is not allowed',
-                            'details' => 'To access the documentation you need to use the GET method',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access the documentation you need to use the GET method.', 'Method PUT is not allowed');
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -846,33 +602,25 @@ class ResourceListener implements ListenerAggregateInterface {
                 ////// Start Resource Relational //////
 
                 if(RESOURCE_CHILD == 'department'){
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 405 . ' Method not allowed',
-                            'title' => 'Method PUT is not allowed',
-                            'details' => 'Methods allowed: GET, POST, DELETE',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'Methods allowed: GET, POST, DELETE', 'Method PUT is not allowed');
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -896,39 +644,29 @@ class ResourceListener implements ListenerAggregateInterface {
                             break;
                         }
                         default :{
-
-                            $response = new Response();
-                            $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
-                            $body = array(
-                                'error' => array(
-                                    'status_code' => 400 .' Bad Request' ,
-                                    'title' => 'The Content-Type is required' ,
-                                    'details' => 'Not received Content-Type Header. Please add a Content-Type Header.',
-                                    'more_info' => URL_API_DOCS
-                                ),
-                            );
-
-                            switch($typeResponse){
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'Not received Content-Type Header. Please add a Content-Type Header.', 'The Content-Type is required');
+                            switch(TYPE_RESPONSE){
                                 case "xml":{
-                                    // Create the config object
-                                    $writer = new \Zend\Config\Writer\Xml();
-                                    return $response->setContent($writer->toString($body));
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
                                     $e->stopPropagation();
                                     break;
                                 }
                                 case "json":{
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
                                     break;
                                 }
                                 default: {
-                                    $jsonModel = new JsonModel($body);
-                                    $jsonModel->setTerminal(true);
-                                    $e->setResult($jsonModel);
-                                    $e->setViewModel($jsonModel)->stopPropagation();
-                                    break;
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
                                 }
                             }
                         }
@@ -958,36 +696,25 @@ class ResourceListener implements ListenerAggregateInterface {
                                             return;
 
                                         }else{
-
-                                            $response = $e->getResponse();
-                                            $response->setStatusCode(Response::STATUS_CODE_400);
-
-                                            $body = array(
-                                                'error' => array(
-                                                    'status_code' => 400 . ' Bad Request',
-                                                    'title' => 'The id department is required',
-                                                    'details' => 'The id department can´t be null.',
-                                                    'more_info' => URL_API_DOCS
-                                                ),
-                                            );
-
-                                            switch($typeResponse){
+                                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id department can´t be null.', 'The id department is required');
+                                            switch(TYPE_RESPONSE){
                                                 case "xml":{
-                                                    // Create the config object
-                                                    $writer = new \Zend\Config\Writer\Xml();
-                                                    return $response->setContent($writer->toString($body));
+                                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                                    return $response->setContent($writer->toString($bodyResponse));
                                                     $e->stopPropagation();
                                                     break;
                                                 }
                                                 case "json":{
-                                                    $jsonModel = new JsonModel($body);
+                                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                    $jsonModel = new JsonModel($bodyResponse);
                                                     $jsonModel->setTerminal(true);
                                                     $e->setResult($jsonModel);
                                                     $e->setViewModel($jsonModel)->stopPropagation();
                                                     break;
                                                 }
                                                 default: {
-                                                $jsonModel = new JsonModel($body);
+                                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                $jsonModel = new JsonModel($bodyResponse);
                                                 $jsonModel->setTerminal(true);
                                                 $e->setResult($jsonModel);
                                                 $e->setViewModel($jsonModel)->stopPropagation();
@@ -1021,36 +748,25 @@ class ResourceListener implements ListenerAggregateInterface {
                             return;
 
                         }else{
-
-                            $response = $e->getResponse();
-                            $response->setStatusCode(Response::STATUS_CODE_400);
-
-                            $body = array(
-                                'error' => array(
-                                    'status_code' => 400 . ' Bad Request',
-                                    'title' => 'The id is required',
-                                    'details' => 'The id'.RESOURCE_CHILD.' can´t be null.',
-                                    'more_info' => URL_API_DOCS
-                                ),
-                            );
-
-                            switch($typeResponse){
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id'.RESOURCE_CHILD.' can´t be null.', 'The id is required');
+                            switch(TYPE_RESPONSE){
                                 case "xml":{
-                                    // Create the config object
-                                    $writer = new \Zend\Config\Writer\Xml();
-                                    return $response->setContent($writer->toString($body));
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
                                     $e->stopPropagation();
                                     break;
                                 }
                                 case "json":{
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
                                     break;
                                 }
                                 default: {
-                                $jsonModel = new JsonModel($body);
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
                                 $jsonModel->setTerminal(true);
                                 $e->setResult($jsonModel);
                                 $e->setViewModel($jsonModel)->stopPropagation();
@@ -1063,36 +779,25 @@ class ResourceListener implements ListenerAggregateInterface {
 
                     // If request id is null
                     if(ID_RESOURCE == null){
-
-                        $response = new Response();
-                        $response->setStatusCode(Response::STATUS_CODE_400);
-                        $statusCode = $response->getStatusCode();
-
-                        $body = array(
-                            'error' => array(
-                                'status_code' => $statusCode . ' Bad Request',
-                                'title' => 'The id is required' ,
-                                'details' => 'The request id'.RESOURCE.' can´t be null',
-                                'more_info' => URL_API_DOCS
-                            ),
-                        );
-                        switch($typeResponse){
+                        $bodyResponse = ArrayResponse::getResponse(409, $response, 'The request id'.RESOURCE.' can´t be null.', 'The id is required');
+                        switch(TYPE_RESPONSE){
                             case "xml":{
-                                // Create the config object
-                                $writer = new \Zend\Config\Writer\Xml();
-                                return $response->setContent($writer->toString($body));
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                return $response->setContent($writer->toString($bodyResponse));
                                 $e->stopPropagation();
                                 break;
                             }
                             case "json":{
-                                $jsonModel = new JsonModel($body);
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
                                 $jsonModel->setTerminal(true);
                                 $e->setResult($jsonModel);
                                 $e->setViewModel($jsonModel)->stopPropagation();
                                 break;
                             }
                             default: {
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
@@ -1113,38 +818,29 @@ class ResourceListener implements ListenerAggregateInterface {
                                 break;
                             }
                             default :{
-
-                                $response->setStatusCode(Response::STATUS_CODE_400); //BAD REQUEST
-                                $body = array(
-                                    'error' => array(
-                                        'status_code' => 400 .' Bad Request' ,
-                                        'title' => 'The Content-Type is required' ,
-                                        'details' => 'Not received Content-Type Header. Please add a Content-Type Header.',
-                                        'more_info' => URL_API_DOCS
-                                    ),
-                                );
-
-                                switch($typeResponse){
+                                $bodyResponse = ArrayResponse::getResponse(409, $response, 'Not received Content-Type Header. Please add a Content-Type Header.', 'The Content-Type is required');
+                                switch(TYPE_RESPONSE){
                                     case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
                                         $e->stopPropagation();
                                         break;
                                     }
                                     case "json":{
-                                        $jsonModel = new JsonModel($body);
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
                                         $jsonModel->setTerminal(true);
                                         $e->setResult($jsonModel);
                                         $e->setViewModel($jsonModel)->stopPropagation();
                                         break;
                                     }
                                     default: {
-                                        $jsonModel = new JsonModel($body);
-                                        $jsonModel->setTerminal(true);
-                                        $e->setResult($jsonModel);
-                                        $e->setViewModel($jsonModel)->stopPropagation();
-                                        break;
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
                                     }
                                 }
                             }
@@ -1152,33 +848,25 @@ class ResourceListener implements ListenerAggregateInterface {
                     }
                     define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
                 }else{
-                    $response->setStatusCode(Response::STATUS_CODE_404);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 404 . ' Not Found',
-                            'title' => 'Resource not found' ,
-                            'details' => 'The requested resource could not be found.',
-                            'more_tnfo' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(404, $response);
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -1196,32 +884,25 @@ class ResourceListener implements ListenerAggregateInterface {
                     case "branch":{
                         switch(RESOURCE_CHILD){
                             case "staff":{
-                                $response->setStatusCode(Response::STATUS_CODE_405);
-                                $body = array(
-                                    'error' => array(
-                                        'status_code' => 405 . ' Method not allowed',
-                                        'title' => 'Method POST is not allowed',
-                                        'details' => 'To access this resources you need to use the GET method.',
-                                        'more_info' => URL_API_DOCS
-                                    ),
-                                );
-                                switch($typeResponse){
+                                $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access this resources you need to use the GET method.', 'Method DELETE is not allowed');
+                                switch(TYPE_RESPONSE){
                                     case "xml":{
-                                        // Create the config object
-                                        $writer = new \Zend\Config\Writer\Xml();
-                                        return $response->setContent($writer->toString($body));
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
                                         $e->stopPropagation();
                                         break;
                                     }
                                     case "json":{
-                                        $jsonModel = new JsonModel($body);
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
                                         $jsonModel->setTerminal(true);
                                         $e->setResult($jsonModel);
                                         $e->setViewModel($jsonModel)->stopPropagation();
                                         break;
                                     }
                                     default: {
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
@@ -1237,33 +918,25 @@ class ResourceListener implements ListenerAggregateInterface {
 
                 $routeName = $e->getRouteMatch()->getMatchedRouteName();
                 if($routeName == "login"){
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 405 . ' Method not allowed',
-                            'title' => 'Method DELETE is not allowed',
-                            'details' => 'To access the login you need to use the POST method.',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access the login you need to use the POST method.', 'Method DELETE is not allowed');
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -1273,33 +946,25 @@ class ResourceListener implements ListenerAggregateInterface {
                     break;
                 }
                 if($routeName == "documentation"){
-                    $response->setStatusCode(Response::STATUS_CODE_405);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 405 . ' Method not allowed',
-                            'title' => 'Method DELETE is not allowed',
-                            'details' => 'o access the documentation you need to use the GET method.',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'To access the documentation you need to use the POST method.', 'Method DELETE is not allowed');
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -1347,35 +1012,25 @@ class ResourceListener implements ListenerAggregateInterface {
                                     return;
 
                                 }else{
-
-                                    $response->setStatusCode(Response::STATUS_CODE_400);
-
-                                    $body = array(
-                                        'error' => array(
-                                            'status_code' => 400 . ' Bad Request',
-                                            'title' => 'The id department is required',
-                                            'details' => 'The id department can´t be null.',
-                                            'more_info' => URL_API_DOCS
-                                        ),
-                                    );
-
-                                    switch($typeResponse){
+                                    $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id department can´t be null.', 'The id department is required');
+                                    switch(TYPE_RESPONSE){
                                         case "xml":{
-                                            // Create the config object
-                                            $writer = new \Zend\Config\Writer\Xml();
-                                            return $response->setContent($writer->toString($body));
+                                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                            return $response->setContent($writer->toString($bodyResponse));
                                             $e->stopPropagation();
                                             break;
                                         }
                                         case "json":{
-                                            $jsonModel = new JsonModel($body);
+                                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                            $jsonModel = new JsonModel($bodyResponse);
                                             $jsonModel->setTerminal(true);
                                             $e->setResult($jsonModel);
                                             $e->setViewModel($jsonModel)->stopPropagation();
                                             break;
                                         }
                                         default: {
-                                        $jsonModel = new JsonModel($body);
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
                                         $jsonModel->setTerminal(true);
                                         $e->setResult($jsonModel);
                                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -1388,34 +1043,25 @@ class ResourceListener implements ListenerAggregateInterface {
                         }
                         // If request id is null
                         if(ID_RESOURCE == null){
-
-                            $response->setStatusCode(Response::STATUS_CODE_400);
-
-                            $body = array(
-                                'error' => array(
-                                    'status_code' => 400 . ' Bad Request',
-                                    'title' => 'The id is required' ,
-                                    'details' => 'The request id'.RESOURCE.' can´t be null',
-                                    'more_info' => URL_API_DOCS
-                                ),
-                            );
-                            switch($typeResponse){
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'The request id'.RESOURCE.' can´t be null', 'The id is required');
+                            switch(TYPE_RESPONSE){
                                 case "xml":{
-                                    // Create the config object
-                                    $writer = new \Zend\Config\Writer\Xml();
-                                    return $response->setContent($writer->toString($body));
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
                                     $e->stopPropagation();
                                     break;
                                 }
                                 case "json":{
-                                    $jsonModel = new JsonModel($body);
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
                                     $jsonModel->setTerminal(true);
                                     $e->setResult($jsonModel);
                                     $e->setViewModel($jsonModel)->stopPropagation();
                                     break;
                                 }
                                 default: {
-                                $jsonModel = new JsonModel($body);
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
                                 $jsonModel->setTerminal(true);
                                 $e->setResult($jsonModel);
                                 $e->setViewModel($jsonModel)->stopPropagation();
@@ -1426,33 +1072,25 @@ class ResourceListener implements ListenerAggregateInterface {
                         break;
                     }
                 }else{
-                    $response->setStatusCode(Response::STATUS_CODE_404);
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => 404 . ' Not Found',
-                            'title' => 'Resource not found' ,
-                            'details' => 'The requested resource could not be found.',
-                            'more_tnfo' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(404, $response);
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
@@ -1462,36 +1100,25 @@ class ResourceListener implements ListenerAggregateInterface {
                 }
                 // If request id is null
                 if(ID_RESOURCE == null){
-
-                    $response = new Response();
-                    $response->setStatusCode(Response::STATUS_CODE_400);
-                    $statusCode = $response->getStatusCode();
-
-                    $body = array(
-                        'error' => array(
-                            'status_code' => $statusCode . ' Bad Request',
-                            'title' => 'The id is required' ,
-                            'details' => 'The request id'.RESOURCE.' can´t be null',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
-                    switch($typeResponse){
+                    $bodyResponse = ArrayResponse::getResponse(409, $response, 'The request id'.RESOURCE.' can´t be null', 'The id is required');
+                    switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
-                            return $response->setContent($writer->toString($body));
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();

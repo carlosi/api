@@ -16,8 +16,9 @@ use Zend\EventManager\ListenerAggregateInterface;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Response;
 
-// - Shared - //
+// - Functions - //
 use API\REST\V1\Shared\Functions\SessionManager;
+use API\REST\V1\Shared\Functions\ArrayResponse;
 
 /**
  * Class TokenListener
@@ -66,6 +67,9 @@ class TokenListener implements ListenerAggregateInterface {
         define('URL_API_DOCS', 'http://api.rest.buybuy.com.mx/documentation');
         define('URL_API', 'http://api.rest.buybuy.com.mx');
 
+        $response = $e->getResponse();
+        $responseHeaders = $response->getHeaders();
+
         if($e->getRouteMatch()->getMatchedRouteName() != 'login'){
             if($e->getRouteMatch()->getMatchedRouteName() != 'documentation'){
                 $token = $e->getRequest()->getHeader('Authorization') ? $e->getRequest()->getHeader('Authorization')->getFieldValue() : null;
@@ -75,35 +79,26 @@ class TokenListener implements ListenerAggregateInterface {
 
                     }else{
                         define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
-
-                        $response = $e->getResponse();
-                        $response->setStatusCode(Response::STATUS_CODE_401);
-                        $response->getHeaders()->addHeaderLine('Message', 'Invalid or expired token');
-
-                        $body = array(
-                            'status_code' => '401' ,
-                            'title' => 'Unauthorized' ,
-                            'details' => 'Invalid or expired token',
-                            'more_info' => URL_API_DOCS
-                        );
-
+                        $bodyResponse = ArrayResponse::getResponse(498, $response);
                         switch(TYPE_RESPONSE){
                             case "xml":{
-                                // Create the config object
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                                 $writer = new \Zend\Config\Writer\Xml();
-                                return $response->setContent($writer->toString($body));
+                                return $response->setContent($writer->toString($bodyResponse));
                                 $e->stopPropagation();
                                 break;
                             }
                             case "json":{
-                                $jsonModel = new JsonModel($body);
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
                                 $jsonModel->setTerminal(true);
                                 $e->setResult($jsonModel);
                                 $e->setViewModel($jsonModel)->stopPropagation();
                                 break;
                             }
                             default: {
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
@@ -114,32 +109,26 @@ class TokenListener implements ListenerAggregateInterface {
                 }else{
                     define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
                     $response = $e->getResponse();
-                    $response->setStatusCode(Response::STATUS_CODE_499);
-                    $body = array(
-                        'status_code' => '499' ,
-                        'title' => 'Token required' ,
-                        'details' => 'Token is required',
-                        'more_info' => URL_API_DOCS
-                    );
-
+                    $bodyResponse = ArrayResponse::getResponse(499, $response);
                     switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                             $writer = new \Zend\Config\Writer\Xml();
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                            return $response->setContent($writer->toString($body));
+                            return $response->setContent($writer->toString($bodyResponse));
                             $e->stopPropagation();
                             break;
                         }
                         case "json":{
-                            $jsonModel = new JsonModel($body);
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
                             $jsonModel->setTerminal(true);
                             $e->setResult($jsonModel);
                             $e->setViewModel($jsonModel)->stopPropagation();
                             break;
                         }
                         default: {
-                        $jsonModel = new JsonModel($body);
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
                         $jsonModel->setTerminal(true);
                         $e->setResult($jsonModel);
                         $e->setViewModel($jsonModel)->stopPropagation();
