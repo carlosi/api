@@ -102,28 +102,14 @@ class Department extends BaseDepartment
                             );
                         }
                         $this->save();
-                        return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
-
+                        return array('status_code' => 201, 'details' => $bodyResponse);
                     }else{
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'Resource data pre-validation error',
-                                'Details' => "department_name ". "'".$dataArray["department_name"]."'". " already exists",
-                            ),
-                        );
-                        return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+                        $bodyResponse = "department_name ". "'".$dataArray["department_name"]."'". " already exists";
+                        return array('status_code' => 409, 'details' => $bodyResponse);
                     }
                 }else{
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'Resource data pre-validation error',
-                            'Details' => "idbranch ". "'".$data["idbranch"]."'". " not exists in your branches",
-                            'More_Info' => URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch',
-                        ),
-                    );
-                    return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+                    $bodyResponse = "idbranch ". "'".$data["idbranch"]."'". " not exists in your branches";
+                    return array('status_code' => 409, 'details' => $bodyResponse);
                 }
             }else{
                 // Si department_name no existe
@@ -163,17 +149,11 @@ class Department extends BaseDepartment
                     //4. el objeto company que va ir como __embebed = "company"
                     $bodyResponse = $this->createBodyResponse($this,array('idcompany'),array('company' => $allowedCompanyColumns),array($company));
                     $this->save();
-                    return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+                    return array('status_code' => 201, 'details' => $bodyResponse);
 
                 }else{
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'Resource data pre-validation error',
-                            'Details' => "department_name ". "'".$dataArray["department_name"]."'". " already exists",
-                        ),
-                    );
-                    return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+                    $bodyResponse = "department_name ". "'".$dataArray["department_name"]."'". " already exists";
+                    return array('status_code' => 409, 'details' => $bodyResponse);
                 }
             }
         }
@@ -237,17 +217,11 @@ class Department extends BaseDepartment
                     );
                 }
                 $this->save();
-                return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+                return array('status_code' => 201, 'details' => $bodyResponse);
 
             }else{
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'Resource data pre-validation error',
-                        'Details' => "department_name ". "'".$dataArray["department_name"]."'". " already exists",
-                    ),
-                );
-                return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+                $bodyResponse = "department_name ". "'".$dataArray["department_name"]."'". " already exists";
+                return array('status_code' => 409, 'details' => $bodyResponse);
             }
 
         }
@@ -693,9 +667,6 @@ class Department extends BaseDepartment
                         ///// Inicio: Si solamente envian el idbranch /////
 
                         if((!isset($data['department_name'])) && (!isset($data['department_type'])) && (isset($idbranch))){
-
-                            var_dump($existsRowArray);
-                            exit();
                             // Si existen registros
                             if($existsRowArray != null){
                                 // Por medio del iddepartment, eliminamos de la tabla branchdepartment la asignacion de los departamentos de las branches de la compañia
@@ -797,8 +768,6 @@ class Department extends BaseDepartment
                                                 }
                                             }
                                         }
-                                        //Modifiamos el Header de nuestra respuesta
-                                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
 
                                         //Le damos formato a nuestra respuesta
                                         $bodyResponse = array(
@@ -871,9 +840,7 @@ class Department extends BaseDepartment
                                                 );
                                             }
                                         }
-
-                                        return $bodyResponse;
-
+                                        return array('status_code' => 200, 'details' => $bodyResponse);
                                     }
 
                                     /*
@@ -1035,32 +1002,14 @@ class Department extends BaseDepartment
 
                                     */
                                 }else{
-
-                                    //Modifiamos el Header de nuestra respuesta
-                                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                                    $bodyResponse = array(
-                                        'Error' => array(
-                                            'HTTP_Status' => 400 . ' Bad Request',
-                                            'Title' => 'Resource data pre-validation error',
-                                            'Details' => "department_name ". "'".$departmentArray['department_name']."'". " already exists",
-                                        ),
-                                    );
-                                    return $bodyResponse;
+                                    $bodyResponse = "department_name ". "'".$dataArray["department_name"]."'". " already exists";
+                                    return array('status_code' => 409, 'details' => $bodyResponse);
                                 }
                             }else{
-                                //Modifiamos el Header de nuestra respuesta
-                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                                $bodyResponse = array(
-                                    'Error' => array(
-                                        'HTTP_Status' => 400 . ' Bad Request',
-                                        'Title' => 'No changes were found',
-                                    ),
-                                );
-                                return $bodyResponse;
+                                $bodyResponse = "No changes were found";
+                                return array('status_code' => 304, 'details' => $bodyResponse);
                             }
                         }else{
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                             //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                             $messageArray = array();
                             foreach ($departmentFormPostPut->getMessages() as $key => $value){
@@ -1070,52 +1019,26 @@ class Department extends BaseDepartment
                                     array_push($messageArray, $message);
                                 }
                             }
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
-                            return $bodyResponse;
+                            return array('status_code' => 409, 'details' => $messageArray);
                         }
                         //Si el formulario no fue valido
                     }else{
-                        //Modifiamos el Header de nuestra respuesta
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                         $messageArray = array();
                         foreach ($departmentFormToShowUpdate->getElements() as $key => $value){
                             //Obtenemos el nombre de la columna
                             $message = $key;
                             array_push($messageArray, $message);
                         }
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'No changes were found',
-                                'Columns_to_do_changes' => $messageArray,
-                            ),
-                        );
-                        return $bodyResponse;
+                        $bodyResponse = "No changes were found";
+                        return array('status_code' => 304, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray);
                     }
                 }else{
-
-                    //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'The request data is invalid',
-                            'Details' => 'Invalid idbranch',
-                        ),
-                    );
-                    return $bodyResponse;
+                    $bodyResponse  = 'Invalid idbranch';
+                    return array('status_code' => 409, 'details' => $bodyResponse);
                 }
             }else{
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'Resource data pre-validation error',
-                        'Details' => "idbranch ". "'".$data["idbranch"]."'". " not exists in your branches",
-                        'More_Info' => URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch',
-                    ),
-                );
-                return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+                $bodyResponse = "idbranch ". "'".$data["idbranch"]."'". " not exists in your branches";
+                return array('status_code' => 409, 'details' => $bodyResponse);
             }
         }else{
             //Instanciamos nuestra branchQuery
@@ -1145,7 +1068,7 @@ class Department extends BaseDepartment
                         $departmentPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
                     }
 
-                    $departmentArray = HttpRequest::resourceData($data, $request, $response, 'Department');
+                    $departmentArray = HttpRequest::resourceUpdateData($data, $request, $response, 'Department');
 
                     if(isset($data)){
                         // Le ponemos los datos a por defecto de nuestro recurso a nuestro formulario
@@ -1179,7 +1102,7 @@ class Department extends BaseDepartment
                                 $branchdepartmentQuery = new BranchdepartmentQuery();
 
                                 // Si el valor de department_type es local y desean actualizarlo a global
-                                if($departmentTypeRow == "local" && $data['department_type'] == 'global'){
+                                if($departmentTypeRow == "local" && (isset($data['department_type']) && $data['department_type'] == 'global')){
 
                                     // Buscamos los registros que exitan en la tabla branchdepartment con el iddepartment que manda el usuario
                                     $findForIdDepartment = $branchdepartmentQuery->filterByIddepartment($id)->find();
@@ -1226,7 +1149,7 @@ class Department extends BaseDepartment
                                     // sino, entonces crearlas
                                 }
 
-                                if($departmentTypeRow == "global" && $data['department_type'] == 'local'){
+                                if($departmentTypeRow == "global" && (isset($data['department_type']) && $data['department_type'] == 'local')){
 
                                     // Buscamos los registros que exitan en la tabla branchdepartment con el iddepartment que manda el usuario
                                     $findForIdDepartment = $branchdepartmentQuery->filterByIddepartment($id)->find();
@@ -1249,9 +1172,6 @@ class Department extends BaseDepartment
                                         }
                                     }
                                 }
-
-                                //Modifiamos el Header de nuestra respuesta
-                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
 
                                 //Le damos formato a nuestra respuesta
                                 $bodyResponse = array(
@@ -1295,7 +1215,7 @@ class Department extends BaseDepartment
                                 $branchQuery = new BranchQuery();
                                 $branchesByIdCompany = $branchQuery->filterByIdCompany($idCompany)->find();
                                 $branchesCollection = $branchesByIdCompany->getArrayCopy();
-                                if($departmentTypeRow == "local" && $data['department_type'] == 'global'){
+                                if($departmentTypeRow == "local" && (isset($data['department_type']) && $data['department_type'] == 'global')){
                                     // Hacer Query a branchdepartment y validar si el id department
                                     // ya se encuentra disponible para todas sus idbranch
                                     // sino, entonces crearlas y dar una respuesta al usuario
@@ -1310,35 +1230,16 @@ class Department extends BaseDepartment
                                         );
                                     }
                                 }
-                                return $bodyResponse;
-
+                                return array('status_code' => 200, 'details' => $bodyResponse);
                             }else{
-
-                                //Modifiamos el Header de nuestra respuesta
-                                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                                $bodyResponse = array(
-                                    'Error' => array(
-                                        'HTTP_Status' => 400 . ' Bad Request',
-                                        'Title' => 'Resource data pre-validation error',
-                                        'Details' => "department_name ". "'".$departmentArray['department_name']."'". " already exists",
-                                    ),
-                                );
-                                return $bodyResponse;
+                                $bodyResponse = "department_name ". "'".$departmentArray['department_name']."'". " already exists";
+                                return array('status_code' => 409, 'details' => $bodyResponse);
                             }
                         }else{
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            $bodyResponse = array(
-                                'Error' => array(
-                                    'HTTP_Status' => 400 . ' Bad Request',
-                                    'Title' => 'No changes were found',
-                                ),
-                            );
-                            return $bodyResponse;
+                            $bodyResponse = "No changes were found";
+                            return array('status_code' => 304, 'details' => $bodyResponse);
                         }
                     }else{
-                        //Modifiamos el Header de nuestra respuesta
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                         //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                         $messageArray = array();
                         foreach ($departmentFormPostPut->getMessages() as $key => $value){
@@ -1348,42 +1249,22 @@ class Department extends BaseDepartment
                                 array_push($messageArray, $message);
                             }
                         }
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
-                        return $bodyResponse;
+                        return array('status_code' => 409, 'details' => $bodyResponse);
                     }
                     //Si el formulario no fue valido
                 }else{
-                    //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $messageArray = array();
                     foreach ($departmentFormToShowUpdate->getElements() as $key => $value){
                         //Obtenemos el nombre de la columna
                         $message = $key;
                         array_push($messageArray, $message);
                     }
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'No changes were found',
-                            'Columns_to_do_changes' => $messageArray,
-                            'Columns_to_do_changes_options' => "idbranch"
-                        ),
-                    );
-                    return $bodyResponse;
+                    $bodyResponse = "No changes were found";
+                    return array('status_code' => 304, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray, 'columns_to_do_changes_options' => "idbranch");
                 }
             }else{
-
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = array(
-                    'Error' => array(
-                        'HTTP_Status' => 400 . ' Bad Request',
-                        'Title' => 'The request data is invalid',
-                        'Details' => 'Invalid idbranch',
-                    ),
-                );
-                return $bodyResponse;
+                $bodyResponse = "Invalid idbranch";
+                return array('status_code' => 409, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray, 'columns_to_do_changes_options' => "idbranch");
             }
         }
     }

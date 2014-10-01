@@ -109,6 +109,9 @@ class ResourceController extends AbstractRestfulController
         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
         $module = MODULE_RESOURCE;
 
+        // Instanciamos el objeto para la respuesta XML
+        $writer = new \Zend\Config\Writer\Xml();
+
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
 
@@ -128,17 +131,19 @@ class ResourceController extends AbstractRestfulController
             if(isset($dataArray['error'])){
                 switch(TYPE_RESPONSE){
                     case "xml":{;
-                        $writer = new \Zend\Config\Writer\Xml();
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                         return $response->setContent($writer->toString($dataArray));
                         break;
                     }
                     case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($dataArray);
                         break;
                     }
                     default: {
-                    return new JsonModel($dataArray);
-                    break;
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                        return new JsonModel($dataArray);
+                        break;
                     }
                 }
             }
@@ -179,25 +184,46 @@ class ResourceController extends AbstractRestfulController
                 // $data solo es alternativo, lo utiliza algunos objetos solamente, como department.
                 $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, $data);
 
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode($issave['statusCode']); //BAD REQUEST
-
-                switch(TYPE_RESPONSE){
-                    case "xml":{
-                        // Create the config object
-                        $writer = new \Zend\Config\Writer\Xml();
-                        return $response->setContent($writer->toString($issave['bodyResponse']));
+                if($issave['status_code'] == 201){
+                    $bodyResponse = ArrayResponse::getResponse($issave['status_code'], $response, $issave['details']);
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse['details']));
+                            break;
+                        }
+                        case "json":{
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                            return new JsonModel($bodyResponse['details']);
+                            break;
+                        }
+                        default: {
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                        return new JsonModel($bodyResponse['details']);
                         break;
+                        }
                     }
-                    case "json":{
-                        return new JsonModel($issave['bodyResponse']);
+                }else{
+                    $bodyResponse = ArrayResponse::getResponse($issave['status_code'], $response, $issave['details']);
+                    switch(TYPE_RESPONSE){
+                        case "xml":{;
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                        return new JsonModel($bodyResponse);
                         break;
-                    }
-                    default: {
-                    return new JsonModel($issave['bodyResponse']);
-                    break;
+                        }
                     }
                 }
+
                 //Si el formulario no fue valido
             }else{
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
@@ -210,44 +236,47 @@ class ResourceController extends AbstractRestfulController
                     }
                 }
 
+                $bodyResponse = ArrayResponse::getResponse(409, $response, $messageArray);
                 switch(TYPE_RESPONSE){
                     case "xml":{
-                        // Create the config object
-                        $writer = new \Zend\Config\Writer\Xml();
-                        $bodyResponse = ArrayResponse::getResponse(400, null, $messageArray, $response);
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                         return $response->setContent($writer->toString($bodyResponse));
                         break;
                     }
                     case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
                     }
                     default: {
-                    return new JsonModel($bodyResponse);
-                    break;
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                        return new JsonModel($bodyResponse);
+                        break;
                     }
                 }
+
             }
             //Si el usuario no tiene permisos sobre el recurso
         }else{
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            $bodyResponse = ArrayResponse::getResponse(403, null, null, $response);
+            $bodyResponse = ArrayResponse::getResponse(403, $response);
             switch(TYPE_RESPONSE){
                 case "xml":{
-                    // Create the config object
-                    $writer = new \Zend\Config\Writer\Xml();
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                     return $response->setContent($writer->toString($bodyResponse));
                     break;
                 }
                 case "json":{
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                 }
                 default: {
-                return new JsonModel($bodyResponse);
-                break;
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                    return new JsonModel($bodyResponse);
+                    break;
                 }
-            }        }
+            }
+        }
     }
 
     public function get($id){
@@ -261,11 +290,17 @@ class ResourceController extends AbstractRestfulController
         //Obtenemos el IdCompany al que pertenece el usuario
         $idCompany = ResourceManager::getIDCompany($token);
 
+        // Instanciamos el objeto response
+        $response = $this->getResponse();
+
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
 
         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
         $module = MODULE_RESOURCE;
+
+        // Instanciamos el objeto para la respuesta XML
+        $writer = new \Zend\Config\Writer\Xml();
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
@@ -283,66 +318,58 @@ class ResourceController extends AbstractRestfulController
                 //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
                 $bodyResponse = $resource->getEntityResponse($entity,$userLevel);
                 switch(TYPE_RESPONSE){
-                    case "xml":{
-                        // Create the config object
-                        $response = $this->getResponse();
-                        $writer = new \Zend\Config\Writer\Xml();
+                    case "xml":{;
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                         return $response->setContent($writer->toString($bodyResponse));
                         break;
                     }
                     case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
                     }
                     default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                     }
                 }
 
             }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response = $this->getResponse();
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = array(
-                    'error' => array(
-                        'status_code' => 400 . ' Bad Request',
-                        'title' => 'The request data is invalid',
-                        'details' => 'Invalid '.RESOURCE.' id',
-                        'more_info' => URL_API_DOCS
-                    ),
-                );
+                $bodyResponse = ArrayResponse::getResponse(409, $response, 'Invalid '.RESOURCE.' id');
                 switch(TYPE_RESPONSE){
-                    case "xml":{;
-                        $writer = new \Zend\Config\Writer\Xml();
+                    case "xml":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                         return $response->setContent($writer->toString($bodyResponse));
                         break;
                     }
                     case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
                     }
                     default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                     }
                 }
             }
         }else{
-            $response = $this->getResponse();
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            $bodyResponse = ArrayResponse::getResponseBody(403);
+            $bodyResponse = ArrayResponse::getResponse(403, $response);
             switch(TYPE_RESPONSE){
                 case "xml":{
-                    $writer = new \Zend\Config\Writer\Xml();
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                     return $response->setContent($writer->toString($bodyResponse));
                     break;
                 }
                 case "json":{
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                 }
                 default: {
+                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                 return new JsonModel($bodyResponse);
                 break;
                 }
@@ -373,6 +400,9 @@ class ResourceController extends AbstractRestfulController
 
         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
         $module = MODULE_RESOURCE;
+
+        // Instanciamos el objeto para la respuesta XML
+        $writer = new \Zend\Config\Writer\Xml();
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
@@ -409,112 +439,99 @@ class ResourceController extends AbstractRestfulController
                 if(RESOURCE == 'company'){
                     // Solamente el idcompany == 1 podrá listar todas la Compañias existentes
                     if($idCompany == 1){
-                        return new JsonModel($getCollection);
-                    }else{
-                        //Modifiamos el Header de nuestra respuesta
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
-                        $bodyResponse = array(
-                            'error' => array(
-                                'status_code' => 403 . ' Forbidden',
-                                'title' => 'Access denied',
-                                'details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
-                                'more_info' => URL_API_DOCS
-                            ),
-                        );
+                        $bodyResponse = $getCollection;
                         switch(TYPE_RESPONSE){
                             case "xml":{
-                                // Create the config object
-                                $response = $this->getResponse();
-                                $writer = new \Zend\Config\Writer\Xml();
+                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                                 return $response->setContent($writer->toString($bodyResponse));
                                 break;
                             }
                             case "json":{
+                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                                 return new JsonModel($bodyResponse);
                                 break;
                             }
                             default: {
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                            return new JsonModel($bodyResponse);
+                            break;
+                            }
+                        }
+                    }else{
+                        $bodyResponse = ArrayResponse::getResponse(401, $response, 'Sorry but you does not have permission over this resource.', 'Access denied');
+                        switch(TYPE_RESPONSE){
+                            case "xml":{
+                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                return $response->setContent($writer->toString($bodyResponse));
+                                break;
+                            }
+                            case "json":{
+                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                return new JsonModel($bodyResponse);
+                                break;
+                            }
+                            default: {
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                             return new JsonModel($bodyResponse);
                             break;
                             }
                         }
                     }
                 }else{
-
                     $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
                     switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $response = $this->getResponse();
-                            $writer = new \Zend\Config\Writer\Xml();
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                             return $response->setContent($writer->toString($bodyResponse));
                             break;
                         }
                         case "json":{
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                             return new JsonModel($bodyResponse);
                             break;
                         }
                         default: {
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
                         }
                     }
-                    return new JsonModel($Response);
                 }
             }else{
-
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //No Content
-                $bodyResponse = array(
-                    'error' => array(
-                        'status_code' => 400 . ' Bad Request',
-                        'title' => 'No Content',
-                        'details' => 'The server successfully processed the request, but is not returning any content.',
-                        'more_info' => URL_API_DOCS
-                    ),
-                );
+                $bodyResponse = ArrayResponse::getResponse(204, $response);
                 switch(TYPE_RESPONSE){
                     case "xml":{
-                        // Create the config object
-                        $response = $this->getResponse();
-                        $writer = new \Zend\Config\Writer\Xml();
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                         return $response->setContent($writer->toString($bodyResponse));
                         break;
                     }
                     case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
                     }
                     default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                     }
                 }
             }
         }else{
-            //Modifiamos el Header de nuestra respuesta
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //Access Denied
-            $bodyResponse = array(
-                'error' => array(
-                    'status_code' => 403 . ' Forbidden',
-                    'title' => 'Access denied',
-                    'details' => 'Sorry but you does not have permission over this resource. Please contact with your supervisor',
-                    'more_info' => URL_API_DOCS
-                ),
-            );
+            $bodyResponse = ArrayResponse::getResponse(403, $response, 'Sorry but you does not have permission over this resource. Please contact with your supervisor.', 'Access denied');
             switch(TYPE_RESPONSE){
                 case "xml":{
-                    // Create the config object
-                    $response = $this->getResponse();
-                    $writer = new \Zend\Config\Writer\Xml();
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                     return $response->setContent($writer->toString($bodyResponse));
                     break;
                 }
                 case "json":{
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                 }
                 default: {
+                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                 return new JsonModel($bodyResponse);
                 break;
                 }
@@ -543,11 +560,20 @@ class ResourceController extends AbstractRestfulController
         //Obtenemos el IdCompany al que pertenece el usuario
         $idCompany = ResourceManager::getIDCompany($token);
 
+        // Instanciamos el objeto response
+        $request = $this->getRequest();
+
+        // Instanciamos el objeto response
+        $response = $this->getResponse();
+
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
 
         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
         $module = ResourceManager::getModule($resourceName);
+
+        // Instanciamos el objeto para la respuesta XML
+        $writer = new \Zend\Config\Writer\Xml();
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
@@ -556,45 +582,64 @@ class ResourceController extends AbstractRestfulController
         if($userLevel!=0){
 
             $resource = ResourceManager::getResource($resourceName);
-            $request = $this->getRequest();
-            $response = $this->getResponse();
+            $isUpdate = $resource->updateResource($id, $data, $idCompany, $userLevel, $request, $response);
 
-            $functionUpdate = $resource->updateResource($id, $data, $idCompany, $userLevel, $request, $response);
-
-            switch(TYPE_RESPONSE){
-                case "xml":{
-                    // Create the config object
-                    $writer = new \Zend\Config\Writer\Xml();
-                    return $response->setContent($writer->toString($functionUpdate));
+            if($isUpdate['status_code'] == 200){
+                $bodyResponse = ArrayResponse::getResponse($isUpdate['status_code'], $response, $isUpdate['details']);
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                        return $response->setContent($writer->toString($bodyResponse['details']));
+                        break;
+                    }
+                    case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                        return new JsonModel($bodyResponse['details']);
+                        break;
+                    }
+                    default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                    return new JsonModel($bodyResponse['details']);
                     break;
+                    }
                 }
-                case "json":{
-                    return new JsonModel($functionUpdate);
+            }else{
+                $bodyResponse = ArrayResponse::getResponse($isUpdate['status_code'], $response, $isUpdate['details']);
+                switch(TYPE_RESPONSE){
+                    case "xml":{;
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
+                    }
+                    case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                        return new JsonModel($bodyResponse);
+                        break;
+                    }
+                    default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                    return new JsonModel($bodyResponse);
                     break;
-                }
-                default: {
-                return new JsonModel($functionUpdate);
-                break;
+                    }
                 }
             }
 
             //Si el usuario no tiene permisos sobre el recurso
         }else{
-            $response = $this->getResponse();
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            $bodyResponse = ArrayResponse::getResponseBody(403);
+            $bodyResponse = ArrayResponse::getResponse(403, $response, 'Sorry but you does not have permission over this resource. Please contact with your supervisor.', 'Access denied');
             switch(TYPE_RESPONSE){
                 case "xml":{
-                    // Create the config object
-                    $writer = new \Zend\Config\Writer\Xml();
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                     return $response->setContent($writer->toString($bodyResponse));
                     break;
                 }
                 case "json":{
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                 }
                 default: {
+                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                 return new JsonModel($bodyResponse);
                 break;
                 }
@@ -623,11 +668,17 @@ class ResourceController extends AbstractRestfulController
         //Obtenemos el IdCompany al que pertenece el usuario
         $idCompany = ResourceManager::getIDCompany($token);
 
+        // Instanciamos el objeto response
+        $response = $this->getResponse();
+
         // La inicial de nuestro string la hacemos mayuscula (En este paso ya tenemos User, Client, etc..)
         $resourceName = ucfirst(RESOURCE);
 
         // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
         $module = ResourceManager::getModule($resourceName);
+
+        // Instanciamos el objeto para la respuesta XML
+        $writer = new \Zend\Config\Writer\Xml();
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
@@ -642,82 +693,62 @@ class ResourceController extends AbstractRestfulController
             if($resource->isIdValidResource($id,$idCompany)){
                 if($resource->deleteEntity($id,$userLevel)){
                     //Modifiamos el Header de nuestra respuesta
-                    $response = $this->getResponse();
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204); //NOT CONTENT
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_204);
                 }else{
-                    //Modifiamos el Header de nuestra respuesta
-                    $response = $this->getResponse();
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = array(
-                        'error' => array(
-                            'status_code' => 400 . ' Bad Request',
-                            'title' => 'The request data is invalid',
-                            'details' => 'Invalid id',
-                            'more_info' => URL_API_DOCS
-                        ),
-                    );
+                    $bodyResponse = ArrayResponse::getResponse(409, $response, 'Invalid id.', 'The request data is invalid');
                     switch(TYPE_RESPONSE){
                         case "xml":{
-                            // Create the config object
-                            $writer = new \Zend\Config\Writer\Xml();
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                             return $response->setContent($writer->toString($bodyResponse));
                             break;
                         }
                         case "json":{
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                             return new JsonModel($bodyResponse);
                             break;
                         }
                         default: {
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
                         }
                     }
                 }
             }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response = $this->getResponse();
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = array(
-                    'error' => array(
-                        'status_code' => 400 . ' Bad Request',
-                        'title' => 'The request data is invalid',
-                        'details' => 'Invalid id'.RESOURCE,
-                        'more_info' => URL_API_DOCS
-                    ),
-                );
+                $bodyResponse = ArrayResponse::getResponse(409, $response, 'Invalid id' . RESOURCE, 'The request data is invalid');
                 switch(TYPE_RESPONSE){
                     case "xml":{
-                        // Create the config object
-                        $writer = new \Zend\Config\Writer\Xml();
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                         return $response->setContent($writer->toString($bodyResponse));
                         break;
                     }
                     case "json":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
                     }
                     default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                     }
                 }
             }
         }else{
-            $response = $this->getResponse();
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_403); //BAD REQUEST
-            $bodyResponse = ArrayResponse::getResponseBody(403);
+            $bodyResponse = ArrayResponse::getResponse(403, $response, 'Sorry but you does not have permission over this resource. Please contact with your supervisor.', 'Access denied');
             switch(TYPE_RESPONSE){
                 case "xml":{
-                    // Create the config object
-                    $writer = new \Zend\Config\Writer\Xml();
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
                     return $response->setContent($writer->toString($bodyResponse));
                     break;
                 }
                 case "json":{
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                     return new JsonModel($bodyResponse);
                     break;
                 }
                 default: {
+                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                 return new JsonModel($bodyResponse);
                 break;
                 }
@@ -757,6 +788,9 @@ class ResourceController extends AbstractRestfulController
             // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
             $module = MODULE_RESOURCE;
         }
+
+        // Instanciamos el objeto para la respuesta XML
+        $writer = new \Zend\Config\Writer\Xml();
 
         //Obtenemnos el nivel de acceso del usuario para el recurso
         $userLevel = ResourceManager::getUserLevels($idUser, $module);
@@ -826,25 +860,25 @@ class ResourceController extends AbstractRestfulController
                             // Ingresamos al objeto del recurso directamente en la clase de Propel
                             $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, null);
 
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode($issave['statusCode']); //BAD REQUEST
-
+                            $bodyResponse = ArrayResponse::getResponse($issave['status_code'], $response, $issave['details']);
                             switch(TYPE_RESPONSE){
-                                case "xml":{
-                                    // Create the config object
-                                    $writer = new \Zend\Config\Writer\Xml();
-                                    return $response->setContent($writer->toString($issave['bodyResponse']));
+                                case "xml":{;
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
                                     break;
                                 }
                                 case "json":{
-                                    return new JsonModel($issave['bodyResponse']);
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                    return new JsonModel($bodyResponse);
                                     break;
                                 }
                                 default: {
-                                return new JsonModel($issave['bodyResponse']);
+                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                return new JsonModel($bodyResponse);
                                 break;
                                 }
                             }
+
                             //Si el formulario no fue valido
                         }else{
                             //Modifiamos el Header de nuestra respuesta
@@ -858,19 +892,21 @@ class ResourceController extends AbstractRestfulController
                                     array_push($messageArray, $message);
                                 }
                             }
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, $messageArray);
                             switch(TYPE_RESPONSE){
-                                case "xml":{;
-                                    $writer = new \Zend\Config\Writer\Xml();
-                                    return $response->setContent($writer->toString(ArrayResponse::getResponseBody(400, $messageArray)));
+                                case "xml":{
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
                                     break;
                                 }
                                 case "json":{
-                                    return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                    return new JsonModel($bodyResponse);
                                     break;
                                 }
                                 default: {
-                                return new JsonModel(ArrayResponse::getResponseBody(400, $messageArray));
+                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                return new JsonModel($bodyResponse);
                                 break;
                                 }
                             }

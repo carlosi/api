@@ -109,12 +109,12 @@ class Branchdepartment extends BaseBranchdepartment
         }else{
             $bodyResponse = array(
                 'Error' => array(
-                    'HTTP_Status' => 400 . ' Bad Request',
+                    'HTTP_Status' => 409 . ' Conflict',
                     'Title' => 'Resource data pre-validation error',
                     'Details' => "iddepartment ". "'".$dataArray["iddepartment"]."'". " already exists in the idbranch "."'".$dataArray["idbranch"]."'",
                 ),
             );
-            return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+            return array('statusCode' => 409, 'bodyResponse' => $bodyResponse);
         }
     }
 

@@ -77,17 +77,11 @@ class Branch extends BaseBranch
             //4. el objeto company que va ir como __embebed = "company"
             $bodyResponse = $this->createBodyResponse($this,array('idcompany'),array('company' => $allowedCompanyColumns),array($company));
             $this->save();
-            return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+            return array('status_code' => 201, 'details' => $bodyResponse);
 
         }else{
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 400 . ' Bad Request',
-                    'Title' => 'Resource data pre-validation error',
-                    'Details' => "branch_name ". "'".$dataArray["branch_name"]."'". " already exists",
-                ),
-            );
-            return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+            $bodyResponse = "branch_name ". "'".$dataArray["branch_name"]."'". " already exists";
+            return array('status_code' => 409, 'details' => $bodyResponse);
         }
     }
 
@@ -475,12 +469,13 @@ class Branch extends BaseBranch
             // Si branch_name tiene un valor, lo almacenamos, de lo contrario lo dejamos como null
             $data['branch_name'] = isset($data['branch_name'])?$data['branch_name']:$branchPKQuery->getBranchName();
 
+            $branchDataArray = $branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
+
             //Remplzamos los datos de la branch por lo que se van a modificar
             foreach ($data as $key => $value){
                 $branchPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
             }
 
-            $branchDataArray = $branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
             $branchArray = HttpRequest::resourceUpdateData($data, $request, $response, 'Branch', $branchDataArray);
 
             unset($branchArray['idbranch']);
@@ -502,11 +497,9 @@ class Branch extends BaseBranch
 
                 //Si hay valores por modificar
                 if($branchPKQuery->isModified()){
-                    if($data['branch_name'] == $branchArray['branch_name']){
+                    if($data['branch_name'] == $branchDataArray['branch_name']){
 
                         $branchPKQuery->save();
-                        //Modifiamos el Header de nuestra respuesta
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
 
                         //Le damos formato a nuestra respuesta
                         $bodyResponse = array(
@@ -548,9 +541,10 @@ class Branch extends BaseBranch
                             'company_name' => $bodyResponse['company']['company_name'],
                         );
 
-                        return $bodyResponse;
+                        return array('status_code' => 200, 'details' => $bodyResponse);
 
                     }else{
+
 
                         //Verificamos que branch_name no exista ya en nuestra base de datos.
                         if($branchQuery->filterByIdCompany($idCompany)->filterByBranchName($data['branch_name'])->find()->count()==0){
@@ -589,7 +583,7 @@ class Branch extends BaseBranch
                                 ),
                             );
 
-                            //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
+                            //Agregamos los datod de company a nuestro arreglo $row['_embedded']['company']
                             foreach ($companyArray as $key=>$value){
                                 $bodyResponse['company'][$key] = $value;
                             }
@@ -599,40 +593,21 @@ class Branch extends BaseBranch
                                 'company_name' => $bodyResponse['company']['company_name'],
                             );
 
-                            return $bodyResponse;
+                            return array('status_code' => 200, 'details' => $bodyResponse);
 
                         }else{
-
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            $bodyResponse = array(
-                                'Error' => array(
-                                    'HTTP_Status' => 400 . ' Bad Request',
-                                    'Title' => 'Resource data pre-validation error',
-                                    'Details' => "branch_name ". "'".$branchArray['branch_name']."'". " already exists",
-                                ),
-                            );
-                            return $bodyResponse;
-                        }
+                            $bodyResponse = "branch_name ". "'".$branchArray['branch_name']."'". " already exists";
+                            return array('status_code' => 409, 'details' => $bodyResponse);                        }
                     }
                 }else{
-                    //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $messageArray = array();
                     foreach ($branchFormToShowUpdate->getElements() as $key => $value){
                         //Obtenemos el nombre de la columna
                         $message = $key;
                         array_push($messageArray, $message);
                     }
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'No changes were found',
-                            'Columns_to_do_changes' => $messageArray,
-                        ),
-                    );
-                    return $bodyResponse;
-                }
+                    $bodyResponse = "No changes were found";
+                    return array('status_code' => 304, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray);                 }
             }else{
                 //Modifiamos el Header de nuestra respuesta
                 $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
@@ -645,22 +620,14 @@ class Branch extends BaseBranch
                         array_push($messageArray, $message);
                     }
                 }
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
-                return $bodyResponse;
+                return array('status_code' => 409, 'details' => $messageArray);
             }
         }else{
 
             //Modifiamos el Header de nuestra respuesta
             $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 400 . ' Bad Request',
-                    'Title' => 'The request data is invalid',
-                    'Details' => 'Invalid idbranch',
-                ),
-            );
-            return $bodyResponse;
+            $bodyResponse = 'Invalid idbranch';
+            return array('status_code' => 409, 'details' => $messageArray);
         }
     }
     /////////// End update ///////////

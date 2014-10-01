@@ -70,7 +70,11 @@ class Response extends AbstractMessage implements ResponseInterface
     const STATUS_CODE_428 = 428;
     const STATUS_CODE_429 = 429;
     const STATUS_CODE_431 = 431;
+
+    // Agregado por Carlos Esparza
+    const STATUS_CODE_498 = 498;
     const STATUS_CODE_499 = 499;
+
     const STATUS_CODE_500 = 500;
     const STATUS_CODE_501 = 501;
     const STATUS_CODE_502 = 502;
@@ -138,8 +142,12 @@ class Response extends AbstractMessage implements ResponseInterface
         428 => 'Precondition Required',
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
+        // Agregado por Carlos Esparza
+        // Client Error - Token expired/invalid
+        498 => 'Token expired/invalid',
         // Client Error - Token Required
         499 => 'Token required',
+
         // SERVER ERROR
         500 => 'Internal Server Error',
         501 => 'Not Implemented',

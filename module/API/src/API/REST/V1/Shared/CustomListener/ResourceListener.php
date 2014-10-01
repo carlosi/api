@@ -470,36 +470,35 @@ class ResourceListener implements ListenerAggregateInterface {
                             }else{
                                 // Si el resource mas el resourceChild no existe, ejemplo: Branchfile, Brancg address.
                                 $bodyResponse = ArrayResponse::getResponse(404, $response);
+                                switch(TYPE_RESPONSE){
+                                    case "xml":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
                             }
                         }
                     }
                     define('MODULE_RESOURCE', ucfirst($e->getRouteMatch()->getMatchedRouteName()));
                 }// No creamos un else porque el ApiProplemListener.php se encarga de dar respuesta 404, a recursos que no existen.
-
-                switch(TYPE_RESPONSE){
-                    case "xml":{
-                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                        return $response->setContent($writer->toString($bodyResponse));
-                        $e->stopPropagation();
-                        break;
-                    }
-                    case "json":{
-                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
-                        $jsonModel = new JsonModel($bodyResponse);
-                        $jsonModel->setTerminal(true);
-                        $e->setResult($jsonModel);
-                        $e->setViewModel($jsonModel)->stopPropagation();
-                        break;
-                    }
-                    default: {
-                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
-                        $jsonModel = new JsonModel($bodyResponse);
-                        $jsonModel->setTerminal(true);
-                        $e->setResult($jsonModel);
-                        $e->setViewModel($jsonModel)->stopPropagation();
-                        break;
-                    }
-                }
                 break;
             }
             case 'PUT':{

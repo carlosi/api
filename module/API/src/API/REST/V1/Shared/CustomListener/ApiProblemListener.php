@@ -124,12 +124,46 @@ class ApiProblemListener implements ListenerAggregateInterface
                 case '404':{
 
                     $bodyResponse = ArrayResponse::getResponse(404, $response);
+                    if($isXML){
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                        $response->setContent($writer->toString($bodyResponse));
+                        $e->setResult($response);
+                    }elseif($isJSON){
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel);
+                    }else{
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel);
+                    }
 
                     break;
                 }
                 case '500':{
 
                     $bodyResponse = ArrayResponse::getResponse(500, $response);
+                    if($isXML){
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                        $response->setContent($writer->toString($bodyResponse));
+                        $e->setResult($response);
+                    }elseif($isJSON){
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel);
+                    }else{
+                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                        $jsonModel = new JsonModel($bodyResponse);
+                        $jsonModel->setTerminal(true);
+                        $e->setResult($jsonModel);
+                        $e->setViewModel($jsonModel);
+                    }
 
                     if($requestHeaders->get('Content-Type') == null){
 
@@ -137,6 +171,23 @@ class ApiProblemListener implements ListenerAggregateInterface
 
                         if($request->getMethod() == "GET"){
                             $bodyResponse = ArrayResponse::getResponse(500, $response);
+                            if($isXML){
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                $response->setContent($writer->toString($bodyResponse));
+                                $e->setResult($response);
+                            }elseif($isJSON){
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel);
+                            }else{
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel);
+                            }
                         }
 
                         if($request->getMethod() == "POST"){
@@ -148,6 +199,23 @@ class ApiProblemListener implements ListenerAggregateInterface
                             $decodeJson = json_decode($getContentBody);
                             if($decodeJson == null){
                                 $bodyResponse = ArrayResponse::getResponse(400, $response, 'The request was a invalid. The body has a syntax error json', 'Sintax error');
+                                if($isXML){
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    $response->setContent($writer->toString($bodyResponse));
+                                    $e->setResult($response);
+                                }elseif($isJSON){
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel);
+                                }else{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel);
+                                }
                             }
                         }
                         if($request->getMethod() == "PUT"){
@@ -164,23 +232,6 @@ class ApiProblemListener implements ListenerAggregateInterface
                     }
                     break;
                 }
-            }
-            if($isXML){
-                $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                $response->setContent($writer->toString($bodyResponse));
-                $e->setResult($response);
-            }elseif($isJSON){
-                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
-                $jsonModel = new JsonModel($bodyResponse);
-                $jsonModel->setTerminal(true);
-                $e->setResult($jsonModel);
-                $e->setViewModel($jsonModel);
-            }else{
-                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
-                $jsonModel = new JsonModel($bodyResponse);
-                $jsonModel->setTerminal(true);
-                $e->setResult($jsonModel);
-                $e->setViewModel($jsonModel);
             }
             return;
         }

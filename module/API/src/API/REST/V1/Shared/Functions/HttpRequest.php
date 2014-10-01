@@ -42,7 +42,6 @@ class HttpRequest
 
         switch ($requestContentType){
             case 'application/x-www-form-urlencoded':{
-
                 if($data != null){
                     $dataArray = array();
                     foreach($elementsForm as $key=>$value){
@@ -51,15 +50,14 @@ class HttpRequest
                         }
                     }
                     return $dataArray;
-
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
                     $bodyResponse = array(
                         'error' => array(
-                            'status_code' => 400 . ' Bad Request',
-                            'title' => 'The body is empty',
-                            'details' => "The body can`t be empty'",
+                            'status_code' => 409 . ' Conflict',
+                            'title' => 'Conflict',
+                            'details' => "The body data is incorrect or empty",
                             'more_info' => URL_API_DOCS
                         ),
                     );
@@ -81,14 +79,23 @@ class HttpRequest
                     return $dataArray;
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    return ArrayResponse::getResponse(400, 'The body is empty', 'The body can`t be empty', $response);
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
+                    $bodyResponse = array(
+                        'error' => array(
+                            'status_code' => 409 . ' Conflict',
+                            'title' => 'The body is empty',
+                            'details' => "The body can`t be empty",
+                            'more_info' => URL_API_DOCS
+                        ),
+                    );
+                    return $bodyResponse;
                 }
                 break;
             }
         }
     }
 
-    public static function resourceUpdateData($data, $request, $response, $resourceName, $resourceDataArray){
+    public static function resourceUpdateData($data, $request, $response, $resourceName, $resourceDataArray=null){
 
         // Instanciamos el Formulario "resourceForm"
         $resourceForm = ResourceManager::getResourceForm($resourceName);
@@ -113,12 +120,12 @@ class HttpRequest
 
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
                     $bodyResponse = array(
                         'error' => array(
-                            'status_code' => 400 . ' Bad Request',
-                            'title' => 'The body is empty',
-                            'details' => "The body can`t be empty'",
+                            'status_code' => 409 . ' Conflict',
+                            'title' => 'Conflict',
+                            'details' => "The body data is incorrect or empty",
                             'more_info' => URL_API_DOCS
                         ),
                     );
@@ -143,9 +150,9 @@ class HttpRequest
                     $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $bodyResponse = array(
                         'error' => array(
-                            'status_code' => 400 . ' Bad Request',
+                            'status_code' => 409 . ' Conflict',
                             'title' => 'The body is empty',
-                            'details' => "The body can`t be empty'",
+                            'details' => "The body can`t be empty",
                             'more_info' => URL_API_DOCS
                         ),
                     );
