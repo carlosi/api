@@ -116,7 +116,7 @@ class ClientfileFilter implements InputFilterAwareInterface
                 // clientfile_uploaddate: DataType = DATETIME, NN = true
                 $inputFilter->add(array(
                     'name' => 'clientfile_uploaddate',
-                    'required' => true,
+                    'required' => false,
                     'filters' => array(
                         array('name' => 'StripTags'),
                         array('name' => 'StringTrim')
