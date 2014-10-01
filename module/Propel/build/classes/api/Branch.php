@@ -466,7 +466,7 @@ class Branch extends BaseBranch
             $branchPKQuery = $branchQuery->findPk($id);
             $branchFormToShowUpdate = BranchFormToShowUpdate::init($userLevel);
 
-            // Si branch_name tiene un valor, lo almacenamos, de lo contrario lo dejamos como null
+            // Si branch_name tiene un valor, lo almacenamos, de lo contrario le asignamos el valor que tiene en la base de datos
             $data['branch_name'] = isset($data['branch_name'])?$data['branch_name']:$branchPKQuery->getBranchName();
 
             $branchDataArray = $branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME);

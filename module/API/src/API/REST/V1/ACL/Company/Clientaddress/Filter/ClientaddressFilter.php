@@ -182,7 +182,7 @@ class ClientaddressFilter implements InputFilterAwareInterface
                 ),
             ));
 
-            // dlientaddress_address: DataType = VARCHAR(45), NN = true
+            // clientaddress_address: DataType = VARCHAR(45), NN = true
             $inputFilter->add(array(
                 'name' => 'clientaddress_address',
                 'required' => true,

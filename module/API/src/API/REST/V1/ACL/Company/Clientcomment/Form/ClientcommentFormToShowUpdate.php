@@ -1,37 +1,37 @@
 <?php
 
 /**
- * ClientaddressFormToShowUpdate.php
+ * ClientcommentFormToShowUpdate.php
  * BuyBuy
  *
- * Created by Buybuy on 12/08/2014.
+ * Created by Buybuy on 1/10/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\Company\Clientaddress\Form;
+namespace API\REST\V1\ACL\Company\Clientcomment\Form;
 
 // - ACL -- //
-use API\REST\V1\ACL\Company\Clientaddress\Form\ClientaddressForm;
+use API\REST\V1\ACL\Company\Clientcomment\Form\ClientcommentForm;
 
 /**
- * Class ClientaddressFormToShowUpdate
- * @package API\REST\V1\ACL\Company\Clientaddress\Form
+ * Class ClientcommentFormToShowUpdate
+ * @package API\REST\V1\ACL\Company\Clientcomment\Form
  */
-class ClientaddressFormToShowUpdate{
+class ClientcommentFormToShowUpdate{
 
     /**
      * @param $userLevel
-     * @return ClientaddressForm
+     * @return ClientcommentForm
      */
     public static function init($userLevel){
 
-        $clientaddressForm = new ClientaddressForm();
+        $clientcommentForm = new ClientcommentForm();
 
         switch ($userLevel){
 
             case 5: {
 
-                $clientaddressForm->remove('idclientaddress');
+                $clientcommentForm->remove('idclientcomment');
 
                 break;
             }
@@ -56,7 +56,7 @@ class ClientaddressFormToShowUpdate{
             }
         }
 
-        return $clientaddressForm;
+        return $clientcommentForm;
     }
 
 }

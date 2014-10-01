@@ -91,12 +91,12 @@ class Clientaddress extends BaseClientaddress
         //4. el objeto company que va ir como __embebed = "client"
         $bodyResponse = $this->createBodyResponse($this,array('idclient'),array('client' => $allowedClientaddressColumns),array($client));
         $this->save();
-        return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+        return array('status_code' => 201, 'details' => $bodyResponse);
 
     }
 
     /**
-     * @param $branch
+     * @param $clientaddress
      * @param array $voidElements
      * @param array $allowedColumns
      * @param array $halResources
@@ -204,14 +204,8 @@ class Clientaddress extends BaseClientaddress
         //Obtenemos nuestra entidad branch en forma de arreglo
         $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
 
-        //Los Links
-        $response = array(
-            "_links" => array(
-                "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".ID_RESOURCE.'/address/'.$entity->getIdclientaddress(),
-                ),
-            ),
-        );
+        $response = array();
+
         //El ACL
 
         //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
@@ -221,11 +215,9 @@ class Clientaddress extends BaseClientaddress
         foreach($clientaddressForm->getElements() as $element){
             if($element->getOption('value_options')!=null){
                 $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
             }else{
                 if($element->getAttribute('name')!="idclient"){
                     $response["ACL"][$element->getAttribute('name')] = $element->getOption('label');
-                    $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
                 }
             }
         }
@@ -235,6 +227,20 @@ class Clientaddress extends BaseClientaddress
             "client_lastname" =>  $clientForm->get("client_lastname")->getOption('label'),
         );
 
+        $response['_links'] = array(
+            "self" => array(
+                "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".ID_RESOURCE.'/address/'.$entity->getIdclientaddress(),
+            ),
+        );
+        foreach($clientaddressForm->getElements() as $element){
+            if($element->getOption('value_options')!=null){
+                $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
+            }else{
+                if($element->getAttribute('name')!="idclient"){
+                    $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
+                }
+            }
+        }
         $client = $entity->getClient();
         $response["client"] = array(
             "_links" => array(
@@ -441,7 +447,7 @@ class Clientaddress extends BaseClientaddress
             $clientaddressFormToShowUpdate = ClientaddressFormToShowUpdate::init($userLevel);
 
             // La funcion resourceData retorna un array de los datos que son enviados por el body
-            $clientaddressArray = HttpRequest::resourceData($data, $request, $response, 'Clientaddress');
+            $clientaddressArray = HttpRequest::resourceUpdateData($data, $request, $response, 'Clientaddress');
 
             // Instanciamos el formulario clientaddressForm()
             $clientaddressForm = new ClientaddressForm();
@@ -479,8 +485,6 @@ class Clientaddress extends BaseClientaddress
                 if($clientaddressPKQuery->isModified()){
 
                     $clientaddressPKQuery->save();
-                    //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
 
                     //Le damos formato a nuestra respuesta
                     $bodyResponse = array(
@@ -523,29 +527,19 @@ class Clientaddress extends BaseClientaddress
                         'client_lastname' => $bodyResponse['client']['client_lastname'],
                     );
 
-                    return $bodyResponse;
+                    return array('status_code' => 200, 'details' => $bodyResponse);
 
                 }else{
-                    //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $messageArray = array();
                     foreach ($clientaddressFormToShowUpdate->getElements() as $key => $value){
                         //Obtenemos el nombre de la columna
                         $message = $key;
                         array_push($messageArray, $message);
                     }
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'No changes were found',
-                            'Columns_to_do_changes' => $messageArray,
-                        ),
-                    );
-                    return $bodyResponse;
+                    $bodyResponse = 'No changes were found';
+                    return array('status_code' => 304, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray);
                 }
             }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                 $messageArray = array();
                 foreach ($clientaddressFormPostPut->getMessages() as $key => $value){
@@ -555,22 +549,12 @@ class Clientaddress extends BaseClientaddress
                         array_push($messageArray, $message);
                     }
                 }
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
-                return $bodyResponse;
+                return array('status_code' => 409, 'details' => $messageArray);
             }
         }else{
 
-            //Modifiamos el Header de nuestra respuesta
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 400 . ' Bad Request',
-                    'Title' => 'The request data is invalid',
-                    'Details' => 'Invalid idclientaddress',
-                ),
-            );
-            return $bodyResponse;
+            $bodyResponse = 'Invalid idclientaddress';
+            return array('status_code' => 409, 'details' => $bodyResponse);
         }
     }
     /////////// End update ///////////
@@ -582,7 +566,6 @@ class Clientaddress extends BaseClientaddress
      * @return bool
      */
     public function deleteEntity($id,$userLevel) {
-        echo "Entro delete Resource";
 
         //Reglas de negocio
         if($userLevel>=4){

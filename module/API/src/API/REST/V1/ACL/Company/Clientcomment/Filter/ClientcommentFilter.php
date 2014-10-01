@@ -98,7 +98,7 @@ class ClientcommentFilter implements InputFilterAwareInterface
             // clientcomment_date: DataType = DATETIME, NN = true
             $inputFilter->add(array(
                 'name'     => 'clientcomment_date',
-                'required' => true,
+                'required' => false,
             ));
 
             $this->inputFilter = $inputFilter;
