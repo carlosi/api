@@ -245,7 +245,7 @@ class Clientaddress extends BaseClientaddress
         $response["client"] = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".ID_RESOURCE.'/address/'.$client->getIdclient(),
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".$client->getIdclient(),
                 ),
             ),
             "idclient" => $client->getIdclient(),
@@ -380,7 +380,7 @@ class Clientaddress extends BaseClientaddress
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$address['idclient'].'/address'),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$address['idclient'].'/address/'.$address['idclientaddress']),
                 ),
             );
 
@@ -435,7 +435,6 @@ class Clientaddress extends BaseClientaddress
     public function updateResource($data, $idCompany, $userLevel, $request, $response){
 
         $idclientaddress = $data['idclientaddress'];
-        $idclient = $data['idclient'];
         //Instanciamos nuestra clientaddressQuery
         $clientaddressQuery = ClientaddressQuery::create();
 

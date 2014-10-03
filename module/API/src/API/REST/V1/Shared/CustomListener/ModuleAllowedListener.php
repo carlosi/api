@@ -64,41 +64,69 @@ class ModuleAllowedListener {
 
         $request = $e->getRequest();
         $response = $e->getResponse();
-        if($e->getRouteMatch()->getParam('resource') == 'company'){
+        switch($e->getRouteMatch()->getParam('resource')){
+            case "company":{
+                //Obtenemos el token por medio del parametro Authorization del método getHeader. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
+                $token = $request->getHeader('Authorization')->getFieldValue();;
 
-            //Obtenemos el token por medio del parametro Authorization del método getHeader. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
-            $token = $request->getHeader('Authorization')->getFieldValue();;
+                //Obtenemos el IdCompany al que pertenece el usuario
+                $idCompany = ResourceManager::getIDCompany($token);
 
-            //Obtenemos el IdCompany al que pertenece el usuario
-            $idCompany = ResourceManager::getIDCompany($token);
+                $companyBuybuy = CompanyQuery::create()->filterByCompanyName('Buybuy Inc.')->findOne();
+                $idcompanyBuybuy = $companyBuybuy->getIdcompany();
 
-            $companyBuybuy = CompanyQuery::create()->filterByCompanyName('Buybuy Inc.')->findOne();
-            $idcompanyBuybuy = $companyBuybuy->getIdcompany();
+                // Solamente el idcompany de Buybuy podrá eliminar entidades de Compañias.
+                if($idcompanyBuybuy == $idCompany){
 
-            // Solamente el idcompany de Buybuy podrá eliminar entidades de Compañias.
-            if($idcompanyBuybuy == $idCompany){
+                    // Sale de este Listener
 
-                // Sale de este Listener
+                }
+                // (Buybuy no podrá hacer CRUD ante las demas compañias sobre el recurso companyaddres, solamente sobre su misma compañia, o sea, sobre Buybuy)
+                // Cualquie company puede hacer el CRUD sobre el recurso companyaddress.
+                elseif($e->getRouteMatch()->getParam('resourceChild') == 'address'){
+                    switch($request->getMethod()){
+                        case "POST":{
 
-            }else{
-                $bodyResponse = ArrayResponse::getResponse(401, $response, 'Sorry but you does not have permission over this resource.', 'Access denied');
-                switch(TYPE_RESPONSE){
-                    case "xml":{
-                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                        return $response->setContent($writer->toString($bodyResponse));
-                        break;
+                            break;
+                        }
+                        case "GET":{
+                            if($e->getRouteMatch()->getParam('idChild') != null){
+                                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                $e->getRouteMatch()->setParam('action', 'getResourceChild');
+                                return;
+                            }
+                            break;
+                        }
+                        case "PUT":{
+
+                            break;
+                        }
+                        case "DELETE":{
+
+                            break;
+                        }
                     }
-                    case "json":{
+                }else{
+                    $bodyResponse = ArrayResponse::getResponse(401, $response, 'Sorry but you does not have permission over this resource.', 'Access denied');
+                    switch(TYPE_RESPONSE){
+                        case "xml":{
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                            return $response->setContent($writer->toString($bodyResponse));
+                            break;
+                        }
+                        case "json":{
+                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                            return new JsonModel($bodyResponse);
+                            break;
+                        }
+                        default: {
                         $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
-                    }
-                    default: {
-                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                    return new JsonModel($bodyResponse);
-                    break;
+                        }
                     }
                 }
+                break;
             }
         }
     }

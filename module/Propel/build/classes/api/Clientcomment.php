@@ -252,7 +252,7 @@ class Clientcomment extends BaseClientcomment
         $response["client"] = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".ID_RESOURCE.'/comment/'.$client->getIdclient(),
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".$client->getIdclient(),
                 ),
             ),
             "idclient" => $client->getIdclient(),
@@ -388,7 +388,7 @@ class Clientcomment extends BaseClientcomment
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$comment['idclient'].'/comment'),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$comment['idclient'].'/comment/'.$comment['idclientcomment']),
                 ),
             );
 
@@ -443,7 +443,6 @@ class Clientcomment extends BaseClientcomment
     public function updateResource($data, $idCompany, $userLevel, $request, $response){
 
         $idclientcomment = $data['idclientcomment'];
-        $idclient = $data['idclient'];
         //Instanciamos nuestra clientcommentQuery
         $clientcommentQuery = ClientcommentQuery::create();
 

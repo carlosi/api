@@ -252,7 +252,7 @@ class Clientfile extends BaseClientfile
         $response["client"] = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".ID_RESOURCE.'/file/'.$client->getIdclient(),
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/client/".$client->getIdclient(),
                 ),
             ),
             "idclient" => $client->getIdclient(),
@@ -388,7 +388,7 @@ class Clientfile extends BaseClientfile
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$file['idclient'].'/file'),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$file['idclient'].'/file/'.$file['idclientfile']),
                 ),
             );
 
@@ -443,7 +443,6 @@ class Clientfile extends BaseClientfile
     public function updateResource($data, $idCompany, $userLevel, $request, $response){
 
         $idclientfile = $data['idclientfile'];
-        $idclient = $data['idclient'];
         //Instanciamos nuestra clientfileQuery
         $clientfileQuery = ClientfileQuery::create();
 
