@@ -449,7 +449,6 @@ class Company extends BaseCompany
             return true;
         }
         return false;
-
     }
     /////////// End delete ///////////
 }

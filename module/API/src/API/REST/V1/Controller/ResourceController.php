@@ -140,9 +140,9 @@ class ResourceController extends AbstractRestfulController
                         break;
                     }
                     default: {
-                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                        return new JsonModel($dataArray);
-                        break;
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                    return new JsonModel($dataArray);
+                    break;
                     }
                 }
             }
@@ -247,9 +247,9 @@ class ResourceController extends AbstractRestfulController
                         break;
                     }
                     default: {
-                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                        return new JsonModel($bodyResponse);
-                        break;
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                    return new JsonModel($bodyResponse);
+                    break;
                     }
                 }
 
@@ -269,9 +269,9 @@ class ResourceController extends AbstractRestfulController
                     break;
                 }
                 default: {
-                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                    return new JsonModel($bodyResponse);
-                    break;
+                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                return new JsonModel($bodyResponse);
+                break;
                 }
             }
         }
@@ -1574,7 +1574,7 @@ class ResourceController extends AbstractRestfulController
             $idresourceRelational = (key($resourceRelationalArray));
 
             if(!isset($idresourceRelational)){
-                $bodyResponse = ArrayResponse::getResponse(409, $response, 'Invalid id'.LOWER_NAME_RESOURCE_CHILD, 'The request data is invalid');
+                $bodyResponse = ArrayResponse::getResponse(409, $response, 'Invalid id'.LOWER_NAME_RESOURCE_CHILD.' or invalid id'.RESOURCE, 'The request data is invalid');
                 switch(TYPE_RESPONSE){
                     case "xml":{
                         $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
