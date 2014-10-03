@@ -21,8 +21,7 @@ use API\REST\V1\Shared\Functions\HttpResponseManager;
 use API\REST\V1\Shared\Functions\ArrayManage;
 use API\REST\V1\Shared\Functions\ArrayResponse;
 // - Propel - //
-use Client;
-use ClientQuery;
+use CompanyQuery;
 use BasePeer;
 use ResourceAlternative;
 
@@ -223,7 +222,6 @@ class ResourceController extends AbstractRestfulController
                         }
                     }
                 }
-
                 //Si el formulario no fue valido
             }else{
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
@@ -435,66 +433,22 @@ class ResourceController extends AbstractRestfulController
             $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
 
             if(!empty($getCollection['data'])){
-                // Si el recurso que solicitan es Company
-                if(RESOURCE == 'company'){
-                    // Solamente el idcompany == 1 podrá listar todas la Compañias existentes
-                    if($idCompany == 1){
-                        $bodyResponse = $getCollection;
-                        switch(TYPE_RESPONSE){
-                            case "xml":{
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                                return $response->setContent($writer->toString($bodyResponse));
-                                break;
-                            }
-                            case "json":{
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                                return new JsonModel($bodyResponse);
-                                break;
-                            }
-                            default: {
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                            return new JsonModel($bodyResponse);
-                            break;
-                            }
-                        }
-                    }else{
-                        $bodyResponse = ArrayResponse::getResponse(401, $response, 'Sorry but you does not have permission over this resource.', 'Access denied');
-                        switch(TYPE_RESPONSE){
-                            case "xml":{
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                                return $response->setContent($writer->toString($bodyResponse));
-                                break;
-                            }
-                            case "json":{
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                                return new JsonModel($bodyResponse);
-                                break;
-                            }
-                            default: {
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                            return new JsonModel($bodyResponse);
-                            break;
-                            }
-                        }
+                $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
                     }
-                }else{
-                    $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
-                    switch(TYPE_RESPONSE){
-                        case "xml":{
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                            return $response->setContent($writer->toString($bodyResponse));
-                            break;
-                        }
-                        case "json":{
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                            return new JsonModel($bodyResponse);
-                            break;
-                        }
-                        default: {
+                    case "json":{
                         $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
-                        }
+                    }
+                    default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                    return new JsonModel($bodyResponse);
+                    break;
                     }
                 }
             }else{
@@ -1328,54 +1282,25 @@ class ResourceController extends AbstractRestfulController
 
 
             if(!empty($getCollection['data'])){
-                // Si el recurso que solicitan es Company
-                if(RESOURCE == 'company'){
-                    // Solamente el idcompany == 1 podrá listar todas la Compañias existentes
-                    if($idCompany == 1){
-                        return new JsonModel($getCollection);
-                    }else{
-                        $bodyResponse = ArrayResponse::getResponse(401, $response);
-                        switch(TYPE_RESPONSE){
-                            case "xml":{
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                                return $response->setContent($writer->toString($bodyResponse));
-                                break;
-                            }
-                            case "json":{
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                                return new JsonModel($bodyResponse);
-                                break;
-                            }
-                            default: {
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                            return new JsonModel($bodyResponse);
-                            break;
-                            }
-                        }
+                $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
+                switch(TYPE_RESPONSE){
+                    case "xml":{
+                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                        return $response->setContent($writer->toString($bodyResponse));
+                        break;
                     }
-                }else{
-
-                    $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
-                    switch(TYPE_RESPONSE){
-                        case "xml":{
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                            return $response->setContent($writer->toString($bodyResponse));
-                            break;
-                        }
-                        case "json":{
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                            return new JsonModel($bodyResponse);
-                            break;
-                        }
-                        default: {
+                    case "json":{
                         $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                         return new JsonModel($bodyResponse);
                         break;
-                        }
+                    }
+                    default: {
+                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                    return new JsonModel($bodyResponse);
+                    break;
                     }
                 }
             }else{
-
                 $bodyResponse = ArrayResponse::getResponse(204, $response);
                 switch(TYPE_RESPONSE){
                     case "xml":{

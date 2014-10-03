@@ -40,7 +40,7 @@ class ResourceListener implements ListenerAggregateInterface {
      */
     public function attach(EventManagerInterface $events){
 
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, array($this, 'onDispatch'), 900);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, array($this, 'onDispatch'), 850);
 
     }
 

@@ -201,7 +201,7 @@ class Clientaddress extends BaseClientaddress
      */
 
     public function getEntityResponse($entity,$userLevel){
-        //Obtenemos nuestra entidad branch en forma de arreglo
+        //Obtenemos nuestra entidad company en forma de arreglo
         $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
 
         $response = array();

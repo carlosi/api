@@ -550,8 +550,6 @@ class Branch extends BaseBranch
                         if($branchQuery->filterByIdCompany($idCompany)->filterByBranchName($data['branch_name'])->find()->count()==0){
 
                             $branchPKQuery->save();
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
 
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
@@ -609,8 +607,6 @@ class Branch extends BaseBranch
                     $bodyResponse = "No changes were found";
                     return array('status_code' => 304, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray);                 }
             }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                 $messageArray = array();
                 foreach ($branchFormPostPut->getMessages() as $key => $value){
@@ -624,10 +620,8 @@ class Branch extends BaseBranch
             }
         }else{
 
-            //Modifiamos el Header de nuestra respuesta
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
             $bodyResponse = 'Invalid idbranch';
-            return array('status_code' => 409, 'details' => $messageArray);
+            return array('status_code' => 409, 'details' => $bodyResponse);
         }
     }
     /////////// End update ///////////

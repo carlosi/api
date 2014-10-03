@@ -162,7 +162,7 @@ class ClientFilter implements InputFilterAwareInterface
             // client_email: DataType = VARCHAR(65), NN = false
             $inputFilter->add(array(
                 'name'     => 'client_email',
-                'required' => false,
+                'required' => true,
                 'filters'  => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),

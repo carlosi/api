@@ -207,7 +207,7 @@ class Clientcomment extends BaseClientcomment
      */
 
     public function getEntityResponse($entity,$userLevel){
-        //Obtenemos nuestra entidad branch en forma de arreglo
+        //Obtenemos nuestra entidad clientcomment en forma de arreglo
         $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
 
         $response = array();

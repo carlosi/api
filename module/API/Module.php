@@ -16,6 +16,7 @@ use Zend\Mvc\MvcEvent;
 // - Shared - //
 use API\REST\V1\Shared\CustomListener\ApiProblemListener;
 use API\REST\V1\Shared\CustomListener\TokenListener;
+use API\REST\V1\Shared\CustomListener\ModuleAllowedListener;
 use API\REST\V1\Shared\CustomListener\ResourceListener;
 
 /**
@@ -43,6 +44,10 @@ class Module
         //TokenListener
         $tokenListener = new TokenListener();
         $tokenListener->attach($eventManager);
+
+        //ModuleAllowedListener
+        $moduleAllowedListener = new ModuleAllowedListener();
+        $moduleAllowedListener->attach($eventManager);
 
         //ResourceListener
         $resourceListener = new ResourceListener();
