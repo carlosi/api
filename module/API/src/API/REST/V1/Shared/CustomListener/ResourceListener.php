@@ -82,6 +82,9 @@ class ResourceListener implements ListenerAggregateInterface {
             case 'POST':{
 
                 ////// Start Resource Not Allowed //////
+
+                // Estos recursos están habilitados en resource y en resourceChild de nuestro module.config.php
+                // Es por eso que necesitamos invalidarlos manualmente y sugerir el método que si está habilitado
                 switch(RESOURCE){
                     case "branch":{
                         switch(RESOURCE_CHILD){
@@ -505,6 +508,8 @@ class ResourceListener implements ListenerAggregateInterface {
 
                 ////// Start Resource Not Allowed //////
 
+                // Estos recursos están habilitados en resource y en resourceChild de nuestro module.config.php
+                // Es por eso que necesitamos invalidarlos manualmente y sugerir el método que si está habilitado
                 switch(RESOURCE){
                     case "branch":{
                         switch(RESOURCE_CHILD){
@@ -879,6 +884,8 @@ class ResourceListener implements ListenerAggregateInterface {
 
                 ////// Start Resource Not Allowed //////
 
+                // Estos recursos están habilitados en resource y en resourceChild de nuestro module.config.php
+                // Es por eso que necesitamos invalidarlos manualmente y sugerir el método que si está habilitado
                 switch(RESOURCE){
                     case "branch":{
                         switch(RESOURCE_CHILD){
@@ -1012,6 +1019,41 @@ class ResourceListener implements ListenerAggregateInterface {
 
                                 }else{
                                     $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id department can´t be null.', 'The id department is required');
+                                    switch(TYPE_RESPONSE){
+                                        case "xml":{
+                                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                            return $response->setContent($writer->toString($bodyResponse));
+                                            $e->stopPropagation();
+                                            break;
+                                        }
+                                        case "json":{
+                                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                            $jsonModel = new JsonModel($bodyResponse);
+                                            $jsonModel->setTerminal(true);
+                                            $e->setResult($jsonModel);
+                                            $e->setViewModel($jsonModel)->stopPropagation();
+                                            break;
+                                        }
+                                        default: {
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                            case "address" :{
+
+                                if(ID_RESOURCE_CHILD != null){
+
+                                    return;
+
+                                }else{
+                                    $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id address can´t be null.', 'The id address is required');
                                     switch(TYPE_RESPONSE){
                                         case "xml":{
                                             $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
