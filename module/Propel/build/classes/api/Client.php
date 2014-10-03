@@ -495,10 +495,12 @@ class Client extends BaseClient
 
                 //Si hay valores por modificar
                 if($clientPKQuery->isModified()){
+
                     if($data['client_email'] == $clientDataArray['client_email']){
 
-                        if(isset($dataArray['client_password'])){
-                            $encryptPassword = hash('sha256', $dataArray['client_password']);
+                        if(isset($data['client_password'])){
+                            $password = $clientArray['client_password'];
+                            $encryptPassword = hash('sha256',$password);
                             $clientPKQuery->setClientpassword($encryptPassword);
                         }
                         $clientPKQuery->save();
@@ -510,10 +512,17 @@ class Client extends BaseClient
                             ),
                         );
 
+                        // Convertimos nuestro objeto del registro en array y lo almacenamos en $bodyRespoonse
                         foreach ($clientPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
                             $bodyResponse[$key] = $value;
                         }
 
+                        //Si existe la variable password, esto quiere decir que el campo password fue modificamo y lo mostramos, de lo contrario lo ocultamos
+                        if(isset($password)){
+                            $bodyResponse['client_password'] = $password;
+                        }else{
+                            unset($bodyResponse['client_password']);
+                        }
                         //Eliminamos los campos que hacen referencia a otras tablas
                         unset($bodyResponse['idcompany']);
 
@@ -550,8 +559,8 @@ class Client extends BaseClient
                         //Verificamos que client_email no exista ya en nuestra base de datos.
                         if($clientQuery->filterByIdCompany($idCompany)->filterByClientEmail($data['client_email'])->find()->count()==0){
 
-                            if(isset($dataArray['client_password'])){
-                                $encryptPassword = hash('sha256', $dataArray['client_password']);
+                            if(isset($data['client_password'])){
+                                $encryptPassword = hash('sha256', $data['client_password']);
                                 $clientPKQuery->setClientpassword($encryptPassword);
                             }
                             $clientPKQuery->save();
