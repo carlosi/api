@@ -64,6 +64,8 @@ class ModuleAllowedListener {
 
         $request = $e->getRequest();
         $response = $e->getResponse();
+        $requestHeaders = $request->getHeaders();
+        $responseHeaders = $response->getHeaders();
         switch($e->getRouteMatch()->getParam('resource')){
             case "company":{
                 //Obtenemos el token por medio del parametro Authorization del método getHeader. Ya no es necesario validarlo por que esto ya lo hizo el tokenListener.
@@ -77,6 +79,36 @@ class ModuleAllowedListener {
 
                 // Solamente el idcompany de Buybuy podrá eliminar entidades de Compañias.
                 if($idcompanyBuybuy == $idCompany){
+                    if($e->getRouteMatch()->getParam('resourceChild') == 'address'){
+                        // Si el id company es diferente del id company que obtenemos del token
+                        if($e->getRouteMatch()->getParam('id') != $idCompany){
+                            $bodyResponse = ArrayResponse::getResponse(401, $response);
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                                }
+                            }
+                        }
+                    }
 
                     // Sale de este Listener
 
@@ -86,22 +118,135 @@ class ModuleAllowedListener {
                 elseif($e->getRouteMatch()->getParam('resourceChild') == 'address'){
                     switch($request->getMethod()){
                         case "POST":{
+                            // Si el id company es diferente del id company que obtenemos del token
+                            if($e->getRouteMatch()->getParam('id') != $idCompany){
+                                $bodyResponse = ArrayResponse::getResponse(401, $response);
+                                switch(TYPE_RESPONSE){
+                                    case "xml":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
+                            }
 
                             break;
                         }
                         case "GET":{
-                            if($e->getRouteMatch()->getParam('idChild') != null){
-                                $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
-                                $e->getRouteMatch()->setParam('action', 'getResourceChild');
-                                return;
+
+                            // Si el id company es diferente del id company que obtenemos del token
+                            if($e->getRouteMatch()->getParam('id') != $idCompany){
+                                $bodyResponse = ArrayResponse::getResponse(401, $response);
+                                switch(TYPE_RESPONSE){
+                                    case "xml":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
                             }
+
+                            $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                            $e->getRouteMatch()->setParam('action', 'getResourceChild');
+                            return;
+
                             break;
                         }
                         case "PUT":{
+                            // Si el id company es diferente del id company que obtenemos del token
+                            if($e->getRouteMatch()->getParam('id') != $idCompany){
+                                $bodyResponse = ArrayResponse::getResponse(401, $response);
+                                switch(TYPE_RESPONSE){
+                                    case "xml":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
+                            }
 
                             break;
                         }
                         case "DELETE":{
+                            // Si el id company es diferente del id company que obtenemos del token
+                            if($e->getRouteMatch()->getParam('id') != $idCompany){
+                                $bodyResponse = ArrayResponse::getResponse(401, $response);
+                                switch(TYPE_RESPONSE){
+                                    case "xml":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
+                                        $e->stopPropagation();
+                                        break;
+                                    }
+                                    case "json":{
+                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                        $jsonModel = new JsonModel($bodyResponse);
+                                        $jsonModel->setTerminal(true);
+                                        $e->setResult($jsonModel);
+                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                        break;
+                                    }
+                                    default: {
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                    }
+                                }
+                            }
 
                             break;
                         }

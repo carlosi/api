@@ -1053,6 +1053,7 @@ class ResourceListener implements ListenerAggregateInterface {
                                     return;
 
                                 }else{
+
                                     $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id address can´t be null.', 'The id address is required');
                                     switch(TYPE_RESPONSE){
                                         case "xml":{

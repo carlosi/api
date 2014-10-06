@@ -1229,30 +1229,6 @@ class ResourceController extends AbstractRestfulController
             // Instanciamos nuestro Recurso
             $resource = ResourceManager::getResource($resourceName);
 
-            if(RESOURCE_CHILD !=null){
-
-                if(!$resource->isIdValidResource(ID_RESOURCE,$idCompany)){
-
-                    $bodyResponse = ArrayResponse::getResponse(409, $response, 'Invalid '.RESOURCE.' id', 'The request data is invalid');
-                    switch(TYPE_RESPONSE){
-                        case "xml":{
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                            return $response->setContent($writer->toString($bodyResponse));
-                            break;
-                        }
-                        case "json":{
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                            return new JsonModel($bodyResponse);
-                            break;
-                        }
-                        default: {
-                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                        return new JsonModel($bodyResponse);
-                        break;
-                        }
-                    }
-                }
-            }
             // Instanciamos nuestro formulario resourceFormPostPut
             $resourceFormGET = ResourceManager::getResourceFormGET($resourceName);
             $resourceFormGET = $resourceFormGET::init($userLevel);
@@ -1279,7 +1255,6 @@ class ResourceController extends AbstractRestfulController
             if($filters != null) $filters = ArrayManage::getFilter_isvalid($filters, $this->getFilters, $allowedColumns); // Si nos envian filtros hacemos la validacion
 
             $getCollection = $resource->getCollection($idCompany, $page, $limit, $filters, $order, $dir);
-
 
             if(!empty($getCollection['data'])){
                 $bodyResponse = $resource->getCollectionResponse($getCollection, $userLevel);
