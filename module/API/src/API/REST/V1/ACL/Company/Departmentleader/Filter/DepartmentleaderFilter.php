@@ -105,6 +105,16 @@ class DepartmentleaderFilter implements InputFilterAwareInterface
                 ),
             ));
 
+            // El idstaff es para asignarle a algun miembro del staff la jerarquia de "department_leader"
+            // idstaff: DataType = INT,  NN = true
+            $inputFilter->add(array(
+                'name'     => 'idstaff',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+            ));
+
             $this->inputFilter = $inputFilter;
         }
 

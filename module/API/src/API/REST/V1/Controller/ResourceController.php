@@ -999,7 +999,7 @@ class ResourceController extends AbstractRestfulController
                     // Recorremos los elementos de nuestro formularioPost y le insertamos los valores a $responseArray para preparar nuestra respuesta
                     $responseArray = array();
                     foreach ($FormPostPut->getElements() as $keyElement => $valueElement){
-                        $responseArray[$keyElement] = $resourceArray[$keyElement];
+                        $responseArray[$keyElement] = isset($resourceArray[$keyElement])?$resourceArray[$keyElement]:null;
                     }
                     foreach ($dataArray as $dataKey => $dataValue){
                         if(!is_null($dataValue)){
@@ -1008,7 +1008,7 @@ class ResourceController extends AbstractRestfulController
                     }
 
                     // Ingresamos al objeto del recurso directamente en la clase de Propel
-                    $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, $data);
+                    $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel);
 
                     if($issave['status_code'] == 201){
                         $bodyResponse = ArrayResponse::getResponse($issave['status_code'], $response, $issave['details']);

@@ -52,5 +52,14 @@ class DepartmentleaderForm extends Form
                 'label' => 'Id Usuario'
             ),
         ));
+
+        // El idstaff es para asignarle a algun miembro del staff la jerarquia de "department_leader"
+        $this->add(array(
+            'type' => 'Hidden',
+            'name' => 'idstaff',
+            'options' => array(
+                'label' => 'Id Staff'
+            ),
+        ));
     }
 }
