@@ -180,24 +180,19 @@ class Branch extends BaseBranch
 
     /////////// Start get ///////////
     /**
-     *
-     * @param type $id
-     * @param array $allowedColumns
-     * @return type
+     * @param $id
+     * @return Branch|Branch[]|mixed
      */
-
     public function getEntity($id){
         $entity = BranchQuery::create()->findPk($id);
         return $entity;
     }
 
     /**
-     *
-     * @param type $entity
-     * @param array $allowedColumns
+     * @param $entity
+     * @param $userLevel
      * @return array
      */
-
     public function getEntityResponse($entity,$userLevel){
         //Obtenemos nuestra entidad branch en forma de arreglo
         $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);

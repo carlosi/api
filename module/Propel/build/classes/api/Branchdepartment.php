@@ -105,16 +105,10 @@ class Branchdepartment extends BaseBranchdepartment
             $bodyResponse = $this->createBodyResponse($this,array('idbranch','iddepartment'),array('branch' => $allowedBranchColumns, 'department' => $allowedDepartmentColumns),array($branch, $department));
 
             $this->save();
-            return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+            return array('statusCode' => 201, 'details' => $bodyResponse);
         }else{
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 409 . ' Conflict',
-                    'Title' => 'Resource data pre-validation error',
-                    'Details' => "iddepartment ". "'".$dataArray["iddepartment"]."'". " already exists in the idbranch "."'".$dataArray["idbranch"]."'",
-                ),
-            );
-            return array('statusCode' => 409, 'bodyResponse' => $bodyResponse);
+            $bodyResponse = "iddepartment ". "'".$dataArray["iddepartment"]."'". " already exists in the idbranch "."'".$dataArray["idbranch"]."'";
+            return array('status_code' => 409, 'details' => $bodyResponse);
         }
     }
 
@@ -571,31 +565,13 @@ class Branchdepartment extends BaseBranchdepartment
 
                     }else{
 
-                        //Modifiamos el Header de nuestra respuesta
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                        $bodyResponse = array(
-                            'Error' => array(
-                                'HTTP_Status' => 400 . ' Bad Request',
-                                'Title' => 'Resource data pre-validation error',
-                                'Details' => "the iddepartment ". "'".$branchdepartmentArray['iddepartment']."'". " already exists in the idbranch ". "'".$branchdepartmentArray['idbranch'],
-                            ),
-                        );
-                        return $bodyResponse;
-                    }
+                        $bodyResponse = "the iddepartment ". "'".$branchdepartmentArray['iddepartment']."'". " already exists in the idbranch ". "'".$branchdepartmentArray['idbranch'];
+                        return array('status_code' => 409, $bodyResponse);                    }
                 }else{
-                    //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'No changes were found',
-                        ),
-                    );
-                    return $bodyResponse;
+                    $bodyResponse = "No changes were found";
+                    return array('status_code' => 304, $bodyResponse);
                 }
             }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                 $messageArray = array();
                 foreach ($FormPostPut->getMessages() as $key => $value){
@@ -605,22 +581,13 @@ class Branchdepartment extends BaseBranchdepartment
                         array_push($messageArray, $message);
                     }
                 }
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = JSonResponse::getResponseBody(400, $messageArray);
-                return $bodyResponse;
+                $bodyResponse = $messageArray;
+                return array('status_code' => 409, 'details' => $bodyResponse);
             }
         }else{
 
-            //Modifiamos el Header de nuestra respuesta
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 400 . ' Bad Request',
-                    'Title' => 'Resource data pre-validation error',
-                    'Details' => "iddepartment ". "'".$data["iddepartment"]."'". " not exists in the idbranch "."'".$data["idbranch"]."'",
-                ),
-            );
-            return array('statusCode' => 400, 'bodyResponse' => $bodyResponse);
+            $bodyResponse = "iddepartment ". "'".$data["iddepartment"]."'". " not exists in the idbranch "."'".$data["idbranch"]."'";
+            return array('status_code' => 409, 'details' => $bodyResponse);
         }
     }
     /////////// End update ///////////

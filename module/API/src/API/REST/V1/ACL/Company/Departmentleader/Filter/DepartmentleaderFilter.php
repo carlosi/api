@@ -88,7 +88,7 @@ class DepartmentleaderFilter implements InputFilterAwareInterface
             // departmentleader_title: DataType = INT, NN = true
             $inputFilter->add(array(
                 'name' => 'departmentleader_title',
-                'required' => false,
+                'required' => true,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim')

@@ -21,6 +21,7 @@ use API\REST\V1\Shared\Functions\HttpResponseManager;
 use API\REST\V1\Shared\Functions\ArrayManage;
 use API\REST\V1\Shared\Functions\ArrayResponse;
 // - Propel - //
+use StaffQuery;
 use CompanyQuery;
 use BasePeer;
 use ResourceAlternative;
@@ -735,7 +736,7 @@ class ResourceController extends AbstractRestfulController
         $resourceName = ucfirst(RESOURCE);
 
         if(RESOURCE_CHILD!=null){
-            // Almacenamos el nombre del resourceChild (Ejemplo: Clientaddress, Clientfile, etc...)
+            // Almacenamos el nombre del resourceChild (Ejemplo: Clientaddress, Clientfile, Departmentleader, etc...)
             $resourceName = NAME_RESOURCE_CHILD;
             $module = MODULE_RESOURCE_CHILD;
         }else{
@@ -757,96 +758,120 @@ class ResourceController extends AbstractRestfulController
 
             $resource = ResourceManager::getResource($resourceName);
 
+            // No agregamos el validador del "body is empty" porque los datos que nos importan están en la URL
+
+            // Si el id existe y pertenece a la compañia
             if($resource->isIdValidResource(ID_RESOURCE,$idCompany)){
 
                 ////// Start Resource Relational //////
-                if(RESOURCE_CHILD == 'department'){
-                    if($resource->isIdValidResurceChild(ID_RESOURCE, ID_RESOURCE_CHILD)){
+                switch(RESOURCE_CHILD){
+                    case 'department':{
 
-                        // Almacenamos en nuestro array $data el id del resource que nos mandan desde la url.
-                        $data['id'.RESOURCE] = (int)ID_RESOURCE;
-                        $data['iddepartment'] = (int)ID_RESOURCE_CHILD;
+                        // Si el id existe y el idChild existe y pertenece a la misma compañia
+                        if($resource->isIdValidResurceChild(ID_RESOURCE, ID_RESOURCE_CHILD)){
 
-                        // Instanciamos el Formulario "resourceForm"
-                        $resourceForm = ResourceManager::getResourceForm($resourceName);
+                            // Almacenamos en nuestro array $data el id del resource que nos mandan desde la url.
+                            $data['id'.RESOURCE] = (int)ID_RESOURCE;
+                            $data['iddepartment'] = (int)ID_RESOURCE_CHILD;
 
-                        // Obtenemos los elementos del Formulario "resourceForm"
-                        $elementsForm = $resourceForm->getElements();
+                            // Instanciamos el Formulario "resourceForm"
+                            $resourceForm = ResourceManager::getResourceForm($resourceName);
 
-                        // Recorremos los elementos de nuestro formulario y le insertamos los valores a $dataArray
-                        if($data != null){
-                            $dataArray = array();
-                            foreach($elementsForm as $key=>$value){
-                                $dataArray[$key] = isset($data[$key]) ? $data[$key] : null;
-                            }
-                        }
+                            // Obtenemos los elementos del Formulario "resourceForm"
+                            $elementsForm = $resourceForm->getElements();
 
-                        // Instanciamos nuestro formulario resourceFormPostPut
-                        $resourceFormPostPut = ResourceManager::getResourceFormPostPut($resourceName);
-                        $FormPostPut = $resourceFormPostPut::init($userLevel);
-                        //Le ponemos los datos a nuestro formulario
-                        $FormPostPut->setData($dataArray);
-
-                        // Instanciamos nuestro filtro resourceFilterPostPut
-                        $resourceFilterPostPut = ResourceManager::getResourceFilterPostPut($resourceName);
-
-                        //Le ponemos el filtro a nuestro formulario
-                        $FilterPostPut = $resourceFilterPostPut;
-                        $FormPostPut->setInputFilter($FilterPostPut->getInputFilter($userLevel));
-                        //Si los valores son validos
-                        if($FormPostPut->isValid()){
-
-                            // Instanciamos nuestro recurso
-                            $resource = ResourceManager::getResource($resourceName);
-                            $resourceArray = $resource->toArray(BasePeer::TYPE_FIELDNAME);
-
-                            // Recorremos los elementos de nuestro formularioPost y le insertamos los valores a $responseArray para preparar nuestra respuesta
-                            $responseArray = array();
-                            foreach ($FormPostPut->getElements() as $keyElement => $valueElement){
-                                $responseArray[$keyElement] = $resourceArray[$keyElement];
-                            }
-                            foreach ($dataArray as $dataKey => $dataValue){
-                                if(!is_null($dataValue)){
-                                    $responseArray[$dataKey] = $dataArray[$dataKey];
+                            // Recorremos los elementos de nuestro formulario y le insertamos los valores a $dataArray
+                            if($data != null){
+                                $dataArray = array();
+                                foreach($elementsForm as $key=>$value){
+                                    $dataArray[$key] = isset($data[$key]) ? $data[$key] : null;
                                 }
                             }
 
-                            // Ingresamos al objeto del recurso directamente en la clase de Propel
-                            $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, null);
+                            // Instanciamos nuestro formulario resourceFormPostPut
+                            $resourceFormPostPut = ResourceManager::getResourceFormPostPut($resourceName);
+                            $FormPostPut = $resourceFormPostPut::init($userLevel);
+                            //Le ponemos los datos a nuestro formulario
+                            $FormPostPut->setData($dataArray);
 
-                            $bodyResponse = ArrayResponse::getResponse($issave['status_code'], $response, $issave['details']);
-                            switch(TYPE_RESPONSE){
-                                case "xml":{;
-                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                                    return $response->setContent($writer->toString($bodyResponse));
-                                    break;
+                            // Instanciamos nuestro filtro resourceFilterPostPut
+                            $resourceFilterPostPut = ResourceManager::getResourceFilterPostPut($resourceName);
+
+                            //Le ponemos el filtro a nuestro formulario
+                            $FilterPostPut = $resourceFilterPostPut;
+                            $FormPostPut->setInputFilter($FilterPostPut->getInputFilter($userLevel));
+                            //Si los valores son validos
+                            if($FormPostPut->isValid()){
+
+                                // Instanciamos nuestro recurso
+                                $resource = ResourceManager::getResource($resourceName);
+                                $resourceArray = $resource->toArray(BasePeer::TYPE_FIELDNAME);
+
+                                // Recorremos los elementos de nuestro formularioPost y le insertamos los valores a $responseArray para preparar nuestra respuesta
+                                $responseArray = array();
+                                foreach ($FormPostPut->getElements() as $keyElement => $valueElement){
+                                    $responseArray[$keyElement] = $resourceArray[$keyElement];
                                 }
-                                case "json":{
+                                foreach ($dataArray as $dataKey => $dataValue){
+                                    if(!is_null($dataValue)){
+                                        $responseArray[$dataKey] = $dataArray[$dataKey];
+                                    }
+                                }
+
+                                // Ingresamos al objeto del recurso directamente en la clase de Propel
+                                $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, null);
+
+                                $bodyResponse = ArrayResponse::getResponse($issave['status_code'], $response, $issave['details']);
+                                switch(TYPE_RESPONSE){
+                                    case "xml":{;
+                                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
+                                        break;
+                                    }
+                                    case "json":{
+                                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                        return new JsonModel($bodyResponse);
+                                        break;
+                                    }
+                                    default: {
                                     $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                                     return new JsonModel($bodyResponse);
                                     break;
+                                    }
                                 }
-                                default: {
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                                return new JsonModel($bodyResponse);
-                                break;
-                                }
-                            }
 
-                            //Si el formulario no fue valido
-                        }else{
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
-                            $messageArray = array();
-                            foreach ($FormPostPut->getMessages() as $key => $value){
-                                foreach($value as $val){
-                                    //Obtenemos el valor de la columna con error
-                                    $message = $key.' '.$val;
-                                    array_push($messageArray, $message);
+                                //Si el formulario no fue valido
+                            }else{
+                                //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
+                                $messageArray = array();
+                                foreach ($FormPostPut->getMessages() as $key => $value){
+                                    foreach($value as $val){
+                                        //Obtenemos el valor de la columna con error
+                                        $message = $key.' '.$val;
+                                        array_push($messageArray, $message);
+                                    }
+                                }
+                                $bodyResponse = ArrayResponse::getResponse(409, $response, $messageArray);
+                                switch(TYPE_RESPONSE){
+                                    case "xml":{
+                                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                        return $response->setContent($writer->toString($bodyResponse));
+                                        break;
+                                    }
+                                    case "json":{
+                                        $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                        return new JsonModel($bodyResponse);
+                                        break;
+                                    }
+                                    default: {
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                    return new JsonModel($bodyResponse);
+                                    break;
+                                    }
                                 }
                             }
-                            $bodyResponse = ArrayResponse::getResponse(409, $response, $messageArray);
+                        }else{
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'Invalid id '.RESOURCE_CHILD);
                             switch(TYPE_RESPONSE){
                                 case "xml":{
                                     $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
@@ -865,27 +890,71 @@ class ResourceController extends AbstractRestfulController
                                 }
                             }
                         }
-                    }else{
-                        $bodyResponse = ArrayResponse::getResponse(403, $response, 'Invalid id '.RESOURCE_CHILD);
-                        switch(TYPE_RESPONSE){
-                            case "xml":{
-                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
-                                return $response->setContent($writer->toString($bodyResponse));
-                                break;
+                        break;
+                    }
+
+                    ////// Start Resource Child Relational //////
+                    case "leader" :{
+                        // Si el usuario es encargado de departamento o dueño de la empresa.
+                        if($userLevel >= 4){
+                            $idstaff = isset($data['idstaff'])?$data['idstaff']:null;
+                            if(isset($idstaff)){
+                                $staffQuery = new StaffQuery();
+                                $staffQueryEntity = $staffQuery->create()->filterByIdstaff($idstaff)->findOne();
+                                $iduser = $staffQueryEntity->getIduser();
+                                $data['iduser'] = $iduser;
                             }
-                            case "json":{
+                        }else{
+                            $bodyResponse = ArrayResponse::getResponse(403, $response, 'Sorry but you does not have permission over this resource. Please contact with your supervisor.', 'Access denied');
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    break;
+                                }
+                                case "json":{
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                    return new JsonModel($bodyResponse);
+                                    break;
+                                }
+                                default: {
                                 $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
                                 return new JsonModel($bodyResponse);
                                 break;
-                            }
-                            default: {
-                            $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
-                            return new JsonModel($bodyResponse);
-                            break;
+                                }
                             }
                         }
+                        break;
+                    }
+                    case "member" :{
+                        // Si el usuario es supervisor o superior (departmentleader, encargado de departamento o dueño de la empresa)
+                        if($userLevel >= 3){
+                            $data['iduser'] = (int) $idUser;
+                        }else{
+                            $bodyResponse = ArrayResponse::getResponse(403, $response, 'Sorry but you does not have permission over this resource. Please contact with your supervisor.', 'Access denied');
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    break;
+                                }
+                                case "json":{
+                                    $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                    return new JsonModel($bodyResponse);
+                                    break;
+                                }
+                                default: {
+                                $response->getHeaders()->addHeaders(array('Content-type' => 'application/json'));
+                                return new JsonModel($bodyResponse);
+                                break;
+                                }
+                            }
+                        }
+                        break;
                     }
                 }
+                ////// End Resource Child Relational //////
+
                 ////// End Resource Relational //////
 
                 // Almacenamos en nuestro array $data el id del resource que nos mandan desde la url.
@@ -899,7 +968,9 @@ class ResourceController extends AbstractRestfulController
 
                 // Recorremos los elementos de nuestro formulario y le insertamos los valores a $dataArray
                 if($data != null){
+                    // Seteamos $dataArray
                     $dataArray = array();
+                    // Almacenamos en $dataArray las columnas del formulario y le asignamos el valor que nos mandan por post, si estan vacios, le asignamos valor null.
                     foreach($elementsForm as $key=>$value){
                         $dataArray[$key] = isset($data[$key]) ? $data[$key] : null;
                     }
@@ -937,7 +1008,7 @@ class ResourceController extends AbstractRestfulController
                     }
 
                     // Ingresamos al objeto del recurso directamente en la clase de Propel
-                    $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, null);
+                    $issave = $resource->saveResouce($responseArray,$idCompany,$userLevel, $data);
 
                     if($issave['status_code'] == 201){
                         $bodyResponse = ArrayResponse::getResponse($issave['status_code'], $response, $issave['details']);
@@ -980,6 +1051,7 @@ class ResourceController extends AbstractRestfulController
                     }
                     //Si el formulario no fue valido
                 }else{
+
                     //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                     $messageArray = array();
                     foreach ($FormPostPut->getMessages() as $key => $value){
@@ -1030,7 +1102,7 @@ class ResourceController extends AbstractRestfulController
             }
             //Si el usuario no tiene permisos sobre el recurso
         }else{
-            $bodyResponse = ArrayResponse::getResponse(409, $response);
+            $bodyResponse = ArrayResponse::getResponse(403, $response, 'Sorry but you does not have permission over this resource. Please contact with your supervisor.', 'Access denied');
             switch(TYPE_RESPONSE){
                 case "xml":{
                     $response->getHeaders()->addHeaders(array('Content-type' => 'application/xhtml+xml'));
