@@ -28,28 +28,28 @@ class DepartmentleaderForm extends Form
             'type' => 'Hidden',
             'name' => 'iddepartmentleader',
             'options' => array(
-                'label' => 'Id Miembro de Departmento'
+                'label' => 'Id Department Leader'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iddepartment',
             'options' => array(
-                'label' => 'Id Departmento'
+                'label' => 'Id Department'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'iduser',
             'options' => array(
-                'label' => 'Id Usuario'
+                'label' => 'Id User'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'departmentleader_title',
             'options' => array(
-                'label' => 'Id Usuario'
+                'label' => 'Department Leader Title'
             ),
         ));
 

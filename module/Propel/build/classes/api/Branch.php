@@ -590,7 +590,8 @@ class Branch extends BaseBranch
 
                         }else{
                             $bodyResponse = "branch_name ". "'".$branchArray['branch_name']."'". " already exists";
-                            return array('status_code' => 409, 'details' => $bodyResponse);                        }
+                            return array('status_code' => 409, 'details' => $bodyResponse);
+                        }
                     }
                 }else{
                     $messageArray = array();

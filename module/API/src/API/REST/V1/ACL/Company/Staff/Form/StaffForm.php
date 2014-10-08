@@ -47,6 +47,13 @@ class StaffForm extends Form
         ));
         $this->add(array(
             'type' => 'Hidden',
+            'name' => 'staff_firstname',
+            'options' => array(
+                'label' => 'Last Name'
+            ),
+        ));
+        $this->add(array(
+            'type' => 'Hidden',
             'name' => 'staff_email',
             'options' => array(
                 'label' => 'Email'
