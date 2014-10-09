@@ -513,11 +513,20 @@ class Departmentleader extends BaseDepartmentleader
 
             // Si desean cambiar el idstaff
             if(isset($idstaff)){
-                // Instanciamos nuestro objeto StaffQuery y obtenemos el staff que le pertenee al iduser del regustro a actualizar
-                $staffQueryByIdstaff = StaffQuery::create()->filterByIdstaff($idstaff)->findOne();
-                $staffByIdstaff = $staffQueryByIdstaff->toArray(BasePeer::TYPE_FIELDNAME);
-                $departmentleaderArray['iduser'] = $staffByIdstaff['iduser'];
-                $departmentleaderArray['idstaff'] = $staffByIdstaff['idstaff'];
+                // Instanciamos nuestro objeto StaffQuery y obtenemos el staff que le pertenee al iduser del regustro a actualizar y validamos si pertenece a la misma compañia
+                $staffQueryByIdstaff = StaffQuery::create()->filterByIdstaff($idstaff)->useUserQuery()->filterByIdcompany($idCompany)->endUse()->findOne();
+                // Si $staffQueryByIdstaff tiene un valor, significa que si es de la misma compañia el usuario al que se desea actualizar
+                // Si $staffQueryByIdstaff es null, entonces no pertenece a la misma compañia
+                if($staffQueryByIdstaff != null){
+                    $staffByIdstaff = $staffQueryByIdstaff->toArray(BasePeer::TYPE_FIELDNAME);
+                    $departmentleaderArray['iduser'] = $staffByIdstaff['iduser'];
+                    $departmentleaderArray['idstaff'] = $staffByIdstaff['idstaff'];
+                    $departmentleaderPKQuery->setByName('iduser', $staffByIdstaff['iduser'], BasePeer::TYPE_FIELDNAME);
+
+                }else{
+                    $bodyResponse = 'Invalid idstaff';
+                    return array('status_code' => 409, 'details' => $bodyResponse);
+                }
             }
 
             // Instanciamos nuestro formulario DepartmentleaderFormPostPut
@@ -536,12 +545,16 @@ class Departmentleader extends BaseDepartmentleader
                 /*
                  * Si hacemos cambios pero no los valida el "isModified()"
                  */
-
                 //Si hay valores por modificar
                 if($departmentleaderPKQuery->isModified()){
+                    $data['departmentleader_title'] = isset($data['departmentleader_title'])?$data['departmentleader_title']:null;
                     if($data['departmentleader_title'] == $departmentleader['departmentleader_title']){
 
                         $departmentleaderPKQuery->save();
+
+                        // Instanciamos nuestro objeto StaffQuery y obtenemos el staff que le pertenee al iduser del regustro actualizado
+                        $staffQuery = StaffQuery::create()->filterByIduser($departmentleaderPKQuery->getIduser())->findOne();
+                        $staff = $staffQuery->toArray(BasePeer::TYPE_FIELDNAME);
 
                         //Le damos formato a nuestra respuesta
                         $bodyResponse = array(
@@ -597,7 +610,7 @@ class Departmentleader extends BaseDepartmentleader
                             ),
                         );
 
-                        //Agregamos los datod de company a nuestro arreglo $row['_embedded']['staff']
+                        //Agregamos los datos a nuestro arreglo $row['_embedded']['staff']
                         foreach ($staffArray as $key=>$value){
                             $bodyResponse['staff'][$key] = $value;
                         }
@@ -616,6 +629,10 @@ class Departmentleader extends BaseDepartmentleader
                         if(!$this->userDepartmentLeaderExist($departmentleader["iduser"], $departmentleader["iddepartment"], $data["departmentleader_title"])){
 
                             $departmentleaderPKQuery->save();
+
+                            // Instanciamos nuestro objeto StaffQuery y obtenemos el staff que le pertenee al iduser del regustro actualizado
+                            $staffQuery = StaffQuery::create()->filterByIduser($departmentleaderPKQuery->getIduser())->findOne();
+                            $staff = $staffQuery->toArray(BasePeer::TYPE_FIELDNAME);
 
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
@@ -729,7 +746,7 @@ class Departmentleader extends BaseDepartmentleader
 
         //Reglas de negocio
         if($userLevel>=4){
-            ClientaddressQuery::create()->filterByIdclientaddress($id)->delete();
+            DepartmentleaderQuery::create()->filterByIddepartmentleader($id)->delete();
             return true;
         }
         return false;
