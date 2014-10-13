@@ -10,6 +10,7 @@
 use API\REST\V1\Shared\Functions\ResourceManager;
 
 //// Forms ////
+use API\REST\V1\ACL\Company\User\Form\UserFormGET;
 use API\REST\V1\ACL\Company\Department\Form\DepartmentFormGET;
 use API\REST\V1\ACL\Company\Departmentleader\Form\DepartmentleaderFormGET;
 
@@ -30,13 +31,11 @@ class ResourceAlternative {
      * @return array
      */
     public function getCollectionAlternative($resourceAlternativeQuery, $idcompany, $page, $limit, array $filters=null, $order, $dir){
-
         //Los Filtros
         if($filters!=null){
             foreach ($filters as $filter){
                 $params = $resourceAlternativeQuery->getParams();
                 if(isset($filter['in'])){
-
                     if(!empty($params)){
                         foreach($params as $param){
                             if($filter['attribute'] == $param['column']){
@@ -46,12 +45,12 @@ class ResourceAlternative {
                             }
                         }
                         if($flag){
-                            $resourceAlternativeQuery->addOr('RESOURCE_CHILD.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $resourceAlternativeQuery->addOr(RESOURCE_CHILD.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }else{
-                            $resourceAlternativeQuery->addAnd('RESOURCE_CHILD.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $resourceAlternativeQuery->addAnd(RESOURCE_CHILD.'.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }
                     }else{
-                        $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname('RESOURCE_CHILD', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
+                        $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname(RESOURCE_CHILD, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
                     }
                 }
 
@@ -59,25 +58,25 @@ class ResourceAlternative {
                     if(!empty($params)){
                         foreach($params as $param){
                             if($filter['attribute'] = $param['column']){
-                                $resourceAlternativeQuery->addOr('RESOURCE_CHILD.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
+                                $resourceAlternativeQuery->addOr(RESOURCE_CHILD.'.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
                             }
                         }
                     }else{
-                        $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname('RESOURCE_CHILD', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL);
+                        $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname(RESOURCE_CHILD, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL);
                     }
                 }
                 if(isset($filter['gt'])){
-                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname('RESOURCE_CHILD', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
+                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname(RESOURCE_CHILD, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
                 }
                 if(isset($filter['lt'])){
-                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname('RESOURCE_CHILD', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN);
+                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname(RESOURCE_CHILD, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN);
                 }
                 if(isset($filter['from']) && isset($filter['to'])){
-                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname('RESOURCE_CHILD', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
-                        ->add(BasePeer::translateFieldname('RESOURCE_CHILD', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['to'], \Criteria::LESS_EQUAL);
+                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname(RESOURCE_CHILD, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
+                        ->add(BasePeer::translateFieldname(RESOURCE_CHILD, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['to'], \Criteria::LESS_EQUAL);
                 }
                 if(isset($filter['like'])){
-                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname('RESOURCE_CHILD', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
+                    $resourceAlternativeQuery->filterBy(BasePeer::translateFieldname(RESOURCE_CHILD, $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
                 }
             }
         }
@@ -121,12 +120,22 @@ class ResourceAlternative {
 
                 // Si el objeto tiene una columna llamada idcompany
                 if($hasIdCompany){
+                    $useResourceQuery = "use".$useQueryFkLevel1."Query";
+                    $result = $resourceAlternativeQuery
+                        ->$useResourceQuery()
+                            ->filterByIdCompany($idcompany)
+                        ->endUse()
+                        ->paginate($page,$limit);
+
+                    /*
+                     * De esta forma, no funcionan los filters
                     $result = $resourceAlternativeQuery->create('alias')
                         ->join('alias.'.$useQueryFkLevel1.' alias2')
                         ->useQuery('alias2')
                         ->filterByIdCompany($idcompany)
                         ->endUse()
                         ->paginate($page,$limit);
+                    */
                 }else{
 
                     //Pendiente
@@ -168,20 +177,40 @@ class ResourceAlternative {
                 if($hasIdCompanyQueryFk1Level1 == true || $hasIdCompanyQueryFk2Level1 == true){
 
                     if($hasIdCompanyQueryFk1Level1 == true){
+                        $useResourceQuery = "use".$useQueryFk1Level1."Query";
+                        $result = $resourceAlternativeQuery
+                            ->$useResourceQuery()
+                                ->filterByIdCompany($idcompany)
+                            ->endUse()
+                            ->paginate($page,$limit);
+
+                        /*
+                         * De esta forma no funcionan los filters
                         $result = $resourceAlternativeQuery->create('alias')
                             ->join('alias.'.$useQueryFk1Level1.' alias2')
                             ->useQuery('alias2')
                             ->filterByIdCompany($idcompany)
                             ->endUse()
                             ->paginate($page,$limit);
+                         */
+
                     }
                     if($hasIdCompanyQueryFk2Level1 == true){
+                        $useResourceQuery = "use".$useQueryFk2Level1."Query";
+                        $result = $resourceAlternativeQuery
+                            ->$useResourceQuery()
+                                ->filterByIdCompany($idcompany)
+                            ->endUse()
+                            ->paginate($page,$limit);
+                        /*
+                         * De esta forma no funcionan los filters
                         $result = $resourceAlternativeQuery->create('alias')
                             ->join('alias.'.$useQueryFk2Level1.' alias2')
                             ->useQuery('alias2')
                             ->filterByIdCompany($idcompany)
                             ->endUse()
                             ->paginate($page,$limit);
+                         */
                     }
 
                 }else{
@@ -216,6 +245,19 @@ class ResourceAlternative {
 
                         // Si el recursos (tambien llamado Objeto o Tabla) tienen la columna idcompany
                         if($hasIdCompanyQueryFkLevel2 == true){
+
+                            $useResourceQuery = "use".$useQueryFk1Level1."Query";
+                            $useResource2Query = "use".$useQueryFkLevel2."Query";
+                            $result = $resourceAlternativeQuery
+                                ->$useResourceQuery()
+                                    ->$useResource2Query()
+                                        ->filterByIdCompany($idcompany)
+                                    ->endUse()
+                                ->endUse()
+                                ->paginate($page,$limit);
+
+                            /*
+                             * De esta forma no funcionan los filters
                             $result = $resourceAlternativeQuery->create('alias')
                                 ->join('alias.'.$useQueryFk1Level1.' alias2')
                                 ->useQuery('alias2')
@@ -225,6 +267,8 @@ class ResourceAlternative {
                                 ->endUse()
                                 ->endUse()
                                 ->paginate($page,$limit);
+                            */
+
                         }else{
 
                             //Pendiente
@@ -264,20 +308,44 @@ class ResourceAlternative {
                         // Si uno de los 2 recursos (tambien llamados Objetos o Tablas) tiene la columna idcompany
                         if($hasIdCompanyQ1 == true || $hasIdCompanyQ2 == true){
                             if($hasIdCompanyQ1 == true){
+
+                                $useResourceQuery = "use".$useQuery1."Query";
+                                $result = $resourceAlternativeQuery
+                                    ->$useResourceQuery()
+                                        ->filterByIdCompany($idcompany)
+                                    ->endUse()
+                                    ->paginate($page,$limit);
+
+                                /*
+                                 * De esta forma no funcionan los filters
+
                                 $result = $resourceAlternativeQuery->create('alias')
                                     ->join('alias.'.$useQuery1.' alias2')
                                     ->useQuery('alias2')
                                     ->filterByIdCompany($idcompany)
                                     ->endUse()
                                     ->paginate($page,$limit);
+                                 */
                             }
                             if($hasIdCompanyQ2 == true){
+
+                                $useResourceQuery = "use".$useQuery2."Query";
+                                $result = $resourceAlternativeQuery
+                                    ->$useResourceQuery()
+                                    ->filterByIdCompany($idcompany)
+                                    ->endUse()
+                                    ->paginate($page,$limit);
+
+                                /*
+                                 * De esta forma no funcionan los filters
+
                                 $result = $resourceAlternativeQuery->create('alias')
                                     ->join('alias.'.$useQuery2.' alias2')
                                     ->useQuery('alias2')
                                     ->filterByIdCompany($idcompany)
                                     ->endUse()
                                     ->paginate($page,$limit);
+                                */
                             }
                         }else{
 
@@ -358,7 +426,17 @@ class ResourceAlternative {
                                 $row[$key] = $item[$key];
                             }
 
-                            $idUser = $row['iduser'];
+                            // Agregamos en la respuesta el iduser y nick_name al que pertenece el staff.
+                            $userQuery = UserQuery::create()->filterByIduser($item['iduser'])->findOne();
+                            $user = $userQuery->toArray(BasePeer::TYPE_FIELDNAME);
+
+                            $row['user'] = array(
+                                '_links' => array(
+                                    'self' => array('href' => URL_API.'/'.MODULE.'/user/'.$user['iduser']),
+                                ),
+                                'iduser' => $user['iduser'],
+                                'user_nickname' => $user['user_nickname'],
+                            );
                             //Eliminamos los campos que hacen referencia a otras tablas
                             unset($row['iduser']);
                             array_push($resourceAlternativeArray, $row);
@@ -375,9 +453,21 @@ class ResourceAlternative {
                             }
                         }
 
-                        // Eliminamos el iduser
+                        //Instanciamos nuestro formulario userGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                        $userFormGET = UserFormGET::init($userLevel);
+                        //Eliminamos el id company Si es visible y lo agregamos como embbeded toda la informacion de company a la que tiene visible el usuario
                         if(key_exists('iduser',$acl)){
                             unset($acl['iduser']);
+                            $userColumns = array();
+                            foreach ($userFormGET->getElements() as $element){
+                                $userColumns[$element->getAttribute('name')] =  $element->getOption('label');
+                            }
+                            // Mostramos las columnas que son relevantes a la respuesta:
+                            $userColumns = array(
+                                'iduser' => $userColumns['iduser'],
+                                'user_nickname' => $userColumns['user_nickname'],
+                            );
+                            $acl['user'] = $userColumns;
                         }
                         // End ACL //
 
@@ -533,10 +623,10 @@ class ResourceAlternative {
                             }
                         }
                         break;
-                    }
+                    }// End resourceChild: staff //
                 }
                 break;
-            }
+            }// End resource: branch //
         }
         return $response;
     }

@@ -60,7 +60,7 @@ class Departmentleader extends BaseDepartmentleader
      */
     public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
-        if(!$this->userDepartmentLeaderExist($dataArray["iduser"], $dataArray["iddepartment"], $dataArray["departmentleader_title"])){
+        if(!$this->userDepartmentLeaderExist($dataArray["iduser"], $dataArray["iddepartment"], $dataArray["departmentleader_title"], $idCompany)){
             foreach ($dataArray as $dataKey => $dataValue){
                 if($dataKey != "idstaff"){
                     $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
@@ -129,10 +129,11 @@ class Departmentleader extends BaseDepartmentleader
      * @param $iduser
      * @param $iddepartment
      * @param $departmentleaderTitle
+     * @param $idCompany
      * @return bool
      */
-    public function userDepartmentLeaderExist($iduser, $iddepartment, $departmentleaderTitle){
-        return DepartmentleaderQuery::create()->filterByIduser($iduser)->filterByIddepartment($iddepartment)->filterByDepartmentleaderTitle($departmentleaderTitle)->exists();
+    public function userDepartmentLeaderExist($iduser, $iddepartment, $departmentleaderTitle, $idCompany){
+        return DepartmentleaderQuery::create()->filterByIduser($iduser)->filterByIddepartment($iddepartment)->filterByDepartmentleaderTitle($departmentleaderTitle)->useUserQuery()->filterByIdcompany($idCompany)->endUse()->exists();
     }
 
     /**
@@ -626,7 +627,7 @@ class Departmentleader extends BaseDepartmentleader
                     }else{
 
                         //Verificamos que departmentleader_title no este asignado al mismo staff en al mismo deparment.
-                        if(!$this->userDepartmentLeaderExist($departmentleader["iduser"], $departmentleader["iddepartment"], $data["departmentleader_title"])){
+                        if(!$this->userDepartmentLeaderExist($departmentleader["iduser"], $departmentleader["iddepartment"], $data["departmentleader_title"], $idCompany)){
 
                             $departmentleaderPKQuery->save();
 
@@ -702,7 +703,7 @@ class Departmentleader extends BaseDepartmentleader
                             return array('status_code' => 200, 'details' => $bodyResponse);
 
                         }else{
-                            $bodyResponse = "This idstaff=".$departmentleaderArray['idstaff']." already exist as a "."'".$data['departmentleader_title']."'"." in the iddepartment=".$dataArray['iddepartment'];
+                            $bodyResponse = "This idstaff=".$departmentleaderArray['idstaff']." already exist as a "."'".$data['departmentleader_title']."'"." in the iddepartment=".$data['iddepartment'];
                             return array('status_code' => 409, 'details' => $bodyResponse);
                         }
                     }

@@ -26,14 +26,14 @@ class DepartmentmemberForm extends Form
 
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idDepartmentmember',
+            'name' => 'iddepartmentmember',
             'options' => array(
                 'label' => 'Id Miembro de Departmento'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'idDepartment',
+            'name' => 'iddepartment',
             'options' => array(
                 'label' => 'Id Departmento'
             ),

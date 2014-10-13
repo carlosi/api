@@ -4,7 +4,7 @@
  * DepartmentleaderFormToShowUpdate.php
  * BuyBuy
  *
- * Created by Buybuy on 12/08/2014.
+ * Created by Buybuy on 08/10/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
@@ -15,7 +15,7 @@ use API\REST\V1\ACL\Company\Departmentleader\Form\DepartmentleaderForm;
 
 /**
  * Class DepartmentleaderFormToShowUpdate
- * @package API\REST\V1\ACL\Company\Department\Form
+ * @package API\REST\V1\ACL\Company\Departmentleader\Form
  */
 class DepartmentleaderFormToShowUpdate{
 

@@ -1,7 +1,20 @@
 <?php
 
-//// Forms ////
-use API\REST\V1\ACL\User\Form\UserFormGET;
+//// Shared ////
+use API\REST\V1\Shared\Functions\HttpResponse;
+use API\REST\V1\Shared\Functions\HttpRequest;
+use API\REST\V1\Shared\Functions\ArrayManage;
+use API\REST\V1\Shared\Functions\ResourceManager;
+use API\REST\V1\Shared\Functions\ArrayResponse;
+
+//// Form ////
+use API\REST\V1\ACL\Company\User\Form\UserFormGET;
+use API\REST\V1\ACL\Company\Staff\Form\StaffFormGET;
+use API\REST\V1\ACL\Company\Staff\Form\StaffFormPostPut;
+use API\REST\V1\ACL\Company\Staff\Form\StaffFormToShowUpdate;
+
+//// Filter ////
+use API\REST\V1\ACL\Company\Staff\Filter\StaffFilterPostPut;
 
 /**
  * Skeleton subclass for representing a row from the 'staff' table.
@@ -29,44 +42,63 @@ class Staff extends BaseStaff
      */
     public function saveResouce($dataArray,$idCompany,$userLevel){
 
-        foreach ($dataArray as $dataKey => $dataValue){
-            $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
-        }
-        $this->save();
-        echo "Entro";
-
-        //Las columnas permitidas de nuestros foreign keys
-        $allowedUserColumns = array();
-        $user = null;
-
-        //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
-        if(array_key_exists("iduser", $dataArray)){
-
-            //Instanciamos nuestro objeto User
-            $user = $this->getUser();
-
-            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-            $userFormGET = UserFormGET::init($userLevel);
-
-            foreach ($userFormGET->getElements() as $element){
-                if($element->getOption('value_options')!=null){
-                    $allowedUserColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                }else{
-                    $allowedUserColumns[$element->getAttribute('name')] = $element->getOption('label');
+        // validamos que el iduser que nos envian, exista y corresponda a la compañia
+        $iduser = UserQuery::create()->filterByIduser($dataArray['iduser'])->filterByIdcompany($idCompany)->exists();
+        if($iduser){
+            $iduserExist = $this->iduserExist($dataArray['iduser'], $idCompany);
+            if(!$iduserExist){
+                foreach ($dataArray as $dataKey => $dataValue){
+                $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
                 }
-            }
-        }
-        //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
-        //1. El objeto branch "this"
-        //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
-        //3. Las columnas permitidas e los foreignKeys
-        //4. el objeto company que va ir como __embebed = "company"
-        $bodyResponse = $this->createBodyResponse($this,array('iduser'),array('user' => $allowedUserColumns),array($user));
-        $this->save();
-        return array('statusCode' => 201, 'bodyResponse' => $bodyResponse);
+                $this->save();
 
+                //Las columnas permitidas de nuestros foreign keys
+                $allowedUserColumns = array();
+                $user = null;
+
+                //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
+                if(array_key_exists("iduser", $dataArray)){
+
+                    //Instanciamos nuestro objeto User
+                    $user = $this->getUser();
+
+                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                    $userFormGET = UserFormGET::init($userLevel);
+
+                    foreach ($userFormGET->getElements() as $element){
+                        if($element->getOption('value_options')!=null){
+                            $allowedUserColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                        }else{
+                            $allowedUserColumns[$element->getAttribute('name')] = $element->getOption('label');
+                        }
+                    }
+                }
+                //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
+                //1. El objeto staff "this"
+                //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
+                //3. Las columnas permitidas e los foreignKeys
+                //4. el objeto company que va ir como __embebed = "company"
+                $bodyResponse = $this->createBodyResponse($this,array('iduser'),array('user' => $allowedUserColumns),array($user));
+                $this->save();
+                return array('status_code' => 201, 'details' => $bodyResponse);
+            }else{
+                $bodyResponse = "The iduser: '".$dataArray['iduser']."' was been assigned for other staff.";
+                return array('status_code' => 409, 'details' => $bodyResponse);
+            }
+        }else{
+            $bodyResponse = 'Invalid iduser';
+            return array('status_code' => 409, 'details' => $bodyResponse);
+        }
     }
 
+    /**
+     * @param $iduser
+     * @param $idCompany
+     * @return bool
+     */
+    public function iduserExist($iduser, $idCompany){
+        return StaffQuery::create()->filterByIduser($iduser)->useUserQuery()->filterByIdcompany($idCompany)->endUse()->exists();
+    }
     /**
      * @param $staff
      * @param array $voidElements
@@ -144,7 +176,6 @@ class Staff extends BaseStaff
         $body[strtolower(get_class($halResource))] = array(
             'iduser' => $body['user']['iduser'],
             'user_nickname' => $body['user']['user_nickname'],
-            'user_password' => $body['user']['user_password'],
         );
 
         // Retornamos nuestra respuesta
@@ -154,43 +185,38 @@ class Staff extends BaseStaff
 
     /////////// Start get ///////////
     /**
-     *
-     * @param type $id
-     * @param array $allowedColumns
-     * @return type
+     * @param $id
+     * @return Staff|Staff[]|mixed
      */
-
     public function getEntity($id){
-        $entity = BranchQuery::create()->findPk($id);
+        $entity = StaffQuery::create()->findPk($id);
         return $entity;
     }
 
     /**
-     *
-     * @param type $entity
-     * @param array $allowedColumns
+     * @param $entity
+     * @param $userLevel
      * @return array
      */
-
     public function getEntityResponse($entity,$userLevel){
-        //Obtenemos nuestra entidad branch en forma de arreglo
+        //Obtenemos nuestra entidad staff en forma de arreglo
         $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
 
         //Los Links
         $response = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/branch/".$entity->getIdbranch(),
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/staff/".$entity->getIdstaff(),
                 ),
             ),
         );
         //El ACL
 
         //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
-        $branchForm = BranchFormGET::init($userLevel);
-        $companyForm = CompanyFormGET::init($userLevel);
+        $staffForm = StaffFormGET::init($userLevel);
+//        $userForm = UserFormGET::init($userLevel);
 
-        foreach ($branchForm->getElements() as $element){
+        foreach ($staffForm->getElements() as $element){
             if($element->getOption('value_options')!=null){
                 $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
                 $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
@@ -201,20 +227,20 @@ class Staff extends BaseStaff
                 }
             }
         }
-//        $response["ACL"]["company"]=array(
-//            "idcompany" =>  $companyForm->get("idcompany")->getOption('label'),
-//            "company_name" =>  $companyForm->get("company_name")->getOption('label'),
+//        $response["ACL"]["user"]=array(
+//            "iduser" =>  $userForm->get("iduser")->getOption('label'),
+//            "user_nickname" =>  $userForm->get("user_nickname")->getOption('label'),
 //        );
 
-        $company = $entity->getCompany();
-        $response["company"] = array(
+        $user = $entity->getUser();
+        $response["user"] = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/company/".$company->getIdcompany(),
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/user/".$user->getIduser(),
                 ),
             ),
-            "idcompany" => $company->getIdcompany(),
-            "company_name" => $company->getCompanyName()
+            "iduser" => $user->getIduser(),
+            "user_nickname" => $user->getUsernickname()
         );
         return $response;
     }
@@ -231,13 +257,12 @@ class Staff extends BaseStaff
      * @return array
      */
     public function getCollection($idcompany, $page, $limit, array $filters=null, $order, $dir){
-        $branchQuery = new BranchQuery();
+        $staffQuery = new StaffQuery();
         //Los Filtros
         if($filters!=null){
             foreach ($filters as $filter){
-                $params = $branchQuery->getParams();
+                $params = $staffQuery->getParams();
                 if(isset($filter['in'])){
-
                     if(!empty($params)){
                         foreach($params as $param){
                             if($filter['attribute'] == $param['column']){
@@ -247,12 +272,12 @@ class Staff extends BaseStaff
                             }
                         }
                         if($flag){
-                            $branchQuery->addOr('branch.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $staffQuery->addOr('staff.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }else{
-                            $branchQuery->addAnd('branch.'.$filter['attribute'], $filter['in'], \Criteria::IN);
+                            $staffQuery->addAnd('staff.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }
                     }else{
-                        $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
+                        $staffQuery->filterBy(BasePeer::translateFieldname('staff', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN);
                     }
                 }
 
@@ -260,44 +285,44 @@ class Staff extends BaseStaff
                     if(!empty($params)){
                         foreach($params as $param){
                             if($filter['attribute'] = $param['column']){
-                                $branchQuery->addOr('branch.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
+                                $staffQuery->addOr('staff.'.$filter['attribute'], $filter['neq'], \Criteria::NOT_EQUAL);
                             }
                         }
                     }else{
-                        $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL);
+                        $staffQuery->filterBy(BasePeer::translateFieldname('staff', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['neq'], \Criteria::NOT_EQUAL);
                     }
                 }
                 if(isset($filter['gt'])){
-                    $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
+                    $staffQuery->filterBy(BasePeer::translateFieldname('staff', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['gt'], \Criteria::GREATER_THAN);
                 }
                 if(isset($filter['lt'])){
-                    $branchQuery ->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN);
+                    $staffQuery ->filterBy(BasePeer::translateFieldname('staff', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['lt'], \Criteria::LESS_THAN);
                 }
                 if(isset($filter['from']) && isset($filter['to'])){
-                    $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
-                        ->add(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['to'], \Criteria::LESS_EQUAL);
+                    $staffQuery->filterBy(BasePeer::translateFieldname('staff', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['from'], \Criteria::GREATER_EQUAL)
+                        ->add(BasePeer::translateFieldname('staff', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['to'], \Criteria::LESS_EQUAL);
                 }
                 if(isset($filter['like'])){
-                    $branchQuery->filterBy(BasePeer::translateFieldname('branch', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
+                    $staffQuery->filterBy(BasePeer::translateFieldname('staff', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['like'], \Criteria::LIKE);
                 }
             }
         }
 
         //Order y Dir
         if($order !=null || $dir !=null){
-            $branchQuery->orderBy($order, $dir);
+            $staffQuery->orderBy($order, $dir);
         }
 
         // Obtenemos el filtrado por medio del idcompany del recurso.
-        $result = $branchQuery->filterByIdCompany($idcompany)->paginate($page,$limit);
+        $result = $staffQuery->useUserQuery()->filterByIdCompany($idcompany)->endUse()->paginate($page,$limit);
 
 
         $links = array(
-            'self' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getPage()),
-            'prev' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getPreviousPage()),
-            'next' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getNextPage()),
-            'first' => array('href' => URL_API.'/'.MODULE.'/branch'),
-            'last' => array('href' => URL_API.'/'.MODULE.'/branch?page='.$result->getLastPage()),
+            'self' => array('href' => URL_API.'/'.MODULE.'/staff?page='.$result->getPage()),
+            'prev' => array('href' => URL_API.'/'.MODULE.'/staff?page='.$result->getPreviousPage()),
+            'next' => array('href' => URL_API.'/'.MODULE.'/staff?page='.$result->getNextPage()),
+            'first' => array('href' => URL_API.'/'.MODULE.'/staff'),
+            'last' => array('href' => URL_API.'/'.MODULE.'/staff?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){
@@ -333,51 +358,62 @@ class Staff extends BaseStaff
      */
     public function getCollectionResponse($getCollection, $userLevel){
 
-        // Instanciamos el Formulario GET de nuestro recurso branch
-        $branchFormGET = BranchFormGET::init($userLevel);
-        $branchArray = array();
+        // Instanciamos el Formulario GET de nuestro recurso staff
+        $staffFormGET = StaffFormGET::init($userLevel);
+        $staffArray = array();
         foreach ($getCollection['data'] as $item){
 
-            $branchQuery = BranchQuery::create()->filterByIdbranch($item['idbranch'])->findOne();
+            $staffQuery = StaffQuery::create()->filterByIdstaff($item['idstaff'])->findOne();
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/'.MODULE.'/branch/'.$item['idbranch']),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/staff/'.$item['idstaff']),
                 ),
             );
 
-            foreach ($branchFormGET->getElements() as $key=>$value){
+            foreach ($staffFormGET->getElements() as $key=>$value){
                 $row[$key] = $item[$key];
             }
 
+            // Agregamos en la respuesta el iduser y nick_name al que pertenece el staff.
+            $userQuery = UserQuery::create()->filterByIduser($item['iduser'])->findOne();
+            $user = $userQuery->toArray(BasePeer::TYPE_FIELDNAME);
+
+            $row['user'] = array(
+                '_links' => array(
+                    'self' => array('href' => URL_API.'/'.MODULE.'/user/'.$user['iduser']),
+                ),
+                'iduser' => $user['iduser'],
+                'user_nickname' => $user['user_nickname'],
+            );
             //Eliminamos los campos que hacen referencia a otras tablas
-            unset($row['idcompany']);
+            unset($row['iduser']);
 
-            array_push($branchArray, $row);
+            array_push($staffArray, $row);
         }
 
-        // Start Company //
-        // Instanciamos el objeto de CompanyQuery
-        $companyQuery = $branchQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+        // Start User //
+        // Instanciamos el objeto de UserQuery
+        $userQuery = $staffQuery->getUser()->toArray(BasePeer::TYPE_FIELDNAME);
 
-        //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-        $companyFormGET = CompanyFormGET::init($userLevel);
+        //Instanciamos nuestro formulario userGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+        $userFormGET = UserFormGET::init($userLevel);
 
-        $companyArray = array();
-        foreach ($companyFormGET->getElements() as $key=>$value){
-            $companyArray[$key] = $companyQuery[$key];
+        $userArray = array();
+        foreach ($userFormGET->getElements() as $key=>$value){
+            $userArray[$key] = $userQuery[$key];
         }
 
-        //Agregamos los datos de user a nuestro arreglo $row['company']
-        foreach ($companyArray as $key=>$value){
+        //Agregamos los datos de user a nuestro arreglo $row['user']
+        foreach ($userArray as $key=>$value){
             $row[$key] = $value;
         }
-        // End Company //
+        // End User //
 
         // Start ACL //
         //Guardamos en un arreglo las columnas y los atributos a los que el usuario tiene permiso
         $acl = array();
-        foreach ($branchFormGET->getElements() as $element){
+        foreach ($staffFormGET->getElements() as $element){
             if($element->getOption('value_options')!=null){
                 $acl[$element->getAttribute('name')] = array('viewName' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
             }else{
@@ -386,18 +422,18 @@ class Staff extends BaseStaff
         }
 
         //Eliminamos el id company Si es visible y lo agregamos como embbeded toda la informacion de company a la que tiene visible el usuario
-        if(key_exists('idcompany',$acl)){
-            unset($acl['idcompany']);
-            $companyColumns = array();
-            foreach ($companyFormGET->getElements() as $element){
-                $companyColumns[$element->getAttribute('name')] =  $element->getOption('label');
+        if(key_exists('iduser',$acl)){
+            unset($acl['iduser']);
+            $userColumns = array();
+            foreach ($userFormGET->getElements() as $element){
+                $userColumns[$element->getAttribute('name')] =  $element->getOption('label');
             }
             // Mostramos las columnas que son relevantes a la respuesta:
-            $companyColumns = array(
-                'idcompany' => $companyColumns['idcompany'],
-                'company_name' => $companyColumns['company_name'],
+            $userColumns = array(
+                'iduser' => $userColumns['iduser'],
+                'user_nickname' => $userColumns['user_nickname'],
             );
-            $acl['company'] = $companyColumns;
+            $acl['user'] = $userColumns;
         }
         // End ACL //
 
@@ -405,19 +441,12 @@ class Staff extends BaseStaff
             '_links' => $getCollection['links'],
             'ACL' => $acl,
             'resume' => $getCollection['resume'],
-            'company' => array(
-                '_links' => array(
-                    'self' => array('href' => URL_API.'/company/'.$branchQuery->getIdcompany()),
-                ),
-                'idcompany' => $row['idcompany'],
-                'company_name' => $row['company_name'],
-            ),
-            'branches' => $branchArray,
+            'staffs' => $staffArray,
         );
         switch(TYPE_RESPONSE){
             case "xml" :{
-                $response['branches'] = array(
-                    'branch' => $branchArray
+                $response['staffs'] = array(
+                    'staff' => $staffArray
                 );
                 break;
             }
@@ -429,206 +458,191 @@ class Staff extends BaseStaff
 
     /////////// Start update ///////////
     public function updateResource($id, $data, $idCompany, $userLevel, $request, $response){
+        $iduser = isset($data['iduser'])?$data['iduser']:null;
+        //Instanciamos nuestra staffQuery
+        $staffQuery = StaffQuery::create();
 
-        //Instanciamos nuestra branchQuery
-        $branchQuery = BranchQuery::create();
+        //Verificamos que el Id staff que se quiere modificar exista y que pretenece a la compañia
+        if($staffQuery->create()->filterByIdstaff($id)->useUserQuery()->filterByIdCompany($idCompany)->endUse()->exists()){
 
-        //Verificamos que el Id branch que se quiere modificar exista y que pretenece a la compañia
-        if($branchQuery->create()->filterByIdCompany($idCompany)->filterByIdbranch($id)->exists()){
+            //Instanciamos nuestro staffQuery
+            $staffPKQuery = $staffQuery->findPk($id);
+            $staffFormToShowUpdate = StaffFormToShowUpdate::init($userLevel);
 
-            //Instanciamos nuestra branchQuery
-            $branchPKQuery = $branchQuery->findPk($id);
-            $branchFormToShowUpdate = BranchFormToShowUpdate::init($userLevel);
+            // Si iduser tiene un valor, lo almacenamos, de lo contrario le asignamos el valor que tiene en la base de datos
+            $data['iduser'] = isset($data['iduser'])?$data['iduser']:$staffPKQuery->getIduser();
 
-            // Si branch_name tiene un valor, lo almacenamos, de lo contrario lo dejamos como null
-            $data['branch_name'] = isset($data['branch_name'])?$data['branch_name']:$branchPKQuery->getBranchName();
+            $staffDataArray = $staffPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
 
-            //Remplzamos los datos de la branch por lo que se van a modificar
+            //Remplzamos los datos de la staff por lo que se van a modificar
             foreach ($data as $key => $value){
-                $branchPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+                $staffPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
             }
 
-            $branchDataArray = $branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
-            $branchArray = HttpRequest::resourceUpdateData($data, $request, $response, 'Branch', $branchDataArray);
+            $staffArray = HttpRequest::resourceUpdateData($data, $request, $response, 'Staff', $staffDataArray);
 
-            unset($branchArray['idbranch']);
-            unset($branchArray['idcompany']);
+            unset($staffArray['idstaff']);
+
+            // Si desean cambiar el iduser
+            if(isset($iduser)){
+                // Instanciamos nuestro objeto StaffQuery y obtenemos el staff que le pertenee al iduser del regustro a actualizar y validamos si pertenece a la misma compañia
+                $userQueryByIduser = UserQuery::create()->filterByIduser($iduser)->filterByIdcompany($idCompany)->findOne();
+                // Si $userQueryByIduser tiene un valor, significa que si es de la misma compañia el usuario al que se desea actualizar
+                // Si $userQueryByIduser es null, entonces no pertenece a la misma compañia
+                if($userQueryByIduser != null){
+                    $userByIduser = $userQueryByIduser->toArray(BasePeer::TYPE_FIELDNAME);
+                    $staffArray['iduser'] = $userByIduser['iduser'];
+                    $staffPKQuery->setByName('iduser', $userByIduser['iduser'], BasePeer::TYPE_FIELDNAME);
+
+                }else{
+                    $bodyResponse = 'Invalid iduser';
+                    return array('status_code' => 409, 'details' => $bodyResponse);
+                }
+            }
 
             // Instanciamos nuestro formulario resourceFormPostPut
-            $branchFormPostPut = BranchFormPostPut::init($userLevel);
+            $staffFormPostPut = StaffFormPostPut::init($userLevel);
 
             //Le ponemos los datos a nuestro formulario
-            $branchFormPostPut->setData($branchArray);
+            $staffFormPostPut->setData($staffArray);
 
             // Instanciamos nuestro filtro resourceFilterPostPut
-            $branchFilterPostPut = new BranchFilterPostPut();
+            $staffFilterPostPut = new StaffFilterPostPut();
 
             //Le ponemos el filtro a nuestro formulario
-            $branchFormPostPut->setInputFilter($branchFilterPostPut->getInputFilter($userLevel));
+            $staffFormPostPut->setInputFilter($staffFilterPostPut->getInputFilter($userLevel));
             //Si los valores son validos
-            if($branchFormPostPut->isValid()){
+            if($staffFormPostPut->isValid()){
 
                 //Si hay valores por modificar
-                if($branchPKQuery->isModified()){
-                    if($data['branch_name'] == $branchArray['branch_name']){
+                if($staffPKQuery->isModified()){
+                    if($data['iduser'] == $staffDataArray['iduser']){
 
-                        $branchPKQuery->save();
-                        //Modifiamos el Header de nuestra respuesta
-                        $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+                        $staffPKQuery->save();
 
                         //Le damos formato a nuestra respuesta
                         $bodyResponse = array(
                             "_links" => array(
-                                'self' => URL_API.'/'.MODULE.'/branch/'.$branchPKQuery->getIdbranch(),
+                                'self' => URL_API.'/'.MODULE.'/staff/'.$staffPKQuery->getIdstaff(),
                             ),
                         );
 
-                        foreach ($branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                        foreach ($staffPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
                             $bodyResponse[$key] = $value;
                         }
 
                         //Eliminamos los campos que hacen referencia a otras tablas
-                        unset($bodyResponse['idcompany']);
+                        unset($bodyResponse['iduser']);
 
                         //Agregamos el campo embedded a nuestro arreglo
-                        $objectCompany = $branchPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+                        $objectUser = $staffPKQuery->getUser()->toArray(BasePeer::TYPE_FIELDNAME);
 
                         //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                        $companyForm = CompanyFormGET::init($userLevel);
+                        $userForm = UserFormGET::init($userLevel);
 
-                        $companyArray = array();
-                        foreach ($companyForm->getElements() as $key=>$value){
-                            $companyArray[$key] = $objectCompany[$key];
+                        $userArray = array();
+                        foreach ($userForm->getElements() as $key=>$value){
+                            $companyArray[$key] = $objectUser[$key];
                         }
-                        $bodyResponse['company'] = array(
+                        $bodyResponse['user'] = array(
                             '_links' => array(
-                                'self' => array('href' => URL_API.'/company/'.$branchPKQuery->getIdCompany()),
+                                'self' => array('href' => URL_API.'/user/'.$staffPKQuery->getIdUser()),
                             ),
                         );
 
-                        //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
-                        foreach ($companyArray as $key=>$value){
-                            $bodyResponse['company'][$key] = $value;
+                        //Agregamos los datos de user a nuestro arreglo $row['_embedded']['user']
+                        foreach ($userArray as $key=>$value){
+                            $bodyResponse['user'][$key] = $value;
                         }
 
-                        $bodyResponse['company'] = array(
-                            'idcompany' => $bodyResponse['company']['idcompany'],
-                            'company_name' => $bodyResponse['company']['company_name'],
+                        $bodyResponse['user'] = array(
+                            'iduser' => $bodyResponse['user']['iduser'],
+                            'user_nickname' => $bodyResponse['user']['user_nickname'],
                         );
 
-                        return $bodyResponse;
+                        return array('status_code' => 200, 'details' => $bodyResponse);
 
                     }else{
 
-                        //Verificamos que branch_name no exista ya en nuestra base de datos.
-                        if($branchQuery->filterByIdCompany($idCompany)->filterByBranchName($data['branch_name'])->find()->count()==0){
 
-                            $branchPKQuery->save();
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_200); //OK
+                        //Verificamos que iduser no exista ya en nuestra base de datos.
+                        if($staffQuery->filterByIduser($data['iduser'])->useUserQuery()->filterByIdCompany($idCompany)->endUse()->find()->count()==0){
+
+                            $staffPKQuery->save();
 
                             //Le damos formato a nuestra respuesta
                             $bodyResponse = array(
                                 "_links" => array(
-                                    'self' => URL_API.'/'.MODULE.'/branch/'.$branchPKQuery->getIdbranch(),
+                                    'self' => URL_API.'/'.MODULE.'/staff/'.$staffPKQuery->getIdstaff(),
                                 ),
                             );
 
-                            foreach ($branchPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                            foreach ($staffPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
                                 $bodyResponse[$key] = $value;
                             }
 
                             //Eliminamos los campos que hacen referencia a otras tablas
-                            unset($bodyResponse['idcompany']);
+                            unset($bodyResponse['iduser']);
 
                             //Agregamos el campo embedded a nuestro arreglo
-                            $objectCompany = $branchPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+                            $objectUser = $staffPKQuery->getUser()->toArray(BasePeer::TYPE_FIELDNAME);
 
                             //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
-                            $companyForm = CompanyFormGET::init($userLevel);
+                            $userForm = UserFormGET::init($userLevel);
 
-                            $companyArray = array();
-                            foreach ($companyForm->getElements() as $key=>$value){
-                                $companyArray[$key] = $objectCompany[$key];
+                            $userArray = array();
+                            foreach ($userForm->getElements() as $key=>$value){
+                                $userArray[$key] = $objectUser[$key];
                             }
-                            $bodyResponse['company'] = array(
+                            $bodyResponse['user'] = array(
                                 '_links' => array(
-                                    'self' => array('href' => URL_API.'/company/'.$branchPKQuery->getIdCompany()),
+                                    'self' => array('href' => URL_API.'/user/'.$staffPKQuery->getIdUser()),
                                 ),
                             );
 
-                            //Agregamos los datod de company a nuestro arreglo $row['_embedded'][company']
-                            foreach ($companyArray as $key=>$value){
-                                $bodyResponse['company'][$key] = $value;
+                            //Agregamos los datos de user a nuestro arreglo $row['_embedded']['user']
+                            foreach ($userArray as $key=>$value){
+                                $bodyResponse['user'][$key] = $value;
                             }
 
-                            $bodyResponse['company'] = array(
-                                'idcompany' => $bodyResponse['company']['idcompany'],
-                                'company_name' => $bodyResponse['company']['company_name'],
+                            $bodyResponse['user'] = array(
+                                'iduser' => $bodyResponse['user']['iduser'],
+                                'user_nickname' => $bodyResponse['user']['user_nickname'],
                             );
 
-                            return $bodyResponse;
+                            return array('status_code' => 200, 'details' => $bodyResponse);
 
                         }else{
+                            $bodyResponse = "The iduser: '".$staffArray['iduser']."' was been assigned for other staff.";
+                            return array('status_code' => 409, 'details' => $bodyResponse);
 
-                            //Modifiamos el Header de nuestra respuesta
-                            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                            $bodyResponse = array(
-                                'Error' => array(
-                                    'HTTP_Status' => 400 . ' Bad Request',
-                                    'Title' => 'Resource data pre-validation error',
-                                    'Details' => "branch_name ". "'".$branchArray['branch_name']."'". " already exists",
-                                ),
-                            );
-                            return $bodyResponse;
                         }
                     }
                 }else{
-                    //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                     $messageArray = array();
-                    foreach ($branchFormToShowUpdate->getElements() as $key => $value){
+                    foreach ($staffFormToShowUpdate->getElements() as $key => $value){
                         //Obtenemos el nombre de la columna
                         $message = $key;
                         array_push($messageArray, $message);
                     }
-                    $bodyResponse = array(
-                        'Error' => array(
-                            'HTTP_Status' => 400 . ' Bad Request',
-                            'Title' => 'No changes were found',
-                            'Columns_to_do_changes' => $messageArray,
-                        ),
-                    );
-                    return $bodyResponse;
-                }
+                    $bodyResponse = "No changes were found";
+                    return array('status_code' => 304, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray);                 }
             }else{
-                //Modifiamos el Header de nuestra respuesta
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
                 //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
                 $messageArray = array();
-                foreach ($branchFormPostPut->getMessages() as $key => $value){
+                foreach ($staffFormPostPut->getMessages() as $key => $value){
                     foreach($value as $val){
                         //Obtenemos el valor de la columna con error
                         $message = $key.' '.$val;
                         array_push($messageArray, $message);
                     }
                 }
-                $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-                $bodyResponse = ArrayResponse::getResponseBody(400, $messageArray);
-                return $bodyResponse;
+                return array('status_code' => 409, 'details' => $messageArray);
             }
         }else{
 
-            //Modifiamos el Header de nuestra respuesta
-            $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
-            $bodyResponse = array(
-                'Error' => array(
-                    'HTTP_Status' => 400 . ' Bad Request',
-                    'Title' => 'The request data is invalid',
-                    'Details' => 'Invalid idbranch',
-                ),
-            );
-            return $bodyResponse;
+            $bodyResponse = 'Invalid idstaff';
+            return array('status_code' => 409, 'details' => $bodyResponse);
         }
     }
     /////////// End update ///////////
@@ -643,7 +657,7 @@ class Staff extends BaseStaff
 
         //Reglas de negocio
         if($userLevel>=4){
-            BranchQuery::create()->filterByIdbranch($id)->delete();
+            StaffQuery::create()->filterByIdstaff($id)->delete();
             return true;
         }
         return false;

@@ -157,6 +157,7 @@ class ResourceController extends AbstractRestfulController
                     }
                 }
             }
+
             //Le ponemos los datos a nuestro formulario
             $FormPostPut->setData($dataArray);
 
@@ -929,7 +930,13 @@ class ResourceController extends AbstractRestfulController
                     case "member" :{
                         // Si el usuario es supervisor o superior (departmentleader, encargado de departamento o dueño de la empresa)
                         if($userLevel >= 3){
-                            $data['iduser'] = (int) $idUser;
+                            $idstaff = (int) $this->params()->fromRoute('idChild',false);
+                            if(isset($idstaff)){
+                                $staffQuery = new StaffQuery();
+                                $staffQueryEntity = $staffQuery->create()->filterByIdstaff($idstaff)->findOne();
+                                $iduser = $staffQueryEntity->getIduser();
+                                $data['iduser'] = $iduser;
+                            }
                         }else{
                             $bodyResponse = ArrayResponse::getResponse(403, $response, 'Sorry but you does not have permission over this resource. Please contact with your supervisor.', 'Access denied');
                             switch(TYPE_RESPONSE){
@@ -1197,6 +1204,7 @@ class ResourceController extends AbstractRestfulController
                     //Obtenemos nuestra entidad padre
                     $entity = $resource->getEntity($id);
                 }
+
                 //Llamamos a la funcion entityResponse para darle formato a nuestra respuesta
                 $bodyResponse = $resource->getEntityResponse($entity,$userLevel);
                 switch(TYPE_RESPONSE){

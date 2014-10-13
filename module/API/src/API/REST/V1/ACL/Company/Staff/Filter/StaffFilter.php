@@ -70,7 +70,7 @@ class StaffFilter implements InputFilterAwareInterface
             // iduser: DataType = INT, NN = true
             $inputFilter->add(array(
                 'name'     => 'iduser',
-                'required' => false,
+                'required' => true,
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),

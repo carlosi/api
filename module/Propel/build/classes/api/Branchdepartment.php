@@ -9,6 +9,17 @@ use API\REST\V1\ACL\Company\Branchdepartment\Form\BranchdepartmentFormPostPut;
 ////// Filters //////
 use API\REST\V1\ACL\Company\Branchdepartment\Filter\BranchdepartmentFilterPostPut;
 
+/**
+ * Skeleton subclass for representing a row from the 'branchdepartment' table.
+ *
+ *
+ *
+ * You should add additional methods to this class to meet the
+ * application requirements.  This class will only be generated as
+ * long as it does not already exist in the output directory.
+ *
+ * @package    propel.generator.api
+ */
 class Branchdepartment extends BaseBranchdepartment
 {
     /**
@@ -59,7 +70,7 @@ class Branchdepartment extends BaseBranchdepartment
             $this->save();
 
             //Las columnas permitidas de nuestros foreign keys
-            $allowedCompanyColumns = array();
+            $allowedBranchColumns = array();
 
             //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
             if(array_key_exists("idbranch", $dataArray)){
@@ -78,6 +89,9 @@ class Branchdepartment extends BaseBranchdepartment
                     }
                 }
             }
+
+            //Las columnas permitidas de nuestros foreign keys
+            $allowedDeparrtmentColumns = array();
 
             //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
             if(array_key_exists("iddepartment", $dataArray)){
@@ -101,11 +115,11 @@ class Branchdepartment extends BaseBranchdepartment
             //1. El objeto branch "this"
             //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
             //3. Las columnas permitidas e los foreignKeys
-            //4. el objeto branch que va ir como __embebed = "branch"
+            //4. el objeto branchdepartment que va ir como __embebed = "branch" y "department"
             $bodyResponse = $this->createBodyResponse($this,array('idbranch','iddepartment'),array('branch' => $allowedBranchColumns, 'department' => $allowedDepartmentColumns),array($branch, $department));
 
             $this->save();
-            return array('statusCode' => 201, 'details' => $bodyResponse);
+            return array('status_code' => 201, 'details' => $bodyResponse);
         }else{
             $bodyResponse = "iddepartment ". "'".$dataArray["iddepartment"]."'". " already exists in the idbranch "."'".$dataArray["idbranch"]."'";
             return array('status_code' => 409, 'details' => $bodyResponse);
@@ -192,75 +206,6 @@ class Branchdepartment extends BaseBranchdepartment
         return $body;
     }
     /////////// End create ///////////
-
-    /////////// Start get /////////////
-    /**
-     * @param $id
-     * @return Department|Department[]|mixed
-     */
-    public function getEntity($id){
-        return DepartmentQuery::create()->findPk($id);
-    }
-
-    /**
-     * @param $entity
-     * @param $userLevel
-     * @return array
-     */
-    public function getEntityResponse($entity,$userLevel){
-        //Obtenemos nuestra entidad branch en forma de arreglo
-        $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
-        $branchArray = BranchQuery::create()->findPk(ID_RESOURCE)->toArray(BasePeer::TYPE_FIELDNAME);
-
-        //Los Links
-        $response = array(
-            "_links" => array(
-                "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/branch/".$branchArray['idbranch']."/department/".$entityArray['iddepartment'],
-                ),
-            ),
-        );
-
-        //El ACL
-
-        //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
-        $departmentForm = DepartmentFormGET::init($userLevel);
-
-        foreach ($departmentForm->getElements() as $element){
-            if($element->getOption('value_options')!=null){
-                $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                //$response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-            }else{
-                if($element->getAttribute('name')!="idcompany"){
-                    $response["ACL"][$element->getAttribute('name')] = $element->getOption('label');
-                    //$response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-                }
-            }
-        }
-        //Los datos de la entidad
-        $response["branch"] = array(
-            "_links" => array(
-                "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/branch/".$branchArray['idbranch'],
-                ),
-            ),
-            "idbranch" => $branchArray['idbranch'],
-            "branch_name" => $branchArray['branch_name']
-        );
-
-        foreach ($departmentForm->getElements() as $element){
-            if($element->getOption('value_options')!=null){
-                $response['department'][$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-            }else{
-                if($element->getAttribute('name')!="idcompany"){
-                    $response['department'][$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-                }
-            }
-        }
-
-        return $response;
-    }
-    /////////// Start get ///////////
 
     /////////// Start getList ///////////
     /**
@@ -439,7 +384,7 @@ class Branchdepartment extends BaseBranchdepartment
     }
     /////////// Start getList ///////////
 
-    /////////// Start update ///////////
+    /////////// Start update -- UPDATE ya no esta habilitado, fue deshabilitado desde ResourceListener ///////////
     public function updateResource($data, $idCompany, $userLevel, $request, $response){
 
         //Instanciamos nuestra branchdepartmentQuery
@@ -566,7 +511,8 @@ class Branchdepartment extends BaseBranchdepartment
                     }else{
 
                         $bodyResponse = "the iddepartment ". "'".$branchdepartmentArray['iddepartment']."'". " already exists in the idbranch ". "'".$branchdepartmentArray['idbranch'];
-                        return array('status_code' => 409, $bodyResponse);                    }
+                        return array('status_code' => 409, $bodyResponse);
+                    }
                 }else{
                     $bodyResponse = "No changes were found";
                     return array('status_code' => 304, $bodyResponse);
@@ -590,7 +536,7 @@ class Branchdepartment extends BaseBranchdepartment
             return array('status_code' => 409, 'details' => $bodyResponse);
         }
     }
-    /////////// End update ///////////
+    /////////// End update -- UPDATE ya no esta habilitado, fue deshabilitado desde ResourceListener ///////////
 
     /////////// Start delete ///////////
     /**
