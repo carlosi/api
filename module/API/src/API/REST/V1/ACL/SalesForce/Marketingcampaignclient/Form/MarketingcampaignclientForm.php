@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Marketingcampaignclient\Form;
+namespace API\REST\V1\ACL\Salesforce\Marketingcampaignclient\Form;
 
 // - ZF2 - //
 use Zend\Form\Form;
 
 /**
  * Class MarketingcampaignclientForm
- * @package API\REST\V1\ACL\SalesForce\Marketingcampaignclient\Form
+ * @package API\REST\V1\ACL\Salesforce\Marketingcampaignclient\Form
  */
 class MarketingcampaignclientForm extends Form
 {

@@ -4,18 +4,18 @@
  * QuoteFormGET.php
  * BuyBuy
  *
- * Created by Buybuy on 4/08/2014.
+ * Created by Buybuy on 16/10/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quote\Form;
+namespace API\REST\V1\ACL\Salesforce\Quote\Form;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Quote\Form\QuoteForm;
+use API\REST\V1\ACL\Salesforce\Quote\Form\QuoteForm;
 
 /**
  * Class QuoteFormGET
- * @package API\REST\V1\ACL\SalesForce\Quote\Form
+ * @package API\REST\V1\ACL\Salesforce\Quote\Form
  */
 class QuoteFormGET
 {

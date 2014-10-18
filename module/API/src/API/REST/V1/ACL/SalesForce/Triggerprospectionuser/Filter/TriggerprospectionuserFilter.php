@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Filter;
+namespace API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -30,7 +30,7 @@ use Zend\InputFilter\InputFilterInterface;
 
 /**
  * Class TriggerprospectionuserFilter
- * @package API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Filter
+ * @package API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Filter
  */
 class TriggerprospectionuserFilter implements InputFilterAwareInterface
 {

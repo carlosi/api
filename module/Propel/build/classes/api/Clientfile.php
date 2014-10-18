@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Clientfile.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
 
 //// FORMS ////
 use API\REST\V1\ACL\Company\Client\Form\ClientFormGET;
@@ -36,7 +43,8 @@ class Clientfile extends BaseClientfile
      * @return bool
      */
     public function isIdValidResource($idResource,$idCompany){
-        return ClientQuery::create()->filterByIdclient($idResource)
+        return ClientQuery::create()
+            ->filterByIdclient($idResource)
             ->filterByIdcompany($idCompany)
             ->exists();
     }
@@ -46,9 +54,12 @@ class Clientfile extends BaseClientfile
      * @param $idResourceChild
      * @return bool
      */
-    public function isIdValidResurceChild($idResource,$idResourceChild){
-        return ClientfileQuery::create()->filterByIdclient($idResource)
+    public function isIdValidResurceChild($idResourceChild, $idCompany){
+        return ClientfileQuery::create()
             ->filterByIdclientfile($idResourceChild)
+            ->useClientQuery()
+                ->filterByIdcompany($idCompany)
+            ->endUse()
             ->exists();
     }
 
@@ -57,9 +68,10 @@ class Clientfile extends BaseClientfile
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel, $data){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         // Agregamos por defecto la fecha del server en la columna clientfile_uploaddate
         $dataArray['clientfile_uploaddate'] = date("Y-m-d H:i:s");

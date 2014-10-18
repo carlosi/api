@@ -1,6 +1,16 @@
 <?php
 
-use API\REST\V1\ACL\Company\Client\Form\ClientFormGet;
+/**
+ * Marketingcampaignclient.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
+////// FORMS //////
+use API\REST\V1\ACL\Company\Client\Form\ClientFormGET;
+use API\REST\V1\ACL\Salesforce\Marketingcampaign\Form\MarketingcampaignFormGET;
 
 /**
  * Skeleton subclass for representing a row from the 'marketingcampaignclient' table.
@@ -20,79 +30,233 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
      * @param $idCompany
      * @return bool
      */
-    public function isIdValid($idResource,$idCompany){
-        return MarketingcampaignQuery::create()->filterByIdmarketingcampaign($idResource)->useMarketingchannelQuery()->filterByIdcompany($idCompany)->endUse()->exists();
+    public function isIdValidResource($idResource,$idCompany){
+        return MarketingcampaignQuery::create()
+            ->filterByIdmarketingcampaign($idResource)
+            ->useMarketingchannelQuery()
+            ->filterByIdcompany($idCompany)
+            ->endUse()
+            ->exists();
     }
 
     /**
-     * @param $idResource
      * @param $idResourceChild
-     * @return bool
+     * @param $idCompany
+     * @return mixed
      */
-    public function isIdChildValid($idResource,$idResourceChild){
-        return MarketingcampaignclientQuery::create()->filterByIdclient($idResource)
-            ->filterByIdmarketingcampaign($idResourceChild)->exists();
+    public function isIdValidResurceChild($idResourceChild, $idCompany){
+        return ClientQuery::create()
+            ->filterByIdclient($idResourceChild)
+            ->filterByIdcompany($idCompany)
+            ->exists();
     }
 
-    public function getEntity($id){
-        return ClientQuery::create()->findPk($id);
+    /////////// Start create ///////////
+    /**
+     * @param $dataArray
+     * @param $idCompany
+     * @param $userLevel
+     * @param null $data
+     * @return array
+     */
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
+
+        $marketingcampaignclientQuery = MarketingcampaignclientQuery::create();
+
+        $existsClientOnMarketingcampaign = $marketingcampaignclientQuery->filterByIdmarketingcampaign($dataArray['idmarketingcampaign'])->filterByIdclient($dataArray['idclient'])->exists();
+        if(!$existsClientOnMarketingcampaign){
+            // Preparamos nuestro recurso para insertamos los datos el idclient y el id marketingcampaign en la base de datos
+            foreach ($dataArray as $dataKey => $dataValue){
+                $this->setByName($dataKey, $dataValue,  BasePeer::TYPE_FIELDNAME);
+            }
+            $this->save();
+
+            //Las columnas permitidas de nuestros foreign keys
+            $allowedMarketingcampaignColumns = array();
+
+            //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
+            if(array_key_exists("idmarketingcampaign", $dataArray)){
+
+                //Instanciamos nuestro objeto Marketingcampaign
+                $marketingcampaign = $this->getMarketingcampaign();
+
+                //Instanciamos nuestro formulario marketingcampaignGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                $marketingcampaignForm   = MarketingcampaignFormGET::init($userLevel);
+
+                foreach ($marketingcampaignForm->getElements() as $element){
+                    if($element->getOption('value_options')!=null){
+                        $allowedMarketingcampaignColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                    }else{
+                        $allowedMarketingcampaignColumns[$element->getAttribute('name')] = $element->getOption('label');
+                    }
+                }
+            }
+
+            //Las columnas permitidas de nuestros foreign keys
+            $allowedClientColumns = array();
+
+            //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
+            if(array_key_exists("idclient", $dataArray)){
+
+                //Instanciamos nuestro objeto Company
+                $client = $this->getClient();
+
+                //Instanciamos nuestro formulario clientGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                $clientForm   = ClientFormGET::init($userLevel);
+
+                foreach ($clientForm->getElements() as $element){
+                    if($element->getOption('value_options')!=null){
+                        $allowedClientColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                    }else{
+                        $allowedClientColumns[$element->getAttribute('name')] = $element->getOption('label');
+                    }
+                }
+            }
+
+            //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
+            //1. El objeto marketingcampaignclient "this"
+            //2. Los elementos que van a ir como _embebed para removerlos(en este caso idmarketingcampaign y idclient),
+            //3. Las columnas permitidas e los foreignKeys
+            //4. el objeto branchdepartment que va ir como __embebed = "marketingcampaign" y "client"
+            $bodyResponse = $this->createBodyResponse($this,array('idmarketingcampaign','idclient'),array('marketingcampaign' => $allowedMarketingcampaignColumns, 'client' => $allowedClientColumns),array($marketingcampaign, $client));
+
+            $this->save();
+            return array('status_code' => 201, 'details' => $bodyResponse);
+        }else{
+            $bodyResponse = "idclient ". "'".$dataArray["idclient"]."'". " already exists in the idmarketingcampaign "."'".$dataArray["idmarketingcampaign"]."'";
+            return array('status_code' => 409, 'details' => $bodyResponse);
+        }
     }
 
-    public function getEntityResponse($entity,$userLevel){
-        //Obtenemos nuestra entidad branch en forma de arreglo
-        $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
-        $marketingcampaignArray = MarketingcampaignQuery::create()->findPk(ID_RESOURCE)->toArray(BasePeer::TYPE_FIELDNAME);
+    /**
+     * @param $marketingcampaignclient
+     * @param array $voidElements
+     * @param array $allowedColumns
+     * @param array $halResources
+     * @return mixed
+     */
+    public function createBodyResponse($marketingcampaignclient, array $voidElements = null, array $allowedColumns,array $halResources=null){
 
-        //Los Links
-        $response = array(
+        //Guardamos en un arrglo los datos de nuestro recurso
+        $marketingcampaignclientArray = $marketingcampaignclient->toArray(\BasePeer::TYPE_FIELDNAME);
+
+        //Verificamos si hay elementos que hay que remover
+        if($voidElements!=null){
+            foreach ($voidElements as $element){
+                unset($marketingcampaignclientArray[$element]);
+            }
+        }
+
+        //Comnezamos a darle formato a nuestra respuesta.
+
+        /*
+        //Los links
+        $body = array(
             "_links" => array(
                 "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/marketingcampaign/".$marketingcampaignArray['idmarketingcampaign']."/client/".$entityArray['idclient'],
+                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/branch/department/'.$branchdepartment->getPrimaryKey()
                 ),
             ),
         );
 
-        //El ACL
+        //Los datos del recurso
+        foreach ($branchdepartmentArray as $branchdepartmentKey => $branchdepartmentValue){
+            $body[$branchdepartmentKey] = $branchdepartmentValue; // Los datos del recurso
+        }
+        */
 
-        //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
-        $clientForm = ClientFormGET::init($userLevel);
+        //Verificamos si hay elementos recursos _embebed
+        if($halResources!=null){
+            foreach ($halResources as $halResource){
+                $class = get_class($halResource);
+                if($class == "Client"){
+                    if($halResource!=null){
+                        if(!isset($body[strtolower(get_class($halResource))])){
+                            $body[strtolower(get_class($halResource))] = array(
+                                "_links" => array(
+                                    "self" => array(
+                                        "href" =>URL_API.'/v'.API_VERSION.'/company/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                    ),
+                                ),
+                            );
+                            $halResourceArray = $halResource->toArray(\BasePeer::TYPE_FIELDNAME);
+                            $halResourceName = strtolower(get_class($halResource));
 
-        foreach ($clientForm->getElements() as $element){
-            if($element->getOption('value_options')!=null){
-                $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                //$response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-            }else{
-                if($element->getAttribute('name')!="idcompany"){
-                    $response["ACL"][$element->getAttribute('name')] = $element->getOption('label');
+                            //Los datos del recurso __embedded
+                            if(isset($allowedColumns[$halResourceName])){
+                                foreach($allowedColumns[$halResourceName] as $column => $value){
+                                    $body[$halResourceName][$column] = isset($halResourceArray[$column]) ? $halResourceArray[$column] : null;
+                                }
+                            }
+                        }else{
+                            $body[strtolower(get_class($halResource))] = array(
+                                "_links" => array(
+                                    "self" => array(
+                                        "href" =>URL_API.'/v'.API_VERSION.'/company/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                    ),
+                                ),
+                            );
+                            if(isset($allowedColumns[$halResourceName])){
+                                foreach($allowedColumns[$halResourceName] as $column){
+                                    $body[$halResourceName][$column] =  isset($halResourceArray[$column]) ? $halResourceArray[$column] : null;
+                                }
+                            }
+                        }
+                    }
+                }else{
+                    if($halResource!=null){
+                        if(!isset($body[strtolower(get_class($halResource))])){
+                            $body[strtolower(get_class($halResource))] = array(
+                                "_links" => array(
+                                    "self" => array(
+                                        "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                    ),
+                                ),
+                            );
+                            $halResourceArray = $halResource->toArray(\BasePeer::TYPE_FIELDNAME);
+                            $halResourceName = strtolower(get_class($halResource));
+
+                            //Los datos del recurso __embedded
+                            if(isset($allowedColumns[$halResourceName])){
+                                foreach($allowedColumns[$halResourceName] as $column => $value){
+                                    $body[$halResourceName][$column] = isset($halResourceArray[$column]) ? $halResourceArray[$column] : null;
+                                }
+                            }
+                        }else{
+                            $body[strtolower(get_class($halResource))] = array(
+                                "_links" => array(
+                                    "self" => array(
+                                        "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                    ),
+                                ),
+                            );
+                            if(isset($allowedColumns[$halResourceName])){
+                                foreach($allowedColumns[$halResourceName] as $column){
+                                    $body[$halResourceName][$column] =  isset($halResourceArray[$column]) ? $halResourceArray[$column] : null;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        //Los datos de la entidad
-        $response["marketingcampaign"] = array(
-            "_links" => array(
-                "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/marketingcampaign/".$marketingcampaignArray['idmarketingcampaign'],
-                ),
-            ),
-            "idmarketingcampaign" => $marketingcampaignArray['idmarketingcampaign'],
-            "marketingcampaign_name" => $marketingcampaignArray['marketingcampaigh_name']
-        );
 
-        foreach ($clientForm->getElements() as $element){
-            if($element->getOption('value_options')!=null){
-                $response['client'][$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-            }else{
-                if($element->getAttribute('name')!="idcompany"){
-                    $response['client'][$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-                }
-            }
-        }
-
-        //var_dump($response);
-        return $response;
+        // Retornamos nuestra respuesta
+        return $body;
     }
+    /////////// End create ///////////
 
-    public function getCollection($idResource,$idCompany, $page, $limit, $filters, $order, $dir){
+    /////////// Start getList ///////////
+    /**
+     * @param $idCompany
+     * @param $page
+     * @param $limit
+     * @param $filters
+     * @param $order
+     * @param $dir
+     * @return array
+     */
+    public function getCollection($idCompany, $page, $limit, $filters, $order, $dir){
         $marketingcampaignclientQuery = new MarketingcampaignclientQuery();
 
         //Los Filtros
@@ -114,7 +278,7 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
                             $marketingcampaignclientQuery->addAnd('client.'.$filter['attribute'], $filter['in'], \Criteria::IN);
                         }
                     }else{
-                        $marketingcampaignclientQuery->useClientQuery()->filterBy(BasePeer::translateFieldname('client', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN)->endUse();
+                        $marketingcampaignclientQuery ->useClientQuery()->filterBy(BasePeer::translateFieldname('client', $filter['attribute'], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_PHPNAME), $filter['in'], \Criteria::IN)->endUse();
                     }
                 }
                 if(isset($filter['neq'])){
@@ -149,15 +313,14 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
         }
 
         // Obtenemos el filtrado por medio del idcompany del recurso.
-        $result =  $marketingcampaignclientQuery->useClientQuery()->filterByIdcompany($idCompany)->endUse()->useMarketingcampaignQuery()->filterByIdmarketingcampaign($idResource)->endUse()->paginate($page,$limit);
+        $result =  $marketingcampaignclientQuery->useMarketingcampaignQuery()->filterByIdmarketingcampaign(ID_RESOURCE)->useMarketingchannelQuery()->filterByIdcompany($idCompany)->endUse()->endUse()->paginate($page,$limit);
 
-        var_dump($result);
         $links = array(
-            'self' => array('href' => URL_API.'/marketingcampaign/'.$idResource.'/client?page='.$result->getPage()),
-            'prev' => array('href' => URL_API.'/marketingcampaign/'.$idResource.'client?page='.$result->getPreviousPage()),
-            'next' => array('href' => URL_API.'/marketingcampaign/'.$idResource.'client?page='.$result->getNextPage()),
-            'first' => array('href' => URL_API.'/marketingcampaign/'.$idResource.'client'),
-            'last' => array('href' => URL_API.'/marketingcampaign/'.$idResource.'client?page='.$result->getLastPage()),
+            'self' => array('href' => URL_API.'/'.MODULE.'/marketingcampaign/'.ID_RESOURCE.'/client?page='.$result->getPage()),
+            'prev' => array('href' => URL_API.'/'.MODULE.'/marketingcampaign/'.ID_RESOURCE.'/client?page='.$result->getPreviousPage()),
+            'next' => array('href' => URL_API.'/'.MODULE.'/marketingcampaign/'.ID_RESOURCE.'/client?page='.$result->getNextPage()),
+            'first' => array('href' => URL_API.'/'.MODULE.'/marketingcampaign/'.ID_RESOURCE.'/client'),
+            'last' => array('href' => URL_API.'/'.MODULE.'/marketingcampaign/'.ID_RESOURCE.'/client?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){
@@ -187,6 +350,11 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
 
     }
 
+    /**
+     * @param $getCollection
+     * @param $userLevel
+     * @return array
+     */
     public function getCollectionResponse($getCollection, $userLevel){
         // Instanciamos el Formulario GET de nuestro recurso department
         $clientFormGET = ClientFormGET::init($userLevel);
@@ -195,18 +363,30 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
 
         foreach ($getCollection['data'] as $item){
 
-            $marketingcampaignclientQuery = MarketingcampaignclientQuery::create()->filterByIdmarketingcampaign($item['idmarketingcampaign'])->findOne();
-            $client = $marketingcampaignclientQuery->getClient()->toArray(BasePeer::TYPE_FIELDNAME);
+            $marketingcampaignClientQuery = MarketingcampaignclientQuery::create()->filterByIdmarketingcampaignclient($item['idmarketingcampaignclient'])->findOne();
+            $client = $marketingcampaignClientQuery->getClient()->toArray(BasePeer::TYPE_FIELDNAME);
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/'.MODULE.'/client/'.$client['idclient']),
+                    'self' => array('href' => URL_API.'/company/client/'.$client['idclient']),
                 ),
             );
 
             foreach ($clientFormGET->getElements() as $key=>$value){
                 $row[$key] = $client[$key];
             }
+
+            // Eliminamos idcompany
+            unset($row['idcompany']);
+            unset($row['client_iso_codephone']);
+            unset($row['client_email']);
+            unset($row['client_email2']);
+            unset($row['client_password']);
+            unset($row['client_cellular']);
+            unset($row['client_language']);
+            unset($row['client_status']);
+            unset($row['client_type']);
+            unset($row['client_type']);
 
             array_push($clientArray, $row);
         }
@@ -221,6 +401,8 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
                 $acl[$element->getAttribute('name')] = $element->getOption('label');
             }
         }
+        // eliminamos el idcompany
+        unset($acl['idcompany']);
         // End ACL //
 
         $response = array(
@@ -229,10 +411,10 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
             'resume' => $getCollection['resume'],
             'marketingcampaign' => array(
                 '_links' => array(
-                    'self' => array('href' => URL_API.'/marketingcampaign/'.$marketingcampaignArray['idmarketingcampaign']),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/marketingcampaign/'.$marketingcampaignArray['idmarketingcampaign']),
                 ),
-                'idmarketingcampaign' => $branchArray['idmarketingcampaign'],
-                'marketingcampaign_name' => $branchArray['marketingcampaign_name'],
+                'idmarketingcampaign' => $marketingcampaignArray['idmarketingcampaign'],
+                'marketingcampaign_name' => $marketingcampaignArray['marketingcampaign_name'],
             ),
             'clients' => $clientArray,
         );
@@ -248,4 +430,23 @@ class Marketingcampaignclient extends BaseMarketingcampaignclient
         return $response;
 
     }
+    /////////// Start getList ///////////
+
+    /////////// Start delete ///////////
+    /**
+     * @param $id
+     * @param $userLevel
+     * @return bool
+     */
+    public function deleteEntity($id,$userLevel) {
+
+        //Reglas de negocio
+        if($userLevel>=4){
+            MarketingcampaignclientQuery::create()->filterByIdmarketingcampaignclient($id)->delete();
+            return true;
+        }
+        return false;
+
+    }
+    /////////// End delete ///////////
 }

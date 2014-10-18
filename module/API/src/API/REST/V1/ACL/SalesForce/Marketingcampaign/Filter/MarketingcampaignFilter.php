@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Marketingcampaign\Filter;
+namespace API\REST\V1\ACL\Salesforce\Marketingcampaign\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -30,7 +30,7 @@ use Zend\InputFilter\InputFilterInterface;
 
 /**
  * Class MarketingcampaignFilter
- * @package API\REST\V1\ACL\SalesForce\Marketingcampaign\Filter
+ * @package API\REST\V1\ACL\Salesforce\Marketingcampaign\Filter
  */
 class MarketingcampaignFilter implements InputFilterAwareInterface
 {
@@ -97,7 +97,7 @@ class MarketingcampaignFilter implements InputFilterAwareInterface
             // marketingcampaign_created_at: DataType = DATETIME, NN = true
             $inputFilter->add(array(
                 'name' => 'marketingcampaign_created_at',
-                'required' => true,
+                'required' => false,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim')

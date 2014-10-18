@@ -84,7 +84,7 @@ class ResourceListener implements ListenerAggregateInterface {
                 ////// Start Resource Not Allowed //////
 
                 // Estos recursos están habilitados en resource y en resourceChild de nuestro module.config.php
-                // Es por eso que necesitamos invalidarlos manualmente y sugerir el método que si está habilitado
+                // Es por eso que necesitamos invalidarlos manualmente y sugerir el método que sí está habilitado
                 switch(RESOURCE){
                     case "branch":{
                         switch(RESOURCE_CHILD){
@@ -244,6 +244,262 @@ class ResourceListener implements ListenerAggregateInterface {
                     }
                     break;
                 }
+                if(RESOURCE_CHILD == 'client'){
+                    if(ID_RESOURCE != null){
+                        if(RESOURCE == 'marketingcampaign'){
+                            $resourcenameChild = RESOURCE_CHILD;
+                            // La inicial de nuestro string la hacemos mayuscula
+                            $resourceNameChild = ucfirst($resourcenameChild);
+                            // Verificamos que exista el recurso
+                            $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+                            // Si el resource y el resourceChild pertenecen al mismo módulo
+                            if($moduleResource == $moduleResourceChild){
+                                // Ésta condición jamás se cumplirá suponiendo que solamente sea
+                                // el RESOURCE = marketingcampaign y RESOURCE_CHIDL = client
+
+                                echo "Entro porque el RESOURCE_CHILD = client y el RESOURCE pertenece al módulo de client";
+                                exit();
+                            }else{
+                                // Toca pensar como manejar los privileguios de los modulos permitidos para los usuarios
+                                // O, dicho de otra forma, el usuario, qué módulos tiene contratados.
+                                if($moduleResource == 'Salesforce' && $moduleResourceChild == 'Company'){
+                                    switch($resourcenameChild){
+                                        case "client" :{
+                                            // Start resourceRelational
+                                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                                            // La inicial de nuestro string la hacemos mayuscula
+                                            $resourceNameChild = ucfirst($resourcenameChild);
+                                            // seteamos el valor de $moduleResourceChild por 'Salesforce' porque
+                                            // el recursoRelacional (marketingcampaignclient) pertenece al
+                                            // módulo de Salesforce
+                                            $moduleResourceChild = "Salesforce";
+                                            define('MODULE_RESOURCE', $moduleResource);
+                                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                            define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                                            if(ID_RESOURCE_CHILD != null){
+
+                                                return;
+
+                                            }else{
+
+                                                $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id client can´t be null.', 'The id client is required');
+                                                switch(TYPE_RESPONSE){
+                                                    case "xml":{
+                                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                                        return $response->setContent($writer->toString($bodyResponse));
+                                                        $e->stopPropagation();
+                                                        break;
+                                                    }
+                                                    case "json":{
+                                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                        $jsonModel = new JsonModel($bodyResponse);
+                                                        $jsonModel->setTerminal(true);
+                                                        $e->setResult($jsonModel);
+                                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                                        break;
+                                                    }
+                                                    default: {
+                                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                    $jsonModel = new JsonModel($bodyResponse);
+                                                    $jsonModel->setTerminal(true);
+                                                    $e->setResult($jsonModel);
+                                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                                    break;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                            $bodyResponse = ArrayResponse::getResponse(404, $response);
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                                }
+                            }
+                        }
+                    }else{
+                        // Si el resource mas el resourceChild no existe, ejemplo: Branchfile, Brancg address.
+                        $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id can´t be null', 'Invalid request');
+                        switch(TYPE_RESPONSE){
+                            case "xml":{
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                return $response->setContent($writer->toString($bodyResponse));
+                                $e->stopPropagation();
+                                break;
+                            }
+                            case "json":{
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                            }
+                            default: {
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
+                            $jsonModel->setTerminal(true);
+                            $e->setResult($jsonModel);
+                            $e->setViewModel($jsonModel)->stopPropagation();
+                            break;
+                            }
+                        }
+                    }
+                    break;
+                }
+                if(RESOURCE_CHILD == 'user'){
+                    if(ID_RESOURCE != null){
+                         if(RESOURCE == 'triggerprospection'){
+                            $resourcenameChild = RESOURCE_CHILD;
+                            // La inicial de nuestro string la hacemos mayuscula
+                            $resourceNameChild = ucfirst($resourcenameChild);
+                            // Verificamos que exista el recurso
+                            $moduleResource = ucfirst($e->getRouteMatch()->getMatchedRouteName());
+                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+                            // Si el resource y el resourceChild pertenecen al mismo módulo
+                            if($moduleResource == $moduleResourceChild){
+                                // Ésta condición jamás se cumplirá suponiendo que solamente sea
+                                // el RESOURCE = marketingcampaign y RESOURCE_CHIDL = client
+
+                                echo "Entro porque el RESOURCE_CHILD = client y el RESOURCE pertenece al módulo de client y eso es un ERROR";
+                                exit();
+                            }else{
+                                // Toca pensar como manejar los privileguios de los modulos permitidos para los usuarios
+                                // O, dicho de otra forma, el usuario, qué módulos tiene contratados.
+                                if($moduleResource == 'Salesforce' && $moduleResourceChild == 'Company'){
+                                    switch($resourcenameChild){
+                                        case "user" :{
+                                            // Start resourceRelational
+                                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                                            // La inicial de nuestro string la hacemos mayuscula
+                                            $resourceNameChild = ucfirst($resourcenameChild);
+                                            // seteamos el valor de $moduleResourceChild por 'Salesforce' porque
+                                            // el recursoRelacional (marketingcampaignclient) pertenece al
+                                            // módulo de Salesforce
+                                            $moduleResourceChild = "Salesforce";
+                                            define('MODULE_RESOURCE', $moduleResource);
+                                            define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                            define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                            define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+                                            if(ID_RESOURCE_CHILD != null){
+
+                                                return;
+
+                                            }else{
+
+                                                $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id user can´t be null.', 'The id client is required');
+                                                switch(TYPE_RESPONSE){
+                                                    case "xml":{
+                                                        $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                                        return $response->setContent($writer->toString($bodyResponse));
+                                                        $e->stopPropagation();
+                                                        break;
+                                                    }
+                                                    case "json":{
+                                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                        $jsonModel = new JsonModel($bodyResponse);
+                                                        $jsonModel->setTerminal(true);
+                                                        $e->setResult($jsonModel);
+                                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                                        break;
+                                                    }
+                                                    default: {
+                                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                    $jsonModel = new JsonModel($bodyResponse);
+                                                    $jsonModel->setTerminal(true);
+                                                    $e->setResult($jsonModel);
+                                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                                    break;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                             $bodyResponse = ArrayResponse::getResponse(404, $response);
+                             switch(TYPE_RESPONSE){
+                                 case "xml":{
+                                     $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                     return $response->setContent($writer->toString($bodyResponse));
+                                     $e->stopPropagation();
+                                     break;
+                                 }
+                                 case "json":{
+                                     $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                     $jsonModel = new JsonModel($bodyResponse);
+                                     $jsonModel->setTerminal(true);
+                                     $e->setResult($jsonModel);
+                                     $e->setViewModel($jsonModel)->stopPropagation();
+                                     break;
+                                 }
+                                 default: {
+                                 $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                 $jsonModel = new JsonModel($bodyResponse);
+                                 $jsonModel->setTerminal(true);
+                                 $e->setResult($jsonModel);
+                                 $e->setViewModel($jsonModel)->stopPropagation();
+                                 break;
+                                 }
+                             }
+                         }
+                    }else{
+                        // Si el resource mas el resourceChild no existe, ejemplo: Branchfile, Brancg address.
+                        $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id can´t be null', 'Invalid request');
+                        switch(TYPE_RESPONSE){
+                            case "xml":{
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                return $response->setContent($writer->toString($bodyResponse));
+                                $e->stopPropagation();
+                                break;
+                            }
+                            case "json":{
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                            }
+                            default: {
+                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                            $jsonModel = new JsonModel($bodyResponse);
+                            $jsonModel->setTerminal(true);
+                            $e->setResult($jsonModel);
+                            $e->setViewModel($jsonModel)->stopPropagation();
+                            break;
+                            }
+                        }
+                    }
+                    break;
+                }
                 ////// End Resource Relational //////
 
                 ////// Start Resource //////
@@ -322,7 +578,7 @@ class ResourceListener implements ListenerAggregateInterface {
                                 }
                             }else{
                                 // Entró porque haremos una concatenación del resource con el resourceChild
-                                // Ejemplo: clientaddress, clientfile, etc
+                                // Ejemplo: clientaddress, clientfile, quoteitem, quotenote, etc
                                 // La inicial de nuestro string la hacemos mayuscula
                                 $resourcenameChild = RESOURCE.RESOURCE_CHILD;
                                 $resourceNameChild = ucfirst($resourcenameChild);
@@ -402,7 +658,7 @@ class ResourceListener implements ListenerAggregateInterface {
                         define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
                         define('NAME_RESOURCE_CHILD', $resourceNameChild);
                     }
-                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
+                    define('MODULE_RESOURCE', ucfirst($e->getRouteMatch()->getMatchedRouteName()));
                 }// No creamos un else porque el ApiProplemListener.php se encarga de dar respuesta 404, a recursos que no existen como ejemplo: Branchaddres, Branchfile, etc.
 
                 ////// End Resource //////
@@ -444,7 +700,7 @@ class ResourceListener implements ListenerAggregateInterface {
                                             // Verificamos que exista el recurso resourceChild, si sí, almacenamos el modulo al que pertenece.
                                             $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
-                                            // Si existe el modulo de resourceChild (En este caso si existe. El módulo de department     es Company).
+                                            // Si existe el modulo de resourceChild (En este caso si existe).
                                             if($moduleResourceChild){
                                                 define('MODULE_RESOURCE', $moduleResource);
                                                 define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
@@ -519,11 +775,109 @@ class ResourceListener implements ListenerAggregateInterface {
                                         }
                                     }
                                 }else{
-
                                     // Si resource y resourceChild no pertenecen al mismo módulo
+                                    switch(RESOURCE_CHILD){
+                                        case "client" :{
+                                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                                            // La inicial de nuestro string la hacemos mayuscula
+                                            $resourceNameChild = ucfirst($resourcenameChild);
+                                            // Verificamos que exista el recurso resourceChild, si sí, almacenamos el modulo al que pertenece.
+                                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
 
+                                            // Si existe el modulo de resourceChild.
+                                            if($moduleResourceChild){
+
+                                                define('MODULE_RESOURCE', $moduleResource);
+                                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+
+                                                if(ID_RESOURCE_CHILD != null){
+                                                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'Methods allowed: GET_COLLECTION, POST, DELETE', 'Method GET_ENTITY is not allowed');
+                                                    switch(TYPE_RESPONSE){
+                                                        case "xml":{
+                                                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                                            return $response->setContent($writer->toString($bodyResponse));
+                                                            $e->stopPropagation();
+                                                            break;
+                                                        }
+                                                        case "json":{
+                                                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                            $jsonModel = new JsonModel($bodyResponse);
+                                                            $jsonModel->setTerminal(true);
+                                                            $e->setResult($jsonModel);
+                                                            $e->setViewModel($jsonModel)->stopPropagation();
+                                                            break;
+                                                        }
+                                                        default: {
+                                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                        $jsonModel = new JsonModel($bodyResponse);
+                                                        $jsonModel->setTerminal(true);
+                                                        $e->setResult($jsonModel);
+                                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                                        break;
+                                                        }
+                                                    }
+                                                }else{
+                                                    $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                                    $e->getRouteMatch()->setParam('action', 'getListResourceChild');
+                                                    return;
+                                                }
+                                            }
+                                            break;
+                                        }
+                                        case "user" :{
+                                            $resourcenameChild = RESOURCE.RESOURCE_CHILD;
+                                            // La inicial de nuestro string la hacemos mayuscula
+                                            $resourceNameChild = ucfirst($resourcenameChild);
+                                            // Verificamos que exista el recurso resourceChild, si sí, almacenamos el modulo al que pertenece.
+                                            $moduleResourceChild = ResourceManager::getModule($resourceNameChild);
+
+                                            // Si existe el modulo de resourceChild.
+                                            if($moduleResourceChild){
+
+                                                define('MODULE_RESOURCE', $moduleResource);
+                                                define('LOWER_NAME_RESOURCE_CHILD', $resourcenameChild);
+                                                define('NAME_RESOURCE_CHILD', $resourceNameChild);
+                                                define('MODULE_RESOURCE_CHILD', $moduleResourceChild);
+
+                                                if(ID_RESOURCE_CHILD != null){
+                                                    $bodyResponse = ArrayResponse::getResponse(405, $response, 'Methods allowed: GET_COLLECTION, POST, DELETE', 'Method GET_ENTITY is not allowed');
+                                                    switch(TYPE_RESPONSE){
+                                                        case "xml":{
+                                                            $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                                            return $response->setContent($writer->toString($bodyResponse));
+                                                            $e->stopPropagation();
+                                                            break;
+                                                        }
+                                                        case "json":{
+                                                            $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                            $jsonModel = new JsonModel($bodyResponse);
+                                                            $jsonModel->setTerminal(true);
+                                                            $e->setResult($jsonModel);
+                                                            $e->setViewModel($jsonModel)->stopPropagation();
+                                                            break;
+                                                        }
+                                                        default: {
+                                                        $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                                        $jsonModel = new JsonModel($bodyResponse);
+                                                        $jsonModel->setTerminal(true);
+                                                        $e->setResult($jsonModel);
+                                                        $e->setViewModel($jsonModel)->stopPropagation();
+                                                        break;
+                                                        }
+                                                    }
+                                                }else{
+                                                    $e->getRouteMatch()->setParam('controller', 'API\REST\V1\Controller\ResourceController');
+                                                    $e->getRouteMatch()->setParam('action', 'getListResourceChild');
+                                                    return;
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
                                 }
-                            }else{
+                           }else{
 
                                 // Los casos de resourceChild que no son un recurso y que no permiten GET_ENTITY
                                 switch(RESOURCE_CHILD){
@@ -930,6 +1284,124 @@ class ResourceListener implements ListenerAggregateInterface {
                         }
                         break;
                     }
+                    case "client":{
+                        if(ID_RESOURCE != null){
+
+                            $bodyResponse = ArrayResponse::getResponse(405, $response, 'Methods allowed: GET, POST, DELETE', 'Method PUT is not allowed');
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                                }
+                            }
+                            break;
+                        }else{
+                            // Si el resource mas el resourceChild no existe, ejemplo: Branchfile, Brancg address.
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id' . RESOURCE . ' can´t be null', 'Invalid request');
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case "user":{
+                        if(ID_RESOURCE != null){
+
+                            $bodyResponse = ArrayResponse::getResponse(405, $response, 'Methods allowed: GET, POST, DELETE', 'Method PUT is not allowed');
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                                }
+                            }
+                            break;
+                        }else{
+                            // Si el resource mas el resourceChild no existe, ejemplo: Branchfile, Brancg address.
+                            $bodyResponse = ArrayResponse::getResponse(409, $response, 'The id' . RESOURCE . ' can´t be null', 'Invalid request');
+                            switch(TYPE_RESPONSE){
+                                case "xml":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/xhtml+xml'));
+                                    return $response->setContent($writer->toString($bodyResponse));
+                                    $e->stopPropagation();
+                                    break;
+                                }
+                                case "json":{
+                                    $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                    $jsonModel = new JsonModel($bodyResponse);
+                                    $jsonModel->setTerminal(true);
+                                    $e->setResult($jsonModel);
+                                    $e->setViewModel($jsonModel)->stopPropagation();
+                                    break;
+                                }
+                                default: {
+                                $responseHeaders->addHeaders(array('Content-type' => 'application/json'));
+                                $jsonModel = new JsonModel($bodyResponse);
+                                $jsonModel->setTerminal(true);
+                                $e->setResult($jsonModel);
+                                $e->setViewModel($jsonModel)->stopPropagation();
+                                break;
+                                }
+                            }
+                        }
+                        break;
+                    }
                 }
 
                 ////// End Resource Relational //////
@@ -1179,7 +1651,7 @@ class ResourceListener implements ListenerAggregateInterface {
                             }
                         }
                     }
-                    define('MODULE_RESOURCE', ResourceManager::getModule(ucfirst(RESOURCE)));
+                    define('MODULE_RESOURCE', ucfirst($e->getRouteMatch()->getMatchedRouteName()));
                 }else{
                     $bodyResponse = ArrayResponse::getResponse(404, $response);
                     switch(TYPE_RESPONSE){

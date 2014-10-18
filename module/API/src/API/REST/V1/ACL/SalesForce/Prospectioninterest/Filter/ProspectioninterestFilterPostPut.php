@@ -1,23 +1,23 @@
 <?php
 
 /**
- * QuotenoteFilterPostPut.php
+ * ProspectioninterestFilterPostPut.php
  * BuyBuy
  *
- * Created by Carlos Esparza on 4/08/2014.
+ * Created by Carlos Esparza on 17/10/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quotenote\Filter;
+namespace API\REST\V1\ACL\Salesforce\Prospectioninterest\Filter;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Quotenote\Filter\QuotenoteFilter;
+use API\REST\V1\ACL\Salesforce\Prospectioninterest\Filter\ProspectioninterestFilter;
 
 /**
- * Class QuotenoteFilterPostPut
- * @package API\REST\V1\ACL\SalesForce\Quotenote\Filter
+ * Class ProspectioninterestFilterPostPut
+ * @package API\REST\V1\ACL\Salesforce\Prospectioninterest\Filter
  */
-class QuotenoteFilterPostPut
+class ProspectioninterestFilterPostPut
 {
 
     /**
@@ -35,8 +35,8 @@ class QuotenoteFilterPostPut
      */
     public function getInputFilter($userLevel)
     {
-        $QuotenoteFilter = new QuotenoteFilter();
-        $inputFilter = $QuotenoteFilter->getInputFilter();
+        $ProspectioninterestFilter = new ProspectioninterestFilter();
+        $inputFilter = $ProspectioninterestFilter->getInputFilter();
 
         switch ($userLevel){
 

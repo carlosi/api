@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Client.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// Shared ////
 use API\REST\V1\Shared\Functions\HttpResponse;
 use API\REST\V1\Shared\Functions\HttpRequest;
@@ -38,9 +46,10 @@ class Client extends BaseClient
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         if(!$this->clientemailExist($dataArray["client_email"], $idCompany)){
             foreach ($dataArray as $dataKey => $dataValue){
@@ -538,7 +547,7 @@ class Client extends BaseClient
                         }
                         $bodyResponse['company'] = array(
                             '_links' => array(
-                                'self' => array('href' => URL_API.'/company/'.$clientPKQuery->getIdCompany()),
+                                'self' => array('href' => URL_API.'/company/company/'.$clientPKQuery->getIdCompany()),
                             ),
                         );
 

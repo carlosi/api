@@ -156,8 +156,8 @@ return array(
                     'constraints' => array(
                         'version' => '1',
                         'typeResponse' => 'xml|json',
-                        'resource' => '',
-                        'resourceChild' => '',
+                        'resource' => 'marketingchannel|marketingcampaign|triggerprospection|triggerprospectionnote|quote|prospectioninterest',
+                        'resourceChild' => 'client|user|note|item',
                         'id' => '[0-9]+',
                         'idChild' => '[0-9]+',
                     ),

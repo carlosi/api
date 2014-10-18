@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Triggerprospection\Filter;
+namespace API\REST\V1\ACL\Salesforce\Triggerprospection\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -30,7 +30,7 @@ use Zend\InputFilter\InputFilterInterface;
 
 /**
  * Class TriggerprospectionFilter
- * @package API\REST\V1\ACL\SalesForce\Triggerprospection\Filter
+ * @package API\REST\V1\ACL\Salesforce\Triggerprospection\Filter
  */
 class TriggerprospectionFilter implements InputFilterAwareInterface
 {
@@ -79,7 +79,7 @@ class TriggerprospectionFilter implements InputFilterAwareInterface
             // triggerprospection_date: DataType = DATETIME, NN = true
             $inputFilter->add(array(
                 'name' => 'triggerprospection_date',
-                'required' => true,
+                'required' => false,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim')

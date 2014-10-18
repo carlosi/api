@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Staff.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// Shared ////
 use API\REST\V1\Shared\Functions\HttpResponse;
 use API\REST\V1\Shared\Functions\HttpRequest;
@@ -62,7 +70,7 @@ class Staff extends BaseStaff
                     //Instanciamos nuestro objeto User
                     $user = $this->getUser();
 
-                    //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                    //Instanciamos nuestro formulario UserGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
                     $userFormGET = UserFormGET::init($userLevel);
 
                     foreach ($userFormGET->getElements() as $element){
@@ -485,13 +493,15 @@ class Staff extends BaseStaff
 
             // Si desean cambiar el iduser
             if(isset($iduser)){
-                // Instanciamos nuestro objeto StaffQuery y obtenemos el staff que le pertenee al iduser del regustro a actualizar y validamos si pertenece a la misma compañia
+                // Instanciamos nuestro objeto UserQuery y validamos si el iduser del registro a actualizar sí pertenece a la misma compañia
                 $userQueryByIduser = UserQuery::create()->filterByIduser($iduser)->filterByIdcompany($idCompany)->findOne();
                 // Si $userQueryByIduser tiene un valor, significa que si es de la misma compañia el usuario al que se desea actualizar
                 // Si $userQueryByIduser es null, entonces no pertenece a la misma compañia
                 if($userQueryByIduser != null){
                     $userByIduser = $userQueryByIduser->toArray(BasePeer::TYPE_FIELDNAME);
+                    // Asignamos a nuestro arreglo el valor del iduser
                     $staffArray['iduser'] = $userByIduser['iduser'];
+                    // Preparamos el valor del idmarketingchannel para actualizar el registro en la base de datos
                     $staffPKQuery->setByName('iduser', $userByIduser['iduser'], BasePeer::TYPE_FIELDNAME);
 
                 }else{

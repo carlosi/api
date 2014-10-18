@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Clientcomment.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
 
 //// FORMS ////
 use API\REST\V1\ACL\Company\Client\Form\ClientFormGET;
@@ -36,8 +43,9 @@ class Clientcomment extends BaseClientcomment
      * @return bool
      */
     public function isIdValidResource($idResource,$idCompany){
-        return ClientQuery::create()->filterByIdclient($idResource)
-            ->filterByIdcompany($idCompany)
+        return ClientQuery::create()
+            ->filterByIdclient($idResource)
+                ->filterByIdcompany($idCompany)
             ->exists();
     }
 
@@ -46,9 +54,12 @@ class Clientcomment extends BaseClientcomment
      * @param $idResourceChild
      * @return bool
      */
-    public function isIdValidResurceChild($idResource,$idResourceChild){
-        return ClientcommentQuery::create()->filterByIdclient($idResource)
+    public function isIdValidResurceChild($idResourceChild, $idCompany){
+        return ClientcommentQuery::create()
             ->filterByIdclientcomment($idResourceChild)
+            ->useClientQuery()
+                ->filterByIdcompany($idCompany)
+            ->endUse()
             ->exists();
     }
 
@@ -57,9 +68,10 @@ class Clientcomment extends BaseClientcomment
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel, $data){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         // Agregamos por defecto la fecha del server en la columna clientcomment_date
         $dataArray['clientcomment_date'] = date("Y-m-d H:i:s");

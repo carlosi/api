@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Company.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// Shared ////
 use API\REST\V1\Shared\Functions\HttpResponse;
 use API\REST\V1\Shared\Functions\HttpRequest;
@@ -29,7 +37,9 @@ use API\REST\V1\ACL\Company\Company\Filter\CompanyFilterPostPut;
 class Company extends BaseCompany
 {
     public function isIdValidResource($idResource,$idCompany){
-        return CompanyQuery::create()->filterByIdcompany($idResource)->exists();
+        return CompanyQuery::create()
+            ->filterByIdcompany($idResource)
+            ->exists();
     }
 
     /////////// Start create ///////////
@@ -37,9 +47,10 @@ class Company extends BaseCompany
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         if(!$this->companynameExist($dataArray["company_name"], $idCompany)){
             foreach ($dataArray as $dataKey => $dataValue){

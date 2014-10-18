@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Marketingcampaign\Form;
+namespace API\REST\V1\ACL\Salesforce\Marketingcampaign\Form;
 
 // - ZF2 - //
 use Zend\Form\Form;
 
 /**
  * Class MarketingcampaignForm
- * @package API\REST\V1\ACL\SalesForce\Marketingcampaign\Form
+ * @package API\REST\V1\ACL\Salesforce\Marketingcampaign\Form
  */
 class MarketingcampaignForm extends Form
 {
@@ -29,7 +29,7 @@ class MarketingcampaignForm extends Form
             'type' => 'Hidden',
             'name' => 'idmarketingcampaign',
             'options' => array(
-                'label' => 'id marketing campaing'
+                'label' => 'id marketing campaign'
             ),
         ));
         $this->add(array(
@@ -44,14 +44,14 @@ class MarketingcampaignForm extends Form
             'type' => 'Hidden',
             'name' => 'marketingcampaign_name',
             'options' => array(
-                'label' => 'marketing campaing name'
+                'label' => 'marketing campaign name'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'marketingcampaign_created_at',
             'options' => array(
-                'label' => 'marketing campaing created at'
+                'label' => 'marketing campaign created at'
             ),
         ));
     }

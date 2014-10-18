@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Departmentleader.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// FORMS ////
 use API\REST\V1\ACL\Company\Department\Form\DepartmentFormGET;
 use API\REST\V1\ACL\Company\Staff\Form\StaffFormGET;
@@ -40,13 +48,16 @@ class Departmentleader extends BaseDepartmentleader
     }
 
     /**
-     * @param $idResource
      * @param $idResourceChild
+     * @param $idCompany
      * @return bool
      */
-    public function isIdValidResurceChild($idResource,$idResourceChild){
-        return DepartmentleaderQuery::create()->filterByIddepartment($idResource)
+    public function isIdValidResurceChild($idResourceChild,$idCompany){
+        return DepartmentleaderQuery::create()
             ->filterByIddepartmentleader($idResourceChild)
+            ->useDepartmentQuery()
+                ->filterByIdcompany($idCompany)
+            ->endUse()
             ->exists();
     }
 
@@ -55,7 +66,7 @@ class Departmentleader extends BaseDepartmentleader
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
-     * @param $data
+     * @param null $data
      * @return array
      */
     public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){

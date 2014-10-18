@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quote\Filter;
+namespace API\REST\V1\ACL\Salesforce\Quote\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -30,7 +30,7 @@ use Zend\InputFilter\InputFilterInterface;
 
 /**
  * Class QuoteFilter
- * @package API\REST\V1\ACL\SalesForce\Quote\Filter
+ * @package API\REST\V1\ACL\Salesforce\Quote\Filter
  */
 class QuoteFilter implements InputFilterAwareInterface
 {
@@ -62,6 +62,15 @@ class QuoteFilter implements InputFilterAwareInterface
             $inputFilter->add(array(
                 'name'     => 'idquote',
                 'required' => false,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+            ));
+
+            // idtriggerprospection: DataType = INT, NN = true
+            $inputFilter->add(array(
+                'name'     => 'idtriggerprospection',
+                'required' => true,
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),

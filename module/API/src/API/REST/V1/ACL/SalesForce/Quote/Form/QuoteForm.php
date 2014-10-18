@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quote\Form;
+namespace API\REST\V1\ACL\Salesforce\Quote\Form;
 
 // - ZF2 - //
 use Zend\Form\Form;
 
 /**
  * Class QuoteForm
- * @package API\REST\V1\ACL\SalesForce\Quote\Form
+ * @package API\REST\V1\ACL\Salesforce\Quote\Form
  */
 class QuoteForm extends Form
 {

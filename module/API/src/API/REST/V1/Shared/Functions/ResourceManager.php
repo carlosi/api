@@ -108,6 +108,7 @@ class ResourceManager{
             // Obtenemos el Modulo (por ejemplo: Company, Sales, Contents, Shipping, etc)
             $module = MODULE_RESOURCE;
         }
+
         //Creamos el objeto de las FormPostPut
         $namespaceResource = array_search('\\API\\REST\\V1\\ACL\\'.$module.'\\'.$resource.'\\Form\\'.$resource.'FormGET', $namespaceResource);
         $objetResourceForm = new $namespaceResource;
@@ -179,6 +180,8 @@ class ResourceManager{
         return $objectResourceFilterPostPut;
     }
 
+
+    // La funcion "getModule()" se utiliza para saber si un resourceChild pertenece a un módulo.
     /**
      * @param $resource
      * @return mixed
@@ -202,8 +205,8 @@ class ResourceManager{
                     $module = 'Expense';
                     break;
                 }
-                if(substr_count($key, "MercadoLibre\\".$resource)){
-                    $module = 'MercadoLibre';
+                if(substr_count($key, "Mercadolibre\\".$resource)){
+                    $module = 'Mercadolibre';
                     break;
                 }
                 if(substr_count($key, "Production\\".$resource)){
@@ -218,8 +221,8 @@ class ResourceManager{
                     $module = 'Sales';
                     break;
                 }
-                if(substr_count($key, "SalesForce\\".$resource)){
-                    $module = 'SalesForce';
+                if(substr_count($key, "Salesforce\\".$resource)){
+                    $module = 'Salesforce';
                     break;
                 }
                 if(substr_count($key, "SATMexico\\".$resource)){
@@ -237,11 +240,11 @@ class ResourceManager{
             'Company' => 'Company',
             'Contents' => 'Contents',
             'Expense' => 'Expense',
-            'MercadoLibre' => 'MercadoLibre',
+            'Mercadolibre' => 'Mercadolibre',
             'Production' => 'Production',
             'Project' => 'Project',
             'Sales' => 'Sales',
-            'SalesForce' => 'SalesForce',
+            'Salesforce' => 'Salesforce',
             'SATMexico' => 'SATMexico',
             'Shipping' => 'Shipping',
         );

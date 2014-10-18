@@ -1,8 +1,28 @@
 <?php
 
+/**
+ * Marketingchannel.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
+//// Shared ////
+use API\REST\V1\Shared\Functions\HttpResponse;
+use API\REST\V1\Shared\Functions\HttpRequest;
+use API\REST\V1\Shared\Functions\ArrayManage;
+use API\REST\V1\Shared\Functions\ResourceManager;
+use API\REST\V1\Shared\Functions\ArrayResponse;
+
 //// Form ////
 use API\REST\V1\ACL\Company\Company\Form\CompanyFormGET;
-use API\REST\V1\ACL\SalesForce\Marketingchannel\Form\MarketingchannelFormGET;
+use API\REST\V1\ACL\Salesforce\Marketingchannel\Form\MarketingchannelFormGET;
+use API\REST\V1\ACL\Salesforce\Marketingchannel\Form\MarketingchannelFormPostPut;
+use API\REST\V1\ACL\Salesforce\Marketingchannel\Form\MarketingchannelFormToShowUpdate;
+
+//// Filter ////
+use API\REST\V1\ACL\Salesforce\Marketingchannel\Filter\MarketingchannelFilterPostPut;
 
 /**
  * Skeleton subclass for representing a row from the 'marketingchannel' table.
@@ -15,16 +35,224 @@ use API\REST\V1\ACL\SalesForce\Marketingchannel\Form\MarketingchannelFormGET;
  *
  * @package    propel.generator.api
  */
+
 class Marketingchannel extends BaseMarketingchannel
 {
+    public function isIdValidResource($idResource,$idCompany){
+        return MarketingchannelQuery::create()
+            ->filterByIdmarketingchannel($idResource)
+            ->filterByIdcompany($idCompany)
+            ->exists();
+    }
+
+    /////////// Start create ///////////
     /**
-     * @param $idResource
+     * @param $dataArray
+     * @param $idCompany
+     * @param $userLevel
+     * @param null $data
+     * @return array
+     */
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
+
+        if(!$this->marketingchannelnameExist($dataArray["marketingchannel_name"], $idCompany)){
+            foreach ($dataArray as $dataKey => $dataValue){
+                $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
+            }
+            $this->setIdcompany($idCompany);
+            $this->save();
+
+            //Las columnas permitidas de nuestros foreign keys
+            $allowedCompanyColumns = array();
+            $company = null;
+
+            //Validamos los foreign Keys a los que va tener acceso el usuario para instanciar nuestros formularios
+            if(array_key_exists("idcompany", $dataArray)){
+
+                //Instanciamos nuestro objeto Company
+                $company = $this->getCompany();
+
+                //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                $companyForm   = CompanyFormGET::init($userLevel);
+
+                foreach ($companyForm->getElements() as $element){
+                    if($element->getOption('value_options')!=null){
+                        $allowedCompanyColumns[$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                    }else{
+                        $allowedCompanyColumns[$element->getAttribute('name')] = $element->getOption('label');
+                    }
+                }
+            }
+            //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
+            //1. El objeto marketingchannel "this"
+            //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
+            //3. Las columnas permitidas e los foreignKeys
+            //4. el objeto company que va ir como __embebed = "company"
+            $bodyResponse = $this->createBodyResponse($this,array('idcompany'),array('company' => $allowedCompanyColumns),array($company));
+            $this->save();
+            return array('status_code' => 201, 'details' => $bodyResponse);
+
+        }else{
+            $bodyResponse = "marketingchannel_name ". "'".$dataArray["marketingchannel_name"]."'". " already exists";
+            return array('status_code' => 409, 'details' => $bodyResponse);
+        }
+    }
+
+    /**
+     * @param $marketingchannelname
      * @param $idCompany
      * @return bool
      */
-    public function isIdValid($idResource,$idCompany){
-        return MarketingchannelQuery::create()->filterByIdmarketingchannel($idResource)->filterByIdcompany($idCompany)->exists();
+    public function marketingchannelnameExist($marketingchannelname, $idCompany){
+        return MarketingchannelQuery::create()->filterByMarketingchannelName($marketingchannelname)->filterByIdcompany($idCompany)->exists();
     }
+
+    /**
+     * @param $marketingchannel
+     * @param array $voidElements
+     * @param array $allowedColumns
+     * @param array $halResources
+     * @return array
+     */
+    public function createBodyResponse($marketingchannel, array $voidElements = null, array $allowedColumns,array $halResources=null){
+
+        //Guardamos en un arrglo los datos de nuestro recurso
+        $marketingchannelArray = $marketingchannel->toArray(\BasePeer::TYPE_FIELDNAME);
+
+        //Verificamos si hay elementos que hay que remover
+        if($voidElements!=null){
+            foreach ($voidElements as $element){
+                unset($marketingchannelArray[$element]);
+            }
+        }
+
+        //Comnezamos a darle formato a nuestra respuesta.
+
+        //Los links
+        $body = array(
+            "_links" => array(
+                "self" => array(
+                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/marketingchannel/'.$marketingchannel->getPrimaryKey()
+                ),
+            ),
+        );
+
+        //Los datos del recurso
+        foreach ($marketingchannelArray as $marketingchannelKey => $marketingchannelValue){
+            $body[$marketingchannelKey] = $marketingchannelValue; // Los datos del recurso
+        }
+
+        //Verificamos si hay elementos recursos _embebed
+        if($halResources!=null){
+            foreach ($halResources as $halResource){
+                if($halResource!=null){
+                    if(!isset($body[strtolower(get_class($halResource))])){
+                        $body[strtolower(get_class($halResource))] = array(
+                            "_links" => array(
+                                "self" => array(
+                                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                ),
+                            ),
+                        );
+                        $halResourceArray = $halResource->toArray(\BasePeer::TYPE_FIELDNAME);
+                        $halResourceName = strtolower(get_class($halResource));
+
+                        //Los datos del recurso __embedded
+                        if(isset($allowedColumns[$halResourceName])){
+                            foreach($allowedColumns[$halResourceName] as $column => $value){
+                                $body[$halResourceName][$column] = $halResourceArray[$column];
+                            }
+                        }
+                    }else{
+                        $body[strtolower(get_class($halResource))] = array(
+                            "_links" => array(
+                                "self" => array(
+                                    "href" =>URL_API.'/v'.API_VERSION.'/'.MODULE.'/'.strtolower(get_class($halResource)).'/'.$halResource->getPrimaryKey()
+                                ),
+                            ),
+                        );
+                        if(isset($allowedColumns[$halResourceName])){
+                            foreach($allowedColumns[$halResourceName] as $column){
+                                $body[$halResourceName][$column] = $halResourceArray[$column];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $body[strtolower(get_class($halResource))] = array(
+            'idcompany' => $body['company']['idcompany'],
+            'company_name' => $body['company']['company_name'],
+        );
+
+        // Retornamos nuestra respuesta
+        return $body;
+    }
+    /////////// End create ///////////
+
+    /////////// Start get ///////////
+    /**
+     * @param $id
+     * @return Marketingchannel|Marketingchannel[]|mixed
+     */
+    public function getEntity($id){
+        $entity = MarketingchannelQuery::create()->findPk($id);
+        return $entity;
+    }
+
+    /**
+     * @param $entity
+     * @param $userLevel
+     * @return array
+     */
+    public function getEntityResponse($entity,$userLevel){
+        //Obtenemos nuestra entidad marketingchannel en forma de arreglo
+        $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
+
+        //Los Links
+        $response = array(
+            "_links" => array(
+                "self" => array(
+                    "href" =>  URL_API."/v".API_VERSION."/".MODULE."/marketingchannel/".$entity->getIdmarketingchannel(),
+                ),
+            ),
+        );
+        //El ACL
+
+        //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
+        $marketingchannelForm = MarketingchannelFormGET::init($userLevel);
+//        $companyForm = CompanyFormGET::init($userLevel);
+
+        foreach ($marketingchannelForm->getElements() as $element){
+            if($element->getOption('value_options')!=null){
+                $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
+                $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
+            }else{
+                if($element->getAttribute('name')!="idcompany"){
+                    $response["ACL"][$element->getAttribute('name')] = $element->getOption('label');
+                    $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
+                }
+            }
+        }
+//        $response["ACL"]["company"]=array(
+//            "idcompany" =>  $companyForm->get("idcompany")->getOption('label'),
+//            "company_name" =>  $companyForm->get("company_name")->getOption('label'),
+//        );
+
+        $company = $entity->getCompany();
+        $response["company"] = array(
+            "_links" => array(
+                "self" => array(
+                    "href" =>  URL_API."/v".API_VERSION."/company/company/".$company->getIdcompany(),
+                ),
+            ),
+            "idcompany" => $company->getIdcompany(),
+            "company_name" => $company->getCompanyName()
+        );
+        return $response;
+    }
+    /////////// End get ///////////
 
     /////////// Start getList ///////////
     /**
@@ -38,7 +266,6 @@ class Marketingchannel extends BaseMarketingchannel
      */
     public function getCollection($idcompany, $page, $limit, array $filters=null, $order, $dir){
         $marketingchannelQuery = new MarketingchannelQuery();
-
         //Los Filtros
         if($filters!=null){
             foreach ($filters as $filter){
@@ -98,12 +325,13 @@ class Marketingchannel extends BaseMarketingchannel
         // Obtenemos el filtrado por medio del idcompany del recurso.
         $result = $marketingchannelQuery->filterByIdCompany($idcompany)->paginate($page,$limit);
 
+
         $links = array(
-            'self' => array('href' => URL_API.'/marketingchannel?page='.$result->getPage()),
-            'prev' => array('href' => URL_API.'/marketingchannel?page='.$result->getPreviousPage()),
-            'next' => array('href' => URL_API.'/marketingchannel?page='.$result->getNextPage()),
-            'first' => array('href' => URL_API.'/marketingchannel'),
-            'last' => array('href' => URL_API.'/marketingchannel?page='.$result->getLastPage()),
+            'self' => array('href' => URL_API.'/'.MODULE.'/marketingchannel?page='.$result->getPage()),
+            'prev' => array('href' => URL_API.'/'.MODULE.'/marketingchannel?page='.$result->getPreviousPage()),
+            'next' => array('href' => URL_API.'/'.MODULE.'/marketingchannel?page='.$result->getNextPage()),
+            'first' => array('href' => URL_API.'/'.MODULE.'/marketingchannel'),
+            'last' => array('href' => URL_API.'/'.MODULE.'/marketingchannel?page='.$result->getLastPage()),
         );
 
         if($result->getPreviousPage() == 1){
@@ -139,7 +367,7 @@ class Marketingchannel extends BaseMarketingchannel
      */
     public function getCollectionResponse($getCollection, $userLevel){
 
-        // Instanciamos el Formulario GET de nuestro recurso branch
+        // Instanciamos el Formulario GET de nuestro recurso marketingchannel
         $marketingchannelFormGET = MarketingchannelFormGET::init($userLevel);
         $marketingchannelArray = array();
         foreach ($getCollection['data'] as $item){
@@ -148,7 +376,7 @@ class Marketingchannel extends BaseMarketingchannel
 
             $row = array(
                 "_links" => array(
-                    'self' => array('href' => URL_API.'/marketingchannel/'.$item['idmarketingchannel']),
+                    'self' => array('href' => URL_API.'/'.MODULE.'/marketingchannel/'.$item['idmarketingchannel']),
                 ),
             );
 
@@ -205,7 +433,6 @@ class Marketingchannel extends BaseMarketingchannel
             );
             $acl['company'] = $companyColumns;
         }
-
         // End ACL //
 
         $response = array(
@@ -214,7 +441,7 @@ class Marketingchannel extends BaseMarketingchannel
             'resume' => $getCollection['resume'],
             'company' => array(
                 '_links' => array(
-                    'self' => array('href' => URL_API.'/company/'.$marketingchannelQuery->getIdcompany()),
+                    'self' => array('href' => URL_API.'/company/company/'.$marketingchannelQuery->getIdcompany()),
                 ),
                 'idcompany' => $row['idcompany'],
                 'company_name' => $row['company_name'],
@@ -222,7 +449,7 @@ class Marketingchannel extends BaseMarketingchannel
             'marketingchannels' => $marketingchannelArray,
         );
         switch(TYPE_RESPONSE){
-               case "xml" :{
+            case "xml" :{
                 $response['marketingchannels'] = array(
                     'marketingchannel' => $marketingchannelArray
                 );
@@ -234,66 +461,196 @@ class Marketingchannel extends BaseMarketingchannel
     }
     /////////// End getList ///////////
 
-    /////////// Start get ///////////
+    /////////// Start update ///////////
+    public function updateResource($id, $data, $idCompany, $userLevel, $request, $response){
+
+        //Instanciamos nuestra marketingchannelQuery
+        $marketingchannelQuery = MarketingchannelQuery::create();
+
+        //Verificamos que el Id marketingchannel que se quiere modificar exista y que pretenece a la compañia
+        if($marketingchannelQuery->create()->filterByIdCompany($idCompany)->filterByIdmarketingchannel($id)->exists()){
+
+            //Instanciamos nuestra marketingchannelQuery
+            $marketingchannelPKQuery = $marketingchannelQuery->findPk($id);
+            $marketingchannelFormToShowUpdate = MarketingchannelFormToShowUpdate::init($userLevel);
+
+            // Si marketingchannel_name tiene un valor, lo almacenamos, de lo contrario le asignamos el valor que tiene en la base de datos
+            $data['marketingchannel_name'] = isset($data['marketingchannel_name'])?$data['marketingchannel_name']:$marketingchannelPKQuery->getMarketingchannelName();
+
+            $marketingchannelDataArray = $marketingchannelPKQuery->toArray(BasePeer::TYPE_FIELDNAME);
+
+            //Remplzamos los datos del marketingchannel por lo que se van a modificar
+            foreach ($data as $key => $value){
+                $marketingchannelPKQuery->setByName($key, $value, BasePeer::TYPE_FIELDNAME);
+            }
+
+            $marketingchannelArray = HttpRequest::resourceUpdateData($data, $request, $response, 'Marketingchannel', $marketingchannelDataArray);
+
+            unset($marketingchannelArray['idmarketingchannel']);
+            unset($marketingchannelArray['idcompany']);
+
+            // Instanciamos nuestro formulario resourceFormPostPut
+            $marketingchannelFormPostPut = MarketingchannelFormPostPut::init($userLevel);
+
+            //Le ponemos los datos a nuestro formulario
+            $marketingchannelFormPostPut->setData($marketingchannelArray);
+
+            // Instanciamos nuestro filtro resourceFilterPostPut
+            $marketingchannelFilterPostPut = new MarketingchannelFilterPostPut();
+
+            //Le ponemos el filtro a nuestro formulario
+            $marketingchannelFormPostPut->setInputFilter($marketingchannelFilterPostPut->getInputFilter($userLevel));
+            //Si los valores son validos
+            if($marketingchannelFormPostPut->isValid()){
+
+                //Si hay valores por modificar
+                if($marketingchannelPKQuery->isModified()){
+                    if($data['marketingchannel_name'] == $marketingchannelDataArray['marketingchannel_name']){
+
+                        $marketingchannelPKQuery->save();
+
+                        //Le damos formato a nuestra respuesta
+                        $bodyResponse = array(
+                            "_links" => array(
+                                'self' => URL_API.'/'.MODULE.'/marketingchannel/'.$marketingchannelPKQuery->getIdmarketingchannel(),
+                            ),
+                        );
+
+                        foreach ($marketingchannelPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                            $bodyResponse[$key] = $value;
+                        }
+
+                        //Eliminamos los campos que hacen referencia a otras tablas
+                        unset($bodyResponse['idcompany']);
+
+                        //Agregamos el campo embedded a nuestro arreglo
+                        $objectCompany = $marketingchannelPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                        //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                        $companyForm = CompanyFormGET::init($userLevel);
+
+                        $companyArray = array();
+                        foreach ($companyForm->getElements() as $key=>$value){
+                            $companyArray[$key] = $objectCompany[$key];
+                        }
+                        $bodyResponse['company'] = array(
+                            '_links' => array(
+                                'self' => array('href' => URL_API.'/company/company/'.$marketingchannelPKQuery->getIdCompany()),
+                            ),
+                        );
+
+                        //Agregamos los datos de company a nuestro arreglo $row['_embedded']['company']
+                        foreach ($companyArray as $key=>$value){
+                            $bodyResponse['company'][$key] = $value;
+                        }
+
+                        $bodyResponse['company'] = array(
+                            'idcompany' => $bodyResponse['company']['idcompany'],
+                            'company_name' => $bodyResponse['company']['company_name'],
+                        );
+
+                        return array('status_code' => 200, 'details' => $bodyResponse);
+
+                    }else{
+
+
+                        //Verificamos que marketingchannel_name no exista ya en nuestra base de datos.
+                        if($marketingchannelQuery->filterByIdCompany($idCompany)->filterByMarketingchannelName($data['marketingchannel_name'])->find()->count()==0){
+
+                            $marketingchannelPKQuery->save();
+
+                            //Le damos formato a nuestra respuesta
+                            $bodyResponse = array(
+                                "_links" => array(
+                                    'self' => URL_API.'/'.MODULE.'/marketingchannel/'.$marketingchannelPKQuery->getIdmarketingchannel(),
+                                ),
+                            );
+
+                            foreach ($marketingchannelPKQuery->toArray(BasePeer::TYPE_FIELDNAME) as $key => $value){
+                                $bodyResponse[$key] = $value;
+                            }
+
+                            //Eliminamos los campos que hacen referencia a otras tablas
+                            unset($bodyResponse['idcompany']);
+
+                            //Agregamos el campo embedded a nuestro arreglo
+                            $objectCompany = $marketingchannelPKQuery->getCompany()->toArray(BasePeer::TYPE_FIELDNAME);
+
+                            //Instanciamos nuestro formulario companyGET para obtener los datos que el usuario de acuerdo a su nivel va tener accesso
+                            $companyForm = CompanyFormGET::init($userLevel);
+
+                            $companyArray = array();
+                            foreach ($companyForm->getElements() as $key=>$value){
+                                $companyArray[$key] = $objectCompany[$key];
+                            }
+                            $bodyResponse['company'] = array(
+                                '_links' => array(
+                                    'self' => array('href' => URL_API.'/company/company/'.$marketingchannelPKQuery->getIdCompany()),
+                                ),
+                            );
+
+                            //Agregamos los datod de company a nuestro arreglo $row['_embedded']['company']
+                            foreach ($companyArray as $key=>$value){
+                                $bodyResponse['company'][$key] = $value;
+                            }
+
+                            $bodyResponse['company'] = array(
+                                'idcompany' => $bodyResponse['company']['idcompany'],
+                                'company_name' => $bodyResponse['company']['company_name'],
+                            );
+
+                            return array('status_code' => 200, 'details' => $bodyResponse);
+
+                        }else{
+                            $bodyResponse = "marketingchannel_name ". "'".$marketingchannelArray['marketingchannel_name']."'". " already exists";
+                            return array('status_code' => 409, 'details' => $bodyResponse);
+                        }
+                    }
+                }else{
+                    $messageArray = array();
+                    foreach ($marketingchannelFormToShowUpdate->getElements() as $key => $value){
+                        //Obtenemos el nombre de la columna
+                        $message = $key;
+                        array_push($messageArray, $message);
+                    }
+                    $bodyResponse = "No changes were found";
+                    return array('status_code' => 304, 'details' => $bodyResponse, 'columns_to_do_changes' => $messageArray);
+                }
+            }else{
+                //Identificamos cual fue la columna que dio problemas y la enviamos como mensaje
+                $messageArray = array();
+                foreach ($marketingchannelFormPostPut->getMessages() as $key => $value){
+                    foreach($value as $val){
+                        //Obtenemos el valor de la columna con error
+                        $message = $key.' '.$val;
+                        array_push($messageArray, $message);
+                    }
+                }
+                return array('status_code' => 409, 'details' => $messageArray);
+            }
+        }else{
+
+            $bodyResponse = 'Invalid idmarketingchannel';
+            return array('status_code' => 409, 'details' => $bodyResponse);
+        }
+    }
+    /////////// End update ///////////
+
+    /////////// Start delete ///////////
     /**
      * @param $id
-     * @return Marketingchannel|Marketingchannel[]|mixed
-     */
-    public function getEntity($id){
-        $entity = MarketingchannelQuery::create()->findPk($id);
-        return $entity;
-    }
-
-    /**
-     * @param $entity
      * @param $userLevel
-     * @return array
+     * @return bool
      */
-    public function getEntityResponse($entity,$userLevel){
-        //Obtenemos nuestra entidad branch en forma de arreglo
-        $entityArray = $entity->toArray(BasePeer::TYPE_FIELDNAME);
+    public function deleteEntity($id,$userLevel) {
 
-        //Los Links
-        $response = array(
-            "_links" => array(
-                "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/marketingchannel/".$entity->getIdmarketingchannel(),
-                ),
-            ),
-        );
-        //El ACL
-
-        //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
-        $marketingchannelForm = MarketingchannelFormGET::init($userLevel);
-        $companyForm = CompanyFormGET::init($userLevel);
-
-        foreach ($marketingchannelForm->getElements() as $element){
-            if($element->getOption('value_options')!=null){
-                $response["ACL"][$element->getAttribute('name')] = array('label' => $element->getOption('label') ,'value_options' => $element->getOption('value_options'));
-                $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-            }else{
-                if($element->getAttribute('name')!="idcompany"){
-                    $response["ACL"][$element->getAttribute('name')] = $element->getOption('label');
-                    $response[$element->getAttribute('name')] = $entityArray[$element->getAttribute('name')];
-                }
-            }
+        //Reglas de negocio
+        if($userLevel>=4){
+            MarketingchannelQuery::create()->filterByIdmarketingchannel($id)->delete();
+            return true;
         }
-        $response["ACL"]["company"]=array(
-            "idcompany" =>  $companyForm->get("idcompany")->getOption('label'),
-            "company_name" =>  $companyForm->get("company_name")->getOption('label'),
-        );
+        return false;
 
-        $company = $entity->getCompany();
-        $response["company"] = array(
-            "_links" => array(
-                "self" => array(
-                    "href" =>  URL_API."/v".API_VERSION."/company/".$company->getIdcompany(),
-                ),
-            ),
-            "idcompany" => $company->getIdcompany(),
-            "company_name" => $company->getCompanyName()
-        );
-        return $response;
     }
-    /////////// End get ///////////
+    /////////// End delete ///////////
 }

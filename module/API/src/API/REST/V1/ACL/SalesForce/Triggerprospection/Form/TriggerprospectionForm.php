@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Triggerprospection\Form;
+namespace API\REST\V1\ACL\Salesforce\Triggerprospection\Form;
 
 // - ZF2 - //
 use Zend\Form\Form;
 
 /**
  * Class TriggerprospectionForm
- * @package API\REST\V1\ACL\SalesForce\Triggerprospection\Form
+ * @package API\REST\V1\ACL\Salesforce\Triggerprospection\Form
  */
 class TriggerprospectionForm extends Form
 {

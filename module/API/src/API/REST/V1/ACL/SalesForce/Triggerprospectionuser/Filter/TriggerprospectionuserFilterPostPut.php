@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Filter;
+namespace API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Filter;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Filter\TriggerprospectionuserFilter;
+use API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Filter\TriggerprospectionuserFilter;
 
 /**
  * Class TriggerprospectionuserFilterPostPut
- * @package API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Filter
+ * @package API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Filter
  */
 class TriggerprospectionuserFilterPostPut
 {

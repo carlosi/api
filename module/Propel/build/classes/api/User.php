@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * User.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// Shared ////
 use API\REST\V1\Shared\Functions\HttpResponse;
 use API\REST\V1\Shared\Functions\HttpRequest;

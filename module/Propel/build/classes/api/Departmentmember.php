@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Departmentmember.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 ////// FORMS //////
 use API\REST\V1\ACL\Company\Department\Form\DepartmentFormGET;
 use API\REST\V1\ACL\Company\Staff\Form\StaffFormGET;
@@ -29,17 +37,23 @@ class Departmentmember extends BaseDepartmentmember
      * @return bool
      */
     public function isIdValidResource($idResource,$idCompany){
-        return DepartmentQuery::create()->filterByIddepartment($idResource)->filterByIdcompany($idCompany)->exists();
+        return DepartmentQuery::create()
+            ->filterByIddepartment($idResource)
+                ->filterByIdcompany($idCompany)
+            ->exists();
     }
 
     /**
-     * @param $idResource
      * @param $idResourceChild
+     * @param $idCompany
      * @return bool
      */
-    public function isIdValidResurceChild($idResource,$idResourceChild){
+    public function isIdValidResurceChild($idResourceChild, $idCompany){
         return StaffQuery::create()
             ->filterByIdstaff($idResourceChild)
+            ->useUserQuery()
+            ->filterByIdcompany($idCompany)
+            ->endUse()
             ->exists();
     }
 
@@ -48,9 +62,10 @@ class Departmentmember extends BaseDepartmentmember
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
         $userQuery = new UserQuery();
         $userQueryEntity = $userQuery->create()->filterByIduser($dataArray['iduser'])->findOne();
         $idcompany = $userQueryEntity->getIdcompany();

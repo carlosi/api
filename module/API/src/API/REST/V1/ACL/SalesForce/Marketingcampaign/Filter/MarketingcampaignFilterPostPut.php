@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Marketingcampaign\Filter;
+namespace API\REST\V1\ACL\Salesforce\Marketingcampaign\Filter;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Marketingcampaign\Filter\MarketingcampaignFilter;
+use API\REST\V1\ACL\Salesforce\Marketingcampaign\Filter\MarketingcampaignFilter;
 
 /**
  * Class MarketingcampaignFilterPostPut
- * @package API\REST\V1\ACL\SalesForce\Marketingcampaign\Filter
+ * @package API\REST\V1\ACL\Salesforce\Marketingcampaign\Filter
  */
 class MarketingcampaignFilterPostPut
 {

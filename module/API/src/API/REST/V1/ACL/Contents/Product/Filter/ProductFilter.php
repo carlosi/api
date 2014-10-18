@@ -76,24 +76,6 @@ class ProductFilter implements InputFilterAwareInterface
                 ),
             ));
 
-            // property_array: DataType = TEXT, NN = true
-            $inputFilter->add(array(
-                'name'     => 'property_array',
-                'required' => true,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                        ),
-                    ),
-                ),
-            ));
-
             // product_status: DataType = ENUM, NN = false
             $inputFilter->add(array(
                 'name' => 'product_status',

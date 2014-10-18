@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Branchdepartment.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 ////// FORMS //////
 use API\REST\V1\ACL\Company\Department\Form\DepartmentFormGET;
 use API\REST\V1\ACL\Company\Branch\Form\BranchFormGET;
@@ -28,26 +36,20 @@ class Branchdepartment extends BaseBranchdepartment
      * @return bool
      */
     public function isIdValidResource($idResource,$idCompany){
-        return BranchQuery::create()->filterByIdbranch($idResource)->filterByIdcompany($idCompany)->exists();
-    }
-
-    /**
-     * @param $idResource
-     * @param $idResourceChild
-     * @return bool
-     */
-    public function isIdValidResurceChild($idResource,$idResourceChild){
-        return BranchdepartmentQuery::create()->filterByIdbranch($idResource)
-            ->filterByIddepartment($idResourceChild)->exists();
+        return BranchQuery::create()
+            ->filterByIdbranch($idResource)
+            ->filterByIdcompany($idCompany)
+            ->exists();
     }
 
     /**
      * @param $idResourceChild
-     * @return bool
+     * @param $idCompany
      */
-    public function isIdValidResurceAlternative($idResourceChild){
+    public function isIdValidResurceChild($idResourceChild, $idCompany){
         return DepartmentQuery::create()
             ->filterByIddepartment($idResourceChild)
+            ->filterByIdcompany($idCompany)
             ->exists();
     }
 
@@ -56,9 +58,10 @@ class Branchdepartment extends BaseBranchdepartment
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         $branchdepartmentQuery = BranchdepartmentQuery::create();
 
@@ -112,7 +115,7 @@ class Branchdepartment extends BaseBranchdepartment
             }
 
             //Mandamos a llamar a nuestra funcion create para darle el formato a nuestra respuesta pasandole los siguientes parametros
-            //1. El objeto branch "this"
+            //1. El objeto Branchdepartment "this"
             //2. Los elementos que van a ir como _embebed para removerlos(en este caso idcompany),
             //3. Las columnas permitidas e los foreignKeys
             //4. el objeto branchdepartment que va ir como __embebed = "branch" y "department"

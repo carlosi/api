@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Marketingcampaignclient\Form;
+namespace API\REST\V1\ACL\Salesforce\Marketingcampaignclient\Form;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Marketingcampaignclient\Form\MarketingcampaignclientForm;
+use API\REST\V1\ACL\Salesforce\Marketingcampaignclient\Form\MarketingcampaignclientForm;
 
 /**
  * Class MarketingcampaignclientFormPostPut
- * @package API\REST\V1\ACL\SalesForce\Marketingcampaignclient\Form
+ * @package API\REST\V1\ACL\Salesforce\Marketingcampaignclient\Form
  */
 class MarketingcampaignclientFormPostPut{
 

@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Form;
+namespace API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Form;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Form\TriggerprospectionuserForm;
+use API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Form\TriggerprospectionuserForm;
 
 /**
  * Class TriggerprospectionuserFormGET
- * @package API\REST\V1\ACL\SalesForce\Triggerprospectionuser\Form
+ * @package API\REST\V1\ACL\Salesforce\Triggerprospectionuser\Form
  */
 class TriggerprospectionuserFormGET
 {

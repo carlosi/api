@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Branch.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// Shared ////
 use API\REST\V1\Shared\Functions\HttpResponse;
 use API\REST\V1\Shared\Functions\HttpRequest;
@@ -38,9 +46,10 @@ class Branch extends BaseBranch
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         if(!$this->branchnameExist($dataArray["branch_name"], $idCompany)){
             foreach ($dataArray as $dataKey => $dataValue){
@@ -209,7 +218,7 @@ class Branch extends BaseBranch
 
         //Instanciamos nuestros formularios para obtener las columnas que el usuario va poder tener acceso
         $branchForm = BranchFormGET::init($userLevel);
-        $companyForm = CompanyFormGET::init($userLevel);
+//        $companyForm = CompanyFormGET::init($userLevel);
 
         foreach ($branchForm->getElements() as $element){
             if($element->getOption('value_options')!=null){

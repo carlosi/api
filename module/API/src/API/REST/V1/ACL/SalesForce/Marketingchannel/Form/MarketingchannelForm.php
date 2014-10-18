@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Marketingchannel\Form;
+namespace API\REST\V1\ACL\Salesforce\Marketingchannel\Form;
 
 // - ZF2 - //
 use Zend\Form\Form;
 
 /**
  * Class MarketingchannelForm
- * @package API\REST\V1\ACL\SalesForce\Marketingchannel\Form
+ * @package API\REST\V1\ACL\Salesforce\Marketingchannel\Form
  */
 class MarketingchannelForm extends Form
 {

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Department.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// Shared ////
 use API\REST\V1\Shared\Functions\HttpResponse;
 use API\REST\V1\Shared\Functions\HttpRequest;
@@ -30,7 +38,10 @@ use API\REST\V1\ACL\Company\Department\Filter\DepartmentFilterPostPut;
 class Department extends BaseDepartment
 {
     public function isIdValidResource($idResource,$idCompany){
-        return DepartmentQuery::create()->filterByIddepartment($idResource)->filterByIdcompany($idCompany)->exists();
+        return DepartmentQuery::create()
+            ->filterByIddepartment($idResource)
+            ->filterByIdcompany($idCompany)
+            ->exists();
     }
 
     /////////// Start create ///////////
@@ -38,10 +49,10 @@ class Department extends BaseDepartment
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
-     * @param $data
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel, $data){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
         if($dataArray['department_type'] == 'local'){
             // Obtenemos el idbranch
             $idbranch = isset($data['idbranch']) ? $data['idbranch'] : null;

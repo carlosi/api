@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Marketingchannel\Filter;
+namespace API\REST\V1\ACL\Salesforce\Marketingchannel\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -30,7 +30,7 @@ use Zend\InputFilter\InputFilterInterface;
 
 /**
  * Class MarketingchannelFilter
- * @package API\REST\V1\ACL\SalesForce\Marketingchannel\Filter
+ * @package API\REST\V1\ACL\Salesforce\Marketingchannel\Filter
  */
 class MarketingchannelFilter implements InputFilterAwareInterface
 {

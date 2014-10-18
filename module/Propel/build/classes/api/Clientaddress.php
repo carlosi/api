@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Clientaddress.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// FORMS ////
 use API\REST\V1\ACL\Company\Client\Form\ClientFormGET;
 use API\REST\V1\ACL\Company\Clientaddress\Form\ClientaddressForm;
@@ -33,30 +41,34 @@ class Clientaddress extends BaseClientaddress
      * @return bool
      */
     public function isIdValidResource($idResource,$idCompany){
-        return ClientQuery::create()->filterByIdclient($idResource)
+        return ClientQuery::create()
+            ->filterByIdclient($idResource)
             ->filterByIdcompany($idCompany)
             ->exists();
     }
 
     /**
-     * @param $idResource
      * @param $idResourceChild
+     * @param $idCompany
      * @return bool
      */
-    public function isIdValidResurceChild($idResource,$idResourceChild){
-        return ClientaddressQuery::create()->filterByIdclient($idResource)
+    public function isIdValidResurceChild($idResourceChild, $idCompany){
+        return ClientaddressQuery::create()
             ->filterByIdclientaddress($idResourceChild)
+            ->useClientQuery()
+            ->filterByIdcompany($idCompany)
+            ->endUse()
             ->exists();
     }
-
     /////////// Start create ///////////
     /**
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel, $data){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         foreach ($dataArray as $dataKey => $dataValue){
             $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);

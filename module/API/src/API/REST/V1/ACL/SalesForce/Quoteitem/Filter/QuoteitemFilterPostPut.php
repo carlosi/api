@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quoteitem\Filter;
+namespace API\REST\V1\ACL\Salesforce\Quoteitem\Filter;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Quoteitem\Filter\QuoteitemFilter;
+use API\REST\V1\ACL\Salesforce\Quoteitem\Filter\QuoteitemFilter;
 
 /**
  * Class QuoteitemFilterPostPut
- * @package API\REST\V1\ACL\SalesForce\Quoteitem\Filter
+ * @package API\REST\V1\ACL\Salesforce\Quoteitem\Filter
  */
 class QuoteitemFilterPostPut
 {

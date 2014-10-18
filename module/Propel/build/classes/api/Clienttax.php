@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Clienttax.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 use API\REST\V1\ACL\Company\Client\Form\ClientFormGET;
 use API\REST\V1\ACL\SATMexico\Clienttax\Form\ClienttaxFormGET;
 
@@ -22,7 +30,8 @@ class Clienttax extends BaseClienttax
      * @return bool
      */
     public function isIdValid($idResource,$idCompany){
-        return ClientQuery::create()->filterByIdclient($idResource)
+        return ClientQuery::create()
+            ->filterByIdclient($idResource)
             ->filterByIdcompany($idCompany)
             ->exists();
     }
@@ -32,9 +41,12 @@ class Clienttax extends BaseClienttax
      * @param $idResourceChild
      * @return bool
      */
-    public function isIdChildValid($idResource,$idResourceChild){
-        return ClienttaxQuery::create()->filterByIdclient($idResource)
+    public function isIdChildValid($idResourceChild, $idCompany){
+        return ClienttaxQuery::create()
             ->filterByIdclienttax($idResourceChild)
+            ->useClientQuery()
+                ->filterByIdcompany($idCompany)
+            ->endUse()
             ->exists();
     }
 

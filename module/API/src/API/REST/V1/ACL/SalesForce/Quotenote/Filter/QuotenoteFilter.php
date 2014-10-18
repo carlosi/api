@@ -21,7 +21,7 @@
  * lo seteamos en el Controlador por medio del token, desde el cual obtenemos el idcompany.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quotenote\Filter;
+namespace API\REST\V1\ACL\Salesforce\Quotenote\Filter;
 
 // - ZF2 - //
 use Zend\InputFilter\InputFilter;
@@ -30,7 +30,7 @@ use Zend\InputFilter\InputFilterInterface;
 
 /**
  * Class QuoteFilter
- * @package API\REST\V1\ACL\SalesForce\Quotenote\Filter
+ * @package API\REST\V1\ACL\Salesforce\Quotenote\Filter
  */
 class QuotenoteFilter implements InputFilterAwareInterface
 {
@@ -106,7 +106,7 @@ class QuotenoteFilter implements InputFilterAwareInterface
             // quotenote_date: DataType = DATETIME, NN = true
             $inputFilter->add(array(
                 'name' => 'quotenote_date',
-                'required' => true,
+                'required' => false,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim')

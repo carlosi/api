@@ -28,23 +28,22 @@ class ProductForm extends Form
             'type' => 'Hidden',
             'name' => 'idproduct',
             'options' => array(
-                'label' => 'Id Producto'
+                'label' => 'Id Product'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
             'name' => 'idproductmain',
             'options' => array(
-                'label' => 'Id Producto'
+                'label' => 'Id Product Main'
             ),
         ));
         $this->add(array(
             'type' => 'Hidden',
-            'name' => 'property_array',
-        ));
-        $this->add(array(
-            'type' => 'Select',
             'name' => 'product_status',
+            'options' => array(
+                'label' => 'Product Status'
+            ),
         ));
     }
 }

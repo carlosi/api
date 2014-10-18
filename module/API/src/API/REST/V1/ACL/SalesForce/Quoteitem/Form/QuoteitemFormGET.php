@@ -8,14 +8,14 @@
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quoteitem\Form;
+namespace API\REST\V1\ACL\Salesforce\Quoteitem\Form;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Quoteitem\Form\QuoteitemForm;
+use API\REST\V1\ACL\Salesforce\Quoteitem\Form\QuoteitemForm;
 
 /**
  * Class QuoteitemFormGET
- * @package API\REST\V1\ACL\SalesForce\Quoteitem\Form
+ * @package API\REST\V1\ACL\Salesforce\Quoteitem\Form
  */
 class QuoteitemFormGET
 {

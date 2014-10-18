@@ -1,31 +1,31 @@
 <?php
 
 /**
- * QuotenoteFormPostPut.php
+ * ProspectioninterestFormPostPut.php
  * BuyBuy
  *
  * Created by Buybuy on 4/08/2014.
  * Copyright (c) 2014 Buybuy. All rightreserved.
  */
 
-namespace API\REST\V1\ACL\SalesForce\Quotenote\Form;
+namespace API\REST\V1\ACL\Salesforce\Prospectioninterest\Form;
 
 // - ACL - //
-use API\REST\V1\ACL\SalesForce\Quotenote\Form\QuotenoteForm;
+use API\REST\V1\ACL\Salesforce\Prospectioninterest\Form\ProspectioninterestForm;
 
 /**
- * Class QuotenoteFormPostPut
- * @package API\REST\V1\ACL\SalesForce\Quotenote\Form
+ * Class ProspectioninterestFormPostPut
+ * @package API\REST\V1\ACL\Salesforce\Prospectioninterest\Form
  */
-class QuotenoteFormPostPut{
+class ProspectioninterestFormPostPut{
 
     /**
      * @param $userLevel
-     * @return QuotenoteForm
+     * @return ProspectioninterestForm
      */
     public static function init($userLevel){
 
-        $QuotenoteForm = new QuotenoteForm();
+        $ProspectioninterestForm = new ProspectioninterestForm();
 
         switch ($userLevel){
 
@@ -43,7 +43,7 @@ class QuotenoteFormPostPut{
 
             case 3: {
 
-                $QuotenoteForm->remove('quotenote_note');
+                $ProspectioninterestForm->remove('idprospectioninterest');
                 break;
             }
 
@@ -56,7 +56,7 @@ class QuotenoteFormPostPut{
             }
         }
 
-        return $QuotenoteForm;
+        return $ProspectioninterestForm;
     }
 
 }

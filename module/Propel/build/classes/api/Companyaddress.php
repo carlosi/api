@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Companyaddress.php
+ * BuyBuy
+ *
+ * Created by Buybuy on 13/10/2014.
+ * Copyright (c) 2014 Buybuy. All rightreserved.
+ */
+
 //// FORMS ////
 use API\REST\V1\ACL\Company\Company\Form\CompanyFormGET;
 use API\REST\V1\ACL\Company\Companyaddress\Form\CompanyaddressForm;
@@ -39,13 +47,14 @@ class Companyaddress extends BaseCompanyaddress
     }
 
     /**
-     * @param $idResource
      * @param $idResourceChild
+     * @param $idCompany
      * @return bool
      */
-    public function isIdValidResurceChild($idResource,$idResourceChild){
-        return CompanyaddressQuery::create()->filterByIdcompany($idResource)
+    public function isIdValidResurceChild($idResourceChild, $idCompany){
+        return CompanyaddressQuery::create()
             ->filterByIdcompanyaddress($idResourceChild)
+            ->filterByIdcompany($idCompany)
             ->exists();
     }
 
@@ -54,10 +63,10 @@ class Companyaddress extends BaseCompanyaddress
      * @param $dataArray
      * @param $idCompany
      * @param $userLevel
-     * @param $data
+     * @param null $data
      * @return array
      */
-    public function saveResouce($dataArray,$idCompany,$userLevel, $data){
+    public function saveResouce($dataArray,$idCompany,$userLevel, $data=null){
 
         foreach ($dataArray as $dataKey => $dataValue){
             $this->setByName($dataKey,$dataValue,  BasePeer::TYPE_FIELDNAME);
