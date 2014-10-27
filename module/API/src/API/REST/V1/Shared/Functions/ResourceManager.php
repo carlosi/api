@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ResourceAPI.php
+ * ResourceManager.php
  * BuyBuy
  *
  * Created by Buybuy on 12/08/2014.
@@ -19,7 +19,7 @@ use UserQuery;
 use Exception;
 
 /**
- * Class ResourceAPI
+ * Class ResourceManager
  * @package API\REST\V1\Shared\Functions
  */
 class ResourceManager{

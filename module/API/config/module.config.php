@@ -49,7 +49,7 @@ return array(
                         'version' => '1',
                         'typeResponse' => 'xml|json',
                         'resource' => 'company|user|staff|client|branch|department',
-                        'resourceChild' => 'staff|address|file|comment|department|leader|member',
+                        'resourceChild' => 'staff|address|file|comment|department|leader|member|order',
                         'id' => '[0-9]+',
                         'idChild' => '[0-9]+',
                     ),

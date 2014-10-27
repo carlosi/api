@@ -76,7 +76,8 @@ class TokenListener implements ListenerAggregateInterface {
 
                 if($token){
                     if(SessionManager::TokenIsValid($token)){
-
+                        // Si entra aquí, es porque el token si es válido.
+                        // Al llegar a este punto salimos del TokenListener.php
                     }else{
                         define('RESOURCE', $e->getRouteMatch()->getParam('resource'));
                         $bodyResponse = ArrayResponse::getResponse(498, $response);

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * HeadersListener.php
+ * ResourceListener.php
  * BuyBuy
  *
  * Created by Buybuy on 12/08/2014.
@@ -23,7 +23,7 @@ use API\REST\V1\Shared\Functions\ResourceManager;
 use API\REST\V1\Shared\Functions\ArrayResponse;
 
 /**
- * Class HeadersListener
+ * Class ResourceListener
  * @package API\REST\V1\Shared\CustomListener
  */
 class ResourceListener implements ListenerAggregateInterface {
@@ -84,7 +84,7 @@ class ResourceListener implements ListenerAggregateInterface {
                 ////// Start Resource Not Allowed //////
 
                 // Estos recursos están habilitados en resource y en resourceChild de nuestro module.config.php
-                // Es por eso que necesitamos invalidarlos manualmente y sugerir el método que sí está habilitado
+                // Es por eso que necesitamos invalidarlos manualmente y sugerir el método que sí está habilitado.
                 switch(RESOURCE){
                     case "branch":{
                         switch(RESOURCE_CHILD){
@@ -567,7 +567,11 @@ class ResourceListener implements ListenerAggregateInterface {
 
                                 }else{
 
-                                    // Entrará en casos como clienttax ya que este recurso pertenece a SATMexico
+                                    // Entrará en casos como resourceAlternative, sin embargo, eso lo debemos delimitar dentro de "Resource Not Allowed" de este mismo ResourceListener.php
+                                    // En lo lógico, deberá entrará en casos como clienttax ya que este recurso es un resourceChild que pertenece al módulo de SATMexico.
+                                    // "client" es el RESOURCE y "tax" es el CHILD, en concatenación "clienttax" esto sería un RESOURCE_CHILD
+                                    // el resource (client), pertenece al módulo de Company pero,
+                                    // el resourceChild (clienttax), pertenece al modulo de SATMexico.
 
                                     $resourcenameChild = RESOURCE.RESOURCE_CHILD;
                                     $resourceNameChild = ucfirst($resourcenameChild);

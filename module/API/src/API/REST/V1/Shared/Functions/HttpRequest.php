@@ -52,7 +52,7 @@ class HttpRequest
                     return $dataArray;
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_409);
                     $bodyResponse = array(
                         'error' => array(
                             'status_code' => 409 . ' Conflict',
@@ -79,7 +79,7 @@ class HttpRequest
                     return $dataArray;
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_409);
                     $bodyResponse = array(
                         'error' => array(
                             'status_code' => 409 . ' Conflict',
@@ -120,7 +120,7 @@ class HttpRequest
 
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400);
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_409);
                     $bodyResponse = array(
                         'error' => array(
                             'status_code' => 409 . ' Conflict',
@@ -147,7 +147,7 @@ class HttpRequest
                     return $dataArray;
                 }else{
                     //Modifiamos el Header de nuestra respuesta
-                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_400); //BAD REQUEST
+                    $response->setStatusCode(\Zend\Http\Response::STATUS_CODE_409); //BAD REQUEST
                     $bodyResponse = array(
                         'error' => array(
                             'status_code' => 409 . ' Conflict',
